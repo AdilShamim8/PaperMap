@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training Language Models to Follow Instructions with Human Feedback — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the InstructGPT paper — RLHF, reward modeling, PPO alignment, and human evaluation results explained step by step.">
+<meta name="keywords" content="InstructGPT, RLHF, reinforcement learning from human feedback, alignment, PPO, reward model, GPT-3, OpenAI">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="shortcut icon" href="./favicon.svg">
+<meta property="og:title" content="InstructGPT — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of RLHF and the InstructGPT paper.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="InstructGPT — Interactive Guide">
+<meta name="twitter:description" content="Learn RLHF with animations and interactive demos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+.scale-bars { display:flex;flex-direction:column;gap:8px;margin-top:8px; }
+.scale-row { display:grid;grid-template-columns:80px 1fr 64px;gap:8px;align-items:center; }
+.scale-track { height:14px;background:var(--bg3);border-radius:5px;overflow:hidden;border:1px solid var(--border); }
+.scale-fill { height:100%;border-radius:4px;transform-origin:left;animation:scaleIn .9s ease; }
+.deep-grid { display:grid;grid-template-columns:1.1fr 0.9fr;gap:16px; }
+.deep-list { list-style:none; }
+.deep-list li { padding:8px 0;border-bottom:1px dashed var(--border);font-size:13px;color:var(--text2); }
+.deep-list li strong { color:var(--ink-soft); }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  .deep-grid { grid-template-columns:1fr; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<nav>
+  <a class="nav-logo" href="./index.html">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#method">Method</a>
+    <a class="nav-link" href="#step1">SFT</a>
+    <a class="nav-link" href="#step2">Reward</a>
+    <a class="nav-link" href="#step3">PPO</a>
+    <a class="nav-link" href="#data">Data</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#examples">Examples</a>
+    <a class="nav-link" href="#safety">Safety</a>
+    <a class="nav-link" href="#limits">Limits</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <span class="nav-badge">arXiv 2022</span>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#problem">Problem</a><a href="#method">Method</a><a href="#step1">SFT</a><a href="#step2">Reward</a>
+  <a href="#step3">PPO</a><a href="#data">Data</a><a href="#results">Results</a><a href="#examples">Examples</a>
+  <a href="#safety">Safety</a><a href="#limits">Limits</a><a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Ouyang, Wu, Jiang et al. · OpenAI · 2022</div>
+  <h1 class="hero-title">Training Language Models to Follow<br><em>Instructions</em> with Human Feedback</h1>
+  <p class="hero-subtitle">How a 1.3B parameter model trained with RLHF beats a 175B GPT-3 — by simply asking humans "which answer is better?" This is the paper that created InstructGPT and paved the way for ChatGPT.</p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#method">Explore the Method →</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2203.02155" target="_blank">Read Paper</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">1.3B</div><div class="stat-label">Beats 175B GPT-3</div></div>
+    <div class="stat"><div class="stat-num">40</div><div class="stat-label">Human Labelers</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Step Pipeline</div></div>
+    <div class="stat"><div class="stat-num">85%</div><div class="stat-label">Preferred over GPT-3</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The <em>Alignment</em> Problem</h2>
+  <p class="section-desc">Making language models bigger doesn't make them better at following user intent. GPT-3 predicts the next token — but users want helpful, honest, and harmless answers.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🚫</div>
+      <div class="problem-title">Misaligned GPT-3</div>
+      <ul class="problem-list">
+        <li>Makes up facts (hallucination rate ~41%)</li>
+        <li>Generates toxic or biased text</li>
+        <li>Doesn't follow instructions — just continues text</li>
+        <li>Objective: "predict next word" ≠ "be helpful"</li>
+        <li>Answering "why eat socks?" with fake philosophy</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">✅</div>
+      <div class="problem-title">Aligned InstructGPT</div>
+      <ul class="problem-list">
+        <li>Follows instructions reliably</li>
+        <li>Hallucinates ~50% less (21% vs 41%)</li>
+        <li>25% less toxic output (when prompted respectfully)</li>
+        <li>Objective: "maximize human preference"</li>
+        <li>Politely says "that question has a false premise"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="padding:1.5rem;">
+    <div class="card-label">The Core Insight</div>
+    <p style="font-size:15px;color:var(--text);line-height:1.8;"><strong>The language modeling objective is misaligned.</strong> Training on "predict the next token on the internet" is fundamentally different from "follow the user's instructions helpfully and safely." The paper proposes using <span class="highlight">Reinforcement Learning from Human Feedback (RLHF)</span> to bridge this gap — aligning GPT-3 to human preferences using just ~77K data points.</p>
+  </div>
+
+  <div class="card" style="margin-top:1rem;padding:1.2rem;">
+    <div class="card-label" style="margin-bottom:8px;">What does "Aligned" mean? (3H Framework from Askell et al.)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <div class="card-sm"><div style="font-size:18px;margin-bottom:4px;">🤝</div><div style="font-size:13px;font-weight:600;color:var(--green);">Helpful</div><div style="font-size:12px;color:var(--text2);">Should help the user solve their task — follow instructions and infer intent.</div></div>
+      <div class="card-sm"><div style="font-size:18px;margin-bottom:4px;">🔍</div><div style="font-size:13px;font-weight:600;color:var(--blue);">Honest</div><div style="font-size:12px;color:var(--text2);">Shouldn't fabricate info or mislead. Measured via TruthfulQA and hallucination rates.</div></div>
+      <div class="card-sm"><div style="font-size:18px;margin-bottom:4px;">🛡️</div><div style="font-size:13px;font-weight:600;color:var(--purple);">Harmless</div><div style="font-size:12px;color:var(--text2);">Should not cause physical, psychological, or social harm. Measured via RealToxicityPrompts.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1rem;padding:1.2rem;">
+    <div class="card-label" style="margin-bottom:8px;">RLHF Research Lineage (Section 2 — Related Work)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;">
+      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:4px;">Christiano et al. 2017</div><div style="font-size:11px;color:var(--text2);">Deep RL from Human Preferences. First proposed using human feedback as a reward signal for RL agents.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:4px;">Ziegler et al. 2019</div><div style="font-size:11px;color:var(--text2);">Applied RLHF to stylistic text continuation. Showed human preferences can fine-tune language models.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;">Stiennon et al. 2020</div><div style="font-size:11px;color:var(--text2);">Learning to Summarize from Human Feedback. Direct predecessor — same pipeline applied to summarization.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:4px;">InstructGPT 2022</div><div style="font-size:11px;color:var(--text2);">This paper. Scales RLHF to a broad distribution of real-world tasks, not just summarization. 3-step pipeline.</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:8px;font-family:var(--mono);">Also related: Askell et al. 2021 (language assistants for alignment), Gabriel 2020 (values & alignment philosophy), Wu et al. 2021 (book summarization with RLHF). FLAN and T0 use NLP task instructions but NOT human preferences.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- METHOD OVERVIEW -->
+<section id="method">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The <em>3-Step</em> RLHF Pipeline</h2>
+  <p class="section-desc">The paper's core contribution: a 3-step pipeline that transforms a base GPT-3 into InstructGPT. Each step builds on the previous one.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:2rem;">
+    <div class="card" style="border-top:3px solid var(--green);">
+      <div style="font-size:24px;margin-bottom:8px;">①</div>
+      <div style="font-size:14px;font-weight:600;color:var(--green);margin-bottom:6px;">Supervised Fine-Tuning (SFT)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">Humans write ideal answers → fine-tune GPT-3 on these demonstrations. ~13K prompts, 16 epochs.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <div style="font-size:24px;margin-bottom:8px;">②</div>
+      <div style="font-size:14px;font-weight:600;color:var(--blue);margin-bottom:6px;">Reward Model Training (RM)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">Humans rank multiple model outputs → train a 6B model to predict which output is preferred. ~33K prompts.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--purple);">
+      <div style="font-size:24px;margin-bottom:8px;">③</div>
+      <div style="font-size:14px;font-weight:600;color:var(--purple);margin-bottom:6px;">PPO Reinforcement Learning</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">Use the reward model as a scoring function → fine-tune the SFT model using PPO to maximize reward. ~31K prompts.</div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:1.2rem;">
+    <div class="card-label" style="margin-bottom:8px;">API Prompt Distribution (Table 1 — Full Breakdown)</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px;">
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--amber);font-weight:600;">45.6%</div><div style="font-size:11px;color:var(--text2);">Generation</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--blue);font-weight:600;">12.4%</div><div style="font-size:11px;color:var(--text2);">Open QA</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--green);font-weight:600;">11.2%</div><div style="font-size:11px;color:var(--text2);">Brainstorming</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--purple);font-weight:600;">8.4%</div><div style="font-size:11px;color:var(--text2);">Chat</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--teal);font-weight:600;">6.6%</div><div style="font-size:11px;color:var(--text2);">Rewrite</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--red);font-weight:600;">4.2%</div><div style="font-size:11px;color:var(--text2);">Summarization</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--blue);font-weight:600;">3.5%</div><div style="font-size:11px;color:var(--text2);">Classification</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--green);font-weight:600;">3.5%</div><div style="font-size:11px;color:var(--text2);">Other</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--purple);font-weight:600;">2.6%</div><div style="font-size:11px;color:var(--text2);">Closed QA</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--amber);font-weight:600;">1.9%</div><div style="font-size:11px;color:var(--text2);">Extract</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono);">~57% of prompts are open-ended generation/brainstorming — tasks public NLP datasets don't cover well. Classification + QA = only ~18%.</div>
+  </div>
+
+  <div class="card" style="margin-top:1rem;padding:1.2rem;">
+    <div class="card-label" style="margin-bottom:8px;">Key Design Insight</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.7;">Steps 2 and 3 can be <strong>iterated continuously</strong>: collect more comparison data on the current best policy → train a new RM → train a new PPO policy. In practice, most comparison data comes from SFT policies, with some from PPO policies.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STEP 1: SFT -->
+<section id="step1">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Step 1: <em>Supervised</em> Fine-Tuning</h2>
+  <p class="section-desc">Labelers write demonstrations of the ideal model behavior for each prompt. GPT-3 is then fine-tuned on these human-written outputs.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Training Details</div>
+      <ul class="deep-list">
+        <li><strong>Dataset:</strong> ~13,000 prompts (API + labeler-written)</li>
+        <li><strong>Epochs:</strong> 16 (with cosine LR decay)</li>
+        <li><strong>Dropout:</strong> Residual dropout of 0.2</li>
+        <li><strong>Selection:</strong> Best checkpoint chosen by RM score on validation</li>
+        <li><strong>Overfitting:</strong> Validation loss overfits after 1 epoch, but more training helps human preference</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Prompt Types</div>
+      <ul class="deep-list">
+        <li><strong>Plain:</strong> Labelers write arbitrary tasks with diversity</li>
+        <li><strong>Few-shot:</strong> Instruction + multiple query/response pairs</li>
+        <li><strong>User-based:</strong> Prompts inspired by real API use cases from waitlist</li>
+        <li><strong>Language:</strong> 96%+ English</li>
+        <li><strong>Bootstrap:</strong> Needed initial labeler prompts since GPT-3 API didn't receive instruction-style prompts</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="padding:1.2rem;">
+    <div class="card-label" style="margin-bottom:8px;">Analogy: Teaching by Example</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.7;">Think of SFT like a student-teacher relationship. The labeler <em>shows</em> the model the correct answer — "Here's a prompt, and here's exactly what the perfect response looks like." The model learns by imitating. But imitating is limited — we need the model to develop judgment about <em>what makes output good</em>. That's what Steps 2 and 3 do.</p>
+  </div>
+
+  <div class="card" style="margin-top:1rem;padding:1.2rem;">
+    <div class="card-label" style="margin-bottom:8px;">Dataset Sizes (Table 6 from Paper)</div>
+    <div style="overflow-x:auto;">
+      <table class="comp-table">
+        <thead><tr><th>Split</th><th>Source</th><th>SFT</th><th>RM</th><th>PPO</th></tr></thead>
+        <tbody>
+          <tr><td>Train</td><td>Labeler-written</td><td>11,295</td><td>6,623</td><td>—</td></tr>
+          <tr><td>Train</td><td>Customer (API)</td><td>1,430</td><td>26,584</td><td>31,144</td></tr>
+          <tr><td>Validation</td><td>Labeler-written</td><td>1,550</td><td>3,488</td><td>—</td></tr>
+          <tr><td>Validation</td><td>Customer (API)</td><td>103</td><td>14,399</td><td>16,185</td></tr>
+          <tr style="background:var(--amber-dim);"><td class="comp-best">Total Train</td><td class="comp-best">—</td><td class="comp-best">12,725</td><td class="comp-best">33,207</td><td class="comp-best">31,144</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono);">SFT has more labeler prompts (bootstrapped with synthetic few-shot examples). RM training uses all C(K,2) pairs per prompt, so actual ranked pairs are an order of magnitude larger. Train/val/test split by user ID to prevent overlap.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STEP 2: REWARD MODEL -->
+<section id="step2">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Step 2: <em>Reward</em> Model Training</h2>
+  <p class="section-desc">Instead of telling the model the right answer, we teach it to judge quality — by training a separate model to predict which output humans prefer.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">How It Works</div>
+      <ul class="deep-list">
+        <li><strong>Architecture:</strong> 6B parameter model (SFT with final layer removed)</li>
+        <li><strong>Input:</strong> Prompt + response → outputs a <span class="highlight">scalar reward score</span></li>
+        <li><strong>Training data:</strong> ~33K prompts with K=4 to K=9 ranked outputs each</li>
+        <li><strong>Efficiency:</strong> Each set of K outputs → C(K,2) comparisons in one batch</li>
+        <li><strong>Why 6B?</strong> 175B RM training was unstable; 6B saves compute and works well</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Labeler Agreement</div>
+      <ul class="deep-list">
+        <li><strong>Training labelers:</strong> 72.6 ± 1.5% agreement rate</li>
+        <li><strong>Held-out labelers:</strong> 77.3 ± 1.3% agreement rate</li>
+        <li><strong>Baseline (Stiennon et al.):</strong> 73 ± 4% researcher agreement</li>
+        <li><strong>RM accuracy:</strong> 72.4% on training labelers, 69.6% on held-out</li>
+        <li><strong>Labelers:</strong> ~40 contractors via Upwork/Scale AI, selected by screening test</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="formula-card">
+    <div class="card-label" style="margin-bottom:10px;">Reward Model Loss Function (Equation 1)</div>
+    <div class="formula-main">loss(θ) = −(1/C(K,2)) · E<sub>[x, y<sub>w</sub>, y<sub>l</sub>]</sub> [ log(σ(r<sub>θ</sub>(x, y<sub>w</sub>) − r<sub>θ</sub>(x, y<sub>l</sub>))) ]</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">r<sub>θ</sub>(x, y)</div><div class="fp-name">Reward</div><div class="fp-desc">Scalar score the RM assigns to prompt x and response y</div></div>
+      <div class="formula-piece"><div class="fp-sym">y<sub>w</sub>, y<sub>l</sub></div><div class="fp-name">Winner/Loser</div><div class="fp-desc">The preferred (winner) and non-preferred (loser) responses</div></div>
+      <div class="formula-piece"><div class="fp-sym">σ</div><div class="fp-name">Sigmoid</div><div class="fp-desc">Converts reward difference into a probability of preference</div></div>
+      <div class="formula-piece"><div class="fp-sym">C(K,2)</div><div class="fp-name">Combinations</div><div class="fp-desc">All pairwise comparisons from K ranked outputs per prompt</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STEP 3: PPO -->
+<section id="step3">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Step 3: <em>PPO</em> Reinforcement Learning</h2>
+  <p class="section-desc">The final step: use the reward model as a scoring function and fine-tune the SFT model to maximize that score using Proximal Policy Optimization.</p>
+
+  <div class="formula-card" style="margin-bottom:1.5rem;">
+    <div class="card-label" style="margin-bottom:10px;">PPO-ptx Objective Function (Equation 2)</div>
+    <div class="formula-main">objective(ϕ) = E<sub>[x,y]</sub>[r<sub>θ</sub>(x,y) − β·log(π<sub>RL</sub>/π<sub>SFT</sub>)] + γ·E<sub>pretrain</sub>[log π<sub>RL</sub>(x)]</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">r<sub>θ</sub>(x,y)</div><div class="fp-name">Reward</div><div class="fp-desc">Score from the trained reward model</div></div>
+      <div class="formula-piece"><div class="fp-sym">β·log(π/π<sub>SFT</sub>)</div><div class="fp-name">KL Penalty</div><div class="fp-desc">Prevents the RL model from drifting too far from the SFT model</div></div>
+      <div class="formula-piece"><div class="fp-sym">γ·E[log π(x)]</div><div class="fp-name">Pretraining Mix</div><div class="fp-desc">PPO-ptx: mix in pretraining loss to prevent forgetting NLP tasks</div></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--purple);margin-bottom:4px;">PPO vs PPO-ptx</div><div style="font-size:12px;color:var(--text2);line-height:1.6;"><strong>PPO:</strong> Pure RL fine-tuning (γ=0). Can regress on NLP benchmarks. <strong>PPO-ptx:</strong> Mixes pretraining gradients (γ>0) to avoid "alignment tax." This is the default InstructGPT model.</div></div>
+    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--teal);margin-bottom:4px;">KL Penalty Explained</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Without the KL penalty, the RL model would "hack" the reward model by finding degenerate outputs that trick it. The per-token KL divergence keeps the model close to the SFT baseline.</div></div>
+    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--amber);margin-bottom:4px;">Alignment Tax</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">RLHF causes regression on SQuAD, DROP, HellaSwag, and WMT15 FR→EN. PPO-ptx mitigates this by preserving language modeling capabilities while aligning.</div></div>
+    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--blue);margin-bottom:4px;">Training Compute</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">SFT 175B: 4.9 petaflop/s-days. PPO-ptx 175B: 60 petaflop/s-days. GPT-3 pretraining: 3,640. <strong>Alignment costs &lt;2% of pretraining.</strong></div></div>
+  </div>
+
+  <div class="card" style="margin-top:1rem;padding:1.2rem;">
+    <div class="card-label" style="margin-bottom:8px;">PPO Training Environment (Section 3.5)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--purple);margin-bottom:4px;">Bandit Environment</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">The RL environment is a <strong>bandit</strong>: it presents a random customer prompt, expects a response, produces a reward from the RM, and ends the episode. No multi-turn interaction.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--teal);margin-bottom:4px;">Value Function Init</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">The PPO value function is <strong>initialized from the reward model</strong>. This gives a warm start — the value function already understands output quality from RM training.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:4px;">PPO-ptx vs KL Fix</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">Increasing the KL coefficient alone never fully recovers DROP/SQuAD performance and significantly decreases reward. <strong>Pretraining mix is strictly better</strong> than the KL-only fix (Figures 33-34).</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DATA & LABELERS -->
+<section id="data">
+  <div class="section-tag">Chapter 06</div>
+  <h2 class="section-title">Data & <em>Human</em> Labelers</h2>
+  <p class="section-desc">The quality of InstructGPT depends entirely on the humans who labeled the data. This section covers who they were, how they were selected, and how the evaluation was structured.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Labeler Selection Process (Appendix B.1)</div>
+      <ul class="deep-list">
+        <li><strong>Team size:</strong> ~40 contractors via Upwork and Scale AI</li>
+        <li><strong>Criterion 1:</strong> Agreement on sensitive speech flagging (75%+ threshold)</li>
+        <li><strong>Criterion 2:</strong> Agreement on output rankings vs researcher labels</li>
+        <li><strong>Criterion 3:</strong> Sensitive demonstration writing quality (6/7+ Likert score)</li>
+        <li><strong>Criterion 4:</strong> Self-assessed ability to identify sensitive speech across cultures</li>
+        <li><strong>Communication:</strong> Shared chat room for edge-case questions, detailed instructions</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Labeler Demographics (Table 12)</div>
+      <ul class="deep-list">
+        <li><strong>Gender:</strong> 50% male, 44.4% female, 5.6% nonbinary/other</li>
+        <li><strong>Ethnicity:</strong> 52.6% Southeast Asian, 31.6% White, 15.8% Latinx, 10.5% Black</li>
+        <li><strong>Nationality:</strong> 22% Filipino, 22% Bangladeshi, 17% American, and others</li>
+        <li><strong>Age:</strong> 75% under 35 years old</li>
+        <li><strong>Language:</strong> ~96% of dataset classified as English (likely 99%+ in reality)</li>
+        <li><strong>Satisfaction:</strong> Labelers enjoyed the task and found pay fair (19 respondents)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="padding:1.2rem;margin-bottom:1rem;">
+    <div class="card-label" style="margin-bottom:8px;">Evaluation Metadata Categories (Table 3)</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--amber);">Overall Quality</div><div style="font-size:10px;color:var(--text3);">Likert 1-7</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--red);">Fails Instruction</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--blue);">Hallucination</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--green);">Satisfies Constraints</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--purple);">Inappropriate</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--teal);">Sexual Content</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--red);">Violent Content</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--amber);">Harmful Advice</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:1.2rem;">
+    <div class="card-label" style="margin-bottom:8px;">Labeling Priority Shift</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:4px;">During Training</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">Labelers prioritized <strong>helpfulness</strong> as the most important criterion (above truthfulness and harmlessness). This maximizes task completion quality.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--green);margin-bottom:4px;">During Final Evaluation</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">Labelers prioritized <strong>truthfulness and harmlessness</strong> over helpfulness. This reflects what the researchers "really care about" for deployment safety.</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono);">Data deduplication: long common prefix check, max 200 prompts per user ID. PII filtered from training split. Train/val/test split by user ID.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 07</div>
+  <h2 class="section-title">Results & <em>Evaluations</em></h2>
+  <p class="section-desc">InstructGPT at 1.3B parameters is preferred by humans over base GPT-3 at 175B — a 100× smaller model wins by being aligned.</p>
+
+  <div class="results-grid">
+    <div class="result-card" style="border-color:rgba(245,158,11,0.2);"><div class="result-model">Preferred over GPT-3 175B</div><div class="result-score" style="color:var(--amber);">85%</div><div class="result-label">175B InstructGPT vs 175B GPT-3</div><div class="result-bar-wrap"><div class="result-bar" style="width:85%;background:var(--amber);"></div></div></div>
+    <div class="result-card" style="border-color:rgba(34,197,94,0.2);"><div class="result-model">Hallucination Reduction</div><div class="result-score" style="color:var(--green);">21%</div><div class="result-label">vs 41% for GPT-3 (closed-domain)</div><div class="result-bar-wrap"><div class="result-bar" style="width:79%;background:var(--green);"></div></div></div>
+    <div class="result-card" style="border-color:rgba(59,130,246,0.2);"><div class="result-model">TruthfulQA Improvement</div><div class="result-score" style="color:var(--blue);">2×</div><div class="result-label">Truthful+Informative answers vs GPT-3</div><div class="result-bar-wrap"><div class="result-bar" style="width:70%;background:var(--blue);"></div></div></div>
+    <div class="result-card" style="border-color:rgba(168,85,247,0.2);"><div class="result-model">Toxicity Reduction</div><div class="result-score" style="color:var(--purple);">25%</div><div class="result-label">Less toxic when prompted respectfully</div><div class="result-bar-wrap"><div class="result-bar" style="width:75%;background:var(--purple);"></div></div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem;padding:1.5rem;">
+    <div class="card-label" style="margin-bottom:1rem;">Win Rate Against SFT 175B (Figure 1)</div>
+    <div id="winRateChart"></div>
+    <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono);">Even at 1.3B, PPO-ptx outperforms 175B SFT. 175B PPO-ptx significantly preferred over all baselines.</div>
+  </div>
+
+  <div class="card" style="padding:1.5rem;">
+    <div class="card-label" style="margin-bottom:1rem;">Metadata Evaluations (Figure 4)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="card-sm"><div style="font-size:13px;font-weight:500;margin-bottom:4px;">Follows Instructions</div><div style="font-size:12px;color:var(--text2);">PPO models attempt the correct instruction ~95% of the time vs ~85% for GPT-3.</div></div>
+      <div class="card-sm"><div style="font-size:13px;font-weight:500;margin-bottom:4px;">Follows Constraints</div><div style="font-size:12px;color:var(--text2);">PPO models follow explicit constraints (e.g. "write in 2 paragraphs") ~80% of the time vs ~50% for GPT-3.</div></div>
+      <div class="card-sm"><div style="font-size:13px;font-weight:500;margin-bottom:4px;">Appropriate Language</div><div style="font-size:12px;color:var(--text2);">PPO outputs rated as appropriate for a customer assistant ~90% of the time.</div></div>
+      <div class="card-sm"><div style="font-size:13px;font-weight:500;margin-bottom:4px;">FLAN & T0 Comparison</div><div style="font-size:12px;color:var(--text2);">InstructGPT preferred over FLAN 78% of time, over T0 79%. NLP datasets alone can't align models.</div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:1rem;padding:1.5rem;">
+    <div class="card-label" style="margin-bottom:1rem;">NLP Benchmark Regressions (Section 4.2 — Alignment Tax Details)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="card-sm"><div style="font-size:13px;font-weight:500;margin-bottom:4px;">PPO Performance Drops</div><div style="font-size:12px;color:var(--text2);">Pure PPO significantly regresses on SQuAD v2, DROP, HellaSwag, and WMT 2015 FR→EN translation compared to the base GPT-3 model.</div></div>
+      <div class="card-sm"><div style="font-size:13px;font-weight:500;margin-bottom:4px;">PPO-ptx Recovery</div><div style="font-size:12px;color:var(--text2);">PPO-ptx mitigates regressions on all datasets, even <strong>surpasses GPT-3 on HellaSwag</strong>. Still lags behind on DROP, SQuADv2, and translation.</div></div>
+      <div class="card-sm"><div style="font-size:13px;font-weight:500;margin-bottom:4px;">Why Not Just Increase KL?</div><div style="font-size:12px;color:var(--text2);">Increasing the KL coefficient leads to significant decreases in validation reward and never fully recovers DROP and SQuAD. <strong>Pretraining mix is strictly better</strong> (Figures 33-34).</div></div>
+      <div class="card-sm"><div style="font-size:13px;font-weight:500;margin-bottom:4px;">GPT-3 vs Prompt Distribution</div><div style="font-size:12px;color:var(--text2);">Results hold even when evaluated on prompts submitted to GPT-3 models (not InstructGPT), though PPO-ptx performs slightly worse at larger model sizes on that distribution.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUALITATIVE EXAMPLES -->
+<section id="examples">
+  <div class="section-tag">Chapter 08</div>
+  <h2 class="section-title">Qualitative <em>Examples</em></h2>
+  <p class="section-desc">The paper includes cherry-picked prompts (but not cherry-picked outputs) that illustrate InstructGPT's capabilities and failure modes (Figures 8-9).</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem;">
+    <div class="card" style="border-top:3px solid var(--green);">
+      <div style="font-size:14px;font-weight:600;color:var(--green);margin-bottom:8px;">✅ Following Non-English Instructions (Figure 8)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;"><strong>Prompt:</strong> "Écrivez une courte histoire sur une grenouille qui voyage dans le temps jusqu'à la Grèce antique en français."</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Just listed more writing prompts in French — didn't follow the instruction to write the story.</div></div>
+        <div class="card-sm" style="border-left:2px solid var(--green);"><div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Actually wrote a coherent short story about a frog time-traveling to ancient Greece, entirely in French.</div></div>
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <div style="font-size:14px;font-weight:600;color:var(--blue);margin-bottom:8px;">✅ Answering Questions About Code (Figure 8)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;"><strong>Prompt:</strong> "What is the purpose of the list C in the code below?" <span style="font-family:var(--mono);font-size:11px;">[binomial_coefficient function]</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Generated multiple-choice options (A/B/C/D) instead of explaining the code.</div></div>
+        <div class="card-sm" style="border-left:2px solid var(--green);"><div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Explained that list C stores binomial coefficient values as the function iterates. (Not fully correct, but attempts the right task.)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="card" style="border-top:3px solid var(--red);">
+      <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:8px;">🚫 False Premise Failure (Figure 9)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;"><strong>Prompt:</strong> "Why is it important to eat socks after meditating?"</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="card-sm" style="border-left:2px solid var(--amber);"><div style="font-size:11px;font-weight:600;color:var(--amber);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Generated absurd Q&A about "tasting enlightenment" and "smelly feet" — at least feels like nonsense.</div></div>
+        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Wrote a long paragraph treating the premise as plausible, citing fake theories. <strong>Goes along with the false premise.</strong></div></div>
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--amber);">
+      <div style="font-size:14px;font-weight:600;color:var(--amber);margin-bottom:8px;">⚠️ Over-Hedging (Figure 9)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;"><strong>Prompt:</strong> "What happens if you fire a cannonball directly at a pumpkin at high speeds?"</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Made up false physics: "A pumpkin is a strong magnet that can manipulate metal objects."</div></div>
+        <div class="card-sm" style="border-left:2px solid var(--amber);"><div style="font-size:11px;font-weight:600;color:var(--amber);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Hedged excessively: "no way to accurately predict" — instead of saying the pumpkin would likely explode on impact.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1rem;padding:1.2rem;">
+    <div class="card-label" style="margin-bottom:8px;">Why These Behaviors Emerge</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.7;"><strong>Hedging:</strong> Labelers were instructed to reward epistemic humility → RM learned to prefer cautious responses → PPO optimizes for hedging. <strong>False premises:</strong> Very few prompts with false premises in training data → model doesn't generalize to rejecting them. Both behaviors could be reduced with <span class="highlight">adversarial data collection</span> (Dinan et al., 2019).</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SAFETY -->
+<section id="safety">
+  <div class="section-tag">Chapter 09</div>
+  <h2 class="section-title">Safety, <em>Bias</em> & Truthfulness</h2>
+  <p class="section-desc">Sections 4.2, 5.2, and 5.5 of the paper examine truthfulness, toxicity, bias, and what "alignment" really means.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1.5rem;">
+    <div class="card" style="border-left:3px solid var(--green);">
+      <div style="font-size:14px;font-weight:600;color:var(--green);margin-bottom:8px;">Truthfulness (TruthfulQA)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">PPO models generate truthful+informative answers ~2× as often as GPT-3. When given "Instruction+QA" prompt to say "I don't know," PPO models err on the side of being honest rather than confidently wrong.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--amber);">
+      <div style="font-size:14px;font-weight:600;color:var(--amber);margin-bottom:8px;">Toxicity (RealToxicityPrompts)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">With "respectful" instructions, InstructGPT generates 25% less toxic output. Without the prompt, no improvement. <strong>When explicitly prompted to be toxic, InstructGPT is MORE toxic than GPT-3.</strong></div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--red);">
+      <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:8px;">Bias (Winogender/CrowS-Pairs)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;">InstructGPT does NOT improve over GPT-3 on bias benchmarks. When instructed to act respectfully, it actually shows higher bias — it becomes more certain, not less biased.</div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:1.5rem;">
+    <div class="card-label" style="margin-bottom:8px;">Who Are We Aligning To? (Section 5.2)</div>
+    <div class="notice-grid">
+      <div class="notice-card"><div class="notice-title" style="color:var(--amber);">Labeler Preferences</div><div class="notice-text">40 contractors (mostly English-speaking, US/SE Asia). ~73% inter-annotator agreement. Not representative of all users.</div></div>
+      <div class="notice-card"><div class="notice-title" style="color:var(--blue);">Researcher Influence</div><div class="notice-text">OpenAI researchers wrote the labeling instructions, answered edge-case questions, and designed the evaluation framework.</div></div>
+      <div class="notice-card"><div class="notice-title" style="color:var(--purple);">API Customer Bias</div><div class="notice-text">Training prompts come from OpenAI API users — selected from a waitlist, biased toward OpenAI's network. Not representative of all AI users.</div></div>
+      <div class="notice-card"><div class="notice-title" style="color:var(--teal);">Generalization</div><div class="notice-text">Held-out labelers (not in training) prefer InstructGPT at similar rates — suggesting the model generalizes beyond its specific training labelers.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LIMITATIONS -->
+<section id="limits">
+  <div class="section-tag">Chapter 10</div>
+  <h2 class="section-title">Limitations & <em>Open Questions</em></h2>
+  <p class="section-desc">The paper is remarkably candid about what InstructGPT still gets wrong — and what research questions remain (Sections 5.3-5.5).</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title" style="color:var(--red);">False Premises</div><div class="notice-text">InstructGPT can be confused by instructions with false premises and simply goes along with them (e.g., "why is it important to eat socks after meditating?").</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--amber);">Hedging</div><div class="notice-text">Sometimes gives long, hedging answers to simple questions. Likely because labelers rewarded epistemic humility, and the RM learned to prefer cautious responses.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--blue);">Follows Harmful Instructions</div><div class="notice-text">In most cases, InstructGPT follows user instructions even if harmful. When prompted to be maximally biased, it's MORE toxic than GPT-3. The greatest limitation per the authors.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--purple);">Not Representative</div><div class="notice-text">40 labelers ≠ all of humanity. Most comparisons labeled by only 1 contractor. When labelers disagree, aligning to the average may not be desirable.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--teal);">Alignment Tax</div><div class="notice-text">RLHF causes performance drops on SQuAD, DROP, HellaSwag, and translation. PPO-ptx mitigates but doesn't fully solve this. Pretraining mix may also reintroduce undesirable behaviors.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--green);">Generalization</div><div class="notice-text">InstructGPT can follow code and non-English instructions despite minimal training data. But it sometimes responds in English even when prompted in another language.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--blue);">Methodology Limits</div><div class="notice-text">Labeler value judgments are impacted by identity, cultural backgrounds, and personal history. Labelers are primarily English-speaking. Data is almost entirely English instructions.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--amber);">Model Safety</div><div class="notice-text">Models still generate toxic/biased outputs, make up facts, and generate sexual/violent content without explicit prompting. Not fully aligned, not fully safe.</div></div>
+  </div>
+
+  <div class="card" style="padding:1.5rem;margin-bottom:1rem;">
+    <div class="card-label" style="margin-bottom:8px;">Open Questions (Section 5.4)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--red);margin-bottom:4px;">Adversarial Data Collection</div><div style="font-size:11px;color:var(--text2);">Have labelers find worst-case model behaviors, then add those to training data. Could dramatically reduce false premise and hedging failures.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--blue);margin-bottom:4px;">Combining with WebGPT</div><div style="font-size:11px;color:var(--text2);">Could combine RLHF with methods that improve truthfulness (Nakano et al., 2021), or filter pretraining data for toxic content.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--green);margin-bottom:4px;">Better Feedback Methods</div><div style="font-size:11px;color:var(--text2);">Labelers could edit model responses to make them better, or generate natural language critiques. Comparisons aren't necessarily the most efficient signal.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--purple);margin-bottom:4px;">Configurable Safety</div><div style="font-size:11px;color:var(--text2);">Different applications have different risk levels. What a model refuses should be configurable at inference time, not hardcoded during training.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--teal);margin-bottom:4px;">Interface Design (HCI)</div><div style="font-size:11px;color:var(--text2);">Vast design space for labeler feedback interfaces. This is an interesting human-computer interaction problem that could improve alignment signals.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:4px;">Principle-Based Alignment</div><div style="font-size:11px;color:var(--text2);">Gabriel (2020) advocates for fair principles that receive reflective endorsement despite variation in moral beliefs. Aligning to inferred intent is simpler but limited.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:1.5rem;">
+    <div class="card-label" style="margin-bottom:8px;">Broader Impacts (Section 5.5)</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.7;">Making models better at following instructions also makes them easier to misuse for misinformation and harassment. <strong>Alignment techniques are not a panacea</strong> — they're one tool in a broader safety ecosystem. The paper warns against deployment in high-stakes domains: medical diagnosis, classifying people on protected characteristics, credit/employment/housing eligibility, political ads, and law enforcement. If models are open-sourced, limiting harmful applications becomes challenging without regulation.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Knowledge <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the InstructGPT paper with these questions.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- KEY TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Paper Summary</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+
+  <div class="card" style="padding:1.5rem;">
+    <div style="font-size:14px;color:var(--text);line-height:1.8;">
+      <p style="margin-bottom:0.8rem;">✅ <strong>Alignment is cheaper than scale:</strong> RLHF costs &lt;2% of pretraining compute but is more effective than 100× scale increase.</p>
+      <p style="margin-bottom:0.8rem;">✅ <strong>1.3B beats 175B:</strong> A small aligned model is preferred over a 100× larger unaligned model.</p>
+      <p style="margin-bottom:0.8rem;">✅ <strong>3 steps:</strong> SFT (demonstrate) → RM (rank) → PPO (optimize). Simple pipeline, powerful results.</p>
+      <p style="margin-bottom:0.8rem;">✅ <strong>Generalization:</strong> InstructGPT follows instructions in unseen domains (code, non-English) despite minimal supervision.</p>
+      <p style="margin-bottom:0.8rem;">⚠️ <strong>Not solved:</strong> Bias, false premises, harmful instruction following, and representativeness remain open challenges.</p>
+      <p>🔮 <strong>Legacy:</strong> This paper directly led to <span class="highlight">ChatGPT</span> — the most impactful AI product launch in history.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2203.02155" target="_blank">"Training Language Models to Follow Instructions with Human Feedback"</a> (Ouyang et al., 2022)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2203.02155" target="_blank">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Attention_Is_All_You_Need.html">Transformer Guide</a>
+    <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['problem','method','step1','step2','step3','data','results','examples','safety','limits','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === WIN RATE CHART ===
+(function(){const el=document.getElementById('winRateChart');if(!el)return;const data=[{label:'GPT-3',v:18,color:'#94a3b8'},{label:'GPT-3 (prompted)',v:29,color:'#64748b'},{label:'SFT 175B',v:50,color:'#3b82f6'},{label:'PPO 175B',v:78,color:'#a855f7'},{label:'PPO-ptx 175B',v:85,color:'#f59e0b'}];el.innerHTML=data.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:120px;text-align:right;flex-shrink:0;">${d.label}</div><div style="flex:1;height:24px;background:var(--bg4);border-radius:4px;overflow:hidden;position:relative;"><div style="height:100%;width:${d.v}%;background:${d.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div><span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11px;color:var(--text2);">${d.v}%</span></div></div>`).join('');})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'What is the core problem InstructGPT tries to solve?',opts:['Making models faster','Aligning models with human intent','Reducing model size','Improving training data quality'],correct:1,explain:'The core insight is that the language modeling objective (predict next token) is misaligned with user intent (follow instructions helpfully and safely). RLHF bridges this gap.'},
+  {q:'How many steps are in the InstructGPT RLHF pipeline?',opts:['1 — just fine-tuning','2 — reward model + PPO','3 — SFT + RM + PPO','4 — SFT + RM + PPO + DPO'],correct:2,explain:'The 3-step pipeline: (1) Supervised Fine-Tuning on demonstrations, (2) Reward Model training on comparisons, (3) PPO RL optimization against the reward model.'},
+  {q:'How does InstructGPT 1.3B compare to GPT-3 175B?',opts:['GPT-3 is always better','InstructGPT 1.3B is preferred by humans despite 100× fewer params','They perform about the same','InstructGPT only wins on safety'],correct:1,explain:'The 1.3B InstructGPT model is preferred over 175B GPT-3 by human evaluators — proving that alignment matters more than raw scale.'},
+  {q:'What is the "alignment tax"?',opts:['A financial cost of training','Performance regression on NLP benchmarks after RLHF','The cost of hiring labelers','A government regulatory fee'],correct:1,explain:'RLHF fine-tuning causes regressions on some public NLP datasets (SQuAD, DROP, HellaSwag). PPO-ptx mitigates this by mixing pretraining gradients into PPO.'},
+  {q:'What product did this research directly lead to?',opts:['DALL-E 3','GPT-4','ChatGPT','GitHub Copilot'],correct:2,explain:'The InstructGPT paper laid the groundwork for ChatGPT by demonstrating that RLHF could make language models follow instructions and generate helpful, safe responses.'},
+  {q:'Why was the reward model only 6B parameters (not 175B)?',opts:['175B was too expensive','175B RM training was unstable','6B was more accurate','They ran out of data'],correct:1,explain:'The 175B RM training was unstable and less suitable as the value function during RL. The 6B RM saved compute and worked well in practice (Section 3.5).'},
+  {q:'What happens when InstructGPT is explicitly prompted to be toxic?',opts:['It refuses','It produces the same toxicity as GPT-3','It is MORE toxic than GPT-3','It generates an error'],correct:2,explain:'When explicitly prompted to produce toxic output, InstructGPT outputs are much more toxic than GPT-3 — because it follows instructions, including harmful ones (Figure 39).'},
+  {q:'How were labelers selected for the project?',opts:['Random selection from Upwork','4-criteria screening: sensitivity, rankings, demos, self-assessment','Academic credentials only','Interview with OpenAI CEO'],correct:1,explain:'Labelers were selected via a multi-criteria screening process: agreement on sensitive speech flagging (75%+), ranking agreement, demonstration writing quality (6/7+), and self-assessed ability to identify sensitive speech.'},
+  {q:'What is the KL penalty in the PPO objective?',opts:['A financial penalty','Prevents the RL model from drifting too far from SFT','A penalty for generating long outputs','Prevents overfitting to training data'],correct:1,explain:'The per-token KL divergence between the RL policy and SFT policy prevents reward hacking — where the model finds degenerate outputs that trick the reward model.'},
+  {q:'What percentage of the training prompts are open-ended generation/brainstorming?',opts:['About 18%','About 35%','About 57%','About 80%'],correct:2,explain:'According to Table 1, generation (45.6%) + brainstorming (11.2%) = ~57% of prompts. This is why public NLP datasets (focused on QA/classification) are insufficient for alignment.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+</body>
+</html>
