@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attention Is All You Need — Interactive Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0c0e;
+  --bg2: #141416;
+  --bg3: #1c1c20;
+  --bg4: #242428;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f0ede8;
+  --text2: #9a9690;
+  --text3: #5c5a56;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(12,12,14,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 54px;
+}
+.nav-logo { font-family: var(--mono); font-size: 13px; color: var(--amber); letter-spacing: -0.02em; }
+.nav-links { display: flex; gap: 4px; }
+.nav-link {
+  font-size: 12px; color: var(--text2);
+  padding: 5px 10px; border-radius: 6px;
+  text-decoration: none; cursor: pointer;
+  transition: all .2s;
+  font-family: var(--mono);
+}
+.nav-link:hover { background: var(--bg3); color: var(--text); }
+.nav-badge {
+  background: var(--amber-dim); color: var(--amber);
+  font-family: var(--mono); font-size: 11px;
+  padding: 3px 8px; border-radius: 20px;
+  border: 1px solid rgba(245,158,11,0.2);
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 6rem 2rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(245,158,11,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,158,11,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+}
+.hero-glow {
+  position: absolute; top: 40%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(245,158,11,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--amber); letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 14px; border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 20px; margin-bottom: 2rem;
+  background: var(--amber-dim);
+}
+.hero-title {
+  font-family: var(--serif); font-size: clamp(2.4rem, 6vw, 4.5rem);
+  line-height: 1.1; letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+}
+.hero-title em { color: var(--amber); font-style: italic; }
+.hero-subtitle {
+  max-width: 560px; color: var(--text2);
+  font-size: 16px; margin-bottom: 2.5rem; line-height: 1.8;
+}
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.btn-primary {
+  background: var(--amber); color: #000;
+  font-weight: 600; font-size: 14px;
+  padding: 10px 24px; border-radius: 8px;
+  border: none; cursor: pointer; text-decoration: none;
+  transition: all .2s; display: inline-block;
+}
+.btn-primary:hover { background: #fbbf24; transform: translateY(-1px); }
+.btn-outline {
+  background: transparent; color: var(--text);
+  font-size: 14px; padding: 10px 24px; border-radius: 8px;
+  border: 1px solid var(--border2); cursor: pointer;
+  text-decoration: none; display: inline-block;
+  transition: all .2s;
+}
+.btn-outline:hover { background: var(--bg3); border-color: var(--border2); }
+.hero-stats {
+  display: flex; gap: 3rem; margin-top: 4rem;
+  padding-top: 3rem; border-top: 1px solid var(--border);
+}
+.stat { text-align: center; }
+.stat-num { font-family: var(--mono); font-size: 1.6rem; font-weight: 600; color: var(--amber); }
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+/* SECTIONS */
+section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 5rem 2rem;
+}
+.section-tag {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--amber); letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 0.75rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-tag::before {
+  content: ''; display: block;
+  width: 20px; height: 1px;
+  background: var(--amber);
+}
+.section-title {
+  font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 2.4rem);
+  line-height: 1.2; margin-bottom: 1rem;
+}
+.section-title em { color: var(--amber); font-style: italic; }
+.section-desc { color: var(--text2); max-width: 580px; font-size: 15px; margin-bottom: 2.5rem; }
+
+/* CARDS */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+.card-sm {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+}
+.card-label {
+  font-family: var(--mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text3); margin-bottom: 6px;
+}
+
+/* PROBLEM SECTION */
+.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 2rem; }
+.problem-card {
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+}
+.problem-card.bad { background: rgba(239,68,68,0.04); border-color: rgba(239,68,68,0.15); }
+.problem-card.good { background: rgba(34,197,94,0.04); border-color: rgba(34,197,94,0.15); }
+.problem-icon { font-size: 1.5rem; margin-bottom: 10px; }
+.problem-title { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+.problem-card.bad .problem-title { color: var(--red); }
+.problem-card.good .problem-title { color: var(--green); }
+.problem-list { list-style: none; }
+.problem-list li { font-size: 13px; color: var(--text2); padding: 3px 0; display: flex; gap: 8px; align-items: flex-start; }
+.problem-list li::before { content: ''; flex-shrink: 0; width: 6px; height: 6px; border-radius: 50%; margin-top: 7px; }
+.bad .problem-list li::before { background: var(--red); opacity: 0.6; }
+.good .problem-list li::before { background: var(--green); opacity: 0.6; }
+
+/* RNN ANIMATION */
+.rnn-demo {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  overflow-x: auto;
+}
+.rnn-demo h4 { font-size: 13px; color: var(--text2); margin-bottom: 1rem; font-family: var(--mono); }
+.rnn-row { display: flex; align-items: center; gap: 0; margin-bottom: 1.5rem; }
+.rnn-token {
+  background: var(--bg4);
+  border: 1px solid var(--border2);
+  border-radius: 6px; padding: 8px 14px;
+  font-family: var(--mono); font-size: 13px;
+  white-space: nowrap; flex-shrink: 0;
+  transition: all .3s;
+}
+.rnn-arrow {
+  width: 30px; text-align: center; color: var(--text3);
+  font-size: 14px; flex-shrink: 0;
+}
+.rnn-hidden {
+  background: var(--bg4); border: 1px solid rgba(59,130,246,0.3);
+  border-radius: 6px; padding: 6px 10px;
+  font-family: var(--mono); font-size: 10px; color: var(--blue);
+  white-space: nowrap; flex-shrink: 0;
+}
+.rnn-bottleneck {
+  background: rgba(239,68,68,0.1); border: 1px dashed var(--red);
+  border-radius: 8px; padding: 8px 16px;
+  font-size: 12px; color: var(--red); text-align: center;
+  margin: 0 10px;
+}
+
+/* TOKENIZER DEMO */
+.tokenizer-demo {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.tokenizer-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tokenizer-title { font-family: var(--mono); font-size: 13px; color: var(--text2); }
+.token-count-badge {
+  font-family: var(--mono); font-size: 12px;
+  background: var(--amber-dim); color: var(--amber);
+  padding: 3px 10px; border-radius: 20px;
+}
+.tokenizer-input {
+  width: 100%; padding: 1.2rem 1.5rem;
+  background: transparent; border: none; outline: none;
+  color: var(--text); font-size: 15px; font-family: var(--sans);
+  resize: none; min-height: 80px;
+  border-bottom: 1px solid var(--border);
+}
+.tokenizer-output { padding: 1.2rem 1.5rem; min-height: 100px; }
+.token-chip {
+  display: inline-block;
+  padding: 3px 8px; margin: 3px;
+  border-radius: 5px; font-family: var(--mono); font-size: 12px;
+  cursor: default; transition: all .15s;
+  border: 1px solid transparent;
+}
+.token-chip:hover { transform: scale(1.08); }
+.token-colors {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  padding: 1rem 1.5rem; border-top: 1px solid var(--border);
+}
+.tok-color { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); }
+.tok-swatch { width: 10px; height: 10px; border-radius: 2px; }
+.bpe-steps {
+  padding: 1.5rem; border-top: 1px solid var(--border);
+  background: var(--bg3);
+}
+.bpe-step { display: flex; gap: 14px; margin-bottom: 12px; align-items: flex-start; }
+.bpe-num {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  background: var(--amber-dim); color: var(--amber);
+  border: 1px solid rgba(245,158,11,0.2); margin-top: 1px;
+}
+.bpe-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.bpe-text strong { color: var(--text); }
+.bpe-merge-vis {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 10px 0 4px;
+}
+.merge-char {
+  padding: 3px 7px; border-radius: 4px;
+  font-family: var(--mono); font-size: 12px;
+  background: var(--bg4); border: 1px solid var(--border);
+  color: var(--text2);
+}
+.merge-char.merged { background: rgba(245,158,11,0.15); border-color: rgba(245,158,11,0.3); color: var(--amber); }
+.merge-plus { color: var(--text3); font-size: 12px; display: flex; align-items: center; }
+
+/* EMBEDDING VIS */
+.embedding-demo { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.emb-canvas-wrap { padding: 1.5rem; display: flex; justify-content: center; }
+.emb-table-wrap { overflow-x: auto; padding: 1rem 1.5rem; border-top: 1px solid var(--border); }
+table.emb-table { border-collapse: collapse; font-family: var(--mono); font-size: 11px; width: 100%; }
+table.emb-table th { padding: 6px 10px; color: var(--text3); font-weight: 500; border-bottom: 1px solid var(--border); text-align: left; }
+table.emb-table td { padding: 5px 10px; color: var(--text2); }
+table.emb-table tr:hover td { color: var(--text); background: var(--bg3); }
+.emb-cell { display: inline-block; padding: 2px 5px; border-radius: 3px; font-size: 10px; }
+
+/* ATTENTION INTERACTIVE */
+.attention-demo {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.attn-controls {
+  padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+}
+.attn-word-btn {
+  padding: 5px 14px; border-radius: 20px;
+  font-family: var(--mono); font-size: 13px;
+  border: 1px solid var(--border2); background: var(--bg3);
+  color: var(--text2); cursor: pointer; transition: all .2s;
+}
+.attn-word-btn.active {
+  background: var(--amber-dim); color: var(--amber);
+  border-color: rgba(245,158,11,0.3);
+}
+.attn-label { font-size: 12px; color: var(--text3); font-family: var(--mono); }
+.attn-vis-wrap { padding: 1.5rem; }
+.attn-sentence-row { display: flex; gap: 4px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.attn-token {
+  padding: 6px 14px; border-radius: 8px;
+  font-family: var(--mono); font-size: 14px;
+  background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text2); transition: all .3s; position: relative;
+}
+.attn-token.query { background: var(--amber-dim); color: var(--amber); border-color: rgba(245,158,11,0.4); }
+.attn-bars { display: flex; flex-direction: column; gap: 8px; }
+.attn-bar-row { display: flex; align-items: center; gap: 10px; }
+.attn-bar-label { font-family: var(--mono); font-size: 12px; color: var(--text2); width: 80px; text-align: right; flex-shrink: 0; }
+.attn-bar-track { flex: 1; height: 22px; background: var(--bg3); border-radius: 4px; overflow: hidden; position: relative; }
+.attn-bar-fill { height: 100%; border-radius: 4px; transition: width .6s cubic-bezier(0.34,1.56,0.64,1); display: flex; align-items: center; padding-left: 8px; }
+.attn-bar-val { font-family: var(--mono); font-size: 11px; position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--text2); }
+.attn-heatmap { display: grid; gap: 3px; margin-top: 1.5rem; }
+.attn-hm-cell {
+  width: 36px; height: 36px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 9px;
+  transition: all .3s; cursor: default;
+}
+.attn-hm-label {
+  font-family: var(--mono); font-size: 10px; color: var(--text3);
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px;
+}
+
+/* QKV EXPLAINER */
+.qkv-flow {
+  display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 0; align-items: center; padding: 1.5rem;
+  overflow-x: auto;
+}
+.qkv-block {
+  border-radius: var(--radius); padding: 0.8rem 1rem;
+  text-align: center; min-width: 80px; flex-shrink: 0;
+}
+.qkv-arrow { color: var(--text3); font-size: 18px; padding: 0 0.5rem; flex-shrink: 0; }
+.qkv-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.qkv-val { font-family: var(--mono); font-size: 1.4rem; font-weight: 600; }
+.qkv-desc { font-size: 11px; color: var(--text3); margin-top: 4px; line-height: 1.4; }
+
+/* FORMULA */
+.formula-card {
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
+  padding: 2rem; text-align: center; margin: 1.5rem 0;
+}
+.formula-main {
+  font-family: var(--mono); font-size: clamp(14px,2.5vw,20px);
+  color: var(--amber); letter-spacing: -0.01em;
+  line-height: 2;
+}
+.formula-breakdown {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px; margin-top: 1.5rem; text-align: left;
+}
+.formula-piece {
+  background: var(--bg4); border-radius: var(--radius);
+  padding: 0.8rem 1rem; border: 1px solid var(--border);
+}
+.fp-sym { font-family: var(--mono); color: var(--amber); font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.fp-name { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.fp-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+/* ARCHITECTURE SVG */
+.arch-container {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 2rem;
+  overflow-x: auto;
+}
+
+/* ENCODER/DECODER STEPPER */
+.layer-stepper { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.layer-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.layer-card-header {
+  padding: 0.8rem 1.2rem;
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+.layer-card.encoder .layer-card-header { color: var(--blue); background: var(--blue-dim); }
+.layer-card.decoder .layer-card-header { color: var(--teal); background: var(--teal-dim); }
+.layer-sublayer {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 1.2rem; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .2s;
+}
+.layer-sublayer:hover { background: var(--bg4); }
+.layer-sublayer:last-child { border-bottom: none; }
+.sublayer-icon {
+  width: 30px; height: 30px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.sublayer-name { font-weight: 500; font-size: 13px; }
+.sublayer-desc { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.sublayer-badge {
+  margin-left: auto; font-family: var(--mono); font-size: 10px;
+  padding: 2px 7px; border-radius: 10px; flex-shrink: 0;
+}
+
+/* MULTIHEAD VIS */
+.multihead-demo {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.mh-heads-row {
+  display: flex; gap: 8px; padding: 1.5rem;
+  overflow-x: auto; border-bottom: 1px solid var(--border);
+}
+.mh-head {
+  flex-shrink: 0; border-radius: var(--radius); padding: 0.8rem 1rem;
+  text-align: center; cursor: pointer; transition: all .2s;
+  border: 1px solid var(--border); min-width: 90px;
+  background: var(--bg3);
+}
+.mh-head.active { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.mh-head-num { font-family: var(--mono); font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+.mh-head-role { font-size: 11px; color: var(--text3); line-height: 1.4; }
+.mh-detail { padding: 1.5rem; }
+.mh-attn-map { display: grid; gap: 2px; }
+
+/* POSITIONAL ENCODING VIS */
+.pe-canvas { width: 100%; border-radius: var(--radius); overflow: hidden; }
+.pe-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+.pe-slider { flex: 1; min-width: 120px; appearance: none; height: 4px; border-radius: 2px; background: var(--bg4); outline: none; }
+.pe-slider::-webkit-slider-thumb { appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--amber); cursor: pointer; }
+.pe-label { font-family: var(--mono); font-size: 12px; color: var(--text2); }
+
+/* RESULTS */
+.results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.result-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.2rem 1.4rem;
+}
+.result-model { font-size: 12px; color: var(--text3); margin-bottom: 6px; font-family: var(--mono); }
+.result-score { font-family: var(--mono); font-size: 2rem; font-weight: 600; }
+.result-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.result-bar-wrap { margin-top: 8px; height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.result-bar { height: 100%; border-radius: 2px; }
+
+/* COMPARISON TABLE */
+.comp-table { width: 100%; border-collapse: collapse; }
+.comp-table th { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text3); text-align: left; font-family: var(--mono); font-weight: 500; }
+.comp-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text2); }
+.comp-table tr:hover td { background: var(--bg3); }
+.comp-best { color: var(--green); font-weight: 600; }
+.comp-worst { color: var(--red); }
+
+/* QUIZ */
+.quiz-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.5rem;
+  margin-bottom: 12px;
+}
+.quiz-q { font-weight: 500; font-size: 15px; margin-bottom: 1rem; }
+.quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 14px;
+  font-size: 13px; cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.quiz-opt:hover { border-color: var(--border2); background: var(--bg4); }
+.quiz-opt.correct { background: var(--green-dim); border-color: rgba(34,197,94,0.3); color: var(--green); }
+.quiz-opt.wrong { background: var(--red-dim); border-color: rgba(239,68,68,0.3); color: var(--red); }
+.quiz-opt.reveal { background: var(--green-dim); border-color: rgba(34,197,94,0.3); }
+.quiz-explain { font-size: 12px; color: var(--text2); margin-top: 10px; padding: 8px 12px; background: var(--bg3); border-radius: 6px; display: none; }
+.quiz-explain.show { display: block; }
+
+/* TIMELINE */
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before { content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 1px; background: var(--border2); }
+.tl-item { position: relative; margin-bottom: 1.5rem; }
+.tl-dot { position: absolute; left: -21px; top: 4px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--bg3); }
+.tl-year { font-family: var(--mono); font-size: 11px; color: var(--amber); margin-bottom: 3px; }
+.tl-title { font-weight: 500; font-size: 14px; margin-bottom: 3px; }
+.tl-desc { font-size: 13px; color: var(--text2); }
+
+/* SCROLLBAR, MISC */
+.divider { height: 1px; background: var(--border); max-width: 1100px; margin: 0 auto; }
+.highlight { color: var(--amber); font-weight: 500; }
+.code-inline { font-family: var(--mono); background: var(--bg3); padding: 1px 6px; border-radius: 4px; font-size: 0.92em; color: var(--text); }
+.pill {
+  display: inline-block; padding: 2px 8px; border-radius: 20px;
+  font-size: 11px; font-family: var(--mono);
+}
+.pill-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+.pill-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(59,130,246,0.2); }
+.pill-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+.pill-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+.pill-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(168,85,247,0.2); }
+
+.tooltip-wrap { position: relative; display: inline-block; }
+.tooltip-tip {
+  position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%);
+  background: var(--bg4); color: var(--text); font-size: 11px;
+  padding: 4px 8px; border-radius: 5px; white-space: nowrap;
+  pointer-events: none; opacity: 0; transition: opacity .2s;
+  border: 1px solid var(--border2); z-index: 10;
+}
+.tooltip-wrap:hover .tooltip-tip { opacity: 1; }
+
+/* PROGRESS BAR */
+.reading-progress {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 2px; background: transparent;
+}
+.reading-progress-bar { height: 100%; background: var(--amber); width: 0%; transition: width .1s; }
+
+/* FOOTNOTES */
+footer {
+  max-width: 1100px; margin: 0 auto;
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap;
+}
+.footer-left { font-size: 13px; color: var(--text3); }
+.footer-left a { color: var(--amber); text-decoration: none; }
+.footer-links { display: flex; gap: 16px; }
+.footer-link { font-size: 12px; color: var(--text3); text-decoration: none; font-family: var(--mono); transition: color .2s; }
+.footer-link:hover { color: var(--text); }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes flow { from{stroke-dashoffset:100} to{stroke-dashoffset:0} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+.animate-in { animation: fadeUp .5s ease forwards; }
+.pulse { animation: pulse 2s infinite; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .problem-grid { grid-template-columns: 1fr; }
+  .layer-stepper { grid-template-columns: 1fr; }
+  .qkv-flow { grid-template-columns: 1fr; }
+  .hero-stats { gap: 1.5rem; }
+  nav .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- READING PROGRESS -->
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">attention-viz</div>
+  <div class="nav-links">
+    <a class="nav-link" onclick="scrollTo('#problem')">Problem</a>
+    <a class="nav-link" onclick="scrollTo('#tokenizer')">Tokenizer</a>
+    <a class="nav-link" onclick="scrollTo('#embeddings')">Embeddings</a>
+    <a class="nav-link" onclick="scrollTo('#attention')">Attention</a>
+    <a class="nav-link" onclick="scrollTo('#architecture')">Architecture</a>
+    <a class="nav-link" onclick="scrollTo('#results')">Results</a>
+    <a class="nav-link" onclick="scrollTo('#quiz')">Quiz</a>
+  </div>
+  <div class="nav-badge">NIPS 2017</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    <em>Attention</em> Is<br>All You Need
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the most cited AI paper of all time.
+    Understand Transformers from the ground up — no PhD required.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" onclick="scrollTo('#problem')">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/1706.03762" target="_blank">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">200K+</div>
+      <div class="stat-label">Citations</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">28.4</div>
+      <div class="stat-label">BLEU Score (EN→DE)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">12hrs</div>
+      <div class="stat-label">Training on 8 GPUs</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2017</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 0: TIMELINE -->
+<section id="timeline">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From RNNs to <em>Transformers</em></h2>
+  <p class="section-desc">The Transformer didn't appear out of nowhere. Here's the evolution of sequence modeling.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--text3)"></div>
+        <div class="tl-year">1990s</div>
+        <div class="tl-title">Recurrent Neural Networks (RNN)</div>
+        <div class="tl-desc">Process sequences word by word. Forget long-range dependencies. No parallelization.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--blue)"></div>
+        <div class="tl-year">1997</div>
+        <div class="tl-title">Long Short-Term Memory (LSTM)</div>
+        <div class="tl-desc">Gates control memory. Better long-range memory. Still sequential. Still slow to train.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--purple)"></div>
+        <div class="tl-year">2014</div>
+        <div class="tl-title">Bahdanau Attention + RNN</div>
+        <div class="tl-desc">Attention mechanism added on top of RNNs. First time attention showed its power for translation.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--amber)"></div>
+        <div class="tl-year">2017</div>
+        <div class="tl-title">🚀 Transformer — No RNN at all!</div>
+        <div class="tl-desc">Vaswani et al. remove RNNs entirely. Pure attention. Parallel. Faster. Better.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--green)"></div>
+        <div class="tl-year">2018–now</div>
+        <div class="tl-title">BERT, GPT, ChatGPT, Claude...</div>
+        <div class="tl-desc">All modern LLMs are built on the Transformer. This paper started it all.</div>
+      </div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">
+        The fundamental breakthrough was realizing that <span class="highlight">attention alone</span> — without any recurrence or convolution — is sufficient for sequence-to-sequence tasks.
+      </p>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1.2rem;">
+        This enabled massive parallelization during training, which meant you could train on much larger datasets in much less time.
+      </p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">TRAINING TIME COMPARISON</div>
+        <div style="margin-bottom:6px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span style="color:var(--text2)">ConvS2S (best before)</span><span style="color:var(--text3)">~9.6×10¹⁸ FLOPs</span></div>
+          <div style="height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:100%;height:100%;background:var(--red);border-radius:3px;opacity:.6;"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;"><span style="color:var(--amber)">Transformer (base)</span><span style="color:var(--amber)">3.3×10¹⁸ FLOPs</span></div>
+          <div style="height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="width:34%;height:100%;background:var(--amber);border-radius:3px;"></div></div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px;">Transformer uses <strong style="color:var(--green)">~3x less</strong> compute than the best prior model</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 1: THE PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem with <em>RNNs</em></h2>
+  <p class="section-desc">Before Transformers, the best sequence models were RNNs and LSTMs. But they had a fundamental flaw.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">😰</div>
+      <div class="problem-title">RNN / LSTM Problems</div>
+      <ul class="problem-list">
+        <li>Sequential processing — can't parallelize</li>
+        <li>Long sentences cause "context bottleneck"</li>
+        <li>Early words are compressed into a single vector</li>
+        <li>Gradient vanishes over long sequences</li>
+        <li>Slow to train on large datasets</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🚀</div>
+      <div class="problem-title">Transformer Solutions</div>
+      <ul class="problem-list">
+        <li>All tokens processed in parallel</li>
+        <li>Every token can directly "see" every other token</li>
+        <li>No information bottleneck — direct connections</li>
+        <li>Constant path length between any two positions</li>
+        <li>Train faster, scale to larger datasets</li>
+      </ul>
+    </div>
+  </div>
+  <!-- RNN Bottleneck Demo -->
+  <div class="rnn-demo">
+    <h4>// RNN Context Bottleneck — The sentence "I grew up in France, so I speak fluent..."</h4>
+    <div style="overflow-x:auto;">
+      <div class="rnn-row" style="min-width:700px;">
+        <div class="rnn-token">I</div>
+        <div class="rnn-arrow">→</div>
+        <div class="rnn-hidden">h₁</div>
+        <div class="rnn-arrow">→</div>
+        <div class="rnn-token">grew</div>
+        <div class="rnn-arrow">→</div>
+        <div class="rnn-hidden">h₂</div>
+        <div class="rnn-arrow">→</div>
+        <div class="rnn-token">up</div>
+        <div class="rnn-arrow">→</div>
+        <div class="rnn-hidden">h₃</div>
+        <div class="rnn-arrow">→</div>
+        <div class="rnn-token" style="opacity:.6">in</div>
+        <div class="rnn-arrow">···</div>
+        <div class="rnn-token" style="opacity:.5">France</div>
+        <div class="rnn-arrow">···</div>
+        <div class="rnn-token" style="opacity:.3">so</div>
+        <div class="rnn-arrow">···</div>
+        <div class="rnn-token" style="opacity:.2">I</div>
+        <div class="rnn-arrow">···</div>
+        <div class="rnn-token" style="opacity:.15">speak</div>
+        <div class="rnn-arrow">···</div>
+        <div class="rnn-token" style="opacity:.1">fluent</div>
+        <div class="rnn-arrow">→</div>
+        <div class="rnn-bottleneck">SINGLE VECTOR<br>⚠️ "France" almost forgotten</div>
+        <div class="rnn-arrow">→</div>
+        <div class="rnn-token" style="background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3)">???</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:8px;">The word "France" (early in the sentence) has almost no influence on predicting "French" at the end. Transformers fix this.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 2: TOKENIZER -->
+<section id="tokenizer">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Step 1 — <em>Tokenization</em></h2>
+  <p class="section-desc">Before any neural network can process text, it must be converted into numbers. Tokenization is how we break text into pieces called <em>tokens</em>.</p>
+  <div class="tokenizer-demo">
+    <div class="tokenizer-header">
+      <span class="tokenizer-title">// Interactive Tokenizer — type anything below</span>
+      <span class="token-count-badge" id="tokenCountBadge">0 tokens</span>
+    </div>
+    <textarea class="tokenizer-input" id="tokenizerInput" placeholder="Type or paste text here... e.g. 'The Transformer is all you need'">The Transformer is all you need</textarea>
+    <div class="tokenizer-output" id="tokenizerOutput"></div>
+    <div style="padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:2rem;flex-wrap:wrap;">
+      <div><span style="font-family:var(--mono);font-size:12px;color:var(--text3);">VOCAB SIZE</span><br><span style="font-family:var(--mono);color:var(--amber);font-size:1.2rem;">50,257</span></div>
+      <div><span style="font-family:var(--mono);font-size:12px;color:var(--text3);">METHOD</span><br><span style="font-family:var(--mono);color:var(--text);font-size:1.2rem;">BPE</span></div>
+      <div><span style="font-family:var(--mono);font-size:12px;color:var(--text3);">MODEL</span><br><span style="font-family:var(--mono);color:var(--text);font-size:1.2rem;">GPT-2</span></div>
+    </div>
+    <div class="bpe-steps">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--amber);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;">How BPE Works — Step by Step</div>
+      <div class="bpe-step">
+        <div class="bpe-num">1</div>
+        <div class="bpe-text">
+          <strong>Start with characters.</strong> Every word is split into individual characters + end-of-word marker.
+          <div class="bpe-merge-vis">
+            <span class="merge-char">o</span><span class="merge-char">l</span><span class="merge-char">d</span><span class="merge-char">&lt;/w&gt;</span>
+            <span class="merge-plus">+</span>
+            <span class="merge-char">f</span><span class="merge-char">i</span><span class="merge-char">n</span><span class="merge-char">e</span><span class="merge-char">s</span><span class="merge-char">t</span><span class="merge-char">&lt;/w&gt;</span>
+          </div>
+        </div>
+      </div>
+      <div class="bpe-step">
+        <div class="bpe-num">2</div>
+        <div class="bpe-text">
+          <strong>Count all adjacent pairs.</strong> Find the most frequent character pair across the whole corpus.
+          <div class="bpe-merge-vis">
+            <span class="merge-char">e</span><span class="merge-char" style="color:var(--amber);border-color:rgba(245,158,11,.4)">s</span> → "es" appears 13x (finest×9 + lowest×4)
+          </div>
+        </div>
+      </div>
+      <div class="bpe-step">
+        <div class="bpe-num">3</div>
+        <div class="bpe-text">
+          <strong>Merge the most frequent pair.</strong> Replace all occurrences with a new token.
+          <div class="bpe-merge-vis">
+            <span class="merge-char">f</span><span class="merge-char">i</span><span class="merge-char">n</span><span class="merge-char merged">es</span><span class="merge-char">t</span><span class="merge-char">&lt;/w&gt;</span>
+          </div>
+        </div>
+      </div>
+      <div class="bpe-step">
+        <div class="bpe-num">4</div>
+        <div class="bpe-text">
+          <strong>Repeat until vocabulary size reached.</strong> GPT-2 performs <strong>50,000 merges</strong> to build its 50,257-token vocabulary.
+          <div class="bpe-merge-vis">
+            <span class="merge-char">f</span><span class="merge-char">i</span><span class="merge-char">n</span><span class="merge-char merged">est&lt;/w&gt;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 3: EMBEDDINGS -->
+<section id="embeddings">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Step 2 — Word <em>Embeddings</em></h2>
+  <p class="section-desc">Tokens get converted into dense vectors of numbers. Similar words have similar vectors — the model learns geometry of meaning.</p>
+  <div class="embedding-demo">
+    <div class="tokenizer-header">
+      <span class="tokenizer-title">// Word Embedding Space — 2D Projection</span>
+      <span class="pill pill-blue">768 dimensions in practice</span>
+    </div>
+    <div class="emb-canvas-wrap">
+      <canvas id="embCanvas" width="680" height="300" style="max-width:100%;border-radius:8px;"></canvas>
+    </div>
+    <div class="emb-table-wrap">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.08em;">Sample Embedding Vectors (d_model = 8, simplified)</div>
+      <table class="emb-table">
+        <thead>
+          <tr><th>Token</th><th>dim_0</th><th>dim_1</th><th>dim_2</th><th>dim_3</th><th>dim_4</th><th>dim_5</th><th>dim_6</th><th>dim_7</th></tr>
+        </thead>
+        <tbody id="embTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Positional Encoding -->
+  <div style="margin-top:2rem;">
+    <div class="card-label" style="margin-bottom:0.5rem;">Why Positional Encoding?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem;">
+      <div class="card-sm">
+        <div style="font-size:13px;color:var(--red);font-weight:500;margin-bottom:6px;">Without Positional Encoding:</div>
+        <div style="font-size:13px;color:var(--text2);">"Dog bites man" = "Man bites dog"<br>The model sees the same bag of tokens and can't tell them apart.</div>
+      </div>
+      <div class="card-sm">
+        <div style="font-size:13px;color:var(--green);font-weight:500;margin-bottom:6px;">With Positional Encoding:</div>
+        <div style="font-size:13px;color:var(--text2);">Each position gets a unique sinusoidal "fingerprint" added to the token embedding.</div>
+      </div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Positional Encoding Formula</div>
+      <div style="font-family:var(--mono);color:var(--amber);font-size:14px;margin:10px 0;line-height:2.2;">
+        PE(pos, 2i) = sin(pos / 10000<sup>2i/d_model</sup>)<br>
+        PE(pos, 2i+1) = cos(pos / 10000<sup>2i/d_model</sup>)
+      </div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Each dimension uses a different frequency sine/cosine wave. Low dimensions oscillate fast (capture local order); high dimensions oscillate slowly (capture global position).</p>
+      <div class="pe-controls">
+        <span class="pe-label">Dimension:</span>
+        <input type="range" class="pe-slider" id="dimSlider" min="0" max="7" value="0" step="1">
+        <span class="pe-label" id="dimLabel">dim 0</span>
+      </div>
+      <canvas id="peCanvas" width="640" height="120" style="max-width:100%;border-radius:8px;"></canvas>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 4: ATTENTION -->
+<section id="attention">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">The Core — <em>Self-Attention</em></h2>
+  <p class="section-desc">This is the heart of the Transformer. Every token looks at every other token and decides how much to "attend" to each one.</p>
+
+  <!-- QKV Explainer -->
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Query, Key, Value — The Library Analogy</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:0.8rem;">
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;border-left:3px solid var(--blue);">
+        <div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--blue);margin-bottom:6px;">Q</div>
+        <div style="font-weight:500;font-size:13px;margin-bottom:4px;">Query</div>
+        <div style="font-size:12px;color:var(--text2);">"What am I looking for?" — You walking into the library with a request. Computed as: Input × W_Q</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;border-left:3px solid var(--green);">
+        <div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--green);margin-bottom:6px;">K</div>
+        <div style="font-weight:500;font-size:13px;margin-bottom:4px;">Key</div>
+        <div style="font-size:12px;color:var(--text2);">"What do I have?" — Each book's label on the shelf advertising its contents. Computed as: Input × W_K</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;border-left:3px solid var(--amber);">
+        <div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--amber);margin-bottom:6px;">V</div>
+        <div style="font-weight:500;font-size:13px;margin-bottom:4px;">Value</div>
+        <div style="font-size:12px;color:var(--text2);">"What do I actually give you?" — The actual content of the book once you check it out. Computed as: Input × W_V</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- The Formula -->
+  <div class="formula-card">
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;">The Scaled Dot-Product Attention Formula</div>
+    <div class="formula-main">
+      Attention(Q, K, V) = softmax( Q · Kᵀ / √d_k ) · V
+    </div>
+    <div class="formula-breakdown">
+      <div class="formula-piece">
+        <div class="fp-sym">Q · Kᵀ</div>
+        <div class="fp-name">Attention Scores</div>
+        <div class="fp-desc">Dot product between every Query and every Key. High score = high relevance.</div>
+      </div>
+      <div class="formula-piece">
+        <div class="fp-sym">÷ √d_k</div>
+        <div class="fp-name">Scaling</div>
+        <div class="fp-desc">Prevents dot products from getting too large (which causes tiny gradients). d_k = 64 in the base model.</div>
+      </div>
+      <div class="formula-piece">
+        <div class="fp-sym">softmax</div>
+        <div class="fp-name">Normalization</div>
+        <div class="fp-desc">Converts raw scores into probabilities (0 to 1, summing to 1). These are the attention weights.</div>
+      </div>
+      <div class="formula-piece">
+        <div class="fp-sym">· V</div>
+        <div class="fp-name">Weighted Sum</div>
+        <div class="fp-desc">Multiply weights by Values. High-attention tokens contribute more to the output context vector.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Attention Demo -->
+  <div class="attention-demo">
+    <div class="tokenizer-header">
+      <span class="tokenizer-title">// Interactive Self-Attention — click a word to see its attention weights</span>
+      <span class="pill pill-amber">Sentence: "The cat sat on the mat"</span>
+    </div>
+    <div class="attn-vis-wrap">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px;font-family:var(--mono);">SELECT QUERY TOKEN:</div>
+      <div class="attn-sentence-row" id="attnSentenceRow"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:1.5rem;">
+        <div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:10px;font-family:var(--mono);">ATTENTION WEIGHTS:</div>
+          <div class="attn-bars" id="attnBars"></div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:10px;font-family:var(--mono);">ATTENTION HEATMAP:</div>
+          <div id="attnHeatmap"></div>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;padding:1rem;background:var(--bg3);border-radius:var(--radius);font-size:13px;color:var(--text2);" id="attnExplain"></div>
+    </div>
+  </div>
+
+  <!-- Step-by-step computation -->
+  <div style="margin-top:2rem;">
+    <div class="card-label" style="margin-bottom:1rem;">Step-by-Step Attention Computation</div>
+    <div style="display:flex;flex-direction:column;gap:12px;" id="attnSteps">
+      <div class="card-sm" id="step1-card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--blue-dim);color:var(--blue);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;flex-shrink:0;">1</div>
+          <div style="font-weight:500;">Compute Q, K, V matrices</div>
+        </div>
+        <div style="font-size:13px;color:var(--text2);font-family:var(--mono);">
+          Q = X · W_Q &nbsp;&nbsp; shape: (seq_len × d_k)<br>
+          K = X · W_K &nbsp;&nbsp; shape: (seq_len × d_k)<br>
+          V = X · W_V &nbsp;&nbsp; shape: (seq_len × d_v)<br>
+          <span style="color:var(--text3);">// In base model: d_k = d_v = 64, d_model = 512</span>
+        </div>
+      </div>
+      <div class="card-sm">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--green-dim);color:var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;flex-shrink:0;">2</div>
+          <div style="font-weight:500;">Compute raw attention scores</div>
+        </div>
+        <div style="font-size:13px;color:var(--text2);font-family:var(--mono);">
+          scores = Q · Kᵀ &nbsp;&nbsp; shape: (seq_len × seq_len)<br>
+          <span style="color:var(--text3);">// Every token attends to every other token — O(n²) complexity</span>
+        </div>
+      </div>
+      <div class="card-sm">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--amber-dim);color:var(--amber);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;flex-shrink:0;">3</div>
+          <div style="font-weight:500;">Scale + Softmax</div>
+        </div>
+        <div style="font-size:13px;color:var(--text2);font-family:var(--mono);">
+          scaled = scores / √d_k &nbsp;&nbsp; <span style="color:var(--text3);">// √64 = 8</span><br>
+          weights = softmax(scaled) &nbsp;&nbsp; <span style="color:var(--text3);">// sums to 1 per row</span>
+        </div>
+      </div>
+      <div class="card-sm">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--purple-dim);color:var(--purple);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;flex-shrink:0;">4</div>
+          <div style="font-weight:500;">Weighted sum of Values</div>
+        </div>
+        <div style="font-size:13px;color:var(--text2);font-family:var(--mono);">
+          output = weights · V &nbsp;&nbsp; shape: (seq_len × d_v)<br>
+          <span style="color:var(--text3);">// Each token now has a context-aware representation</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 5: MULTI-HEAD ATTENTION -->
+<section id="multihead">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title"><em>Multi-Head</em> Attention</h2>
+  <p class="section-desc">Instead of one attention function, we run h=8 attention heads in parallel. Each head learns to focus on different aspects of language.</p>
+
+  <div class="multihead-demo">
+    <div class="tokenizer-header">
+      <span class="tokenizer-title">// 8 Attention Heads — each learns different patterns</span>
+      <span class="pill pill-amber">d_k = d_model / h = 512/8 = 64 per head</span>
+    </div>
+    <div class="mh-heads-row" id="mhHeadsRow"></div>
+    <div class="mh-detail" id="mhDetail"></div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-label">Multi-Head Formula</div>
+    <div style="font-family:var(--mono);color:var(--amber);font-size:14px;margin:10px 0;line-height:2.2;">
+      MultiHead(Q, K, V) = Concat(head₁, ..., headₕ) · Wᴼ<br>
+      where head_i = Attention(Q·Wᵢ_Q, K·Wᵢ_K, V·Wᵢ_V)
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;">
+      <div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;"><strong style="color:var(--text);">Why multiple heads?</strong><br>A single head averages all attention — it misses nuance. Multiple heads can specialize: one for syntax, one for semantics, one for coreference resolution.</div>
+        <div style="font-size:13px;color:var(--text2);">The paper's ablation study showed 8 heads optimal. Too few — can't capture all relationships. Too many — dimensions per head become too small.</div>
+      </div>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">ABLATION: NUMBER OF HEADS (Table 3)</div>
+        <div id="headsChart"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 6: ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-tag">Chapter 06</div>
+  <h2 class="section-title">Full <em>Architecture</em></h2>
+  <p class="section-desc">The complete Transformer: an Encoder stack and a Decoder stack, connected through cross-attention.</p>
+
+  <div class="arch-container">
+    <svg id="archSvg" viewBox="0 0 780 500" style="width:100%;max-width:780px;display:block;margin:0 auto;"></svg>
+  </div>
+
+  <div class="layer-stepper" style="margin-top:1.5rem;">
+    <div class="layer-card encoder">
+      <div class="layer-card-header">ENCODER — N=6 identical layers</div>
+      <div class="layer-sublayer" onclick="showLayerInfo('enc-attn')">
+        <div class="sublayer-icon" style="background:rgba(245,158,11,0.1);">🔍</div>
+        <div>
+          <div class="sublayer-name">Multi-Head Self-Attention</div>
+          <div class="sublayer-desc">All positions attend to all positions</div>
+        </div>
+        <span class="sublayer-badge" style="background:var(--amber-dim);color:var(--amber);">d_model=512</span>
+      </div>
+      <div class="layer-sublayer" onclick="showLayerInfo('enc-add')">
+        <div class="sublayer-icon" style="background:rgba(59,130,246,0.1);">➕</div>
+        <div>
+          <div class="sublayer-name">Add & Norm</div>
+          <div class="sublayer-desc">Residual connection + LayerNorm</div>
+        </div>
+      </div>
+      <div class="layer-sublayer" onclick="showLayerInfo('enc-ffn')">
+        <div class="sublayer-icon" style="background:rgba(168,85,247,0.1);">⚡</div>
+        <div>
+          <div class="sublayer-name">Feed-Forward Network</div>
+          <div class="sublayer-desc">FFN(x) = max(0, xW₁+b₁)W₂+b₂</div>
+        </div>
+        <span class="sublayer-badge" style="background:var(--purple-dim);color:var(--purple);">d_ff=2048</span>
+      </div>
+      <div class="layer-sublayer" onclick="showLayerInfo('enc-add2')">
+        <div class="sublayer-icon" style="background:rgba(59,130,246,0.1);">➕</div>
+        <div>
+          <div class="sublayer-name">Add & Norm</div>
+          <div class="sublayer-desc">Second residual + LayerNorm</div>
+        </div>
+      </div>
+    </div>
+    <div class="layer-card decoder">
+      <div class="layer-card-header">DECODER — N=6 identical layers</div>
+      <div class="layer-sublayer" onclick="showLayerInfo('dec-masked')">
+        <div class="sublayer-icon" style="background:rgba(239,68,68,0.1);">🔒</div>
+        <div>
+          <div class="sublayer-name">Masked Multi-Head Self-Attention</div>
+          <div class="sublayer-desc">Can't see future tokens (causal mask)</div>
+        </div>
+        <span class="sublayer-badge pill-red">masked</span>
+      </div>
+      <div class="layer-sublayer" onclick="showLayerInfo('dec-add')">
+        <div class="sublayer-icon" style="background:rgba(59,130,246,0.1);">➕</div>
+        <div>
+          <div class="sublayer-name">Add & Norm</div>
+          <div class="sublayer-desc">Residual + LayerNorm</div>
+        </div>
+      </div>
+      <div class="layer-sublayer" onclick="showLayerInfo('dec-cross')">
+        <div class="sublayer-icon" style="background:rgba(20,184,166,0.1);">🔗</div>
+        <div>
+          <div class="sublayer-name">Cross-Attention</div>
+          <div class="sublayer-desc">Q from decoder, K/V from encoder output</div>
+        </div>
+        <span class="sublayer-badge" style="background:var(--teal-dim);color:var(--teal);">cross</span>
+      </div>
+      <div class="layer-sublayer" onclick="showLayerInfo('dec-ffn')">
+        <div class="sublayer-icon" style="background:rgba(168,85,247,0.1);">⚡</div>
+        <div>
+          <div class="sublayer-name">Feed-Forward Network</div>
+          <div class="sublayer-desc">Same as encoder FFN</div>
+        </div>
+        <span class="sublayer-badge" style="background:var(--purple-dim);color:var(--purple);">d_ff=2048</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer Info Panel -->
+  <div id="layerInfoPanel" style="display:none;margin-top:1rem;"></div>
+
+  <!-- Key Hyperparameters -->
+  <div style="margin-top:2rem;">
+    <div class="card-label" style="margin-bottom:1rem;">Key Hyperparameters — Base vs Big Model</div>
+    <div style="overflow-x:auto;">
+      <table class="comp-table">
+        <thead>
+          <tr><th>Parameter</th><th>Symbol</th><th>Base Model</th><th>Big Model</th><th>Meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Layers</td><td class="code-inline">N</td><td class="comp-best">6</td><td>6</td><td>Stack depth</td></tr>
+          <tr><td>Model dimension</td><td class="code-inline">d_model</td><td>512</td><td class="comp-best">1024</td><td>Embedding size</td></tr>
+          <tr><td>FFN inner dim</td><td class="code-inline">d_ff</td><td>2048</td><td class="comp-best">4096</td><td>4× d_model</td></tr>
+          <tr><td>Attention heads</td><td class="code-inline">h</td><td>8</td><td class="comp-best">16</td><td>Parallel heads</td></tr>
+          <tr><td>Key/Value dim</td><td class="code-inline">d_k, d_v</td><td>64</td><td>64</td><td>d_model / h</td></tr>
+          <tr><td>Dropout</td><td class="code-inline">P_drop</td><td>0.1</td><td class="comp-best">0.3</td><td>Regularization</td></tr>
+          <tr><td>Parameters</td><td class="code-inline">—</td><td>65M</td><td class="comp-best">213M</td><td>Total trainable</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 7: TRAINING -->
+<section id="training">
+  <div class="section-tag">Chapter 07</div>
+  <h2 class="section-title">Training — <em>Details</em></h2>
+  <p class="section-desc">The optimizer, learning rate schedule, and regularization that made the Transformer work.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Optimizer</div>
+      <div style="font-family:var(--mono);color:var(--amber);font-size:14px;margin:8px 0;">Adam (β₁=0.9, β₂=0.98, ε=10⁻⁹)</div>
+      <p style="font-size:13px;color:var(--text2);">Standard Adam with unusual β₂ (very close to 1) to maintain longer history of second moment. The small ε prevents division by zero.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Learning Rate Schedule</div>
+      <div style="font-family:var(--mono);color:var(--amber);font-size:12px;margin:8px 0;line-height:2;">
+        lrate = d_model<sup>-0.5</sup> · min(step<sup>-0.5</sup>, step · warmup<sup>-1.5</sup>)
+      </div>
+      <p style="font-size:13px;color:var(--text2);">Increase linearly for first 4,000 steps (warmup), then decrease proportionally to inverse square root.</p>
+    </div>
+  </div>
+  <canvas id="lrCanvas" width="680" height="160" style="max-width:100%;border-radius:var(--radius);border:1px solid var(--border);"></canvas>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:1.5rem;">
+    <div class="card-sm">
+      <div style="font-size:13px;color:var(--text);font-weight:500;margin-bottom:4px;">Residual Dropout</div>
+      <div style="font-size:12px;color:var(--text2);">Applied to output of each sub-layer, and to embedding+PE sums. P_drop=0.1 for base model.</div>
+    </div>
+    <div class="card-sm">
+      <div style="font-size:13px;color:var(--text);font-weight:500;margin-bottom:4px;">Label Smoothing</div>
+      <div style="font-size:12px;color:var(--text2);">ε_ls=0.1. Softens hard 0/1 targets to [0.05, 0.95]. Hurts perplexity but improves BLEU.</div>
+    </div>
+    <div class="card-sm">
+      <div style="font-size:13px;color:var(--text);font-weight:500;margin-bottom:4px;">Hardware</div>
+      <div style="font-size:12px;color:var(--text2);">8× NVIDIA P100 GPUs. Base model: 100K steps, ~12 hours. Big model: 300K steps, 3.5 days.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 8: RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 08</div>
+  <h2 class="section-title">Results — <em>State of the Art</em></h2>
+  <p class="section-desc">The Transformer outperformed every previous model while using a fraction of the compute.</p>
+  <div class="results-grid">
+    <div class="result-card" style="border-color:rgba(245,158,11,0.2);">
+      <div class="result-model">Transformer (big) — EN→DE</div>
+      <div class="result-score" style="color:var(--amber);">28.4</div>
+      <div class="result-label">BLEU Score</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="width:85%;background:var(--amber);"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">Previous best (GNMT Ensemble)</div>
+      <div class="result-score" style="color:var(--text2);">26.3</div>
+      <div class="result-label">BLEU Score — EN→DE</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="width:79%;background:var(--text3);"></div></div>
+    </div>
+    <div class="result-card" style="border-color:rgba(20,184,166,0.2);">
+      <div class="result-model">Transformer (big) — EN→FR</div>
+      <div class="result-score" style="color:var(--teal);">41.8</div>
+      <div class="result-label">BLEU Score</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="width:92%;background:var(--teal);"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">Previous best (ConvS2S Ensemble)</div>
+      <div class="result-score" style="color:var(--text2);">41.3</div>
+      <div class="result-label">BLEU Score — EN→FR</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="width:91%;background:var(--text3);"></div></div>
+    </div>
+  </div>
+
+  <!-- Bar Chart -->
+  <div class="card" style="margin-top:1rem;padding:1.5rem;">
+    <div class="card-label" style="margin-bottom:1rem;">BLEU Score Comparison — EN→DE (All Models)</div>
+    <div id="bleuChart"></div>
+  </div>
+
+  <!-- Self-Attention vs RNN Table -->
+  <div style="margin-top:1.5rem;">
+    <div class="card-label" style="margin-bottom:1rem;">Self-Attention vs Recurrent vs Convolutional (Table 1)</div>
+    <div style="overflow-x:auto;">
+      <table class="comp-table">
+        <thead>
+          <tr><th>Layer Type</th><th>Complexity/Layer</th><th>Sequential Ops</th><th>Max Path Length</th><th>Winner?</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="comp-best">Self-Attention</td>
+            <td class="code-inline">O(n² · d)</td>
+            <td class="comp-best">O(1)</td>
+            <td class="comp-best">O(1)</td>
+            <td><span class="pill pill-green">✓ Best</span></td>
+          </tr>
+          <tr>
+            <td>Recurrent</td>
+            <td class="code-inline">O(n · d²)</td>
+            <td class="comp-worst">O(n)</td>
+            <td class="comp-worst">O(n)</td>
+            <td><span class="pill pill-red">✗</span></td>
+          </tr>
+          <tr>
+            <td>Convolutional</td>
+            <td class="code-inline">O(k · n · d²)</td>
+            <td class="comp-best">O(1)</td>
+            <td>O(log_k n)</td>
+            <td><span class="pill pill-amber">~</span></td>
+          </tr>
+          <tr>
+            <td>Self-Attn (restricted)</td>
+            <td class="code-inline">O(r · n · d)</td>
+            <td class="comp-best">O(1)</td>
+            <td>O(n/r)</td>
+            <td><span class="pill pill-amber">~</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:8px;">n = sequence length, d = dimension, k = kernel size, r = restriction neighborhood. Self-attention wins on path length (O(1) means direct connection!) but has quadratic complexity in sequence length.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 9: QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 10: KEY FORMULAS -->
+<section id="formulas">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">All Key <em>Formulas</em></h2>
+  <p class="section-desc">A complete reference of every important formula from the paper.</p>
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="card-label">Scaled Dot-Product Attention</div>
+          <div style="font-family:var(--mono);color:var(--amber);font-size:16px;margin:6px 0;">Attention(Q,K,V) = softmax(QKᵀ/√d_k)V</div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);max-width:300px;">Core attention mechanism. Scale by √d_k to prevent gradient saturation. Apply softmax to get weights, multiply by values.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="card-label">Multi-Head Attention</div>
+          <div style="font-family:var(--mono);color:var(--amber);font-size:14px;margin:6px 0;line-height:2;">MultiHead(Q,K,V) = Concat(head₁,...,headₕ)Wᴼ<br>head_i = Attention(QWᵢQ, KWᵢK, VWᵢV)</div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);max-width:300px;">h=8 attention heads run in parallel. Each projects to d_k=64 dimensions. Concat output projected back to d_model=512.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="card-label">Feed-Forward Network</div>
+          <div style="font-family:var(--mono);color:var(--amber);font-size:16px;margin:6px 0;">FFN(x) = max(0, xW₁+b₁)W₂+b₂</div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);max-width:300px;">Two linear layers with ReLU activation. d_model=512 → d_ff=2048 → d_model=512. Applied position-wise.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="card-label">Positional Encoding</div>
+          <div style="font-family:var(--mono);color:var(--amber);font-size:14px;margin:6px 0;line-height:2.2;">PE(pos,2i) = sin(pos/10000^(2i/d_model))<br>PE(pos,2i+1) = cos(pos/10000^(2i/d_model))</div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);max-width:300px;">Sine/cosine at different frequencies. Added to token embeddings. Unique fingerprint for each position. No learned parameters.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="card-label">Sub-Layer Output (Residual)</div>
+          <div style="font-family:var(--mono);color:var(--amber);font-size:16px;margin:6px 0;">Output = LayerNorm(x + Sublayer(x))</div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);max-width:300px;">Residual connection ensures gradient flows even through deep networks. Layer norm stabilizes training. Applied after every sub-layer.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div class="card-label">Learning Rate Schedule</div>
+          <div style="font-family:var(--mono);color:var(--amber);font-size:14px;margin:6px 0;">lrate = d_model^(-0.5) · min(step^(-0.5), step · warmup^(-1.5))</div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);max-width:300px;">Linear warmup for 4000 steps, then inverse square root decay. Prevents exploding gradients early in training.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">
+    Built with ❤️ to explain <a href="https://arxiv.org/abs/1706.03762" target="_blank">"Attention Is All You Need"</a> (Vaswani et al., 2017)
+  </div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/1706.03762" target="_blank">Paper</a>
+    <a class="footer-link" href="https://github.com/tensorflow/tensor2tensor" target="_blank">Code</a>
+    <a class="footer-link" href="https://tiktokenizer.vercel.app/" target="_blank">Tiktokenizer</a>
+  </div>
+</footer>
+
+<script>
+// UTILS
+function scrollTo(selector) {
+  document.querySelector(selector).scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (window.scrollY / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+});
+
+// TOKENIZER
+const TOKEN_COLORS = [
+  ['#f59e0b','rgba(245,158,11,.12)'],
+  ['#3b82f6','rgba(59,130,246,.12)'],
+  ['#22c55e','rgba(34,197,94,.12)'],
+  ['#a855f7','rgba(168,85,247,.12)'],
+  ['#ef4444','rgba(239,68,68,.12)'],
+  ['#14b8a6','rgba(20,184,166,.12)'],
+  ['#f97316','rgba(249,115,22,.12)'],
+  ['#ec4899','rgba(236,72,153,.12)'],
+];
+function naiveTokenize(text) {
+  const tokens = [];
+  const parts = text.match(/\w+|[^\w\s]|\s+/g) || [];
+  parts.forEach(p => {
+    if (p.trim().length === 0) {
+      tokens.push({ text: '·', space: true });
+    } else {
+      const sub = p.match(/.{1,4}/g) || [p];
+      sub.forEach(s => tokens.push({ text: s, space: false }));
+    }
+  });
+  return tokens;
+}
+function renderTokens() {
+  const inp = document.getElementById('tokenizerInput').value;
+  const tokens = naiveTokenize(inp);
+  const out = document.getElementById('tokenizerOutput');
+  const badge = document.getElementById('tokenCountBadge');
+  const real = tokens.filter(t => !t.space);
+  badge.textContent = real.length + ' tokens';
+  out.innerHTML = tokens.map((t, i) => {
+    if (t.space) return '<span style="color:var(--bg4);font-family:var(--mono);font-size:12px;"> · </span>';
+    const c = TOKEN_COLORS[i % TOKEN_COLORS.length];
+    return `<span class="token-chip" style="background:${c[1]};color:${c[0]};border-color:${c[0]}22;">${t.text}</span>`;
+  }).join('');
+}
+document.getElementById('tokenizerInput').addEventListener('input', renderTokens);
+renderTokens();
+
+// EMBEDDING CANVAS
+const EMB_WORDS = [
+  { label: 'king', x: 0.75, y: 0.2, color: '#3b82f6', vec: [0.32,0.85,-0.21,0.67,0.43,-0.12,0.78,0.29] },
+  { label: 'queen', x: 0.65, y: 0.32, color: '#ec4899', vec: [0.28,0.81,-0.18,0.71,0.39,-0.09,0.74,0.31] },
+  { label: 'man', x: 0.72, y: 0.52, color: '#3b82f6', vec: [0.21,0.65,-0.15,0.48,0.34,-0.08,0.61,0.22] },
+  { label: 'woman', x: 0.62, y: 0.62, color: '#ec4899', vec: [0.18,0.62,-0.12,0.51,0.31,-0.06,0.58,0.24] },
+  { label: 'cat', x: 0.25, y: 0.45, color: '#22c55e', vec: [-0.12,0.34,0.67,-0.23,0.56,0.89,-0.34,0.45] },
+  { label: 'dog', x: 0.32, y: 0.55, color: '#22c55e', vec: [-0.09,0.31,0.71,-0.19,0.52,0.85,-0.31,0.48] },
+  { label: 'apple', x: 0.2, y: 0.25, color: '#f59e0b', vec: [-0.43,0.12,0.89,0.67,-0.23,0.34,-0.56,0.78] },
+  { label: 'banana', x: 0.3, y: 0.2, color: '#f59e0b', vec: [-0.39,0.15,0.85,0.71,-0.19,0.31,-0.52,0.74] },
+  { label: 'France', x: 0.55, y: 0.75, color: '#a855f7', vec: [0.67,-0.34,0.23,-0.12,0.89,0.45,0.32,-0.67] },
+  { label: 'Paris', x: 0.65, y: 0.78, color: '#a855f7', vec: [0.71,-0.31,0.19,-0.09,0.85,0.48,0.29,-0.71] },
+];
+function drawEmbCanvas() {
+  const c = document.getElementById('embCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#141416';
+  ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for (let i=0;i<=10;i++) {
+    ctx.beginPath(); ctx.moveTo(i*(W/10),0); ctx.lineTo(i*(W/10),H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,i*(H/10)); ctx.lineTo(W,i*(H/10)); ctx.stroke();
+  }
+  // Cluster labels
+  ctx.fillStyle='rgba(59,130,246,0.08)';
+  ctx.beginPath(); ctx.ellipse(0.7*W,0.45*H,90,80,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(34,197,94,0.08)';
+  ctx.beginPath(); ctx.ellipse(0.28*W,0.5*H,60,50,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(245,158,11,0.08)';
+  ctx.beginPath(); ctx.ellipse(0.25*W,0.22*H,60,40,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(168,85,247,0.08)';
+  ctx.beginPath(); ctx.ellipse(0.6*W,0.77*H,60,30,0,0,Math.PI*2); ctx.fill();
+  // Cluster labels
+  [{t:'Royalty',x:0.7,y:0.05,c:'#3b82f6'},{t:'Animals',x:0.28,y:0.9,c:'#22c55e'},{t:'Fruits',x:0.22,y:0.1,c:'#f59e0b'},{t:'Places',x:0.58,y:0.88,c:'#a855f7'}].forEach(cl=>{
+    ctx.fillStyle=cl.c+'88';
+    ctx.font='bold 11px IBM Plex Mono, monospace';
+    ctx.textAlign='center';
+    ctx.fillText(cl.t, cl.x*W, cl.y*H);
+  });
+  // Points
+  EMB_WORDS.forEach(w => {
+    const px = w.x*W, py = w.y*H;
+    ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2);
+    ctx.fillStyle = w.color; ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle = w.color;
+    ctx.font='12px DM Sans, sans-serif';
+    ctx.textAlign='left';
+    ctx.fillText(w.label, px+8, py+4);
+  });
+}
+// Embedding table
+function renderEmbTable() {
+  const tbody = document.getElementById('embTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = EMB_WORDS.slice(0,5).map(w => {
+    const cells = w.vec.map(v => {
+      const abs = Math.abs(v);
+      const bg = v > 0 ? `rgba(59,130,246,${abs*0.5})` : `rgba(239,68,68,${abs*0.5})`;
+      return `<td><span class="emb-cell" style="background:${bg};color:${v>0?'#93c5fd':'#fca5a5'};">${v.toFixed(2)}</span></td>`;
+    }).join('');
+    return `<tr><td style="color:${w.color};font-weight:500;">${w.label}</td>${cells}</tr>`;
+  }).join('');
+}
+
+// POSITIONAL ENCODING
+function drawPE(dim) {
+  const c = document.getElementById('peCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#141416'; ctx.fillRect(0,0,W,H);
+  const maxPos=100, dmodel=512;
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+  [0.25,0.5,0.75].forEach(y=>{ ctx.beginPath(); ctx.moveTo(0,y*H); ctx.lineTo(W,y*H); ctx.stroke(); });
+  // Axes
+  ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(40,H*0.1); ctx.lineTo(40,H*0.9); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(40,H*0.5); ctx.lineTo(W-10,H*0.5); ctx.stroke();
+  // PE curves
+  const drawCurve = (iDim, color, label) => {
+    ctx.beginPath(); ctx.strokeStyle=color; ctx.lineWidth=2;
+    for (let pos=0; pos<maxPos; pos++) {
+      const x = 40 + pos*(W-50)/maxPos;
+      let val;
+      if (iDim%2===0) val = Math.sin(pos / Math.pow(10000, 2*Math.floor(iDim/2)/dmodel));
+      else val = Math.cos(pos / Math.pow(10000, 2*Math.floor(iDim/2)/dmodel));
+      const y = H*0.5 - val*(H*0.35);
+      if (pos===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.fillStyle=color; ctx.font='11px IBM Plex Mono'; ctx.fillText(label, W-80, 20);
+  };
+  drawCurve(dim*2, '#f59e0b', `dim ${dim*2} (sin)`);
+  drawCurve(dim*2+1, '#3b82f6', `dim ${dim*2+1} (cos)`);
+  // Labels
+  ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font='10px IBM Plex Mono'; ctx.textAlign='center';
+  ctx.fillText('+1', 24, H*0.15); ctx.fillText('0', 28, H*0.52); ctx.fillText('-1', 24, H*0.88);
+  ctx.fillText('Position →', W/2, H-4);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const sl = document.getElementById('dimSlider');
+  const lb = document.getElementById('dimLabel');
+  if (sl) {
+    sl.addEventListener('input', e => {
+      lb.textContent = 'dim ' + e.target.value;
+      drawPE(parseInt(e.target.value));
+    });
+    drawPE(0);
+  }
+  drawEmbCanvas();
+  renderEmbTable();
+  renderAttention();
+  renderMultiHead();
+  renderArchSVG();
+  renderQuiz();
+  renderBLEUChart();
+  renderLRCanvas();
+  renderHeadsChart();
+});
+
+// SELF-ATTENTION INTERACTIVE
+const ATTN_SENTENCE = ['The','cat','sat','on','the','mat'];
+const ATTN_DATA = {
+  'The':  [0.30,0.15,0.10,0.10,0.25,0.10],
+  'cat':  [0.10,0.35,0.30,0.05,0.08,0.12],
+  'sat':  [0.08,0.45,0.20,0.12,0.06,0.09],
+  'on':   [0.05,0.12,0.18,0.35,0.15,0.15],
+  'the':  [0.28,0.10,0.08,0.12,0.22,0.20],
+  'mat':  [0.08,0.14,0.12,0.18,0.20,0.28],
+};
+const ATTN_EXPLAINS = {
+  'The':  '"The" is a determiner — it mostly attends to itself and "the" later in the sentence (both articles).',
+  'cat':  '"cat" is the subject — it pays strong attention to "sat" (the verb of the subject) and itself.',
+  'sat':  '"sat" is the verb — it strongly attends to "cat" (the subject performing the action).',
+  'on':   '"on" is a preposition — it focuses on "mat" (what the cat sat on) and "sat".',
+  'the':  'The second "the" attends to both "The" (same word) and "mat" (its noun) and "on".',
+  'mat':  '"mat" is the object — it attends to itself, "on" (its preposition), and "sat".',
+};
+let selectedWord = 'sat';
+function renderAttention() {
+  const row = document.getElementById('attnSentenceRow');
+  const bars = document.getElementById('attnBars');
+  const heatmap = document.getElementById('attnHeatmap');
+  const explain = document.getElementById('attnExplain');
+  if (!row) return;
+  row.innerHTML = ATTN_SENTENCE.map(w =>
+    `<div class="attn-token${w===selectedWord?' query':''}" onclick="selectWord('${w}')">${w}</div>`
+  ).join('');
+  const weights = ATTN_DATA[selectedWord];
+  const maxW = Math.max(...weights);
+  bars.innerHTML = ATTN_SENTENCE.map((w,i) => {
+    const pct = weights[i]/maxW*100;
+    const opacity = 0.3 + weights[i]*1.4;
+    return `<div class="attn-bar-row">
+      <div class="attn-bar-label">${w}</div>
+      <div class="attn-bar-track">
+        <div class="attn-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,rgba(245,158,11,${opacity}),rgba(245,158,11,${opacity*0.6}));"></div>
+        <span class="attn-bar-val">${(weights[i]*100).toFixed(0)}%</span>
+      </div>
+    </div>`;
+  }).join('');
+  // Heatmap
+  const SIZE = 36;
+  let hmHTML = `<div style="display:inline-grid;grid-template-columns:40px ${ATTN_SENTENCE.map(()=>SIZE+'px').join(' ')};gap:2px;">`;
+  hmHTML += '<div></div>';
+  ATTN_SENTENCE.forEach(w => { hmHTML += `<div class="attn-hm-label" style="font-size:9px;writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);height:${SIZE}px;">${w}</div>`; });
+  ATTN_SENTENCE.forEach((rowW, ri) => {
+    hmHTML += `<div class="attn-hm-label">${rowW}</div>`;
+    ATTN_SENTENCE.forEach((colW, ci) => {
+      const w = ATTN_DATA[rowW][ci];
+      const alpha = w*2.5;
+      const isSelected = rowW === selectedWord;
+      const bg = isSelected ? `rgba(245,158,11,${Math.min(alpha,1)})` : `rgba(255,255,255,${Math.min(alpha*0.3,0.5)})`;
+      hmHTML += `<div class="attn-hm-cell" style="background:${bg};width:${SIZE}px;height:${SIZE}px;font-size:9px;color:${isSelected?'#000':'rgba(255,255,255,0.6)'};">${(w*100).toFixed(0)}</div>`;
+    });
+  });
+  hmHTML += '</div>';
+  heatmap.innerHTML = hmHTML;
+  explain.innerHTML = `<strong style="color:var(--amber)">"${selectedWord}"</strong> — ${ATTN_EXPLAINS[selectedWord]}`;
+}
+function selectWord(w) { selectedWord = w; renderAttention(); }
+
+// MULTI-HEAD
+const MH_HEADS = [
+  { num:1, color:'#3b82f6', role:'Syntactic structure', pattern:'Subject→Verb agreement', weights:[[0.8,0.1,0.05,0.02,0.02,0.01],[0.1,0.7,0.1,0.05,0.03,0.02],[0.05,0.3,0.5,0.1,0.03,0.02],[0.02,0.05,0.1,0.7,0.05,0.08],[0.04,0.03,0.04,0.05,0.72,0.12],[0.01,0.04,0.03,0.1,0.14,0.68]] },
+  { num:2, color:'#22c55e', role:'Semantic similarity', pattern:'Related word clusters', weights:[[0.5,0.2,0.1,0.05,0.1,0.05],[0.2,0.4,0.2,0.08,0.06,0.06],[0.08,0.2,0.4,0.15,0.09,0.08],[0.04,0.08,0.15,0.5,0.14,0.09],[0.1,0.06,0.09,0.14,0.45,0.16],[0.05,0.06,0.08,0.09,0.16,0.56]] },
+  { num:3, color:'#a855f7', role:'Coreference', pattern:'Pronoun→Antecedent', weights:[[0.6,0.08,0.08,0.08,0.08,0.08],[0.08,0.6,0.08,0.08,0.08,0.08],[0.08,0.08,0.6,0.08,0.08,0.08],[0.08,0.08,0.08,0.6,0.08,0.08],[0.08,0.08,0.08,0.08,0.6,0.08],[0.08,0.08,0.08,0.08,0.08,0.6]] },
+  { num:4, color:'#f59e0b', role:'Local context', pattern:'Adjacent token focus', weights:[[0.7,0.25,0.02,0.01,0.01,0.01],[0.25,0.5,0.2,0.03,0.01,0.01],[0.02,0.25,0.45,0.22,0.04,0.02],[0.01,0.03,0.22,0.5,0.22,0.02],[0.01,0.01,0.04,0.22,0.5,0.22],[0.01,0.01,0.02,0.02,0.25,0.69]] },
+  { num:5, color:'#ef4444', role:'Positional', pattern:'Relative distance', weights:[[0.4,0.3,0.15,0.07,0.05,0.03],[0.3,0.3,0.2,0.1,0.06,0.04],[0.15,0.2,0.3,0.2,0.1,0.05],[0.07,0.1,0.2,0.3,0.2,0.13],[0.05,0.06,0.1,0.2,0.35,0.24],[0.03,0.04,0.05,0.13,0.24,0.51]] },
+  { num:6, color:'#14b8a6', role:'Long-range dep.', pattern:'Subject/Object links', weights:[[0.3,0.05,0.05,0.05,0.5,0.05],[0.05,0.3,0.4,0.05,0.1,0.1],[0.05,0.4,0.3,0.1,0.08,0.07],[0.05,0.05,0.1,0.4,0.15,0.25],[0.5,0.1,0.08,0.15,0.12,0.05],[0.05,0.1,0.07,0.25,0.05,0.48]] },
+  { num:7, color:'#f97316', role:'Temporal/order', pattern:'Sequence position', weights:[[0.55,0.2,0.1,0.06,0.05,0.04],[0.2,0.45,0.2,0.08,0.04,0.03],[0.1,0.2,0.4,0.18,0.07,0.05],[0.06,0.08,0.18,0.45,0.15,0.08],[0.05,0.04,0.07,0.15,0.5,0.19],[0.04,0.03,0.05,0.08,0.19,0.61]] },
+  { num:8, color:'#ec4899', role:'Rare/special tokens', pattern:'EOS, punctuation focus', weights:[[0.35,0.15,0.1,0.1,0.15,0.15],[0.15,0.4,0.15,0.1,0.1,0.1],[0.1,0.15,0.4,0.15,0.1,0.1],[0.1,0.1,0.15,0.4,0.15,0.1],[0.15,0.1,0.1,0.15,0.35,0.15],[0.15,0.1,0.1,0.1,0.15,0.4]] },
+];
+let activeHead = 0;
+function renderMultiHead() {
+  const row = document.getElementById('mhHeadsRow');
+  const detail = document.getElementById('mhDetail');
+  if (!row) return;
+  row.innerHTML = MH_HEADS.map((h,i) =>
+    `<div class="mh-head${i===activeHead?' active':''}" style="border-color:${i===activeHead?h.color+'55':'var(--border)'};${i===activeHead?'background:'+h.color+'15;':''}" onclick="selectHead(${i})">
+      <div class="mh-head-num" style="color:${h.color};">H${h.num}</div>
+      <div class="mh-head-role" style="color:${i===activeHead?h.color:'var(--text3)'};">${h.role}</div>
+    </div>`
+  ).join('');
+  const h = MH_HEADS[activeHead];
+  const SIZE=32;
+  let mapHTML = `<div style="font-size:12px;color:var(--text2);margin-bottom:1rem;"><strong style="color:${h.color};">Head ${h.num}</strong> — ${h.role} &nbsp; <span style="color:var(--text3);">${h.pattern}</span></div>`;
+  mapHTML += `<div style="display:inline-grid;grid-template-columns:40px ${ATTN_SENTENCE.map(()=>SIZE+'px').join(' ')};gap:2px;">`;
+  mapHTML += '<div></div>';
+  ATTN_SENTENCE.forEach(w => { mapHTML += `<div style="font-family:var(--mono);font-size:8px;color:var(--text3);display:flex;align-items:flex-end;justify-content:center;height:${SIZE}px;padding-bottom:4px;">${w}</div>`; });
+  ATTN_SENTENCE.forEach((rw,ri) => {
+    mapHTML += `<div style="font-family:var(--mono);font-size:9px;color:var(--text3);display:flex;align-items:center;justify-content:flex-end;padding-right:4px;height:${SIZE}px;">${rw}</div>`;
+    h.weights[ri].forEach((w,ci) => {
+      const hexColor = h.color.replace('#','');
+      const r=parseInt(hexColor.slice(0,2),16),g=parseInt(hexColor.slice(2,4),16),b=parseInt(hexColor.slice(4,6),16);
+      const bg = `rgba(${r},${g},${b},${Math.min(w*1.5,0.95)})`;
+      const textColor = w > 0.5 ? '#000' : 'rgba(255,255,255,0.5)';
+      mapHTML += `<div style="width:${SIZE}px;height:${SIZE}px;background:${bg};border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;color:${textColor};transition:all .3s;">${(w*100).toFixed(0)}</div>`;
+    });
+  });
+  mapHTML += '</div>';
+  detail.innerHTML = mapHTML;
+}
+function selectHead(i) { activeHead=i; renderMultiHead(); }
+
+// ARCHITECTURE SVG
+function renderArchSVG() {
+  const svg = document.getElementById('archSvg');
+  if (!svg) return;
+  const ENC_X=60, DEC_X=420, W=240, LH=44, GAP=8, START_Y=60;
+  const layers = [
+    { label:'Input Embedding + PE', enc:true, dec:false, y:380, color:'#a855f7', desc:'Token embeddings + positional encoding' },
+    { label:'Multi-Head Self-Attention', enc:true, dec:false, y:310, color:'#f59e0b' },
+    { label:'Add & Norm', enc:true, dec:false, y:265, color:'#3b82f6' },
+    { label:'Feed-Forward Network', enc:true, dec:false, y:210, color:'#ec4899' },
+    { label:'Add & Norm', enc:true, dec:false, y:165, color:'#3b82f6' },
+  ];
+  let html = '';
+  // Encoder box
+  html += `<rect x="${ENC_X-10}" y="50" width="${W+20}" height="370" rx="12" fill="none" stroke="rgba(59,130,246,0.2)" stroke-width="1" stroke-dasharray="5,4"/>`;
+  html += `<text x="${ENC_X+W/2}" y="40" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#3b82f6" letter-spacing="1">ENCODER (×6)</text>`;
+  // Decoder box
+  html += `<rect x="${DEC_X-10}" y="50" width="${W+20}" height="370" rx="12" fill="none" stroke="rgba(20,184,166,0.2)" stroke-width="1" stroke-dasharray="5,4"/>`;
+  html += `<text x="${DEC_X+W/2}" y="40" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#14b8a6" letter-spacing="1">DECODER (×6)</text>`;
+
+  const encBlocks = [
+    { y:370,label:'Input Embedding + PE',color:'#a855f7' },
+    { y:310,label:'Multi-Head Self-Attn',color:'#f59e0b' },
+    { y:265,label:'Add & Norm',color:'#374151' },
+    { y:205,label:'Feed-Forward Net',color:'#ec4899' },
+    { y:160,label:'Add & Norm',color:'#374151' },
+  ];
+  encBlocks.forEach(b => {
+    html += `<rect x="${ENC_X}" y="${b.y}" width="${W}" height="38" rx="7" fill="${b.color}22" stroke="${b.color}55" stroke-width="1"/>`;
+    html += `<text x="${ENC_X+W/2}" y="${b.y+23}" text-anchor="middle" font-family="DM Sans" font-size="12" fill="${b.color}">${b.label}</text>`;
+    if (b.y > 160) {
+      html += `<line x1="${ENC_X+W/2}" y1="${b.y}" x2="${ENC_X+W/2}" y2="${b.y-12}" stroke="${b.color}66" stroke-width="1.5" marker-end="url(#arrow)"/>`;
+    }
+  });
+  // Encoder output arrow
+  html += `<line x1="${ENC_X+W/2}" y1="160" x2="${ENC_X+W/2}" y2="120" stroke="rgba(59,130,246,0.5)" stroke-width="1.5" marker-end="url(#arrow)"/>`;
+  html += `<text x="${ENC_X+W/2}" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#3b82f6">Encoder Output</text>`;
+
+  const decBlocks = [
+    { y:370,label:'Output Embedding + PE',color:'#a855f7' },
+    { y:310,label:'Masked Self-Attn',color:'#ef4444' },
+    { y:265,label:'Add & Norm',color:'#374151' },
+    { y:205,label:'Cross-Attention',color:'#14b8a6' },
+    { y:160,label:'Add & Norm',color:'#374151' },
+    { y:105,label:'Feed-Forward Net',color:'#ec4899' },
+    { y:65,label:'Add & Norm',color:'#374151' },
+  ];
+  decBlocks.forEach((b,i) => {
+    html += `<rect x="${DEC_X}" y="${b.y}" width="${W}" height="38" rx="7" fill="${b.color}22" stroke="${b.color}55" stroke-width="1"/>`;
+    html += `<text x="${DEC_X+W/2}" y="${b.y+23}" text-anchor="middle" font-family="DM Sans" font-size="12" fill="${b.color}">${b.label}</text>`;
+    if (i > 0) {
+      const prevY = decBlocks[i-1].y;
+      html += `<line x1="${DEC_X+W/2}" y1="${b.y+38}" x2="${DEC_X+W/2}" y2="${prevY+38+6}" stroke="${b.color}66" stroke-width="1.5"/>`;
+      html += `<polyline points="${DEC_X+W/2},${b.y+38+6} ${DEC_X+W/2},${b.y}" stroke="${b.color}44" stroke-width="1" fill="none" marker-end="url(#arrow)"/>`;
+    }
+  });
+  // Arrow from encoder to cross-attention
+  html += `<path d="M${ENC_X+W+10},110 Q${DEC_X-40},110 ${DEC_X-40},224 L${DEC_X},224" stroke="#14b8a622" stroke-width="2" fill="none" stroke-dasharray="6,3" marker-end="url(#arrow)"/>`;
+  html += `<text x="${ENC_X+W+80}" y="135" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#14b8a6">K, V from Encoder</text>`;
+  // Output
+  html += `<line x1="${DEC_X+W/2}" y1="65" x2="${DEC_X+W/2}" y2="28" stroke="#22c55e66" stroke-width="1.5" marker-end="url(#arrow)"/>`;
+  html += `<rect x="${DEC_X+30}" y="8" width="W/2+80" height="24" rx="5" fill="rgba(34,197,94,0.1)" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>`;
+  html += `<text x="${DEC_X+W/2}" y="25" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="#22c55e">Linear + Softmax → Output</text>`;
+  // Arrow marker
+  html = `<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M2 2L8 5L2 8" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>` + html;
+
+  svg.innerHTML = html;
+}
+
+// LAYER INFO PANELS
+const LAYER_INFO = {
+  'enc-attn': { title:'Multi-Head Self-Attention', color:'#f59e0b', content:'Every position in the encoder can attend to all positions in the previous encoder layer. Queries, Keys, and Values all come from the same place — the output of the previous layer. This is "self" attention. 8 heads run in parallel, each in 64 dimensions.' },
+  'enc-add': { title:'Add & Norm', color:'#3b82f6', content:'<strong>Residual Connection:</strong> Output = LayerNorm(x + Sublayer(x)). The input x is added to the sublayer output before normalization. This prevents vanishing gradients and allows gradients to flow directly through the network.' },
+  'enc-ffn': { title:'Feed-Forward Network', color:'#a855f7', content:'FFN(x) = max(0, xW₁+b₁)W₂+b₂. Applied to each position separately and identically. Input/output: 512 dims. Hidden layer: 2048 dims (4×). This is where most of the model\'s "memory" lives.' },
+  'enc-add2': { title:'Second Add & Norm', color:'#3b82f6', content:'Another residual connection and layer normalization, this time wrapping the feed-forward network. The pattern is always: (Sub-layer → Add → Norm), repeated.' },
+  'dec-masked': { title:'Masked Multi-Head Self-Attention', color:'#ef4444', content:'Same as encoder self-attention, BUT with masking: future positions are set to −∞ before softmax, so they become ~0 after softmax. This prevents the model from "cheating" by looking at future tokens during training. This is what makes generation auto-regressive.' },
+  'dec-add': { title:'Add & Norm', color:'#3b82f6', content:'Residual connection + Layer Normalization, same as encoder.' },
+  'dec-cross': { title:'Cross-Attention (Encoder-Decoder Attention)', color:'#14b8a6', content:'<strong>This is the key bridge</strong> between encoder and decoder. Queries (Q) come from the decoder\'s previous sub-layer. Keys (K) and Values (V) come from the encoder\'s output. This lets every decoder position attend over all encoder positions — connecting input context to output generation.' },
+  'dec-ffn': { title:'Feed-Forward Network', color:'#a855f7', content:'Same as encoder FFN. FFN(x) = max(0, xW₁+b₁)W₂+b₂. d_ff=2048, with ReLU in between. Applied position-wise.' },
+};
+function showLayerInfo(key) {
+  const panel = document.getElementById('layerInfoPanel');
+  const info = LAYER_INFO[key];
+  if (!info) return;
+  panel.style.display = 'block';
+  panel.innerHTML = `<div class="card" style="border-color:${info.color}33;background:${info.color}08;">
+    <div style="font-weight:600;font-size:15px;color:${info.color};margin-bottom:8px;">${info.title}</div>
+    <div style="font-size:14px;color:var(--text2);line-height:1.8;">${info.content}</div>
+  </div>`;
+  panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+// QUIZ
+const QUIZ_DATA = [
+  { q:'Why do we scale attention scores by √d_k?', opts:['To make the output bigger','Large dot products push softmax into regions with tiny gradients','To normalize the output to [0,1]','Because the paper uses d_k=64 which happens to be a perfect square'], correct:1, explain:'When d_k is large, dot products grow large in magnitude, pushing softmax into regions with extremely small gradients. Dividing by √d_k counteracts this — if q and k are random with mean 0 and variance 1, their dot product has variance d_k, so dividing by √d_k brings variance back to 1.' },
+  { q:'What is the complexity of a self-attention layer?', opts:['O(n)', 'O(n · d²)', 'O(n² · d)', 'O(log n)'], correct:2, explain:'Self-attention computes QKᵀ which is (n×d) · (d×n) = n² · d operations. This quadratic complexity in sequence length n is the main limitation of Transformers for very long sequences.' },
+  { q:'In the base Transformer model, what are the values of h, d_k, and d_model?', opts:['h=6, d_k=512, d_model=64', 'h=8, d_k=64, d_model=512', 'h=16, d_k=32, d_model=512', 'h=8, d_k=512, d_model=512'], correct:1, explain:'The base model uses h=8 attention heads, each with d_k = d_v = d_model/h = 512/8 = 64. The model dimension is d_model=512 throughout. This way, multi-head attention has the same total computational cost as single-head attention with the full d_model.' },
+  { q:'What is the purpose of masking in the decoder self-attention?', opts:['To remove padding tokens','To prevent positions from attending to future positions','To reduce computational cost','To implement dropout'], correct:1, explain:'The decoder generates output auto-regressively — one token at a time. During training, we process all tokens in parallel, but we must ensure that position i can only attend to positions 1...i (not i+1, i+2...). We implement this by setting illegal connections to −∞ before softmax.' },
+  { q:'How many BLEU points did the big Transformer improve over the previous best model on EN→DE?', opts:['0.5 BLEU', '1.1 BLEU', '2.1 BLEU', '5.0 BLEU'], correct:2, explain:'The big Transformer achieved 28.4 BLEU on EN→DE, improving over the previous best (26.3 from GNMT+RL ensemble) by more than 2 BLEU points — a very significant improvement in translation quality.' },
+];
+function renderQuiz() {
+  const container = document.getElementById('quizContainer');
+  if (!container) return;
+  container.innerHTML = QUIZ_DATA.map((q,qi) => `
+    <div class="quiz-card" id="quiz-${qi}">
+      <div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div>
+      <div class="quiz-opts">
+        ${q.opts.map((opt,oi) =>
+          `<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})">
+            <span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span>
+            ${opt}
+          </div>`
+        ).join('')}
+      </div>
+      <div class="quiz-explain" id="explain-${qi}">${q.explain}</div>
+    </div>
+  `).join('');
+}
+const answered = {};
+function answerQuiz(qi, oi) {
+  if (answered[qi]) return;
+  answered[qi] = true;
+  const q = QUIZ_DATA[qi];
+  q.opts.forEach((_, i) => {
+    const el = document.getElementById(`opt-${qi}-${i}`);
+    if (i === q.correct) { el.classList.add('correct'); el.innerHTML = '✓ ' + el.innerHTML; }
+    else if (i === oi && i !== q.correct) { el.classList.add('wrong'); el.innerHTML = '✗ ' + el.innerHTML; }
+    el.style.pointerEvents = 'none';
+  });
+  const exp = document.getElementById(`explain-${qi}`);
+  exp.classList.add('show');
+}
+
+// BLEU CHART
+function renderBLEUChart() {
+  const el = document.getElementById('bleuChart');
+  if (!el) return;
+  const models = [
+    { name:'ByteNet', score:23.75, color:'#374151' },
+    { name:'GNMT+RL', score:24.6, color:'#4b5563' },
+    { name:'ConvS2S', score:25.16, color:'#6b7280' },
+    { name:'MoE', score:26.03, color:'#9ca3af' },
+    { name:'GNMT Ensemble', score:26.3, color:'#d1d5db' },
+    { name:'ConvS2S Ensemble', score:26.36, color:'#e5e7eb' },
+    { name:'Transformer (base)', score:27.3, color:'#f59e0b' },
+    { name:'Transformer (big)', score:28.4, color:'#fbbf24' },
+  ];
+  const max = 30; const barH = 28;
+  el.innerHTML = models.map(m => `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:160px;text-align:right;flex-shrink:0;">${m.name}</div>
+      <div style="flex:1;height:${barH}px;background:var(--bg4);border-radius:4px;overflow:hidden;position:relative;">
+        <div style="height:100%;width:${(m.score/max)*100}%;background:${m.color};border-radius:4px;display:flex;align-items:center;transition:width .8s ease;animation:scaleIn .8s ease;transform-origin:left;"></div>
+        <span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11px;color:${m.color==='#fbbf24'||m.color==='#f59e0b'?'#000':'var(--text2)'};">${m.score}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// LEARNING RATE CANVAS
+function renderLRCanvas() {
+  const c = document.getElementById('lrCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.fillStyle='#141416'; ctx.fillRect(0,0,W,H);
+  const dmodel=512, warmup=4000;
+  const lrate = step => Math.pow(dmodel,-0.5) * Math.min(Math.pow(step+1,-0.5), (step+1)*Math.pow(warmup,-1.5));
+  const maxStep=40000;
+  const maxLr = lrate(warmup);
+  const pad={l:50,r:20,t:20,b:30};
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+  [0.25,0.5,0.75,1].forEach(y=>{ ctx.beginPath(); ctx.moveTo(pad.l,pad.t+y*(H-pad.t-pad.b)); ctx.lineTo(W-pad.r,pad.t+y*(H-pad.t-pad.b)); ctx.stroke(); });
+  // Warmup marker
+  const wx = pad.l + (warmup/maxStep)*(W-pad.l-pad.r);
+  ctx.strokeStyle='rgba(245,158,11,0.2)'; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(wx,pad.t); ctx.lineTo(wx,H-pad.b); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='rgba(245,158,11,0.6)'; ctx.font='10px IBM Plex Mono'; ctx.textAlign='center';
+  ctx.fillText('warmup=4000',wx,pad.t+12);
+  // Curve
+  ctx.beginPath(); ctx.strokeStyle='#f59e0b'; ctx.lineWidth=2;
+  for(let s=0;s<=maxStep;s+=100) {
+    const x = pad.l + (s/maxStep)*(W-pad.l-pad.r);
+    const y = pad.t + (1 - lrate(s)/maxLr)*(H-pad.t-pad.b);
+    if(s===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // Labels
+  ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font='10px IBM Plex Mono';
+  ctx.textAlign='right';
+  ctx.fillText('lr',pad.l-4,(H-pad.b-pad.t)*0.1+pad.t);
+  ctx.textAlign='center';
+  [0,10000,20000,30000,40000].forEach(s => {
+    ctx.fillText(s/1000+'k', pad.l+(s/maxStep)*(W-pad.l-pad.r), H-4);
+  });
+  ctx.fillText('Training steps →', W/2, H);
+  // Labels on axes
+  ctx.fillStyle='rgba(245,158,11,0.7)'; ctx.textAlign='left'; ctx.font='bold 10px IBM Plex Mono';
+  ctx.fillText('↑ Linear warmup', wx+6, pad.t+28);
+  ctx.fillStyle='rgba(59,130,246,0.7)';
+  ctx.fillText('→ Decay', wx+100, H-pad.b-20);
+}
+
+// HEADS CHART
+function renderHeadsChart() {
+  const el = document.getElementById('headsChart');
+  if (!el) return;
+  const data = [{h:1,bleu:24.9},{h:4,bleu:25.5},{h:8,bleu:25.8},{h:16,bleu:25.4},{h:32,bleu:25.1}];
+  const max=26.5, min=24.5;
+  el.innerHTML = data.map(d => {
+    const isOpt = d.h===8;
+    const bar = ((d.bleu-min)/(max-min))*100;
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+      <div style="font-family:var(--mono);font-size:11px;color:${isOpt?'var(--amber)':'var(--text3)'};width:48px;text-align:right;">h=${d.h}</div>
+      <div style="flex:1;height:20px;background:var(--bg4);border-radius:3px;overflow:hidden;position:relative;">
+        <div style="height:100%;width:${bar}%;background:${isOpt?'var(--amber)':'var(--text3)'};opacity:${isOpt?1:0.4};border-radius:3px;"></div>
+        <span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:10px;color:var(--text2);">${d.bleu}</span>
+      </div>
+      ${isOpt?'<span style="font-family:var(--mono);font-size:9px;color:var(--amber);">optimal</span>':''}
+    </div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
