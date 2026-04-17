@@ -1,66 +1,63 @@
-# PaperMap — Interactive Research Paper Library
+# PaperMap
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Static HTML](https://img.shields.io/badge/HTML-100%25-blue)](https://github.com/AdilShamim8/PaperMap)
-[![Live](https://img.shields.io/badge/%F0%9F%8C%90-Live_Demo-FF6B6B)](https://papermap.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-FF6B6B)](https://papermap.vercel.app/)
 
-**From dense research papers to interactive, visual learning experiences.**
+PaperMap is an open-source, static-first library of interactive AI paper explainers.
 
-PaperMap transforms landmark AI papers into beautiful, self-contained interactive explainers. Each paper becomes a rich, production-quality educational page featuring animations, live demos, architectural visualizations, and quizzes — all while maintaining a consistent, polished design system.
+The goal is simple: turn dense research papers into visually rich, beginner-friendly, and research-accurate learning experiences.
 
-### Live Explainers
-- **[Attention Is All You Need](https://papermap.vercel.app/paper/Attention_Is_All_You_Need.html)** — The Transformer architecture (Vaswani et al., 2017)
-- **[Language Models are Few-Shot Learners](https://papermap.vercel.app/paper/Language_Models_are_Few_Shot_Learners.html)** — GPT-3 and in-context learning (Brown et al., 2020)
-- **[Training Language Models to Follow Instructions with Human Feedback](https://papermap.vercel.app/paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html)** — RLHF & InstructGPT (Ouyang et al., 2022)
+## Live Library
 
-**[Explore the full library →](https://papermap.vercel.app/)**
+- [Homepage](https://papermap.vercel.app/)
+- [Attention Is All You Need](https://papermap.vercel.app/paper/Attention_Is_All_You_Need.html)
+- [Language Models are Few-Shot Learners](https://papermap.vercel.app/paper/Language_Models_are_Few_Shot_Learners.html)
+- [Training Language Models to Follow Instructions with Human Feedback](https://papermap.vercel.app/paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html)
+- [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://papermap.vercel.app/paper/Retrieval-Augmented%20Generation%20for%20Knowledge-Intensive%20NLP%20Tasks.html)
 
----
+## Why PaperMap
 
-## ✨ Features
+- Interactive explanations instead of static summaries
+- Research-accurate content grounded in original papers
+- Shared visual language across all paper pages
+- Pure HTML, CSS, and JavaScript with no framework overhead
+- Easy to contribute and easy to deploy
 
-- **Highly Interactive** — Token playgrounds, attention visualizations, training pipeline animations, and more
-- **Research-Accurate** — Content is grounded in the original papers with clear references
-- **Static-First** — Pure HTML, CSS, and vanilla JavaScript. No build step, no frameworks, no dependencies
-- **Consistent Design System** — All explainers share the same high-quality UI components and visual language
-- **Mobile-First & Accessible** — Responsive design, keyboard navigation, ARIA labels, and reduced motion support
-- **Easily Extensible** — Add new papers while preserving one unified homepage and style
+## Tech Stack
 
-## Why PaperMap?
-
-Most research papers are difficult to digest. PaperMap bridges the gap between academic writing and deep understanding by turning theory into interactive products.
+- HTML
+- CSS
+- Vanilla JavaScript
+- Static hosting (Vercel, Netlify, GitHub Pages, Cloudflare Pages)
 
 ## Project Structure
 
-```bash
+```text
 PaperMap/
-├── index.html                                      # Homepage + paper catalog
-├── 404.html
-├── assets/
-│   └── favicon.svg
-├── paper/
-│   ├── Attention_Is_All_You_Need.html              # Interactive explainer
-│   ├── Language_Models_are_Few_Shot_Learners.html
-│   └── Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html
-├── LICENSE
-└── README.md
+|- index.html
+|- 404.html
+|- assets/
+|  |- favicon.svg
+|- paper/
+|  |- Attention_Is_All_You_Need.html
+|  |- Language_Models_are_Few_Shot_Learners.html
+|  |- Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.html
+|  |- Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html
+|- robots.txt
+|- sitemap.xml
+|- LICENSE
+|- README.md
 ```
 
-## How to Add a New Paper
+## Run Locally
 
-1. **Create a new HTML file in `paper/`** using clear `Pascal_Case.html` naming (e.g. `BERT.html` or `Diffusion_Models.html`)
-2. **Use an existing explainer as a template** to maintain visual and structural consistency
-3. **Add a new card** in `index.html` under the Paper Library section
-4. **Include proper metadata** in the `<head>` (title, description, Open Graph tags)
-5. **Test thoroughly** on both desktop and mobile
+Option 1:
 
-The architecture is deliberately simple so contributors can focus on creating excellent educational content rather than fighting with tooling.
+Open index.html directly in your browser.
 
-## Local Development
+Option 2 (recommended):
 
-**Option 1 (Simplest):** Just open `index.html` in your browser.
-
-**Option 2 (Recommended):**
 ```bash
 # Python
 python -m http.server 8080
@@ -69,41 +66,53 @@ python -m http.server 8080
 npx serve
 ```
 
-Then visit `http://localhost:8080`
+Then open http://localhost:8080
 
-## Deployment
+## Add a New Paper (Standard Workflow)
 
-This project works on any static hosting platform:
+1. Create a new HTML file inside paper/.
+2. Use an existing paper page as your style and structure template.
+3. Keep naming clean and readable, for example BERT.html or Diffusion_Models.html.
+4. Add your paper card and links in index.html.
+5. Verify responsive behavior on desktop and mobile.
+6. Include complete metadata in the head section.
 
-- **Vercel** (current live site)
-- **Netlify**
-- **GitHub Pages**
-- **Cloudflare Pages**
+## Contributing
 
-For GitHub Pages: Settings → Pages → Deploy from `main` branch (root folder).
+Users and developers are welcome to contribute to this open-source project.
 
-## Roadmap
+If you want an easy, guided process, use the workflow below.
 
-- More foundational papers (BERT, ViTs, Diffusion Models, RAG, etc.)
-- Search & filtering on the homepage
-- Difficulty ratings and estimated reading time
-- Expanded interactive components and quizzes
-- Dark mode support
+## Easy Contribution Workflow (Using Prompt + Claude)
+
+1. Open this document and copy the prompt template:
+   https://docs.google.com/document/d/1PYVkWYqFDUZ6bY1hyAk7zOauGnyIIWjDh44S918wOCM/edit?usp=sharing
+2. Go to Claude AI:
+   https://claude.ai
+3. Paste the prompt you copied from the document.
+4. Provide your paper details: paper name, official publication link, and PDF link (recommended).
+5. Ask Claude to generate a complete HTML explainer.
+6. Download the generated HTML file.
+7. Fork this GitHub repository.
+8. Upload your HTML file into the paper/ folder.
+9. Update index.html so your paper appears on the homepage.
+10. Open a Pull Request.
+
+Congratulations, you are now part of the PaperMap community.
+
+## Pull Request Checklist
+
+1. File added inside paper/.
+2. Homepage card added in index.html.
+3. Links tested locally.
+4. Desktop and mobile layout checked.
+5. Metadata updated (title, description, social tags).
 
 ## Attribution
 
-All explainers are educational derivatives of the original research papers. We greatly respect the work of the original authors.
-
-**Current papers:**
-- "Attention Is All You Need" — Ashish Vaswani, Noam Shazeer, et al.
-- "Language Models are Few-Shot Learners" — Tom Brown, Benjamin Mann, et al.
-- "Training Language Models to Follow Instructions with Human Feedback" — Long Ouyang, Jeffrey Wu, et al.
+All explainers are educational derivatives of original research papers.
+Credit always belongs to the original authors.
 
 ## License
 
-This project is open-sourced under the [MIT License](LICENSE).
-
----
-
-*Built for the AI research and education community.*
-```
+This project is licensed under the [MIT License](LICENSE).
