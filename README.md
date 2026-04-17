@@ -8,6 +8,8 @@ PaperMap is an open-source, static-first library of interactive AI paper explain
 
 The goal is simple: turn dense research papers into visually rich, beginner-friendly, and research-accurate learning experiences.
 
+Current status: 5 live interactive paper explainers.
+
 ## Live Library
 
 - [Homepage](https://papermap.vercel.app/)
@@ -15,6 +17,7 @@ The goal is simple: turn dense research papers into visually rich, beginner-frie
 - [Language Models are Few-Shot Learners](https://papermap.vercel.app/paper/Language_Models_are_Few_Shot_Learners.html)
 - [Training Language Models to Follow Instructions with Human Feedback](https://papermap.vercel.app/paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html)
 - [Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://papermap.vercel.app/paper/Retrieval-Augmented%20Generation%20for%20Knowledge-Intensive%20NLP%20Tasks.html)
+- [LoRA: Low-Rank Adaptation of Large Language Models](https://papermap.vercel.app/paper/LoRA%20Low-Rank%20Adaptation%20of%20Large%20Language%20Models.html)
 
 ## Why PaperMap
 
@@ -42,6 +45,7 @@ PaperMap/
 |- paper/
 |  |- Attention_Is_All_You_Need.html
 |  |- Language_Models_are_Few_Shot_Learners.html
+|  |- LoRA Low-Rank Adaptation of Large Language Models.html
 |  |- Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.html
 |  |- Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html
 |- robots.txt
