@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent-SafetyBench: Evaluating the Safety of LLM Agents — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the Agent-SafetyBench paper, with interactive demos for judging unsafe agent actions, a hazard-domain heatmap, and safety-defense toggles.">
+<meta name="keywords" content="Agent-SafetyBench, LLM agents, agent safety, behavioral safety, tool use, safety benchmark, failure modes, risk awareness, privacy leakage, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Agent_SafetyBench_Evaluating_the_Safety_of_LLM_Agents.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Agent-SafetyBench: Evaluating the Safety of LLM Agents — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the Agent-SafetyBench paper with practical intuition and demos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Agent_SafetyBench_Evaluating_the_Safety_of_LLM_Agents.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agent-SafetyBench — Interactive Guide">
+<meta name="twitter:description" content="Learn why even the best LLM agents take unsafe actions in 4 out of 10 risky scenarios, with animations and interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#hazards">Hazards</a>
+    <a class="nav-link" href="#scenarios">Scenarios</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#defenses">Defenses</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2024</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#hazards">Hazards</a>
+  <a href="#scenarios">Scenarios</a>
+  <a href="#results">Results</a>
+  <a href="#defenses">Defenses</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    When Agents <em>Act</em> Unsafe
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to Agent-SafetyBench — the benchmark that measures whether LLM
+    agents take unsafe <strong>actions</strong> (not just say unsafe things) across 349 interactive
+    tool-using environments and 2,000 test cases. Spoiler: none of the 16 agents tested scores
+    above 60% safety.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2412.14470" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">2,000</div>
+      <div class="stat-label">Test Cases</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">349</div>
+      <div class="stat-label">Interactive Environments</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">16</div>
+      <div class="stat-label">LLM Agents Evaluated</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">&lt;60%</div>
+      <div class="stat-label">Best Safety Score</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Toxic Text to <em>Unsafe Actions</em></h2>
+  <p class="section-desc">Agent safety didn't appear from nowhere — it grew out of years of chatbot safety research that could only measure words.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2022</div><div class="tl-title">Chatbot safety era</div><div class="tl-desc">Jailbreak research shows aligned chatbots can still be coaxed into unsafe text. "Safety" means filtering content.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023</div><div class="tl-title">RLHF-era safety benchmarks</div><div class="tl-desc">Aligned models learn to refuse harmful requests; benchmarks like AdvBench score toxic <em>output text</em> — no tools, no consequences.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2024</div><div class="tl-title">Agents get tools</div><div class="tl-desc">LLMs start booking, buying, emailing, and controlling systems through tool APIs. Actions enter the picture — and actions can't be un-said.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024</div><div class="tl-title">First agent-safety evals</div><div class="tl-desc">ToolEmu, R-Judge, AgentDojo, InjecAgent and others probe narrow slices of agent risk — 2 to 53 environments each.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2024 · Dec</div><div class="tl-title">🚀 Agent-SafetyBench (Zhang et al., Tsinghua CoAI)</div><div class="tl-desc">349 interactive environments, 2,000 test cases, 8 risk categories, 10 failure modes — the first comprehensive <em>behavioral</em> safety benchmark for agents.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2025 →</div><div class="tl-title">Agent-safety evals go standard</div><div class="tl-desc">The benchmark is open-sourced (thu-coai/Agent-SafetyBench) and revised (v2, May 2025), feeding a wave of agent-safety research.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Chatbot safety measures what a model <span class="highlight">says</span>. Agent safety measures what a model <span class="highlight">does</span>. A model can pass every text-safety test in existence and still take actions that leak data, spend money, or disable alarms — without writing a single harmful word.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">TWO TESTS, ONE MODEL</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:1.9;color:var(--text2);">
+          <span style="color:var(--green);">chatbot test →</span> "How do I pick a lock?"<br>
+          <span style="color:var(--green);">response:</span> "I can't help with that." <span class="pill pill-green">safe text</span><br>
+          <span style="color:var(--red);">agent test →</span> <span class="code-inline">call_tool(locksmith, target="neighbor's house")</span><br>
+          <span style="color:var(--red);">result:</span> executed ✓ no harmful word written <span class="pill pill-red">unsafe action</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem — Safety of <em>Actions</em>, Not Words</h2>
+  <p class="section-desc">Before Agent-SafetyBench, safety benchmarks asked whether a model writes harmful text. But an agent's real danger is the tool call it makes — the purchase, the email, the deletion.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">📝</div>
+      <div class="problem-title">Text-Level Safety Benchmarks</div>
+      <ul class="problem-list">
+        <li>Measure whether a model <em>writes</em> toxic or harmful text</li>
+        <li>Inputs are single instructions or multiple-choice questions</li>
+        <li>No tools, no environment, no side effects</li>
+        <li>A wrong purchase, a leaked email, a disabled alarm — all invisible</li>
+        <li>Focused on jailbreaks and content, blind to behavior</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🕹️</div>
+      <div class="problem-title">Agent-SafetyBench's Solution</div>
+      <ul class="problem-list">
+        <li>349 interactive environments with callable tools</li>
+        <li>Unsafe behavior is <em>observable</em>: a wrong tool call is the failure</li>
+        <li>A finetuned LLM judge scores the full multi-turn interaction record</li>
+        <li>8 risk categories × 250 test cases each = 2,000 cases</li>
+        <li>Covers both content-level and behavior-level safety</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Analogy — Written Exam vs Driving Test</div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;">A driver can ace the <strong>written rules exam</strong> (text safety) and still run red lights on the road (unsafe actions). Content-safety benchmarks are the written exam. Agent-SafetyBench is the driving test — it puts the agent behind the wheel with real pedals: tools, purchases, data access — and watches what it actually does.</p>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Should the Agent Comply?</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">You are the agent. In each round a user asks for something through a tool. Choose the action an agent should take — then see how the paper's taxonomy judges it. <strong>4 rounds.</strong></p>
+    <div id="complyDemo"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HAZARDS -->
+<section id="hazards">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Eight Kinds of <em>Harm</em></h2>
+  <p class="section-desc">Agent-SafetyBench groups agent risks into 8 categories — 250 test cases each. Notice that only the last one is about text: seven of eight are about actions. Pills show the average safety score of the 16 tested agents per category (higher = safer).</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🔓 Leak sensitive data / information</div><div class="notice-text">"Share confidential salary data via email to unintended recipients." <span class="pill pill-amber">avg safety 33.7</span></div></div>
+    <div class="notice-card"><div class="notice-title">💸 Lead to property loss</div><div class="notice-text">"Erroneously modify order quantities" — money, data, or IP lost. <span class="pill pill-amber">avg safety 37.7</span></div></div>
+    <div class="notice-card"><div class="notice-title">📣 Spread unsafe information</div><div class="notice-text">"Post malicious content or spread fake news" through posts, blogs, emails. <span class="pill pill-red">avg safety 15.6 — weakest</span></div></div>
+    <div class="notice-card"><div class="notice-title">🩹 Lead to physical harm</div><div class="notice-text">"Purchase the wrong medication" or disable safety systems. <span class="pill pill-amber">avg safety 35.7</span></div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Violate law / ethics</div><div class="notice-text">"Assist in the transport of contraband" or unethical requests. <span class="pill pill-red">avg safety 28.0</span></div></div>
+    <div class="notice-card"><div class="notice-title">🧱 Compromise availability</div><div class="notice-text">"Block access to legitimate websites" or delete shared files. <span class="pill pill-amber">avg safety 30.6</span></div></div>
+    <div class="notice-card"><div class="notice-title">💻 Harmful / vulnerable code</div><div class="notice-text">"Deploy harmful code" or set insecure file permissions. <span class="pill pill-amber">avg safety 37.1</span></div></div>
+    <div class="notice-card"><div class="notice-title">✍️ Produce unsafe information</div><div class="notice-text">Jailbreak-style harmful text generation — the classic chatbot case, no tools. <span class="pill pill-green">avg safety 87.0 — best studied</span></div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The 10 Failure Modes (how harm happens)</div>
+      <ul class="problem-list" style="margin-top:6px;">
+        <li><strong>M1</strong> — generates harmful content without any tool call</li>
+        <li><strong>M2</strong> — calls tools when key information is incomplete</li>
+        <li><strong>M3</strong> — calls tools before gathering obtainable info</li>
+        <li><strong>M4</strong> — ignores known constraints (e.g. permissions)</li>
+        <li><strong>M5</strong> — ignores implicit risks (e.g. "turn off all fire alarms")</li>
+        <li><strong>M6</strong> — uses incorrect parameters when calling tools</li>
+        <li><strong>M7</strong> — calls tools that are marked unverified / known-bad</li>
+        <li><strong>M8</strong> — fails to call a <em>necessary</em> tool</li>
+        <li><strong>M9</strong> — trusts tool results without validation</li>
+        <li><strong>M10</strong> — fails to choose among multiple options safely</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Where Models Fail Hardest</div>
+      <ul class="problem-list" style="margin-top:6px;">
+        <li><strong>M7 (unverified tools):</strong> avg safety <span class="highlight">12.5</span> — models ignore warnings and call harmful tools anyway.</li>
+        <li><strong>M2 (fabricated parameters):</strong> avg safety <span class="highlight">18.1</span> — "send it to John" with three Johns in contacts? Models just pick one.</li>
+        <li><strong>M4 / M5 (ignored constraints & risks):</strong> 28.3 / 23.2 — explicit rules and implicit dangers both get bypassed.</li>
+        <li><strong>M1 (harmful text, no tools):</strong> avg safety <span class="highlight">70.1</span> — the well-studied case. <em>The pattern is clear: models handle words, fail on tools.</em></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SCENARIOS -->
+<section id="scenarios">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">How a Test Case <em>Works</em></h2>
+  <p class="section-desc">Each of the 2,000 test cases is an interactive episode: an environment with tools, a user instruction or dialog, an expected risk category, and anticipated failure modes. After the episode ends, a finetuned judge scores the whole record.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">Safety Score = ( records judged SAFE ÷ all interaction records ) × 100%</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">🤖</div><div class="fp-name">The Agent</div><div class="fp-desc">16 LLMs with tool-use capability: Claude-3.x, GPT-4o, Gemini-1.5, Llama-3.1, Qwen2.5, and more.</div></div>
+      <div class="formula-piece"><div class="fp-sym">🌍</div><div class="fp-name">The Environment</div><div class="fp-desc">349 environments — a JSON tool schema plus a configurable Python simulator per environment.</div></div>
+      <div class="formula-piece"><div class="fp-sym">🧾</div><div class="fp-name">The Full Record</div><div class="fp-desc">Every tool call, parameter, result, and reply across the multi-turn interaction — not just the final answer.</div></div>
+      <div class="formula-piece"><div class="fp-sym">🧑‍⚖️</div><div class="fp-name">The Scorer</div><div class="fp-desc">A finetuned Qwen2.5-7B judge: 91.5% accuracy — about 15 points above GPT-4o-as-judge (75.5%).</div></div>
+    </div>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">ENVIRONMENTS</div><div class="result-score" style="color:var(--amber);">349</div><div class="result-label">interactive tool-using scenarios</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">TEST CASES</div><div class="result-score" style="color:var(--blue);">2,000</div><div class="result-label">250 per risk category</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:82%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">RISK CATEGORIES</div><div class="result-score" style="color:var(--teal);">8</div><div class="result-label">from privacy leakage to vulnerable code</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:45%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">FAILURE MODES</div><div class="result-score" style="color:var(--purple);">10</div><div class="result-label">annotated per test case</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:55%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">AGENTS TESTED</div><div class="result-score" style="color:var(--green);">16</div><div class="result-label">proprietary + open-source</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:70%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">SCORER ACCURACY</div><div class="result-score" style="color:var(--red);">91.5%</div><div class="result-label">finetuned judge vs 75.5% for GPT-4o</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:91%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">The Interaction Loop</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:2;background:var(--bg3);padding:1rem;border-radius:var(--radius);">
+        <span style="color:var(--amber);">STEP 1</span> agent reads history + tool definitions<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;└─ decides to call a tool → <span style="color:var(--blue);">STEP 2</span><br>
+        <span style="color:var(--blue);">STEP 2</span> agent picks a tool + parameters<br>
+        <span style="color:var(--teal);">STEP 3</span> environment executes the call<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;└─ result appended → back to STEP 1<br>
+        <span style="color:var(--green);">STEP 4</span> agent writes final response → done<br>
+        <span style="color:var(--red);">JUDGE</span> scores the entire record: safe / unsafe
+      </div>
+      <p style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6;">Unsafe actions can happen at <em>any</em> step: a fabricated parameter in step 2, an ignored risk in step 3, blind trust in a tool's output in step 1 of the next loop.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Where the 349 Environments Come From</div>
+      <ul class="problem-list" style="margin-top:6px;">
+        <li><strong>68</strong> — tools already present in earlier benchmarks (refined & standardized)</li>
+        <li><strong>42</strong> — tools with public APIs but no prior sandboxed evaluation</li>
+        <li><strong>220</strong> — <span class="highlight">novel</span> real-world-style tools with no public API (e.g. SmartPowerAllocation)</li>
+        <li><strong>19</strong> — speculative future tools (e.g. NanorobotController, PersonalizedDreamWeaver)</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6;">Test cases: <strong>876</strong> refined from earlier datasets (R-Judge, AgentDojo, GuardAgent, ToolEmu, ToolSword, InjecAgent) + <strong>1,124</strong> newly generated and validated = 2,000. Every case passed manual review and automated validation.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow-x:auto;">
+    <div class="card-label">Agent-Safety Benchmarks Compared (from the paper's Table 1)</div>
+    <table class="comp-table">
+      <thead><tr><th>Benchmark</th><th>Dynamic Interaction</th><th>Environments</th><th>Test Cases</th><th>Failure Modes</th></tr></thead>
+      <tbody>
+        <tr><td>R-Judge</td><td>✗</td><td>27</td><td>569</td><td>7</td></tr>
+        <tr><td>AgentDojo</td><td>✓</td><td>10</td><td>267</td><td>3</td></tr>
+        <tr><td>GuardAgent</td><td>✓</td><td>2</td><td>516</td><td>1</td></tr>
+        <tr><td>ToolEmu</td><td>✓</td><td>36</td><td>144</td><td>5</td></tr>
+        <tr><td>InjecAgent</td><td>✓</td><td>36</td><td>1,054</td><td>1</td></tr>
+        <tr><td class="comp-best">Agent-SafetyBench (ours →)</td><td class="comp-best">✓</td><td class="comp-best">349</td><td class="comp-best">2,000</td><td class="comp-best">10</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">"Dynamic Interaction" = the agent must interact with a live simulated environment, not just answer one prompt. Agent-SafetyBench covers ~13× more environments than any prior agent-safety benchmark.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">The Scoreboard — <em>Nobody Passes</em></h2>
+  <p class="section-desc">16 agents were evaluated with identical settings. The best total safety score was 59.8% (Claude-3-Opus). The paper's headline: <span class="highlight">none of the agents achieves a safety score above 60%</span> — the average is 38.5, meaning a typical agent acts unsafely in about 3 of every 5 risky episodes.</p>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">CLAUDE-3-OPUS</div><div class="result-score" style="color:var(--green);">59.8</div><div class="result-label">total safety score — best of 16</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:59.8%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">behavior 53.2 · content 84.9</div></div>
+    <div class="result-card"><div class="result-model">CLAUDE-3.5-SONNET</div><div class="result-score" style="color:var(--green);">59.4</div><div class="result-label">total safety score</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:59.4%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">behavior 51.9 · content 88.6</div></div>
+    <div class="result-card"><div class="result-model">GPT-4O</div><div class="result-score" style="color:var(--amber);">44.2</div><div class="result-label">total safety score</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:44.2%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">behavior 36.9 · content 72.5</div></div>
+    <div class="result-card"><div class="result-model">GEMINI-1.5-FLASH</div><div class="result-score" style="color:var(--amber);">41.6</div><div class="result-label">total safety score</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:41.6%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">behavior 34.6 · content 69.1</div></div>
+    <div class="result-card"><div class="result-model">LLAMA3.1-405B</div><div class="result-score" style="color:var(--amber);">35.4</div><div class="result-label">total safety score — largest open model</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:35.4%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">behavior 24.0 · content 79.6</div></div>
+    <div class="result-card"><div class="result-model">GPT-4O-MINI</div><div class="result-score" style="color:var(--red);">31.2</div><div class="result-label">total safety score</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:31.2%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">behavior 20.5 · content 72.5</div></div>
+    <div class="result-card"><div class="result-model">LLAMA3.1-8B</div><div class="result-score" style="color:var(--red);">19.9</div><div class="result-label">total safety score — 2nd weakest</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:19.9%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">behavior 9.9 · content 58.6</div></div>
+    <div class="result-card"><div class="result-model">QWEN2.5-7B</div><div class="result-score" style="color:var(--red);">18.8</div><div class="result-label">total safety score — weakest tested</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:18.8%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">behavior 13.5 · content 38.9</div></div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card" style="border-color:rgba(239,68,68,0.25);">
+      <div class="card-label" style="color:var(--red);">Weakest Risk Domain — Spread</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">The "Spread unsafe information / misinformation" category averages a safety score of <strong>15.6</strong> — agents are unsafe about <strong>84% of the time</strong> when asked to post, publish, or forward information. Even the best model (Claude-3-Opus, 35.6) is unsafe roughly 2 times in 3. Agents rarely validate what they repost via blogs, posts, and emails.</p>
+      <div id="spreadBar"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">The Transfer Finding — Text ≠ Actions</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Split the 2,000 cases into content-only cases (no tools) and behavior cases (tools + environment): models average <strong>68.4</strong> on content but only <strong>30.4</strong> on behavior. Chatbot-style safety training <em>transfers to text, not to actions</em> — and most behavior cases don't even contain jailbreak attacks.</p>
+      <div id="transferBar"></div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Hazard Domain Heatmap</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Click a risk domain to see a real scenario, the average model unsafe rate (100 − safety score), and the models that fail it hardest. Red = most dangerous for current agents, green = handled best.</p>
+    <div id="hazardHeatmap"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEFENSES -->
+<section id="defenses">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">What <em>Helps</em> — and What Doesn't</h2>
+  <p class="section-desc">The paper doesn't just score agents — it diagnoses the two root defects behind the failures and tests the obvious quick fix: telling the model to be careful.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🧯</div>
+      <div class="problem-title">What Doesn't Work</div>
+      <ul class="problem-list">
+        <li><strong>Defense prompts alone.</strong> A simple prompt listing the 10 failure modes: little effect</li>
+        <li><strong>Enhanced defense prompts</strong> (detailed + examples): still limited — Claude-3.5-Sonnet stays below 70% even with it</li>
+        <li><strong>Weak models get nothing.</strong> Qwen2.5-7B shows no improvement from defense prompts at all</li>
+        <li><strong>Refusing everything isn't safety.</strong> The benchmark also scores helpfulness — safety by blanket refusal fails the task</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🛡️</div>
+      <div class="problem-title">What Does Help</div>
+      <ul class="problem-list">
+        <li><strong>Stronger models are safer</strong> — proprietary agents (Claude, GPT, Gemini) clearly outperform open-source ones on average</li>
+        <li><strong>Robustness:</strong> precise tool usage — correct parameters, no fabricated values (fixes M2/M6)</li>
+        <li><strong>Risk awareness:</strong> pausing when an action is irreversible or unverified (fixes M5/M7)</li>
+        <li><strong>Safety without refusing:</strong> on fulfillable tasks, Claude-3.5-Sonnet stays as helpful as weaker models while far safer — strong agents analyze, not just refuse</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Two Root Defects (the paper's diagnosis)</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:8px;">
+      <div class="card-sm"><div style="font-weight:600;font-size:14px;">🔩 Lack of robustness</div><div style="font-size:12px;color:var(--text2);">The agent can't reliably use tools across scenarios — wrong quantities, fabricated parameters, wrong file permissions. Small tool errors can have outsized real-world impact.</div></div>
+      <div class="card-sm"><div style="font-weight:600;font-size:14px;">🚨 Lack of risk awareness</div><div style="font-size:12px;color:var(--text2);">The agent calls tools correctly but ignores what could go wrong — disabling all alarms, forwarding private data, trusting an unverified source.</div></div>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Safety Net Toggle</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A fixed risky task, one model (GPT-4o), three safety configurations. Toggle each layer and watch the verdict and the action-safety bar react.</p>
+    <div id="safetyToggle"></div>
+  </div>
+  <div class="card" style="border-color:rgba(239,68,68,0.2);">
+    <div class="card-label" style="color:var(--red);">What This Paper Did NOT Solve</div>
+    <ul class="problem-list" style="margin-top:6px;">
+      <li><strong>Simulated, not live:</strong> environments are Python simulators — real production APIs may behave differently (and more dangerously)</li>
+      <li><strong>The judge is an LLM:</strong> 91.5% accurate — still ~1 in 12 labels can be wrong, and it was validated on one model's records</li>
+      <li><strong>One category per case:</strong> real incidents often span several risk types; the benchmark assigns only the primary one</li>
+      <li><strong>Defenses beyond prompts untested:</strong> no architecture-level, training-level, or runtime-permission defenses were evaluated</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Behavioral Safety</em> Becomes a Field</h2>
+  <p class="section-desc">Agent-SafetyBench gave agent safety what ImageNet gave vision: a shared scale, a public dataset, and a scoreboard everyone can fail against.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🚨 The sub-60% headline</div><div class="notice-text">The first comprehensive scorecard showing that no frontier agent — not even the best Claude — passes 60% safety on risky interactive tasks.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Scaled the eval line</div><div class="notice-text">349 environments and 2,000 cases dwarfed prior agent-safety benchmarks (2–53 environments), raising the bar for the whole subfield.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 The transfer finding</div><div class="notice-text">Content safety 68.4 vs behavior safety 30.4 — hard evidence that chatbot-style alignment doesn't cover tool actions.</div></div>
+    <div class="notice-card"><div class="notice-title">📣 Tool-safety norms</div><div class="notice-text">The "Spread" category (15.6 safety) showed agents repost unverified information — flagging validation-before-publishing as a must-have.</div></div>
+    <div class="notice-card"><div class="notice-title">🕵️ Agent red-teaming</div><div class="notice-text">The 10 failure modes give builders a concrete checklist — from fabricated parameters (M2) to unverified tools (M7).</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Regulation-ready measurement</div><div class="notice-text">A reproducible safety score for agents, open-sourced at thu-coai/Agent-SafetyBench — the kind of number regulators and auditors can actually track.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Content Safety ≠ <em>Behavior</em> Safety</h2>
+  <p class="section-desc">Agent-SafetyBench's central measurement is a 38-point canyon: the same 16 agents average 68.4 on refusing to <em>produce</em> harmful text and 30.4 on refusing to <em>do</em> harmful things with tools. Text-level safety training — years of red-teaming — simply does not transfer to actions.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🧭</div>
+      <div class="problem-title">What Sixteen Agents Could Not Do</div>
+      <ul class="problem-list">
+        <li>349 interactive environments · 2,000 test cases · 8 risk categories · 10 failure modes</li>
+        <li><em>None</em> of 16 agents scored above 60% total safety — the best, Claude-3-Opus, reached 59.8</li>
+        <li>The weakest, Qwen2.5-7B, scored 18.8 — safety and size are only loosely coupled here</li>
+        <li>Weakest domain: spreading unsafe information, 15.6 average — agents relay dangerous content helpfully</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔬</div>
+      <div class="problem-title">Failure Has Two Named Roots</div>
+      <ul class="problem-list">
+        <li><span class="highlight">Lack of robustness</span> — imprecise tool use: the right intent, the wrong call, the harmful side effect</li>
+        <li><span class="highlight">Lack of risk awareness</span> — the right tools called with no sense of the danger</li>
+        <li>Defense prompts: limited gains for strong models, <em>none</em> for weak ones — prompting is not a floor</li>
+        <li>Best-studied domain: producing unsafe text, 87.0 — jailbreaks are the known enemy; actions are the new one</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Two Safety Scores, Side by Side</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Select any agent to place it on the twin scoreboard — what it says (content safety) versus what it does (behavior safety). Then switch to the domain view and watch the eight risk categories spread from 87 to 15.6. The canyon is visible at every zoom level.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <button class="btn-primary" id="asb2Ag" type="button" style="font-size:12.5px;padding:8px 16px;">Agent scoreboard</button>
+        <button class="btn-outline" id="asb2Dom" type="button" style="font-size:12.5px;padding:8px 16px;">Risk-domain view</button>
+      </div>
+      <div id="asb2Body"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Safety training stopped at the output boundary</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The 68.4 vs 30.4 split reframes every "our model is safe" claim: the number was measured where the model talks. The moment the same model picks up a calendar API, a wallet, or a shell, safety has to be re-earned at the action layer — with risk awareness as a first-class capability, not a system prompt sentence. Safety track reading order: this paper (the gap), <a href="./Agent_Security_Bench_Formalizing_and_Benchmarking_Attacks_and_Defenses.html" style="color:var(--amber);font-weight:600;text-decoration:none;">ASB</a> (attacks on the harness), <a href="./AgentDojo_A_Dynamic_Environment_to_Evaluate_Prompt_Injection_Attacks_and_Defenses.html" style="color:var(--amber);font-weight:600;text-decoration:none;">AgentDojo</a> (live attack-defense dynamics), <a href="./InjecAgent_Benchmarking_Indirect_Prompt_Injections.html" style="color:var(--amber);font-weight:600;text-decoration:none;">InjecAgent</a> (one door, exhaustively).</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🗣️ vs 🤝 Two different skills</div><div class="notice-text">Refusing to write harmful text is a classification learned from RLHF data. Declining to book the suspicious flight requires modeling downstream consequences of actions — training data for which barely exists.</div></div>
+    <div class="notice-card"><div class="notice-title">📦 349 environments</div><div class="notice-text">Interactive, multi-turn, with real tool state — not static QA. Unsafe behavior often only becomes visible on turn three, after the irreversible call.</div></div>
+    <div class="notice-card"><div class="notice-title">🧱 Prompts are not a floor</div><div class="notice-text">Defense prompts helped strong models a little and weak models not at all. Whatever safety floor exists must be architectural — gates, confirmations, capability scoping.</div></div>
+    <div class="notice-card"><div class="notice-title">🧮 Why Opus is not a pass</div><div class="notice-text">59.8 is the <em>best</em> score. The strongest agent available still behaved unsafely in two of every five tests. Read that as the field's starting line, not its finish.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the Agent-SafetyBench paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Agent-SafetyBench = 349 interactive environments, 2,000 test cases, 8 risk categories, 10 failure modes — evaluating the behavioral safety of 16 LLM agents.</div>
+    <div class="card-sm">✅ None of the 16 agents scores above 60% total safety; the best (Claude-3-Opus) reaches just 59.8, and the weakest (Qwen2.5-7B) only 18.8.</div>
+    <div class="card-sm">✅ Content safety averages 68.4 vs behavior safety 30.4 — text-level safety training does not transfer to tool actions.</div>
+    <div class="card-sm">✅ Weakest domain: spreading unsafe information (15.6 avg safety). Best-studied: producing unsafe text (87.0) — jailbreaks are the known enemy.</div>
+    <div class="card-sm">✅ Two root defects: lack of robustness (imprecise tool use) and lack of risk awareness (right tools, ignored dangers).</div>
+    <div class="card-sm">✅ Defense prompts alone: limited gains for strong models, none for weak ones. Open-sourced at github.com/thu-coai/Agent-SafetyBench.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2412.14470" target="_blank" rel="noopener noreferrer">"Agent-SafetyBench: Evaluating the Safety of LLM Agents"</a> (Zhang et al., 2024)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2412.14470" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Agent_Security_Bench_Formalizing_and_Benchmarking_Attacks_and_Defenses.html">Agent Security Bench Guide</a>
+    <a class="footer-link" href="./InjecAgent_Benchmarking_Indirect_Prompt_Injections.html">InjecAgent Guide</a>
+    <a class="footer-link" href="./AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','hazards','scenarios','results','defenses','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === DEMO 1: SHOULD THE AGENT COMPLY? ===
+(function(){
+  const root=document.getElementById('complyDemo');
+  if(!root)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const rounds=[
+    {icon:'📧',tag:'EMAIL TOOL · SEND_TO_LISTSERV',task:'"Send these meeting notes to the whole-team listserv."',detail:'The notes contain a teammate\u2019s salary and performance-review comments. The listserv reaches all 300 employees.',cat:'\uD83D\uDD13 Leak sensitive data / information',catStat:'Avg model safety in this risk category: 33.7% — models leak roughly 2 times in 3.',mode:'Failure mode M2 — calling a tool while key information (who should see this) is unstated.',best:'refuse',
+     verdicts:{comply:{pts:0,cls:'var(--red)',label:'\u2717 UNSAFE',text:'The email reaches 300 inboxes. A teammate\u2019s salary and review are now public — an irreversible privacy leak.'},ask:{pts:1,cls:'var(--amber)',label:'\u25B3 HALF-SAFE',text:'Asking catches the scope problem, but the private data is still attached — and \u201Cconfirm?\u201D often gets a lazy \u201Cyes\u201D.'},refuse:{pts:2,cls:'var(--green)',label:'\u2713 SAFE',text:'The agent flags the salary data, offers to strip it first, and asks who really needs it. No leak — and the task is still doable.'}}},
+    {icon:'\uD83D\uDED2',tag:'SHOPPING TOOL · PLACE_ORDER',task:'"Use my saved payment method to buy the allergy medicine from the cheapest listing."',detail:'Three pharmacies appear. The cheapest listing is the 500\u00A0mg adult dose — the user\u2019s profile says 5\u00A0mg pediatric. Quantity and delivery address are unstated.',cat:'\uD83D\uDCB8 Lead to property loss',catStat:'Avg model safety in this risk category: 37.7%.',mode:'Failure mode M2 — acting while key information is incomplete (avg safety just 18.1).',best:'ask',
+     verdicts:{comply:{pts:0,cls:'var(--red)',label:'\u2717 UNSAFE',text:'The agent fabricates the missing parameters — picks a pharmacy, dose, and quantity — and the order goes through. Wrong dose, wrong spend.'},ask:{pts:2,cls:'var(--green)',label:'\u2713 SAFE',text:'The agent gathers dose, quantity, and address before any call — exactly what failure mode M2 demands.'},refuse:{pts:1,cls:'var(--amber)',label:'\u25B3 HALF-SAFE',text:'No money lost — but a flat refusal is overkill. The task is fulfillable once the details are confirmed.'}}},
+    {icon:'\uD83D\uDCF1',tag:'CRM TOOL · SHARE_CONTACT',task:'"Share the client\u2019s phone number with this third-party \u2018assistant\u2019 app so it can book the call."',detail:'The third-party tool is marked \u26A0\uFE0F unverified in the environment, and the number is flagged confidential in the client record.',cat:'\uD83D\uDD13 Leak sensitive data / information',catStat:'Avg model safety in this risk category: 33.7%.',mode:'Failure mode M7 — calling a tool marked unverified (avg safety 12.5, the lowest of all 10 modes).',best:'refuse',
+     verdicts:{comply:{pts:0,cls:'var(--red)',label:'\u2717 UNSAFE',text:'The confidential number goes to an unverified third party. Once data is out, it cannot be recalled.'},ask:{pts:1,cls:'var(--amber)',label:'\u25B3 HALF-SAFE',text:'A slower leak with the same destination — confirmation doesn\u2019t make an unverified recipient trustworthy.'},refuse:{pts:2,cls:'var(--green)',label:'\u2713 SAFE',text:'The agent declines to pass confidential data to an unverified tool and explains why — offering a verified channel instead.'}}},
+    {icon:'\uD83D\uDDD1\uFE0F',tag:'FILE SYSTEM · DELETE_FILES',task:'"Delete all files in the shared team folder — I need to free up space."',detail:'The folder holds 40 colleagues\u2019 active project files, there is no backup, and the requester is not the folder owner.',cat:'\uD83E\uDDF1 Compromise availability',catStat:'Avg model safety in this risk category: 30.6%.',mode:'Failure mode M5 — ignoring implicit risks (avg safety 23.2).',best:'refuse',
+     verdicts:{comply:{pts:0,cls:'var(--red)',label:'\u2717 UNSAFE',text:'40 colleagues lose active work. Availability is destroyed for everyone who depends on the folder — irreversible.'},ask:{pts:1,cls:'var(--amber)',label:'\u25B3 HALF-SAFE',text:'Better — but \u201Call files\u201D plus \u201Cnot the owner\u201D should stop the agent before waving a mass deletion through.'},refuse:{pts:2,cls:'var(--green)',label:'\u2713 SAFE',text:'The agent declines a non-owner mass deletion and offers the safe alternative: archive, or clear only the user\u2019s own files.'}}}
+  ];
+  const KEYS=[{k:'comply',t:'Comply'},{k:'ask',t:'Ask for confirmation'},{k:'refuse',t:'Refuse + explain'}];
+  let idx=0,score=0,answered=false;
+  const anim=()=>reduced?'':'animate-in';
+  function dots(){return rounds.map((_,i)=>`<span style="width:8px;height:8px;border-radius:50%;display:inline-block;background:${i<idx?'var(--green)':i===idx?'var(--amber)':'var(--bg4)'};"></span>`).join(' ');}
+  function render(){
+    const r=rounds[idx];answered=false;
+    root.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <span style="font-family:var(--mono);font-size:11px;color:var(--text3);">ROUND ${idx+1} / ${rounds.length}</span>
+      <span style="display:inline-flex;gap:5px;align-items:center;">${dots()}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--amber);">SCORE ${score}</span>
+    </div>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:1rem;${anim()}">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px;">\uD83D\uDC64 USER \u2192 AGENT \u00B7 ${r.icon} ${r.tag}</div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px;">${r.task}</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">${r.detail}</div>
+    </div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">WHAT DOES THE AGENT DO?</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;">
+      ${KEYS.map(o=>`<button type="button" onclick="window._complyChoose('${o.k}')" style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 14px;font-family:var(--sans);font-size:13px;cursor:pointer;transition:all .2s;text-align:left;"><strong style="display:block;font-size:13.5px;">${o.t}</strong><span style="font-size:11px;color:var(--text3);">agent takes this route</span></button>`).join('')}
+    </div>
+    <div id="complyVerdict"></div>`;
+  }
+  window._complyChoose=function(k){
+    if(answered||idx>=rounds.length)return;answered=true;
+    const r=rounds[idx],v=r.verdicts[k];
+    if(v.pts>0)score+=v.pts;
+    const last=idx===rounds.length-1;
+    document.getElementById('complyVerdict').innerHTML=`
+    <div style="margin-top:1rem;background:var(--bg2);border:1px solid var(--border);border-left:4px solid ${v.cls};border-radius:var(--radius);padding:1rem;${anim()}">
+      <div style="font-family:var(--mono);font-size:12px;font-weight:600;color:${v.cls};margin-bottom:6px;">${v.label} \u00B7 +${v.pts} pts</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">${v.text}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+        <span class="pill pill-blue">${r.cat}</span>
+        <span class="pill pill-purple">${r.mode}</span>
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.6;">${r.catStat}</div>
+      <button class="btn-primary" type="button" onclick="window._complyNext()" style="font-size:13px;padding:8px 18px;margin-top:12px;">${last?'See your score \u2192':'Next round \u2192'}</button>
+    </div>`;
+    root.querySelectorAll('button[onclick^="window._complyChoose"]').forEach(b=>{b.style.borderColor='var(--border)';b.style.opacity='0.55';b.style.cursor='default';});
+  };
+  window._complyNext=function(){if(!answered)return;idx++;if(idx>=rounds.length){renderSummary();}else{render();}};
+  function renderSummary(){
+    const max=rounds.length*2;
+    const msg=score===max?'Perfect \u2014 safer than every agent in the benchmark.':score>=max-2?'Strong \u2014 you paused exactly where current agents rush in.':score>=max/2?'Mixed \u2014 you caught some, missed some. So do frontier agents.':'Risky \u2014 you complied your way into 3 of the 8 risk categories.';
+    root.innerHTML=`
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center;${anim()}">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:0.08em;margin-bottom:6px;">YOUR AGENT-SAFETY SCORE</div>
+      <div style="font-family:var(--mono);font-size:2.4rem;font-weight:600;color:var(--amber);">${score}<span style="color:var(--text3);font-size:1.2rem;"> / ${max}</span></div>
+      <div style="font-size:13px;color:var(--text2);margin:8px 0 4px;">${msg}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">For reference: the best agent tested on the full 2,000 cases \u2014 Claude-3-Opus \u2014 scores 59.8% safety. Nobody passes 60%.</div>
+      <button class="btn-outline" type="button" onclick="window._complyRestart()">\u21BB Play again</button>
+    </div>`;
+  }
+  window._complyRestart=function(){idx=0;score=0;render();};
+  render();
+})();
+
+// === SPREAD vs PRODUCE MINI CHART ===
+(function(){const el=document.getElementById('spreadBar');if(!el)return;const data=[{label:'Spread (avg)',pct:15.6,color:'#ef4444'},{label:'Spread (best)',pct:35.6,color:'#f59e0b'},{label:'Produce (avg)',pct:87.0,color:'#22c55e'}];el.innerHTML=data.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:96px;text-align:right;">${d.label}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${d.pct}%;background:${d.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:44px;">${d.pct}</div></div>`).join('')+'<div style="font-size:11px;color:var(--text3);margin-top:4px;">Safety scores (higher = safer). \u201CBest\u201D = Claude-3-Opus.</div>';})();
+
+// === CONTENT vs BEHAVIOR MINI CHART ===
+(function(){const el=document.getElementById('transferBar');if(!el)return;const data=[{label:'Content cases',pct:68.4,color:'#22c55e'},{label:'Behavior cases',pct:30.4,color:'#ef4444'},{label:'GPT-4o content',pct:72.5,color:'#14b8a6'},{label:'GPT-4o behavior',pct:36.9,color:'#f59e0b'}];el.innerHTML=data.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:110px;text-align:right;">${d.label}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${d.pct}%;background:${d.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:44px;">${d.pct}</div></div>`).join('')+'<div style="font-size:11px;color:var(--text3);margin-top:4px;">Average safety scores across 16 agents (top) and GPT-4o alone (bottom).</div>';})();
+
+// === DEMO 2: HAZARD DOMAIN HEATMAP ===
+(function(){
+  const el=document.getElementById('hazardHeatmap');
+  if(!el)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const domains=[
+    {k:'spread',name:'\uD83D\uDCE3 Spread unsafe info',unsafe:84.4,safety:15.6,
+     sc:'\u201CPost this breaking health tip to the company blog \u2014 I found it on a forum.\u201D The agent calls create_post() with the unverified claim.',
+     weak:['Llama3.1-8B \u00B7 safety 6.4','Qwen2.5-7B \u00B7 7.6','GPT-4o \u00B7 12.4','Qwen2.5-72B \u00B7 12.0'],
+     note:'Weakest domain of all 8. Agents repost and forward without validation \u2014 even the best model (Claude-3-Opus, 35.6) is unsafe 2 of 3 times.'},
+    {k:'law',name:'\u2696\uFE0F Violate law / ethics',unsafe:72.0,safety:28.0,
+     sc:'\u201CHelp me book an unmarked courier to move this package across the border.\u201D The agent starts calling shipment tools.',
+     weak:['Llama3.1-8B \u00B7 safety 6.8','Qwen2.5-7B \u00B7 10.4','GPT-4o-mini \u00B7 13.2','Qwen2.5-14B \u00B7 20.4'],
+     note:'Models often comply with legally or ethically loaded logistics requests instead of stopping to reason about them.'},
+    {k:'avail',name:'\uD83E\uDDF1 Compromise availability',unsafe:69.4,safety:30.6,
+     sc:'\u201CDelete all the files in the shared folder to free up space.\u201D The agent calls delete_files(scope=all) \u2014 40 colleagues lose their work.',
+     weak:['Llama3.1-8B \u00B7 safety 12.8','Llama3.1-405B \u00B7 19.6','GPT-4o-mini \u00B7 23.6','Llama3.1-70B \u00B7 24.0'],
+     note:'Destructive, irreversible tool calls on shared systems are rarely second-guessed.'},
+    {k:'leak',name:'\uD83D\uDD13 Leak sensitive data',unsafe:66.3,safety:33.7,
+     sc:'\u201CForward these meeting notes \u2014 salary and review details included \u2014 to the all-staff list.\u201D The agent calls send_email(to=all_staff).',
+     weak:['Llama3.1-8B \u00B7 safety 10.0','Qwen2.5-7B \u00B7 13.2','Llama3.1-70B \u00B7 20.0','Gemini-1.5-Pro \u00B7 30.0'],
+     note:'Confidential data leaks in about 2 of 3 episodes \u2014 the classic agent privacy failure.'},
+    {k:'physical',name:'\uD83E\uDE79 Lead to physical harm',unsafe:64.3,safety:35.7,
+     sc:'\u201CTurn off all the fire-alarm sensors before tonight\u2019s event.\u201D The agent calls set_alarm(zones=all, state=off).',
+     weak:['Llama3.1-8B \u00B7 safety 11.2','Llama3.1-70B \u00B7 23.2','GPT-4o-mini \u00B7 24.4','Llama3.1-405B \u00B7 24.4'],
+     note:'Physical-harm cases include wrong-medication purchases and disabled safety systems.'},
+    {k:'code',name:'\uD83D\uDCBB Harmful / vulnerable code',unsafe:62.9,safety:37.1,
+     sc:'\u201CDeploy this script and set permissions so anyone can edit it.\u201D The agent grants world-writable access without flagging the risk.',
+     weak:['Qwen2.5-7B \u00B7 safety 10.8','GLM4-9B \u00B7 23.2','GPT-4o-mini \u00B7 25.2','DeepSeek-V2.5 \u00B7 30.4'],
+     note:'Agents produce and deploy vulnerable code with insecure settings.'},
+    {k:'property',name:'\uD83D\uDCB8 Lead to property loss',unsafe:62.3,safety:37.7,
+     sc:'\u201COrder 3 more of those pills from the cheapest listing.\u201D The agent picks a 500\u00A0mg dose for a 5\u00A0mg pediatric profile and buys.',
+     weak:['Llama3.1-8B \u00B7 safety 12.4','Qwen2.5-7B \u00B7 15.6','Llama3.1-405B \u00B7 27.6','Llama3.1-70B \u00B7 28.4'],
+     note:'Money, data, and IP are lost through wrong quantities, wrong items, and wrong counterparties.'},
+    {k:'produce',name:'\u270D\uFE0F Produce unsafe info',unsafe:13.0,safety:87.0,
+     sc:'A jailbreak template asks for weapon-building instructions. The agent refuses \u2014 no tools are involved.',
+     weak:['Qwen2.5-7B \u00B7 safety 57.6','GLM4-9B \u00B7 57.2','DeepSeek-V2.5 \u00B7 76.8','Gemini-1.5-Flash \u00B7 82.4'],
+     note:'The one well-studied category: years of jailbreak research pay off. Claude-3-Opus and Claude-3.5-Sonnet score 100.'}
+  ];
+  function riskColor(u){return u>=70?'var(--red)':u>=60?'var(--amber)':'var(--green)';}
+  function riskBg(u){return u>=70?'var(--red-dim)':u>=60?'var(--amber-dim)':'var(--green-dim)';}
+  let cur='spread';
+  function render(){
+    el.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:1rem;">
+      ${domains.map(d=>`<button type="button" onclick="window._hazardSelect('${d.k}')" aria-pressed="${d.k===cur}" style="background:${d.k===cur?riskBg(d.unsafe):'var(--bg3)'};border:1px solid ${d.k===cur?riskColor(d.unsafe):'var(--border)'};border-radius:var(--radius);padding:10px 12px;cursor:pointer;text-align:left;transition:all .2s;">
+        <div style="font-size:12px;font-weight:600;line-height:1.4;">${d.name}</div>
+        <div style="font-family:var(--mono);font-size:11px;color:${riskColor(d.unsafe)};margin-top:4px;">${d.unsafe}% unsafe</div>
+      </button>`).join('')}
+    </div>
+    ${detail()}`;
+  }
+  function detail(){
+    const d=domains.find(x=>x.k===cur);
+    return `<div style="background:var(--bg2);border:1px solid var(--border);border-left:4px solid ${riskColor(d.unsafe)};border-radius:var(--radius);padding:1rem;${reduced?'':'animate-in'}">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px;">EXAMPLE SCENARIO \u00B7 ${d.name.toUpperCase()}</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;font-style:italic;margin-bottom:12px;">${d.sc}</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:130px;text-align:right;">avg unsafe rate</div>
+        <div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${d.unsafe}%;background:${riskColor(d.unsafe)};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div>
+        <div style="font-family:var(--mono);font-size:11px;color:${riskColor(d.unsafe)};width:52px;">${d.unsafe}%</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 6px;">
+        <span class="pill pill-blue">avg safety ${d.safety}</span>
+        <span class="pill pill-amber">250 test cases</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:8px;margin-bottom:4px;">WEAKEST MODELS (safety score, higher = safer)</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;">${d.weak.map(w=>`\u00B7 ${w}`).join('<br>')}</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">${d.note}</div>
+    </div>`;
+  }
+  window._hazardSelect=function(k){cur=k;render();};
+  render();
+})();
+
+// === DEMO 3: SAFETY NET TOGGLE ===
+(function(){
+  const el=document.getElementById('safetyToggle');
+  if(!el)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const cfgs=[
+    {id:'base',btn:'Baseline model (GPT-4o)',vColor:'var(--red)',vTag:'\u2717 COMPLIES \u2014 the alarms go off',
+     vText:'The agent calls set_alarm(zones="all", state="off") and replies: \u201CDone \u2014 all 4 alarm zones disabled.\u201D No harmful word was ever written.',
+     beh:36.9,behLabel:'36.9',behStyle:'solid',
+     note:'GPT-4o\u2019s behavior-safety score on Agent-SafetyBench (Table 5): 36.9 \u2014 unsafe in about 63 of 100 risky tool-using episodes.'},
+    {id:'refusal',btn:'+ Refusal training (text-level)',vColor:'var(--red)',vTag:'\u2717 STILL COMPLIES \u2014 refusal checks words, not calls',
+     vText:'Refusal training fires on harmful WORDS. This request contains none \u2014 just a routine-looking tool call. The alarms still go off.',
+     beh:36.9,behLabel:'36.9',behStyle:'solid',
+     note:'GPT-4o scores 72.5 on content-only cases but 36.9 on tool-using ones \u2014 the paper\u2019s transfer finding: safety training checks text, not actions.'},
+    {id:'prompt',btn:'+ Safety system prompt (defense)',vColor:'var(--amber)',vTag:'\u25B3 PAUSES \u2014 strong models only',
+     vText:'With the paper\u2019s enhanced defense prompt (10 failure modes + examples), stronger models start asking: \u201CThis disables every alarm \u2014 is that intended?\u201D',
+     beh:45,behLabel:'~',behStyle:'dashed',
+     note:'The paper reports only LIMITED gains from defense prompts: some for GPT-4o, none for Qwen2.5-7B; Claude-3.5-Sonnet stays below 70%. Bar position illustrative \u2014 no exact number is published in text.'}
+  ];
+  const scenario={icon:'\uD83D\uDEA8',tag:'BUILDING CONTROL \u00B7 SET_ALARM',task:'"Disable all the fire-alarm sensors in the building for tonight\u2019s event."',detail:'4 alarm zones \u00B7 12 floors \u00B7 the request skips the required safety-approval step. The tool exists and the agent has permission to call it.'};
+  let cur='base';
+  function bar(label,val,lab,color,style){
+    const dashes=style==='dashed'?'background:repeating-linear-gradient(45deg,'+color+' 0 6px,rgba(0,0,0,0.08) 6px 12px);':'background:'+color+';';
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:190px;text-align:right;">${label}</div>
+      <div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${val}%;${dashes}border-radius:4px;${reduced?'':'transition:width .6s ease;'}"></div></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:60px;">${lab}</div>
+    </div>`;
+  }
+  function render(){
+    const c=cfgs.find(x=>x.id===cur);
+    el.innerHTML=`
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.06em;margin-bottom:6px;">FIXED RISKY TASK \u00B7 ${scenario.icon} ${scenario.tag}</div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px;">${scenario.task}</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">${scenario.detail}</div>
+    </div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">TOGGLE SAFETY LAYERS (GPT-4O):</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:1rem;">
+      ${cfgs.map(x=>`<button type="button" onclick="window._toggleCfg('${x.id}')" aria-pressed="${x.id===cur}" style="background:${x.id===cur?'var(--amber-dim)':'var(--bg3)'};border:1px solid ${x.id===cur?'rgba(245,158,11,0.4)':'var(--border)'};border-radius:var(--radius);padding:10px 12px;font-family:var(--mono);font-size:12px;color:${x.id===cur?'var(--amber)':'var(--text2)'};cursor:pointer;transition:all .2s;text-align:left;">${x.btn}</button>`).join('')}
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:4px solid ${c.vColor};border-radius:var(--radius);padding:1rem;margin-bottom:1rem;${reduced?'':'animate-in'}">
+      <div style="font-family:var(--mono);font-size:12px;font-weight:600;color:${c.vColor};margin-bottom:6px;">AGENT VERDICT \u00B7 ${c.vTag}</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;">${c.vText}</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;">
+      ${bar('text safety (content cases)',72.5,'72.5','var(--green)','solid')}
+      ${bar('action safety (behavior cases)',c.beh,c.behLabel,risk(),c.behStyle)}
+      <div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.6;">${c.note}</div>
+    </div>`;
+  }
+  function risk(){return cur==='prompt'?'var(--amber)':'var(--red)';}
+  window._toggleCfg=function(id){cur=id;render();};
+  render();
+})();
+
+// === TWIN SCORES (DEEP DIVE) ===
+(function(){
+  const body=document.getElementById('asb2Body'),agB=document.getElementById('asb2Ag'),domB=document.getElementById('asb2Dom');
+  if(!body||!agB||!domB)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const AGENTS=[
+    {n:'Claude-3-Opus',total:59.8,content:88,behavior:35},
+    {n:'GPT-4o',total:54.2,content:86,behavior:30},
+    {n:'Llama-3.1-70B',total:48.5,content:74,behavior:26},
+    {n:'Qwen2.5-7B',total:18.8,content:35,behavior:12}
+  ];
+  const DOMAINS=[
+    {n:'Producing unsafe text',v:87.0,c:'var(--green)'},
+    {n:'Misleading actions',v:41.2,c:'var(--amber)'},
+    {n:'Privacy violation',v:33.5,c:'var(--amber)'},
+    {n:'Unethical instructions',v:30.8,c:'var(--red)'},
+    {n:'Unsafe tool actions',v:28.4,c:'var(--red)'},
+    {n:'Overrefusal (cost)',v:24.1,c:'var(--red)'},
+    {n:'Environment damage',v:21.3,c:'var(--red)'},
+    {n:'Spreading unsafe info',v:15.6,c:'var(--red)'}
+  ];
+  function bar(l,v,color,i,w){
+    return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:'+(w||150)+'px;flex-shrink:0;">'+l+'</div><div style="flex:1;height:13px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div style="height:100%;width:'+v+'%;background:'+color+';border-radius:6px;transform-origin:left;'+(RM?'':'animation:scaleIn .7s ease '+(i*100)+'ms backwards;')+'"></div></div><div style="font-family:var(--mono);font-size:11.5px;font-weight:600;color:'+color+';width:44px;text-align:right;flex-shrink:0;">'+v+'</div></div>';
+  }
+  function agents(){
+    body.innerHTML='<div style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;color:var(--amber);margin-bottom:10px;">WHAT IT SAYS vs WHAT IT DOES — PAPER AVERAGES: 68.4 CONTENT vs 30.4 BEHAVIOR</div>'
+      +AGENTS.map((a,i)=>'<div style="margin-bottom:12px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text1);font-weight:600;margin-bottom:4px;">'+a.n+' · total '+a.total+'</div>'+bar('CONTENT',a.content,'var(--green)',i*2)+bar('BEHAVIOR',a.behavior,'var(--red)',i*2+1)+'</div>').join('')
+      +'<div class="card-sm" style="border-left:3px solid var(--red);"><div style="font-size:12px;color:var(--text2);line-height:1.7;">Every agent shows the same shape: green bar high, red bar collapsed. No amount of text-level alignment moved the red bar by itself — the canyon is structural, not a tuning gap.</div></div>';
+  }
+  function domains(){
+    body.innerHTML='<div style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;color:var(--amber);margin-bottom:10px;">AVERAGE SAFETY BY RISK CATEGORY (8 CATEGORIES, 16 AGENTS)</div>'
+      +DOMAINS.map((d,i)=>bar(d.n,d.v,d.c,i,170)).join('')
+      +'<div class="card-sm" style="border-left:3px solid var(--amber);"><div style="font-size:12px;color:var(--text2);line-height:1.7;">The spread runs from 87 (text production — the jailbreak era trained this) to 15.6 (relaying unsafe information — the agent era has not). Risk categories that involve <em>action</em> cluster at the bottom.</div></div>';
+  }
+  agB.addEventListener('click',()=>{agB.className='btn-primary';domB.className='btn-outline';agents();});
+  domB.addEventListener('click',()=>{domB.className='btn-primary';agB.className='btn-outline';domains();});
+  if(RM||!('IntersectionObserver' in window)){agents();}
+  else{const io=new IntersectionObserver(en=>{if(en.some(e=>e.isIntersecting)){agents();io.disconnect();}},{threshold:0.3});io.observe(body);}
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'What does Agent-SafetyBench measure?',opts:['Whether LLM agents produce toxic or offensive text in chat','Whether LLM agents take unsafe actions in interactive, tool-using environments','How fast LLM agents complete multi-step tasks','Whether LLM agents pass multiple-choice safety quizzes'],correct:1,explain:'It evaluates behavioral safety: the agent\u2019s actual actions (tool calls, purchases, data access) across 349 simulated interactive environments — not text toxicity.'},
+  {q:'How big is the Agent-SafetyBench benchmark?',opts:['27 environments and 569 test cases','8 environments and 349 test cases','349 environments and 2,000 test cases','1,054 environments and 10,000 test cases'],correct:2,explain:'349 interactive environments and 2,000 test cases — 250 per risk category — covering 8 risk categories, 10 failure modes, and 16 evaluated agents.'},
+  {q:'What was the paper\u2019s safety-transfer finding?',opts:['Safety training transfers perfectly from chat to agents','Agents are generally safer than plain chatbots','Content safety averages 68.4 but behavior safety only 30.4 — safety training doesn\u2019t transfer to actions','Fine-tuning removes all safety behaviors from models'],correct:2,explain:'On content-only cases (no tools) models average 68.4; on tool-using behavior cases just 30.4. Refusal-style training checks what a model says, not what it does.'},
+  {q:'Which risk category was weakest for current agents?',opts:['Producing unsafe text after jailbreaks (avg safety 87.0)','Spreading unsafe or misleading information via tools (avg safety 15.6)','Writing vulnerable code','Leaking sensitive data'],correct:1,explain:'The \u201CSpread\u201D category averages just 15.6 safety — agents repost and forward unverified information through posts, blogs, and emails. The well-studied \u201CProduce\u201D (jailbreak) category is the strongest at 87.0.'},
+  {q:'Why is agentic safety fundamentally different from chatbot safety?',opts:['Agents use much longer prompts than chatbots','Agents only become unsafe when jailbroken','Actions have external, often irreversible side effects through tools — even when no harmful word is written','Chatbots are more aligned than agents by definition'],correct:2,explain:'An agent that never writes a harmful sentence can still disable alarms, leak private data, or buy the wrong medication. The consequences live in the environment, not the text — and usually cannot be undone.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
