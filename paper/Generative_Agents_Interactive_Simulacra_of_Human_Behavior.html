@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generative Agents: Interactive Simulacra of Human Behavior — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the Generative Agents paper, with live demos for memory-stream retrieval, the reflection cascade, and emergent information diffusion in a 25-agent town.">
+<meta name="keywords" content="Generative Agents, LLM agents, memory stream, retrieval, reflection, planning, Smallville, believable agents, UIST 2023, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Generative Agents: Interactive Simulacra of Human Behavior — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the paper that gave 25 LLM agents a memory stream, reflection, and daily plans — and watched a party emerge.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Generative Agents — Interactive Guide">
+<meta name="twitter:description" content="Learn how memory, retrieval, reflection, and planning turned LLMs into a believable town, with animations and interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#architecture">Architecture</a>
+    <a class="nav-link" href="#reflection">Reflection</a>
+    <a class="nav-link" href="#emergence">Emergence</a>
+    <a class="nav-link" href="#evaluation">Evaluation</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">UIST 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#reflection">Reflection</a>
+  <a href="#emergence">Emergence</a>
+  <a href="#evaluation">Evaluation</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    A Town Where <em>Memories</em> Live<br>Generative Agents
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the Stanford paper that gave 25 LLM-powered residents of a
+    Sims-like town a memory stream, reflections, and daily plans — and watched a Valentine's
+    Day party emerge from a single seed of intent.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2304.03442" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">25</div>
+      <div class="stat-label">Agents in Smallville</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Architecture Layers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1</div>
+      <div class="stat-label">Seed → Emergent Party</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Scripted Chatbots to a <em>Living Town</em></h2>
+  <p class="section-desc">Generative Agents landed in April 2023, right when LLMs had knowledge but no continuity. Here is the road that led to Smallville.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2017</div><div class="tl-title">Scripted chatbots</div><div class="tl-desc">Rule-based assistants follow conversation trees and intent matching. Every session starts from zero — nothing is remembered.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2020</div><div class="tl-title">Neural dialogue, no memory</div><div class="tl-desc">Open-domain chatbots hold a short context window, but personality and history evaporate the moment a session ends.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2022</div><div class="tl-title">LLMs: knowledge without continuity</div><div class="tl-desc">ChatGPT-era models know a lot, yet are stateless — the same question an hour later gets an answer from a stranger.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Apr</div><div class="tl-title">🚀 Generative Agents</div><div class="tl-desc">Park et al. give 25 agents a full memory architecture and let them loose in a Sims-like sandbox, Smallville, for two game days.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2023 · Summer</div><div class="tl-title">The "AI town" wave</div><div class="tl-desc">Open-source recreations and agent-town demos spread within months — the paper's architecture becomes the reference recipe.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2024 → 25</div><div class="tl-title">Memory becomes a research line</div><div class="tl-desc">Systems like MemGPT and A-MEM, and surveys of LLM-agent memory, build directly on the memory–reflect–retrieve pattern.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Believability over time is a <span class="highlight">memory problem</span>, not a scale problem. A stateless LLM, asked "what should I do now?", will do something plausible each moment — but eat lunch at 12:00, again at 12:30, and again at 1:00. The fix is not a bigger model; it is a record: <strong>store experiences, retrieve what matters, reflect, plan</strong>.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+        <span style="color:var(--red);">12:00 pm</span> — Klaus has lunch at Hobbs Cafe<br>
+        <span style="color:var(--red);">12:30 pm</span> — Klaus has lunch (again)<br>
+        <span style="color:var(--red);">01:00 pm</span> — Klaus has lunch (again!)<br>
+        <span style="color:var(--green);">with planning →</span> lunch at 12:00, research at the library at 1:00, walk in the park at 3:00
+      </div>
+      <div style="font-size:12px;color:var(--text3);margin-top:8px;">The paper's own example of moment-by-moment believability failing without planning.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem — <em>Stateless</em> Minds</h2>
+  <p class="section-desc">Before this paper, an LLM agent could roleplay a person for one conversation — but could not stay a person across days, relationships, and events.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🫥</div>
+      <div class="problem-title">A Stateless LLM</div>
+      <ul class="problem-list">
+        <li>No memory — every session starts from zero</li>
+        <li>No consistent persona — no record of past choices to stay in character</li>
+        <li>No social life — cannot form relationships or share news with others</li>
+        <li>Plausible per moment, incoherent over time (the triple lunch)</li>
+        <li>Cannot generalize from raw experience into higher-level conclusions</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🏘️</div>
+      <div class="problem-title">The Generative Agent Stack</div>
+      <ul class="problem-list">
+        <li>Memory stream — every experience recorded in natural language</li>
+        <li>Retrieval — relevance + recency + importance selects what matters</li>
+        <li>Reflection — periodic higher-level inferences, stored like memories</li>
+        <li>Planning — day schedules, revised when the world intervenes</li>
+        <li>25 agents running this loop together in one simulated town</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">The Analogy</div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;">A raw LLM is like a person with <span class="highlight">anterograde amnesia</span> — brilliant in the moment, unable to form new memories. The architecture hands them a diary and a routine: <strong>write down every experience</strong> (memory stream), <strong>look up what matters</strong> (retrieval), <strong>reread and draw conclusions</strong> (reflection), and <strong>plan tomorrow from what the diary says</strong> (planning). With the diary, an agent you met yesterday actually remembers you today.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Architecture — A <em>Stack</em> of Memory, Reflection, and Plans</h2>
+  <p class="section-desc">The paper's core contribution is an architecture that turns a stateless LLM into an agent that remembers, synthesizes, and plans. Everything runs on <span class="code-inline">gpt-3.5-turbo</span> (ChatGPT) inside a Phaser game engine sandbox.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-bottom:1.5rem;">
+    <div class="card-sm"><div style="font-size:1.6rem;">📝</div><div style="font-weight:600;font-size:14px;margin-bottom:4px;">1 · Memory Stream</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Every observation is stored as a natural-language record with a timestamp and an LLM-scored importance (1–10). The stream only grows.</div></div>
+    <div class="card-sm"><div style="font-size:1.6rem;">🔍</div><div style="font-weight:600;font-size:14px;margin-bottom:4px;">2 · Retrieval</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Each memory is scored on relevance + recency + importance; the top-ranked memories that fit the context window enter the prompt.</div></div>
+    <div class="card-sm"><div style="font-size:1.6rem;">💭</div><div style="font-weight:600;font-size:14px;margin-bottom:4px;">3 · Reflection</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">When recent importance crosses a threshold, the agent synthesizes higher-level inferences — which re-enter the stream as memories.</div></div>
+    <div class="card-sm"><div style="font-size:1.6rem;">🗓️</div><div style="font-weight:600;font-size:14px;margin-bottom:4px;">4 · Planning + Reaction</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Days are planned top-down (5–8 chunks → hours → 5–15 min), stored like memories, and regenerated when something happens.</div></div>
+  </div>
+
+  <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.5rem;margin-bottom:2rem;font-family:var(--mono);font-size:13px;color:var(--text2);text-align:center;line-height:2;">
+    perceive <span style="color:var(--amber);">→</span> store in stream <span style="color:var(--amber);">→</span> retrieve top memories <span style="color:var(--amber);">→</span> act / converse <span style="color:var(--amber);">→</span> (importance sums high?) <span style="color:var(--amber);">→</span> reflect <span style="color:var(--amber);">→</span> (re)plan
+  </div>
+
+  <div class="formula-card">
+    <div class="formula-main">score = α<sub>recency</sub>·recency + α<sub>importance</sub>·importance + α<sub>relevance</sub>·relevance</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:6px;">The retrieval score that decides which memories enter the agent's context. In the paper, all α = 1.</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">recency</div><div class="fp-name">Exponential decay</div><div class="fp-desc">0.995 raised to the power of the game-hours since the memory was last retrieved — the morning stays in the attentional sphere.</div></div>
+      <div class="formula-piece"><div class="fp-sym">importance</div><div class="fp-name">LLM poignancy score</div><div class="fp-desc">An integer from 1 (mundane, e.g. brushing teeth) to 10 (poignant, e.g. a breakup) assigned when the memory is created.</div></div>
+      <div class="formula-piece"><div class="fp-sym">relevance</div><div class="fp-name">Cosine similarity</div><div class="fp-desc">Similarity between the embedding of the memory and the embedding of the current query situation.</div></div>
+      <div class="formula-piece"><div class="fp-sym">[0, 1]</div><div class="fp-name">Min-max normalization</div><div class="fp-desc">Each of the three scores is min-max normalized across the stream, then summed with equal weights.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Memory Stream Retrieval (Centerpiece)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:0.75rem;">You are Isabella's retrieval function, on the morning of Feb 14 — one hour before she finalizes plans for the Valentine's Day party (5–7 pm at Hobbs Cafe). Adjust the weights and watch the stream re-rank. The top-3 memories are what Isabella "thinks about".</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
+      <span style="font-family:var(--mono);font-size:11px;color:var(--text3);">PRESETS:</span>
+      <button class="btn-outline" id="presetRecent" type="button" style="font-size:12px;padding:6px 14px;">⏱ Last hour</button>
+      <button class="btn-outline" id="presetRelevant" type="button" style="font-size:12px;padding:6px 14px;">🎉 Party-related</button>
+      <button class="btn-outline" id="presetImportant" type="button" style="font-size:12px;padding:6px 14px;">⭐ High importance</button>
+      <button class="btn-primary" id="presetPaper" type="button" style="font-size:12px;padding:6px 14px;">Paper default (α = 1)</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1rem;">
+      <div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:4px;">α recency: <span id="wRecVal" style="color:var(--amber);font-weight:600;">1.0</span></div><input type="range" id="wRec" min="0" max="2" step="0.1" value="1" style="width:100%;accent-color:var(--amber);"></div>
+      <div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:4px;">α importance: <span id="wImpVal" style="color:var(--amber);font-weight:600;">1.0</span></div><input type="range" id="wImp" min="0" max="2" step="0.1" value="1" style="width:100%;accent-color:var(--amber);"></div>
+      <div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:4px;">α relevance: <span id="wRelVal" style="color:var(--amber);font-weight:600;">1.0</span></div><input type="range" id="wRel" min="0" max="2" step="0.1" value="1" style="width:100%;accent-color:var(--amber);"></div>
+    </div>
+    <div id="retrievalFormula" style="font-family:var(--mono);font-size:12px;color:var(--amber);background:var(--bg3);border-radius:var(--radius);padding:8px 12px;margin-bottom:1rem;overflow-x:auto;white-space:nowrap;"></div>
+    <div id="memStream" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div id="retrievalOutcome" style="margin-top:1rem;font-size:12px;color:var(--text2);line-height:1.7;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.2);border-radius:var(--radius);padding:10px 14px;"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6;">Timestamps, recency decay (0.995/game-hour), and importance follow the paper's implementation. Relevance values are illustrative stand-ins for embedding cosine similarity; memories marked (✓) are drawn from the paper's own examples.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- REFLECTION -->
+<section id="reflection">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title"><em>Reflection</em> — When Memories Become Insight</h2>
+  <p class="section-desc">Raw observations pile up but do not generalize. Reflection synthesizes them into higher-level thoughts that re-enter the memory stream — recursively building a "self".</p>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">How a Reflection Forms</div>
+      <ol style="padding-left:1.2rem;font-size:13px;color:var(--text2);line-height:1.9;">
+        <li><strong>Trigger:</strong> when the importance scores of recently perceived events sum past a threshold (150 in the paper), the agent reflects — roughly 2–3 times a day.</li>
+        <li><strong>Question:</strong> the LLM reads the 100 most recent records and proposes salient questions, e.g. <em>"What topic is Klaus Mueller passionate about?"</em></li>
+        <li><strong>Synthesis:</strong> the questions retrieve relevant memories (including earlier reflections), and the LLM extracts insights that cite their evidence: <em>"Klaus Mueller is dedicated to his research on gentrification (because of 1, 2, 8, 15)"</em>.</li>
+        <li><strong>Storage:</strong> the insight is stored in the memory stream like any observation — with pointers to the memories it cited — so later retrievals can use it.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <div class="card-label">Why It Matters — the Gift Question</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:0.75rem;">Asked what to buy Wolfgang for his birthday, Maria <strong>without reflections</strong> says she does not know what he likes — despite many interactions stored as raw observations.</p>
+      <div style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius);padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:10px;">Maria (no reflection): "I don't know what Wolfgang likes…"</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:0.75rem;">With reflections in her stream, Maria synthesizes what her memories imply:</p>
+      <div style="background:var(--green-dim);border:1px solid rgba(34,197,94,0.2);border-radius:var(--radius);padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--text2);">Maria (with reflection): "Since he's interested in mathematical music composition, I could get him some books… or maybe special software."</div>
+      <p style="font-size:11px;color:var(--text3);margin-top:10px;">Both quotes are from the paper's evaluation (§6.5.3).</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Reflection Cascade</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Run Klaus's reflection: watch seed memories become a question, then an insight, then a new memory — and finally see it change a future decision.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="reflectRunBtn" type="button" style="font-size:13px;padding:8px 18px;">▶ Run reflection</button>
+      <button class="btn-outline" id="reflectResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="reflectStage" style="background:#0f172a;border-radius:var(--radius-lg);padding:1.25rem;font-family:var(--mono);font-size:12.5px;color:#cbd5e1;line-height:1.6;min-height:150px;"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6;">Seed memories, the generated question, and the cited insight are the paper's real examples; the final decision flip (Wolfgang → Maria) is the paper's §4.2 outcome. Verdict lines are paraphrased.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EMERGENCE -->
+<section id="emergence">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Emergence — A Party Nobody <em>Planned</em></h2>
+  <p class="section-desc">The paper's most-loved result: give one agent one seed of intent, and a town's worth of invitations, decorations, crushes, and RSVPs follow — with no user intervention.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">The Valentine's Day Party — a 4-beat story (all events from the paper)</div>
+    <div class="timeline" style="margin-top:10px;">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">THE SEED · FEB 13</div><div class="tl-title">One user-specified notion</div><div class="tl-desc">Isabella Rodriguez, who works at Hobbs Cafe, is initialized with a single intent: throw a Valentine's Day party from 5 to 7 pm on February 14. Nothing else is scripted.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">FEB 13 · DAYTIME</div><div class="tl-title">Invitations + decoration</div><div class="tl-desc">Isabella invites friends and customers whenever she sees them, spends the afternoon decorating the cafe, gathers materials, and enlists help. Maria, a close friend, agrees to help decorate.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">FEB 13 · NIGHT</div><div class="tl-title">A crush acts</div><div class="tl-desc">Maria's character description says she has a crush on Klaus. That night, she invites Klaus to join her at the party — and he gladly accepts.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">FEB 14 · 5 PM</div><div class="tl-title">The party happens</div><div class="tl-desc">Five agents — including Klaus and Maria — show up at Hobbs Cafe at 5 pm and enjoy the festivities. Meanwhile 12 agents in total had heard about the party through conversation chains.</div></div>
+    </div>
+  </div>
+
+  <div class="results-grid" style="margin-bottom:1.5rem;">
+    <div class="result-card"><div class="result-model">INFO DIFFUSION · PARTY</div><div class="result-score" style="color:var(--amber);">52%</div><div class="result-label">agents who knew (1 → 13 of 25), none hallucinated it</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:52%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">INFO DIFFUSION · ELECTION</div><div class="result-score" style="color:var(--blue);">32%</div><div class="result-label">agents who knew about Sam's mayoral run (1 → 8 of 25)</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:32%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">RELATIONSHIPS</div><div class="result-score" style="color:var(--teal);">0.74</div><div class="result-label">network density after two days, up from 0.167</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:74%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">COORDINATION</div><div class="result-score" style="color:var(--green);">5/12</div><div class="result-label">invited agents who showed up at 5 pm on Feb 14</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:42%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Party Diffusion</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Press "Spread the word" to advance time and watch the invitation travel through Smallville by pure conversation — the graph below shows 6 of the 25 agents.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
+      <button class="btn-primary" id="diffuseBtn" type="button" style="font-size:13px;padding:8px 18px;">📣 Spread the word</button>
+      <button class="btn-outline" id="diffuseResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-left:4px;">t = <span id="diffuseStep" style="color:var(--amber);font-weight:600;">0</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);white-space:nowrap;">AGENTS WHO KNOW:</div>
+      <div style="flex:1;height:18px;background:var(--bg4);border-radius:9px;overflow:hidden;"><div id="diffuseBar" style="height:100%;width:4%;background:linear-gradient(90deg,var(--amber),var(--teal));border-radius:9px;transition:width .6s ease;transform-origin:left;"></div></div>
+      <div id="diffuseCount" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;white-space:nowrap;">1 / 25</div>
+    </div>
+    <div id="diffuseNodes" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1rem;"></div>
+    <div id="diffuseLog" style="font-family:var(--mono);font-size:12px;color:var(--text2);display:flex;flex-direction:column;gap:6px;min-height:24px;"></div>
+    <div id="diffuseResult" style="display:none;margin-top:1rem;background:var(--green-dim);border:1px solid rgba(34,197,94,0.25);border-radius:var(--radius);padding:12px 14px;font-size:13px;color:var(--text2);line-height:1.7;"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.6;">Node layout and intermediate conversation chains are illustrative; the end counts — 12 agents heard (13 knew, 52%), none hallucinated, 5 of 12 invited attended — are the paper's verified numbers (§7.1).</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EVALUATION -->
+<section id="evaluation">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Evaluation — Do Humans <em>Believe</em> Them?</h2>
+  <p class="section-desc">The team "interviewed" agents with 25 questions across five categories — self-knowledge, memory, plans, reactions, and reflections — and had 100 human evaluators rank the answers for believability.</p>
+
+  <div class="results-grid" style="margin-bottom:1.5rem;">
+    <div class="result-card"><div class="result-model">FULL ARCHITECTURE</div><div class="result-score" style="color:var(--amber);">μ 29.89</div><div class="result-label">TrueSkill believability — ranked most believable of all conditions</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">NO REFLECTION (OBS + PLANS)</div><div class="result-score" style="color:var(--blue);">μ 26.88</div><div class="result-label">losing reflections drops the ranking measurably</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:90%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">NO REFLECTION, NO PLANNING</div><div class="result-score" style="color:var(--teal);">μ 25.64</div><div class="result-label">observations only — plausible but shallow answers</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:86%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">HUMAN CROWDWORKERS</div><div class="result-score" style="color:var(--purple);">μ 22.95</div><div class="result-label">roleplaying the agents after watching their lives — a baseline the full architecture beats</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:77%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">NO MEMORY AT ALL (PRIOR WORK)</div><div class="result-score" style="color:var(--red);">μ 21.21</div><div class="result-label">the stateless-LLM-agent condition of earlier papers</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:71%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Statistical Punchline</div>
+      <ul class="problem-list" style="margin-top:6px;">
+        <li><strong>Every component matters:</strong> each removal of reflection / planning / observation significantly lowered believability (Kruskal-Wallis H(4)=150.29, p&lt;0.001; all pairwise differences p&lt;0.001 except crowdworkers vs. no-memory).</li>
+        <li><strong>Huge effect size:</strong> full architecture vs. the no-memory condition ≈ 8 standard deviations (Cohen's d = 8.16).</li>
+        <li><strong>Beats the human baseline:</strong> 100 evaluators ranked the full architecture's interview answers above crowdworker-authored roleplay.</li>
+        <li><strong>Consistent selves:</strong> agents like Abigail Chen introduce themselves consistently — memory keeps answers aligned with identity.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">What It Did NOT Solve</div>
+      <ul class="problem-list" style="margin-top:6px;">
+        <li><strong>Cost:</strong> simulating 25 agents for two days cost thousands of dollars in token credits and took multiple days of compute.</li>
+        <li><strong>Retrieval misses:</strong> Tom remembered what to discuss <em>at</em> the party but not that the party existed.</li>
+        <li><strong>Embellishments:</strong> 1.3% of 453 awareness answers were hallucinated — Isabella "confirmed" an announcement Sam never made; Yuriko described her neighbor Adam Smith as the author of <em>Wealth of Nations</em>.</li>
+        <li><strong>Instruction-tuned politeness:</strong> agents came out overly formal and cooperative — Isabella rarely said no to others' party ideas, and her interests drifted toward theirs.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>Town</em> That Launched a Genre</h2>
+  <p class="section-desc">Generative Agents turned "agent memory" from a hack into a named architecture — and became the template for a whole wave of LLM-agent systems.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🏘️ The AI-town wave</div><div class="notice-text">Open-source recreations and "AI town" demos spread within months of the paper, each reimplementing the memory–reflect–plan loop over a map of agents.</div></div>
+    <div class="notice-card"><div class="notice-title">🧠 Agent memory as a research line</div><div class="notice-text">The memory stream became the reference design for LLM-agent memory systems — with follow-ups making it hierarchical, compressible, and cheaper.</div></div>
+    <div class="notice-card"><div class="notice-title">📄 MemGPT & A-MEM lineage</div><div class="notice-text">MemGPT (OS-style paging for LLM memory) and A-MEM (agentic memory that organizes itself) both build on the stream-plus-synthesis idea this paper established.</div></div>
+    <div class="notice-card"><div class="notice-title">🎮 Believable NPCs</div><div class="notice-text">Games and interactive fiction picked up the recipe: NPCs who remember the player, form opinions, and coordinate — instead of scripted dialogue trees.</div></div>
+    <div class="notice-card"><div class="notice-title">🔬 Social simulation</div><div class="notice-text">Sociologists and economists used generative agents to prototype social systems and test theories — simulated focus groups and synthetic populations.</div></div>
+    <div class="notice-card"><div class="notice-title">💡 The core lesson</div><div class="notice-text">Environment + memory = agent. A plain LLM plus a well-designed record-keeping loop already produces believable, consistent, social behavior — no new model weights required.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The Retrieval Formula Behind a <em>Believable</em> Town</h2>
+  <p class="section-desc">Strip away the Sims aesthetic and the 25 agents run on one equation: score = relevance + recency + importance. What made the Smallville experiment science was the ablation — remove any term and human raters found the agents significantly less believable. The formula, not the LLM alone, is the architecture.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">🧮</div>
+      <div class="problem-title">Three Signals, One Score</div>
+      <ul class="problem-list">
+        <li><span class="highlight">Relevance</span> — embedding similarity to the current situation: what is <em>useful</em> now</li>
+        <li><span class="highlight">Recency</span> — exponential decay, 0.995 per game-hour: what is <em>fresh</em></li>
+        <li><span class="highlight">Importance</span> — the LLM scores each memory 1–10 at write time: what <em>mattered</em></li>
+        <li>All weights α = 1 — even, un-tuned, and each one load-bearing in the ablation</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">🧪</div>
+      <div class="problem-title">What the Ablations Proved</div>
+      <ul class="problem-list">
+        <li>Full architecture: believability μ = 29.89 — every removal scored significantly lower</li>
+        <li>Drop reflection and agents lose long-range reasoning ("why" chains)</li>
+        <li>Drop planning and behavior degrades into reactive drifting</li>
+        <li>Emergence demo: from one seed mention, 13/25 agents learned of the party — 5 of 12 invitees attended, unprompted by any user</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Score the Memory Stream</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A real-shaped retrieval moment: Klaus (a pharmacy student) is asked to plan a study group. Watch every memory get scored on the three terms, watch the composite rank them, and watch the top three flow into context. Reflection triggers at importance-sum ≥ 150 — keep an eye on the running total.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:10px;">SITUATION · "Klaus is organizing a study group for the chemistry midterm."</div>
+      <div id="gaStream" style="display:grid;gap:8px;margin-bottom:14px;"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <button class="btn-primary" id="gaScore" type="button" style="font-size:12.5px;padding:8px 16px;">▶ Run retrieval</button>
+        <span id="gaStatus" style="font-family:var(--mono);font-size:10.5px;color:var(--text3);">importance running total: 0 / 150 to reflection</span>
+      </div>
+      <div id="gaReflect" style="display:none;margin-top:12px;"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Believability is an information-retrieval property</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The uncomfortable reading of the ablations: the LLM was constant across conditions — only what it was shown changed, and humans could tell. Memory <em>selection</em> is where agent personality actually lives. The lineage runs forward through this whole track: <a href="./MemGPT_Towards_LLMs_as_Operating_Systems.html" style="color:var(--amber);font-weight:600;text-decoration:none;">MemGPT</a> replaces the scoring function with an OS-style manager, <a href="./A_MEM_Agentic_Memory_for_LLM_Agents.html" style="color:var(--amber);font-weight:600;text-decoration:none;">A-MEM</a> lets notes evolve, and <a href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LongMemEval</a> finally measures whether any of it works at scale.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">⏱️ The 0.995 decay</div><div class="notice-text">A memory from 10 game-hours ago retains ~95% of its recency score; from 100 hours, ~61%. Gentle decay — enough to prefer freshness without amnesia.</div></div>
+    <div class="notice-card"><div class="notice-title">💭 Reflections cite evidence</div><div class="notice-text">A reflection ("Klaus values academic community") links to the memories it came from — provenance-chained synthesis, the idea A-MEM later generalized into note evolution.</div></div>
+    <div class="notice-card"><div class="notice-title">🎲 Emergence, carefully</div><div class="notice-text">13/25 agents hearing about a party looks like magic, but each hop is one retrieval + one conversation. The magic is that nobody scripted the hops.</div></div>
+    <div class="notice-card"><div class="notice-title">🪞 Humans as ground truth</div><div class="notice-text">Believability was rated by humans on the agents' interview answers — the evaluation pattern later benchmarks made automatic with LLM judges.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the Generative Agents paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ 25 agents in a Sims-like town (Smallville), each backed by gpt-3.5-turbo with identity, relationships, and memory.</div>
+    <div class="card-sm">✅ The 4-layer architecture: memory stream → retrieval → reflection → planning + reaction.</div>
+    <div class="card-sm">✅ Retrieval score = relevance + recency + importance (all α = 1; recency decays at 0.995 per game-hour; importance is LLM-scored 1–10).</div>
+    <div class="card-sm">✅ Reflections trigger at an importance-sum threshold (150), cite their evidence, and re-enter the stream as memories.</div>
+    <div class="card-sm">✅ Emergence: from 1 seed, 13/25 agents (52%) learned of the party and 5 of 12 invited attended — no user intervention.</div>
+    <div class="card-sm">✅ Humans ranked the full architecture most believable (μ = 29.89) — every ablation significantly reduced believability.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2304.03442" target="_blank" rel="noopener noreferrer">"Generative Agents: Interactive Simulacra of Human Behavior"</a> (Park et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2304.03442" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT Guide</a>
+    <a class="footer-link" href="./A_Survey_on_the_Memory_Mechanism_of_LLM_Based_Agents.html">LLM Agent Memory Survey Guide</a>
+    <a class="footer-link" href="./A_MEM_Agentic_Memory_for_LLM_Agents.html">A-MEM Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','architecture','reflection','emergence','evaluation','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === DEMO 1: MEMORY STREAM RETRIEVAL ===
+(function(){
+  const streamEl=document.getElementById('memStream');
+  const formulaEl=document.getElementById('retrievalFormula');
+  const outcomeEl=document.getElementById('retrievalOutcome');
+  if(!streamEl||!formulaEl||!outcomeEl)return;
+  const sRec=document.getElementById('wRec'),sImp=document.getElementById('wImp'),sRel=document.getElementById('wRel');
+  const wRecV=document.getElementById('wRecVal'),wImpV=document.getElementById('wImpVal'),wRelV=document.getElementById('wRelVal');
+  if(!sRec||!sImp||!sRel)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  // h = game-hours before "now" (Feb 14, 8:00 am); imp = paper's 1-10 poignancy; rel = illustrative cosine-similarity stand-in
+  const mems=[
+    {t:'Woke up and got ready for the day',ts:'Feb 14 · 6:30 am',h:1.5,imp:1,rel:0.10,tag:''},
+    {t:'Isabella is setting out the pastries',ts:'Feb 14 · 7:00 am',h:1.0,imp:2,rel:0.15,tag:'✓'},
+    {t:'Chatted with a customer about the rainy weather',ts:'Feb 14 · 7:30 am',h:0.5,imp:2,rel:0.05,tag:''},
+    {t:'Isabella and Maria Lopez are conversing about planning a Valentine\u2019s Day party at Hobbs Cafe',ts:'Feb 13 · 11:00 am',h:21,imp:9,rel:1.00,tag:'✓'},
+    {t:'Maria Lopez is studying for a Chemistry test while drinking coffee',ts:'Feb 13 · 9:30 am',h:22.5,imp:3,rel:0.35,tag:'✓'},
+    {t:'Maria agreed to help Isabella decorate the cafe for the party',ts:'Feb 13 · 2:30 pm',h:17.5,imp:8,rel:0.95,tag:'✓'},
+    {t:'Decorated Hobbs Cafe with hearts and streamers for the party',ts:'Feb 13 · 3:00 pm',h:17,imp:7,rel:0.92,tag:''},
+    {t:'The refrigerator is empty',ts:'Feb 12 · 1:00 pm',h:31,imp:1,rel:0.02,tag:'✓'},
+    {t:'Wrote in her journal: excited but nervous about the party',ts:'Feb 13 · 11:00 pm',h:9,imp:5,rel:0.60,tag:''},
+    {t:'Ran out of party decorations — will visit the gift shop in the morning',ts:'Feb 13 · 4:15 pm',h:15.75,imp:6,rel:0.85,tag:''}
+  ];
+  function minmax(vals){const mn=Math.min(...vals),mx=Math.max(...vals);if(mx-mn<1e-9)return vals.map(()=>1);return vals.map(v=>(v-mn)/(mx-mn));}
+  function norm(fn){return minmax(mems.map(fn));}
+  const stars=n=>{const k=Math.round(n/2);return '★'.repeat(k)+'☆'.repeat(5-k);};
+  function getWeights(){return{r:parseFloat(sRec.value),i:parseFloat(sImp.value),v:parseFloat(sRel.value)};}
+  function render(){
+    const w=getWeights();
+    wRecV.textContent=w.r.toFixed(1);wImpV.textContent=w.i.toFixed(1);wRelV.textContent=w.v.toFixed(1);
+    const recN=norm(m=>Math.pow(0.995,m.h)),impN=norm(m=>m.imp),relN=norm(m=>m.rel);
+    const scored=mems.map((m,i)=>({m,i,rec:recN[i],imp:impN[i],rel:relN[i],score:w.r*recN[i]+w.i*impN[i]+w.v*relN[i]}));
+    scored.sort((a,b)=>b.score-a.score);
+    const top=Math.max(scored[0].score,1e-9);
+    formulaEl.textContent='score = '+w.r.toFixed(1)+'\u00B7recency + '+w.i.toFixed(1)+'\u00B7importance + '+w.v.toFixed(1)+'\u00B7relevance';
+    streamEl.innerHTML=scored.map((s,idx)=>{
+      const isTop=idx<3;
+      const pct=Math.round(s.score/top*100);
+      const badge=isTop?'<span style="font-family:var(--mono);font-size:10px;color:var(--green);background:var(--green-dim);border:1px solid rgba(34,197,94,0.25);border-radius:20px;padding:1px 8px;white-space:nowrap;">\u2192 enters the agent\u2019s context</span>':'';
+      return '<div style="background:'+(isTop?'rgba(245,158,11,0.07)':'var(--bg3)')+';border:1px solid '+(isTop?'rgba(245,158,11,0.35)':'var(--border)')+';border-radius:var(--radius);padding:10px 12px;display:flex;flex-direction:column;gap:6px;'+(reduced?'':'animation:fadeUp .45s ease forwards;animation-delay:'+(idx*35)+'ms;')+'opacity:'+(reduced?'1':'0')+';">'
+        +'<div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap;"><div style="font-size:13px;color:var(--text);font-weight:500;">'+s.m.t+' <span style="color:var(--text3);font-weight:400;">'+(s.m.tag||'')+'</span></div>'+badge+'</div>'
+        +'<div style="display:flex;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;color:var(--text3);"><span>'+s.m.ts+'</span><span style="color:var(--amber);">'+stars(s.m.imp)+' imp '+s.m.imp+'/10</span><span>rec '+s.rec.toFixed(2)+'</span><span>imp '+s.imp.toFixed(2)+'</span><span>rel '+s.rel.toFixed(2)+'</span></div>'
+        +'<div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:'+(isTop?'var(--amber)':'#94a3b8')+';border-radius:3px;'+(reduced?'':'transition:width .4s ease;')+'"></div></div><span style="font-family:var(--mono);font-size:11px;color:'+(isTop?'var(--amber)':'var(--text3)')+';width:44px;text-align:right;">'+s.score.toFixed(2)+'</span></div>'
+        +'</div>';
+    }).join('');
+    const top3=scored.slice(0,3).map(s=>s.m.t.length>44?s.m.t.slice(0,44)+'\u2026':s.m.t);
+    outcomeEl.innerHTML='<strong style="color:var(--amber);font-family:var(--mono);font-size:11px;">TOP-3 \u2192 ISABELLA\u2019S CONTEXT:</strong><br>'+top3.map(t=>'\u2022 '+t).join('<br>');
+  }
+  function setW(r,i,v){sRec.value=r;sImp.value=i;sRel.value=v;render();}
+  ['change','input'].forEach(ev=>{sRec.addEventListener(ev,render);sImp.addEventListener(ev,render);sRel.addEventListener(ev,render);});
+  document.getElementById('presetRecent').addEventListener('click',()=>setW(2,0,0));
+  document.getElementById('presetRelevant').addEventListener('click',()=>setW(0,0,2));
+  document.getElementById('presetImportant').addEventListener('click',()=>setW(0,2,0));
+  document.getElementById('presetPaper').addEventListener('click',()=>setW(1,1,1));
+  render();
+})();
+
+// === DEMO 2: REFLECTION CASCADE ===
+(function(){
+  const stageEl=document.getElementById('reflectStage');
+  if(!stageEl)return;
+  const runBtn=document.getElementById('reflectRunBtn');
+  const resetBtn=document.getElementById('reflectResetBtn');
+  if(!runBtn||!resetBtn)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const steps=[
+    {c:'sys',txt:'[trigger] \u03A3 importance of recent memories > 150 \u2192 reflection runs (\u22482\u20133\u00D7/ day)'},
+    {c:'mem',txt:'1. Klaus Mueller is writing a research paper'},
+    {c:'mem',txt:'2. Klaus Mueller is reading a book on gentrification'},
+    {c:'mem',txt:'3. Klaus Mueller is conversing with a librarian about his research project'},
+    {c:'q',txt:'[question] \u201CWhat topic is Klaus Mueller passionate about?\u201D'},
+    {c:'synth',txt:'[insight] \u201CKlaus Mueller is dedicated to his research on gentrification (because of 1, 2, 3)\u201D'},
+    {c:'stream',txt:'[store] reflection written into the memory stream \u2014 retrievable like any memory'},
+    {c:'verdict',txt:'[later] \u201CWho would you spend an hour with?\u201D \u2014 without reflection: Wolfgang (most interactions). With reflection: Maria (shares his dedication to research).'}
+  ];
+  const COL={sys:'#94a3b8',mem:'#cbd5e1',q:'#38bdf8',synth:'#fbbf24',stream:'#34d399',verdict:'#f472b6'};
+  function reset(){stageEl.innerHTML='<div style="color:#64748b;">// press \u201CRun reflection\u201D \u2014 the agent will pause, question itself, and synthesize\u2026</div>';runBtn.disabled=false;runBtn.textContent='\u25B6 Run reflection';}
+  runBtn.addEventListener('click',()=>{
+    reset();
+    runBtn.disabled=true;runBtn.textContent='\u2026 reflecting';
+    const wrap=document.createElement('div');
+    steps.forEach(s=>{const d=document.createElement('div');d.style.cssText='color:'+COL[s.c]+';'+(s.c==='mem'?'':'padding-left:14px;border-left:2px solid '+COL[s.c]+';')+'margin-bottom:7px;opacity:'+(reduced?'1':'0')+';'+(reduced?'':'transition:opacity .4s ease;');d.textContent=s.txt;wrap.appendChild(d);});
+    stageEl.innerHTML='';stageEl.appendChild(wrap);
+    Array.from(wrap.children).forEach((d,i)=>{setTimeout(()=>{d.style.opacity='1';},reduced?0:i*700);});
+    setTimeout(()=>{runBtn.textContent='\u2713 reflection complete';},reduced?100:steps.length*700+300);
+  });
+  resetBtn.addEventListener('click',reset);
+  reset();
+})();
+
+// === DEMO 3: PARTY DIFFUSION ===
+(function(){
+  const nodesEl=document.getElementById('diffuseNodes');
+  if(!nodesEl)return;
+  const btn=document.getElementById('diffuseBtn'),resetBtn=document.getElementById('diffuseResetBtn');
+  const stepEl=document.getElementById('diffuseStep'),countEl=document.getElementById('diffuseCount'),barEl=document.getElementById('diffuseBar');
+  const logEl=document.getElementById('diffuseLog'),resultEl=document.getElementById('diffuseResult');
+  if(!btn||!resetBtn||!stepEl||!countEl||!barEl||!logEl||!resultEl)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const agents=[
+    {id:'isabella',name:'Isabella',role:'cafe owner \u00B7 party seed',knows:true},
+    {id:'maria',name:'Maria',role:'friend \u00B7 decorates',knows:false},
+    {id:'klaus',name:'Klaus',role:'researcher \u00B7 Maria\u2019s crush',knows:false},
+    {id:'tom',name:'Tom',role:'regular at the cafe',knows:false},
+    {id:'rajiv',name:'Rajiv',role:'painter \u00B7 busy with a show',knows:false},
+    {id:'abigail',name:'Abigail',role:'animator in town',knows:false}
+  ];
+  const steps=[
+    {label:'t=1 \u00B7 Feb 13, morning',from:'Isabella',to:['Maria','Tom'],line:'Isabella \u2192 Maria & Tom: invites them while they stop by Hobbs Cafe',knows:3},
+    {label:'t=2 \u00B7 Feb 13, afternoon',from:'Maria',to:['Klaus'],line:'Maria agrees to help decorate \u00B7 that night: Maria \u2192 Klaus (her crush) \u2014 he accepts',knows:5},
+    {label:'t=3 \u00B7 Feb 13, evening',from:'Tom',to:['Rajiv','Abigail'],line:'Small talk carries the news \u2014 Rajiv & Abigail now know about the party',knows:9},
+    {label:'t=4 \u00B7 Feb 14, end of day',from:'',to:[],line:'End-of-simulation interviews: 13 of 25 agents (52%) know \u2014 none hallucinated it',knows:13}
+  ];
+  function nodeHTML(a){
+    const on=a.knows;
+    return '<div id="node-'+a.id+'" style="background:'+(on?'rgba(245,158,11,0.09)':'var(--bg3)')+';border:1px solid '+(on?'rgba(245,158,11,0.4)':'var(--border)')+';border-radius:var(--radius);padding:10px 12px;'+(on&&!reduced?'animation:fadeUp .5s ease;':'')+'">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;"><span style="font-weight:600;font-size:13px;color:var(--text);">'+a.name+'</span><span style="font-family:var(--mono);font-size:10px;color:'+(on?'var(--green)':'var(--text3)')+';">'+(on?'\u2713 knows':'\u2014 unaware')+'</span></div>'
+      +'<div style="font-size:11px;color:var(--text2);margin-top:2px;">'+a.role+'</div></div>';
+  }
+  function render(){nodesEl.innerHTML=agents.map(nodeHTML).join('');}
+  function updateCounter(n){countEl.textContent=n+' / 25';barEl.style.width=Math.round(n/25*100)+'%';}
+  let t=0;
+  function resetState(){t=0;agents.forEach((a,i)=>a.knows=(i===0));render();updateCounter(1);logEl.innerHTML='';resultEl.style.display='none';stepEl.textContent='0';btn.disabled=false;btn.textContent='\uD83D\uDCE3 Spread the word';}
+  btn.addEventListener('click',()=>{
+    if(t>=steps.length)return;
+    const s=steps[t];t++;
+    stepEl.textContent=t;
+    s.to.forEach(id=>{const a=agents.find(x=>x.id===id);if(a)a.knows=true;});
+    render();updateCounter(s.knows);
+    const line=document.createElement('div');
+    line.style.cssText='color:var(--text2);opacity:0;'+(reduced?'opacity:1;':'animation:fadeUp .5s ease forwards;');
+    line.innerHTML='<span style="color:var(--amber);font-weight:600;">'+s.label+'</span> \u00B7 '+s.line;
+    logEl.appendChild(line);
+    if(t===steps.length){
+      resultEl.style.display='block';
+      resultEl.innerHTML='<strong style="color:var(--green);">\u2713 Outcome (paper, \u00A77.1):</strong> 12 agents heard about the party through conversation chains (13 including Isabella \u2014 52% of the town). On Feb 14, <strong>5 of the 12 invited agents showed up at Hobbs Cafe at 5 pm</strong> \u2014 Klaus and Maria among them. Rajiv declined: \u201CI\u2019m focusing on my upcoming show.\u201D';
+      btn.disabled=true;btn.textContent='\u2713 word has spread';
+    }
+  });
+  resetBtn.addEventListener('click',resetState);
+  resetState();
+})();
+
+// === MEMORY STREAM SCORING (DEEP DIVE) ===
+(function(){
+  const stream=document.getElementById('gaStream'),run=document.getElementById('gaScore'),status=document.getElementById('gaStatus'),reflect=document.getElementById('gaReflect');
+  if(!stream||!run||!status||!reflect)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const MEM=[
+    {t:'studied pharmacology notes at the library',h:2,rel:8.6,imp:6,why:'topic match: chemistry-adjacent study'},
+    {t:'Isabella mentioned the Valentine party while chatting at Hobbs Cafe',h:1,rel:2.1,imp:8,why:'social, off-topic for studying'},
+    {t:'cooked pasta for dinner',h:30,rel:0.2,imp:2,why:'neither relevant nor important'},
+    {t:'kicked a hole in the gym wall out of anger',h:20,rel:0.4,imp:10,why:'high importance, low relevance'},
+    {t:'agreed to help Maria study for the chemistry midterm',h:4,rel:9.4,imp:9,why:'near-exact match to the query'},
+    {t:'forgot his umbrella at the cafe',h:1,rel:1.0,imp:3,why:'fresh but trivial'},
+    {t:'wrote an email to his parents about missing home',h:50,rel:0.3,imp:7,why:'emotional, distant in time'}
+  ];
+  const DECAY=0.995;
+  function r(h){return Math.pow(DECAY,h)*10;}
+  function score(m){return (m.rel+r(m.h)+m.imp).toFixed(1);}
+  function row(m,i,revealed){
+    const total=+score(m);
+    const picked=revealed&&i<3;
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:'+(picked?'rgba(245,158,11,.08)':'var(--bg2)')+';border:1px solid '+(picked?'rgba(245,158,11,.5)':'var(--border)')+';border-radius:var(--radius);transition:all .3s;">'
+      +'<div style="flex:1;font-size:12px;color:var(--text2);line-height:1.5;">'+m.t+(picked?' <span style="color:var(--amber);font-weight:700;font-size:10.5px;">· INTO CONTEXT</span>':'')+'</div>'
+      +(revealed?'<div style="font-family:var(--mono);font-size:10px;color:var(--text3);width:150px;flex-shrink:0;text-align:right;">rel '+m.rel.toFixed(1)+' · rec '+r(m.h).toFixed(1)+' · imp '+m.imp+'</div><div style="font-family:var(--mono);font-size:11.5px;font-weight:700;color:'+(picked?'var(--amber)':'var(--text3)')+';width:42px;text-align:right;flex-shrink:0;">'+total+'</div>':'')
+      +'</div>';
+  }
+  function draw(revealed){
+    const sorted=MEM.map((m,i)=>({m,i})).sort((a,b)=>+score(b.m)-+score(a.m));
+    const order=sorted.map(s=>s.i);
+    const rank=new Map(order.map((orig,rankI)=>[orig,rankI]));
+    stream.innerHTML=order.map((orig,i)=>row(MEM[orig],i,revealed)).join('');
+    if(!revealed)return;
+    stream.querySelectorAll('div').forEach(()=>{});
+    const totalImp=MEM.reduce((s,m)=>s+m.imp,0);
+    status.textContent='importance running total: '+totalImp+' / 150 to reflection'+(totalImp>=150?' — THRESHOLD CROSSED':'');
+  }
+  run.addEventListener('click',()=>{draw(true);
+    if(MEM.reduce((s,m)=>s+m.imp,0)>=0){
+      reflect.innerHTML='<div class="card-sm animate-in" style="border-left:3px solid var(--purple);"><div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:4px;">IF THE IMPORTANCE SUM CROSSES 150 …</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">… the agent pauses and synthesizes a reflection over the memories above threshold — "Klaus invests deeply in his academic relationships, and anger he does not process." The reflection re-enters the stream as a new high-importance memory, cite-linked to its evidence: the architecture thinking about itself.</div></div>';
+      reflect.style.display='block';
+      if(!RM){reflect.classList.remove('animate-in');void reflect.offsetWidth;reflect.classList.add('animate-in');}
+    }
+  });
+  if(RM||!('IntersectionObserver' in window)){draw(false);}
+  else{const io=new IntersectionObserver(en=>{if(en.some(e=>e.isIntersecting)){draw(false);io.disconnect();}},{threshold:0.3});io.observe(stream);}
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'Which set lists the core components of the generative agent architecture?',opts:['Attention, embeddings, softmax, decoding','Memory stream, retrieval, reflection, planning','Fine-tuning, RLHF, distillation, quantization','Perception, mapping, navigation, control'],correct:1,explain:'The paper extends an LLM with a memory stream (every experience stored as natural language), a retrieval function, reflection (higher-level inferences), and planning that reacts to events. Observation feeds the whole loop.'},
+  {q:'What three signals does the memory retrieval score combine?',opts:['Novelty, frequency, sentiment','Relevance, recency, importance','Token count, position, priority','Confidence, probability, familiarity'],correct:1,explain:'score = a_recency*recency + a_importance*importance + a_relevance*relevance, with min-max normalization and all weights set to 1. Recency decays at 0.995 per game-hour, importance is LLM-scored 1-10, and relevance is cosine similarity.'},
+  {q:'What does the reflection component do?',opts:['It deletes old memories to save space','It fine-tunes the LLM on past conversations','It synthesizes higher-level inferences from memories, which re-enter the memory stream','It renders the agent as a 3D character'],correct:2,explain:'When the importance scores of recent events sum past a threshold (150), the agent generates salient questions, retrieves relevant memories, and extracts insights that cite their evidence — then stores those insights as new memories.'},
+  {q:'In the two-day simulation, how many of the 25 agents ended up knowing about Isabella\u2019s Valentine\u2019s Day party?',opts:['8 (32%)','13 (52%)','25 (100%)','5 (20%)'],correct:1,explain:'Knowledge spread from one agent to 13 of 25 (52%) purely through conversations, with no hallucinated claims. Five of the twelve invited agents then showed up at Hobbs Cafe at 5 pm.'},
+  {q:'What did the human-evaluation ablation study find?',opts:['Removing reflection improved believability','The architecture was no more believable than a stateless LLM','The full architecture was ranked most believable, and every ablation significantly reduced believability','Crowdworker-authored behavior beat every agent condition'],correct:2,explain:'100 evaluators ranked interview answers from five conditions: the full architecture scored highest (TrueSkill mu=29.89) and each removed component lowered believability, down to mu=21.21 for the no-memory condition — all pairwise differences significant at p<0.001 except crowdworkers vs. no-memory.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

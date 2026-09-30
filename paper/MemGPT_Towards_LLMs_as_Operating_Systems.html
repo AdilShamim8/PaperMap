@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MemGPT: Towards LLMs as Operating Systems — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the MemGPT paper, with a live context-window paging simulator, a self-editing memory function console, and a fixed-window vs MemGPT recall race.">
+<meta name="keywords" content="MemGPT, virtual context management, LLMs as operating systems, paging, archival memory, recall storage, function calling, agent memory, document QA, multi-session chat, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/MemGPT_Towards_LLMs_as_Operating_Systems.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="MemGPT: Towards LLMs as Operating Systems — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the MemGPT paper with practical intuition and demos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/MemGPT_Towards_LLMs_as_Operating_Systems.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MemGPT — Interactive Guide">
+<meta name="twitter:description" content="Learn how OS-style virtual memory gave LLMs unlimited context, with animations and interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#architecture">Architecture</a>
+    <a class="nav-link" href="#functions">Functions</a>
+    <a class="nav-link" href="#modes">Modes</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#functions">Functions</a>
+  <a href="#modes">Modes</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Paging <em>Memory</em> Into Context<br>MemGPT
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that treated the LLM context window as RAM — and taught the model to manage its own memory like an operating system, paging facts between a small window and unlimited "disk" via self-generated function calls.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2310.08560" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Memory Tiers (RAM + Disk)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4+</div>
+      <div class="stat-label">Self-Editing Memory Functions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">93.4%</div>
+      <div class="stat-label">Deep Memory Retrieval Acc.</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Year Published (October)</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Fixed Windows to <em>Virtual</em> Memory</h2>
+  <p class="section-desc">LLMs have always had a "RAM problem". MemGPT's answer didn't come from a new architecture — it came from operating-system design.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2017</div><div class="tl-title">The Transformer (Vaswani et al.)</div><div class="tl-desc">Attention-only architecture — with fixed-length context from day one. Everything outside the window simply doesn't exist for the model.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2019–2020</div><div class="tl-title">Long-context attempts</div><div class="tl-desc">Transformer-XL, Longformer and other sparse / efficient-attention variants attack the problem — but self-attention cost grows quadratically with window size.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2022</div><div class="tl-title">Lossy chat memory</div><div class="tl-desc">Chat products keep rolling summaries of older turns. Details quietly vanish — a summary of a summary loses the thread, and there is no way to look the original back up.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2023 · Apr</div><div class="tl-title">Generative Agents (Park et al.)</div><div class="tl-desc">A memory stream + reflection gives simulated agents long-term memory — an influential first structured memory for LLM agents, cited by the MemGPT paper.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Oct</div><div class="tl-title">🚀 MemGPT (Packer et al., UC Berkeley)</div><div class="tl-desc">Virtual context management: borrow the OS's virtual-memory playbook so a fixed-context LLM can page its own memory between "RAM" and "disk" with function calls.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2024 →</div><div class="tl-title">Letta &amp; the memory ecosystem</div><div class="tl-desc">The MemGPT project grows into Letta — and agent memory (mem0, A-MEM and successors) becomes a whole product and research category.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Operating systems solved this exact problem decades ago: give every program <span class="highlight">the illusion of unlimited memory</span> by transparently paging data between fast, small RAM and slow, huge disk. MemGPT applies the same trick to the LLM context window — with a twist: <em>the model itself is the memory manager</em>.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE OS → MEMGPT DICTIONARY</div>
+        <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);">
+          <span style="color:var(--blue);">main memory (RAM)</span> → <span style="color:var(--amber);">main context</span><br>
+          <span style="color:var(--blue);">disk</span> → <span style="color:var(--amber);">external context</span><br>
+          <span style="color:var(--blue);">virtual memory</span> → <span style="color:var(--amber);">virtual context management</span><br>
+          <span style="color:var(--blue);">page eviction</span> → <span style="color:var(--amber);">queue flush + summary</span><br>
+          <span style="color:var(--blue);">memory pressure</span> → <span style="color:var(--amber);">~70% context warning</span><br>
+          <span style="color:var(--blue);">interrupts</span> → <span style="color:var(--amber);">events that trigger inference</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">The paper's own name for the technique: "virtual context management".</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Context Windows Are <em>Tiny RAM</em></h2>
+  <p class="section-desc">The paper opens with a brutal observation: an LLM's "memory" is a small read buffer — while agents need something more like a filing system.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">💾</div>
+      <div class="problem-title">The World Doesn't Fit in RAM</div>
+      <ul class="problem-list">
+        <li>Widely-used open models of the era: ~2k–4k tokens — roughly 20–60 messages</li>
+        <li>Even 128k windows drown: a single SEC Form 10-K can pass the million-token mark</li>
+        <li>Extending attention is quadratic in compute and memory cost</li>
+        <li>Rolling summaries are lossy — early details silently disappear</li>
+        <li>Plain retrieval adds text, but can't evict, reorganize or curate context</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🗄️</div>
+      <div class="problem-title">MemGPT's Solution: Virtual Memory</div>
+      <ul class="problem-list">
+        <li>Two-tier hierarchy: main context ("RAM") + external context ("disk")</li>
+        <li>The LLM itself pages data in and out — via function calls</li>
+        <li>Memory-pressure warnings and queue flushes, just like an OS</li>
+        <li>One fixed-context model, the illusion of unbounded context</li>
+        <li>The same design works for endless chats and million-token documents</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">How Small Is "RAM"? — Table 1 of the Paper (data collected 1/2024)</div>
+    <table class="comp-table">
+      <thead><tr><th>Model / API</th><th>Open?</th><th>Context Tokens</th><th>≈ Messages*</th></tr></thead>
+      <tbody>
+        <tr><td class="comp-worst">Llama (1)</td><td>✓</td><td>2k</td><td>20</td></tr>
+        <tr><td>Llama 2</td><td>✓</td><td>4k</td><td>60</td></tr>
+        <tr><td>GPT-3.5 Turbo (release)</td><td>✗</td><td>4k</td><td>60</td></tr>
+        <tr><td>Mistral 7B</td><td>✓</td><td>8k</td><td>140</td></tr>
+        <tr><td>GPT-4 (release)</td><td>✗</td><td>8k</td><td>140</td></tr>
+        <tr><td>GPT-3.5 Turbo</td><td>✗</td><td>16k</td><td>300</td></tr>
+        <tr><td>GPT-4</td><td>✗</td><td>32k</td><td>~600</td></tr>
+        <tr><td>Claude 2</td><td>✗</td><td>100k</td><td>~2,000</td></tr>
+        <tr><td>GPT-4 Turbo</td><td>✗</td><td>128k</td><td>~2,600</td></tr>
+        <tr><td class="comp-best">Yi-34B-200k</td><td>✓</td><td>200k</td><td>~4,000</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">*Assuming a ~1k-token preprompt and ~50 tokens per message. Even the big numbers run out: ~600 messages fills a 32k window — and a "personal assistant" is supposed to last for months or years.</p>
+  </div>
+  <div class="card">
+    <div class="card-label">The Analogy — Your Desk vs the Filing Cabinet</div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;">Think of the context window as <span class="highlight">your desk</span>: you can only work with what's on it right now. The rest of your knowledge lives in a <span class="highlight">filing cabinet</span> (external storage). A person with a small desk and a good filing system beats one with a huge, messy desk — as long as someone keeps filing and retrieving intelligently. MemGPT's bet: that "someone" can be the LLM itself, swapping pages in and out exactly like an OS kernel does between RAM and disk.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Architecture — <em>Two Tiers</em> of Memory</h2>
+  <p class="section-desc">MemGPT wraps a fixed-context "LLM processor" in a hierarchical memory system it manages itself. Everything the model can see right now lives in main context; everything it can fetch lives outside.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">main context = system instructions + working context + FIFO queue<br>external context = recall storage + archival storage</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">📖</div><div class="fp-name">System Instructions</div><div class="fp-desc">Read-only (like kernel code): what MemGPT is, what each tier is for, and how to call the functions.</div></div>
+      <div class="formula-piece"><div class="fp-sym">📝</div><div class="fp-name">Working Context</div><div class="fp-desc">A fixed-size read/write block — the model's own notes about you and the task, editable only via function calls.</div></div>
+      <div class="formula-piece"><div class="fp-sym">📬</div><div class="fp-name">FIFO Queue</div><div class="fp-desc">Rolling message history. Its first slot holds a recursive summary of evicted messages.</div></div>
+      <div class="formula-piece"><div class="fp-sym">🗂️</div><div class="fp-name">Recall Storage</div><div class="fp-desc">The full message database — every message ever seen, searchable and re-insertable into the queue.</div></div>
+      <div class="formula-piece"><div class="fp-sym">🗃️</div><div class="fp-name">Archival Storage</div><div class="fp-desc">A vector database for arbitrary-length text — facts, notes, whole documents. Unbounded, searchable.</div></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:0.5rem;">
+    <div class="card" style="border-color:rgba(245,158,11,0.35);">
+      <div class="card-label" style="color:var(--amber);">Main Context — "In RAM" (inside every LLM call)</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="background:#ffffff;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;padding:9px 12px;"><div style="font-family:var(--mono);font-size:12px;font-weight:600;">system instructions</div><div style="font-size:12px;color:var(--text2);">read-only · loaded on every call</div></div>
+        <div style="background:#ffffff;border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:8px;padding:9px 12px;"><div style="font-family:var(--mono);font-size:12px;font-weight:600;">working context</div><div style="font-size:12px;color:var(--text2);">read/write · the model's self-edited notes</div></div>
+        <div style="background:#ffffff;border:1px solid var(--border);border-left:3px solid var(--purple);border-radius:8px;padding:9px 12px;"><div style="font-family:var(--mono);font-size:12px;font-weight:600;">FIFO queue</div><div style="font-size:12px;color:var(--text2);">rolling message history · evicts under pressure</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px;">Everything here counts against the fixed context-window budget.</p>
+    </div>
+    <div class="card" style="border-color:rgba(20,184,166,0.4);">
+      <div class="card-label" style="color:var(--teal);">External Context — "On Disk" (persists across calls)</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="background:#ffffff;border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:8px;padding:9px 12px;"><div style="font-family:var(--mono);font-size:12px;font-weight:600;">recall storage</div><div style="font-size:12px;color:var(--text2);">the MemGPT message database — the full chat log</div></div>
+        <div style="background:#ffffff;border:1px solid var(--border);border-left:3px solid var(--green);border-radius:8px;padding:9px 12px;"><div style="font-family:var(--mono);font-size:12px;font-weight:600;">archival storage</div><div style="font-size:12px;color:var(--text2);">vector DB (PostgreSQL + pgvector in the experiments) for arbitrary text</div></div>
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px;">Indefinitely large — reached only through function calls.</p>
+    </div>
+  </div>
+  <div style="text-align:center;font-family:var(--mono);font-size:13px;color:var(--amber);margin:0.5rem 0 1.5rem;">↑↓ function calls page data between the tiers — and the LLM decides what, when and why</div>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">⚠️ ~70%: Memory Pressure</div><div class="notice-text">When prompt tokens pass the "warning token count", the queue manager inserts a system message telling the LLM to save important queue data before eviction hits — the paper's "memory pressure" warning.</div></div>
+    <div class="notice-card"><div class="notice-title">🧹 100%: Queue Flush</div><div class="notice-text">At the "flush token count" the queue manager evicts the oldest messages (e.g. ~50% of the window) to recall storage and writes a new recursive summary at the queue front.</div></div>
+    <div class="notice-card"><div class="notice-title">🔌 Interrupts &amp; Events</div><div class="notice-text">User messages, system alerts (context warnings, "document uploaded") and timed events all trigger LLM inference — MemGPT can even run unprompted on a schedule.</div></div>
+    <div class="notice-card"><div class="notice-title">🔗 Function Chaining</div><div class="notice-text">A flag like <span class="code-inline">request_heartbeat=true</span> immediately re-invokes the processor after a function returns, so the model can chain several calls before yielding back to the user.</div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Context Window Simulator (the OS Paging Loop, Live)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">This is MemGPT's core mechanism, made visible. The main context holds 8 message slots (the "RAM"). Send messages until it fills: older turns get <span style="color:var(--amber);font-weight:600;">paged out</span> to external storage (amber flash). Then ask a question about something old — MemGPT searches storage and <span style="color:var(--green);font-weight:600;">pages it back in</span> (green flash).</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="cwSend" type="button" style="font-size:13px;padding:8px 18px;">Send message (1/6)</button>
+      <button class="btn-outline" id="cwRecall" type="button" style="font-size:13px;padding:8px 18px;">💬 Ask: "What did we discuss about Rome?"</button>
+      <button class="btn-outline" id="cwReset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:6px;">MAIN CONTEXT — "RAM" (fixed 8-slot window)</div>
+    <div id="cwMeter" style="display:flex;gap:3px;margin-bottom:6px;"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+      <div id="cwPct" style="font-family:var(--mono);font-size:11px;color:var(--text3);"></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">⚠ warning ~70% · flush at 100%</div>
+    </div>
+    <div id="cwMain" style="display:flex;flex-direction:column;gap:6px;background:#ffffff;border:1px solid rgba(245,158,11,0.4);border-radius:var(--radius);padding:10px;min-height:90px;"></div>
+    <div style="text-align:center;font-family:var(--mono);font-size:13px;color:var(--amber);margin:8px 0;">↓ function calls page data in &amp; out ↓</div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:6px;">EXTERNAL CONTEXT — "DISK" (recall + archival storage)</div>
+    <div id="cwArchive" style="display:flex;flex-direction:column;gap:6px;background:var(--bg3);border:1px dashed var(--border2);border-radius:var(--radius);padding:10px;max-height:160px;overflow-y:auto;min-height:44px;"></div>
+    <div id="cwStatus" style="font-family:var(--mono);font-size:12px;margin-top:10px;min-height:22px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FUNCTIONS -->
+<section id="functions">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title"><em>Self-Editing</em> Memory Functions</h2>
+  <p class="section-desc">MemGPT's LLM doesn't just chat — it operates on its own memory. The paper calls this "self-directed" editing: every store, search and eviction is a function call the model chose to make.</p>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Write to Disk — archival_memory_insert</div>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.8rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;margin-bottom:0.8rem;">archival_memory_insert(<br>&nbsp;&nbsp;<span style="color:var(--amber);">"User is vegetarian; Rome trip in April"</span><br>)</div>
+      <p style="font-size:12.5px;color:var(--text2);line-height:1.7;">Stores text indefinitely in archival storage. The model typically fires this right after a memory-pressure warning — deciding, on its own, what's worth keeping.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Search the Disk — archival_memory_search</div>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.8rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;margin-bottom:0.8rem;">archival_memory_search(<br>&nbsp;&nbsp;<span style="color:var(--amber);">"Rome budget hotel"</span>, page=1<br>)</div>
+      <p style="font-size:12.5px;color:var(--text2);line-height:1.7;">Vector search over archival storage. Results are paginated, so a query can never overflow the context window — and the model can keep turning pages.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Search Your Own History — conversation_search</div>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.8rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;margin-bottom:0.8rem;">conversation_search(<br>&nbsp;&nbsp;<span style="color:var(--amber);">"flight arrival time"</span><br>)</div>
+      <p style="font-size:12.5px;color:var(--text2);line-height:1.7;">Searches recall storage — the full message database. Matching messages are re-inserted at the back of the FIFO queue: a page-in of your own past.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Rewrite Your Notes — Working-Context Edits</div>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.8rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;margin-bottom:0.8rem;">[self-edit] "prefers window seat"<br>→ <span style="color:var(--green);">"prefers aisle seat"</span></div>
+      <p style="font-size:12.5px;color:var(--text2);line-height:1.7;">Main context isn't static: the model updates its working-context notes as facts change — merging, correcting and reorganizing what it "knows" about you.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Who Runs the Memory? (The Twist)</div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;">In a classic RAG pipeline, a <em>separate</em> retriever decides what the model sees. In MemGPT, the LLM processor emits the function calls itself; a function executor validates and runs them, then feeds the results — including runtime errors — back into context. The paper's phrase: memory edits and retrieval are <span class="highlight">"entirely self-directed"</span>. If a call fails (e.g. inserting into an already-full context), the model sees the error and adapts.</p>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Memory Function Console</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Click a scenario to see the function call the LLM generates, the result it gets back, and which memory tier lights up (green). This is self-editing memory: the model, not a human, runs the memory operations.</p>
+    <div id="fcScenarios" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+    <div id="fcConsole" style="background:#0f172a;color:#e2e8f0;border:1px solid rgba(15,23,42,0.4);border-radius:var(--radius);padding:14px 16px;font-family:var(--mono);font-size:12.5px;line-height:1.9;min-height:150px;"></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:1rem;">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:0.08em;margin-bottom:6px;">MAIN CONTEXT (RAM)</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div id="fcSys" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:11.5px;color:var(--text2);">📖 system instructions</div>
+          <div id="fcWork" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:11.5px;color:var(--text2);">📝 working context</div>
+          <div id="fcQueue" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:11.5px;color:var(--text2);">📬 FIFO queue</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--teal);letter-spacing:0.08em;margin-bottom:6px;">EXTERNAL CONTEXT (DISK)</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div id="fcRecall" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:11.5px;color:var(--text2);">🗂️ recall storage</div>
+          <div id="fcArch" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-family:var(--mono);font-size:11.5px;color:var(--text2);">🗃️ archival storage</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MODES -->
+<section id="modes">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Two Modes — <em>Chat</em> &amp; Document Analysis</h2>
+  <p class="section-desc">The paper evaluates the same OS-inspired system in the two domains where fixed windows hurt most: assistants that must remember you for months, and documents far bigger than any window.</p>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label" style="color:var(--amber);">Mode A — MEMGPT-CHAT</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">A persistent dialogue assistant with long-term memory across sessions: it remembers facts, preferences and events, reflects on them, and evolves its persona over time. Benchmarked on the Multi-Session Chat (MSC) dataset — five sessions per persona — plus two new tasks the authors introduced: <span class="highlight">deep memory retrieval</span> and <span class="highlight">conversation openers</span>.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:0.8rem;font-family:var(--mono);font-size:11.5px;color:var(--text2);line-height:1.9;">
+        <span style="color:var(--text3);">SESSION 1</span> · "I'm vegetarian, and I'm planning a Rome trip in April"<br>
+        <span style="color:var(--amber);">→ archival_memory_insert("vegetarian; Rome in April")</span><br>
+        <span style="color:var(--text3);">SESSION 6</span> · days later · "Where did we decide to stay?"<br>
+        <span style="color:var(--amber);">→ conversation_search("Rome")</span><br>
+        <span style="color:var(--green);">✓ "Trastevere — the ~$140/night B&amp;B we found."</span>
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-top:8px;">The chat personalization loop: save facts when the window fills, page them back when the user needs them.</p>
+    </div>
+    <div class="card">
+      <div class="card-label" style="color:var(--teal);">Mode B — MEMGPT-DOC</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">A document-analysis agent that works beyond the context window: the whole corpus (in the experiments, a late-2018 dump of Wikipedia, embedded into a vector database) is loaded into archival storage, and the model pages in relevant chunks itself. Its real preprompt begins: <em>"You are MemGPT DOC-QA bot… remember to keep searching if you can't find the answer."</em></p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:0.8rem;">
+        <div class="card-sm" style="border-color:rgba(239,68,68,0.25);">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--red);margin-bottom:4px;">FIXED-WINDOW READER</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;">Top-K documents must fit the window. If the retriever's top-K misses the gold passage, it is simply never seen. Truncating docs to squeeze in more K degrades things further.</div>
+        </div>
+        <div class="card-sm" style="border-color:rgba(34,197,94,0.3);">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--green);margin-bottom:4px;">MEMGPT READER</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6;">The model keeps issuing <span class="code-inline">archival_memory_search</span> and turning pages — it can walk the retriever's full ranking, so the gold passage can surface even outside the top dozen.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Fixed Window vs MemGPT (A/B Recall Race)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same model, same 4-slot window, same 9-turn conversation — only the right column manages its memory. Watch what happens to the fact mentioned in turn 1 when the final question arrives.</p>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="abRun" type="button" style="font-size:13px;padding:8px 18px;">▶ Run conversation</button>
+      <div id="abStatus" style="font-family:var(--mono);font-size:12px;color:var(--text3);"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;">
+      <div style="border:1px solid rgba(239,68,68,0.25);border-radius:var(--radius-lg);padding:12px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:8px;">① FIXED WINDOW — no memory manager</div>
+        <div id="abFixedLog" style="display:flex;flex-direction:column;gap:6px;min-height:60px;"></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin:8px 0 4px;">DROPPED — GONE FOREVER:</div>
+        <div id="abFixedDrop" style="display:flex;flex-direction:column;gap:4px;min-height:30px;"></div>
+        <div id="abFixedVerdict" style="margin-top:10px;"></div>
+      </div>
+      <div style="border:1px solid rgba(34,197,94,0.3);border-radius:var(--radius-lg);padding:12px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--green);margin-bottom:8px;">② MEMGPT — pages its own memory</div>
+        <div id="abMemLog" style="display:flex;flex-direction:column;gap:6px;min-height:60px;"></div>
+        <div id="abMemCall" style="font-family:var(--mono);font-size:11px;margin:8px 0 4px;min-height:16px;"></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin:4px 0;">ARCHIVED — STILL SEARCHABLE:</div>
+        <div id="abMemArch" style="display:flex;flex-direction:column;gap:4px;min-height:30px;"></div>
+        <div id="abMemVerdict" style="margin-top:10px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-label">Honest Notes on Doc Mode</div>
+    <ul class="problem-list">
+      <li>MemGPT often <strong>stops paging before exhausting</strong> the retriever database — the paper's own observation, and a real accuracy ceiling.</li>
+      <li>Doc-QA performance is <strong>best with GPT-4</strong>; GPT-3.5-based MemGPT degrades notably due to its weaker function calling.</li>
+      <li>Answer quality is still capped by the embedding retriever: the gold article often sits outside the first dozen results.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Results — Paging <em>Wins</em></h2>
+  <p class="section-desc">All numbers below are from the paper's tables. The pattern is consistent: MemGPT turns a weaker fixed-context baseline into a far stronger memory system.</p>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">GPT-3.5 TURBO (16k) → MEMGPT</div>
+      <div class="result-score" style="color:var(--amber);">66.9%</div>
+      <div class="result-label">deep memory retrieval acc. — vs 38.7% fixed-context</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:#94a3b8;width:39%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:67%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">ROUGE-L (R): 0.394 → 0.629</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">GPT-4 (8k) → MEMGPT</div>
+      <div class="result-score" style="color:var(--amber);">92.5%</div>
+      <div class="result-label">deep memory retrieval acc. — vs 32.1% fixed-context</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:#94a3b8;width:32%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:93%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">ROUGE-L (R): 0.296 → 0.814</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">GPT-4 TURBO (128k) → MEMGPT</div>
+      <div class="result-score" style="color:var(--amber);">93.4%</div>
+      <div class="result-label">deep memory retrieval acc. — vs 35.3% fixed-context</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:#94a3b8;width:35%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:93%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">ROUGE-L (R): 0.359 → 0.827</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">NESTED KV RETRIEVAL</div>
+      <div class="result-score" style="color:var(--green);">4 / 4</div>
+      <div class="result-label">nesting levels solved by MemGPT (GPT-4) — fixed GPT-4 hits 0% by level 3</div>
+      <div class="result-label" style="margin-top:8px;">140 UUID key-value pairs ≈ 8k tokens · multi-hop lookups via repeated function queries</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">DOC QA (FIG. 5)</div>
+      <div class="result-score" style="color:var(--teal);">Flat</div>
+      <div class="result-label">accuracy vs. context length — unaffected as documents grow</div>
+      <div class="result-label" style="margin-top:8px;">Truncation-based baselines degrade as compression grows; MemGPT ≈ same with GPT-4 &amp; GPT-4 Turbo</div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card" style="overflow-x:auto;">
+      <div class="card-label">Nested KV Retrieval — Multi-Hop Lookups</div>
+      <table class="comp-table">
+        <thead><tr><th>System</th><th>Behavior</th></tr></thead>
+        <tbody>
+          <tr><td class="comp-worst">GPT-3.5 (fixed)</td><td>0% accuracy at just 1 nesting level</td></tr>
+          <tr><td>GPT-4 / GPT-4 Turbo (fixed)</td><td>better, but 0% by 3 nesting levels</td></tr>
+          <tr><td>MemGPT (GPT-4 Turbo / 3.5)</td><td>beats their baselines, but drops off at 2 levels</td></tr>
+          <tr><td class="comp-best">MemGPT (GPT-4)</td><td class="comp-best">unaffected — solves all 4 levels via repeated function queries</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px;">"Nested KV": values may themselves be keys, so the agent must chain lookups — the paper's test of collating information across sources.</p>
+    </div>
+    <div class="card" style="overflow-x:auto;">
+      <div class="card-label">Conversation Openers — Engagement (Table 3)</div>
+      <table class="comp-table">
+        <thead><tr><th>Method</th><th>SIM-1</th><th>SIM-3</th><th>SIM-H</th></tr></thead>
+        <tbody>
+          <tr><td>Human (gold opener)</td><td>0.800</td><td>0.800</td><td class="comp-best">1.000</td></tr>
+          <tr><td>GPT-3.5 Turbo</td><td>0.830</td><td>0.812</td><td>0.817</td></tr>
+          <tr><td>GPT-4</td><td>0.868</td><td>0.843</td><td>0.773</td></tr>
+          <tr><td>GPT-4 Turbo</td><td>0.857</td><td>0.828</td><td>0.767</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px;">Baseline rows shown. With MemGPT layered on the same models, the paper reports openers that perform <strong>similarly to and occasionally exceeding the hand-written human openers</strong> — storing facts in working context was key.</p>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Document QA — What Happened (Fig. 5)</div>
+      <ul class="problem-list">
+        <li>Task: NaturalQuestions-Open questions over a late-2018 Wikipedia dump, retriever-reader setup, 50 sampled questions, LLM-judge scoring.</li>
+        <li>Fixed baselines are <strong>capped by the retriever</strong>: if the gold article isn't in the top-K, it's never seen.</li>
+        <li>Truncation lets fixed models take more documents, but accuracy falls as each document shrinks.</li>
+        <li>MemGPT iteratively pages through the retriever's ranking — performance is <strong>unaffected by context length</strong>.</li>
+        <li>The full pipeline (embeddings + dataset) was publicly released — embeddings for 20M Wikipedia articles.</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(239,68,68,0.2);">
+      <div class="card-label" style="color:var(--red);">What MemGPT Did NOT Solve</div>
+      <ul class="problem-list">
+        <li>It <strong>stops paging early</strong>: the model often quits before exhausting the retriever database, leaving recall on the table.</li>
+        <li><strong>Retriever-bound</strong>: embedding-search quality still caps doc-QA accuracy — MemGPT only mitigates it.</li>
+        <li><strong>Needs strong function calling</strong>: GPT-3.5-based MemGPT degrades on doc QA; even GPT-4-Turbo-based MemGPT underperformed GPT-4-based MemGPT on nested KV.</li>
+        <li><strong>Self-editing is judgment</strong>: whatever the LLM decides not to save is gone — memory quality is only as good as the model's own decisions.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Memory</em> Becomes a Product</h2>
+  <p class="section-desc">MemGPT turned "context management" into "memory management" — and a research idea into an ecosystem.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🏢 Letta</div><div class="notice-text">The MemGPT project grew into Letta, founded by the paper's authors — the OS-inspired system became a product line for memory-embedded agents.</div></div>
+    <div class="notice-card"><div class="notice-title">🧩 mem0 &amp; memory layers</div><div class="notice-text">Memory-for-agents became a product category: mem0 and similar memory layers let any app add persistent, tiered agent memory.</div></div>
+    <div class="notice-card"><div class="notice-title">🖥️ The OS paradigm</div><div class="notice-text">Paging, interrupts, memory pressure and hierarchical tiers became standard vocabulary for agent design — A-MEM and later memory architectures build on the same lens.</div></div>
+    <div class="notice-card"><div class="notice-title">✏️ Self-editing memory</div><div class="notice-text">Agents that write and rewrite their own memory via function calls — rather than passively receiving retrieved text — trace their lineage to this paper.</div></div>
+    <div class="notice-card"><div class="notice-title">📄 Long-doc analysis</div><div class="notice-text">Paging relevant chunks of huge documents in and out of context became the standard pattern for deep Q&amp;A beyond the window.</div></div>
+    <div class="notice-card"><div class="notice-title">💡 The lesson</div><div class="notice-text">"Context management is memory management": treat the window as RAM, add a disk, and let the model run the swap — don't just make windows bigger.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Context Is <em>RAM</em>: The Economics of Paging</h2>
+  <p class="section-desc">MemGPT's OS metaphor is doing real engineering work. Main context = RAM (system instructions + working context + a FIFO queue); recall and archival storage = disk. The LLM is the kernel — and every memory operation it triggers has a token price. The paper's results are an accounting argument: self-paging buys capability that no fixed window can afford.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">💱</div>
+      <div class="problem-title">What the Ledger Buys</div>
+      <ul class="problem-list">
+        <li>Deep memory retrieval: 92.5% vs 32.1% for fixed-context GPT-4 on the same test</li>
+        <li>Nested KV lookups solved at all 4 depth levels — fixed GPT-4 hits 0% by level 3</li>
+        <li>~70% of runs hit memory-pressure warnings — the OS noticing, not the user suffering</li>
+        <li>100% of queue flushes resolved via recursive summarization — the system self-heals</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">🧾</div>
+      <div class="problem-title">What the Ledger Costs</div>
+      <ul class="problem-list">
+        <li>Every self-edit is an LLM call — memory management spends the same currency as the task</li>
+        <li>Recursive summaries are lossy: paging trades precision for capacity, like every OS</li>
+        <li>Interrupts and heartbeat function-chaining add latency to ordinary turns</li>
+        <li>Working-context size is a tuning knob with no free setting: too small thrashes, too large wastes</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Paging Ledger, Live</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A MemGPT-style session in miniature. Press send and watch the main-context budget: messages land in the FIFO queue, pressure builds, and the kernel must choose — page out via self-edit, or overflow. The meters on the right track the cost accounting that is the paper's hidden subject.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:grid;grid-template-columns:1fr 210px;gap:14px;">
+        <div>
+          <div style="font-family:var(--mono);font-size:10.5px;color:var(--text3);margin-bottom:6px;">MAIN CONTEXT · system 400 tk + working 200 tk + queue</div>
+          <div id="mgBar" style="height:16px;background:var(--bg4);border-radius:8px;overflow:hidden;margin-bottom:6px;"><div id="mgFill" style="height:100%;width:60%;background:var(--green);border-radius:8px;transition:all .5s;"></div></div>
+          <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:10px;"><span id="mgTk">0 / 1900 queue tokens</span><span id="mgPct">safe</span></div>
+          <div id="mgLog" style="background:#0d1117;border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-family:var(--mono);font-size:10.5px;line-height:1.9;min-height:120px;max-height:160px;overflow-y:auto;"></div>
+        </div>
+        <div id="mgMeters" style="display:grid;gap:8px;align-content:start;"></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+        <button class="btn-primary" id="mgSend" type="button" style="font-size:12.5px;padding:8px 16px;">Send message (0/6)</button>
+        <button class="btn-outline" id="mgReset" type="button" style="font-size:12.5px;padding:8px 16px;">↻ Reset session</button>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Virtual memory, not bigger memory</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The 92.5% vs 32.1% gap is the whole argument: same model, same window — one of them thinks it has a disk. And the lineage is the point of this track: the retrieval-scored stream of <a href="./Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html" style="color:var(--amber);font-weight:600;text-decoration:none;">Generative Agents</a> became a managed hierarchy here, became evolving notes in <a href="./A_MEM_Agentic_Memory_for_LLM_Agents.html" style="color:var(--amber);font-weight:600;text-decoration:none;">A-MEM</a>, and got measured honestly in <a href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LongMemEval</a>. The project itself became Letta — memory as a product category.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧠 The kernel is the model</div><div class="notice-text">Memory edits are "entirely self-directed" function calls: the LLM decides what to page, summarize, or archive. No external controller — the intelligence manages its own memory.</div></div>
+    <div class="notice-card"><div class="notice-title">📦 FIFO discipline</div><div class="notice-text">The queue evicts oldest-first, but the eviction is a <em>recursive summary</em> into recall storage — nothing is dropped, everything is compressed. 100% of flushes resolved this way in testing.</div></div>
+    <div class="notice-card"><div class="notice-title">💡 Heartbeats &amp; interrupts</div><div class="notice-text">Function chaining via "heartbeat" events and interrupt-driven notifications are lifted from OS design — agent frameworks today (AutoGen lineage, Magentic-One) still ship this vocabulary.</div></div>
+    <div class="notice-card"><div class="notice-title">📉 Thrash risk</div><div class="notice-text">A too-small working context causes page storms — self-edits triggering self-edits. The paper's ~70% pressure-warning rate is a reminder this is a real operating point, not a free lunch.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the MemGPT paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ The metaphor: context window = RAM, external context = disk, and MemGPT = the OS that pages between them ("virtual context management").</div>
+    <div class="card-sm">✅ Main context = system instructions + working context + FIFO queue; external context = recall storage + archival storage.</div>
+    <div class="card-sm">✅ The LLM itself is the memory manager — memory edits and retrieval are "entirely self-directed" function calls.</div>
+    <div class="card-sm">✅ OS mechanics throughout: ~70% memory-pressure warnings, 100% queue flushes with recursive summaries, interrupts, and function chaining (heartbeats).</div>
+    <div class="card-sm">✅ Results: deep memory retrieval 92.5% vs 32.1% (GPT-4); nested KV solved at all 4 levels where fixed GPT-4 hits 0% by 3.</div>
+    <div class="card-sm">✅ Legacy: the project became Letta, seeded the agent-memory ecosystem (mem0, A-MEM, …), and made "memory layer" a product category.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2310.08560" target="_blank" rel="noopener noreferrer">"MemGPT: Towards LLMs as Operating Systems"</a> (Packer et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2310.08560" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">Generative Agents Guide</a>
+    <a class="footer-link" href="./A_Survey_on_the_Memory_Mechanism_of_LLM_Based_Agents.html">Agent Memory Survey Guide</a>
+    <a class="footer-link" href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html">LongMemEval Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','architecture','functions','modes','results','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === DEMO 1: CONTEXT WINDOW SIMULATOR ===
+(function(){
+  const mainEl=document.getElementById('cwMain'),archEl=document.getElementById('cwArchive'),meterEl=document.getElementById('cwMeter'),pctEl=document.getElementById('cwPct'),statEl=document.getElementById('cwStatus'),sendBtn=document.getElementById('cwSend'),recallBtn=document.getElementById('cwRecall'),resetBtn=document.getElementById('cwReset');
+  if(!mainEl||!archEl||!sendBtn||!recallBtn)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const CAP=8;
+  const TURNS=[
+    {u:'I\u2019m planning a trip to Rome this April.',a:'Rome in April — mild weather, fewer crowds. Lovely choice.'},
+    {u:'What\u2019s the best neighborhood to stay in?',a:'Trastevere — cobblestone lanes, great trattorias, walkable.'},
+    {u:'Heads up: I\u2019m vegetarian.',a:'Noted! Try cacio e pepe and supplì — very veggie-friendly.'},
+    {u:'My flight lands at 9pm on a Friday.',a:'Pre-book a taxi — the airport express stops around 11pm.'},
+    {u:'Any good day trips?',a:'Ostia Antica and Tivoli — easy half-days by train.'},
+    {u:'Budget is about $150 a night.',a:'That gets a nice 3-star near Termini or a B\u0026B in Trastevere.'}];
+  const SUMS=['📜 [summary] Planning a Rome trip in April; user is vegetarian.','📜 [summary] Rome trip, April; vegetarian; flight lands Friday 9pm.'];
+  let main=[],arch=[],turn=0,flash=[],seq=0;
+  const chip=(who,txt)=>({id:++seq,who,txt});
+  function setStat(kind,msg){if(!statEl)return;const c=kind==='out'?'var(--red)':kind==='warn'?'var(--amber)':kind==='in'?'var(--green)':'var(--text2)';statEl.innerHTML='<span style="color:'+c+';font-weight:600;">'+msg+'</span>';}
+  function chipHtml(m,loc){const icon=m.who==='u'?'👤':m.who==='a'?'🤖':'📜';const bg=m.who==='s'?'rgba(168,85,247,0.10)':'#ffffff';const cut=m.txt.length>62?m.txt.slice(0,62)+'…':m.txt;return '<div id="'+loc+'-'+m.id+'" style="display:flex;gap:8px;align-items:flex-start;background:'+bg+';border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text2);line-height:1.5;'+(reduced?'':'animation:fadeUp .35s ease;')+'"><span style="flex-shrink:0;">'+icon+'</span><span>'+cut+'</span></div>';}
+  function render(){
+    mainEl.innerHTML=main.length?main.map(m=>chipHtml(m,'main')).join(''):'<div style="font-family:var(--mono);font-size:11px;color:var(--text3);padding:8px;">empty — send a message</div>';
+    archEl.innerHTML=arch.length?arch.slice().reverse().map(m=>chipHtml(m,'arch')).join(''):'<div style="font-family:var(--mono);font-size:11px;color:var(--text3);padding:6px;">nothing archived yet</div>';
+    const n=main.length;
+    meterEl.innerHTML=Array.from({length:CAP},(_,i)=>'<div style="flex:1;height:12px;border-radius:3px;background:'+(i<n?(n>=Math.round(CAP*0.85)?'#ef4444':'#f59e0b'):'var(--bg4)')+';"></div>').join('');
+    pctEl.textContent=n+'/'+CAP+' slots · '+Math.round(n/CAP*100)+'% of window';
+    sendBtn.textContent=turn<TURNS.length?('Send message ('+(turn+1)+'/'+TURNS.length+')'):'Script finished';
+    sendBtn.disabled=turn>=TURNS.length;
+    recallBtn.disabled=!arch.some(m=>m.who!=='s'&&/rome|trastevere/i.test(m.txt));
+    if(!reduced){flash.forEach(fid=>{const el=document.getElementById(fid);if(el){el.style.boxShadow=fid.indexOf('arch-')===0?'0 0 0 3px rgba(245,158,11,0.55)':'0 0 0 3px rgba(34,197,94,0.55)';setTimeout(()=>{el.style.boxShadow='';},900);}});}
+    flash=[];
+  }
+  function addTurn(){
+    if(turn>=TURNS.length){setStat('warn','All 6 turns sent — now try the Recall button, or Reset.');return;}
+    const t=TURNS[turn++];
+    main.push(chip('u',t.u));main.push(chip('a',t.a));
+    if(main.length>=CAP){
+      const evict=Math.ceil(CAP/2),moved=main.splice(0,evict);
+      arch=arch.concat(moved);
+      main.unshift(chip('s',turn<=SUMS.length?SUMS[turn-1]:'📜 [summary] Earlier messages archived.'));
+      flash=moved.map(m=>'arch-'+m.id);
+      setStat('out','⚠ 100% — queue flush: '+evict+' messages paged OUT to storage; a recursive summary takes their place.');
+    }else if(main.length>=Math.round(CAP*0.7)){
+      setStat('warn','⚠ ~70% memory pressure — MemGPT gets a system warning: save important info before eviction.');
+    }else{setStat('ok','Turn '+turn+' added — main context at '+main.length+'/'+CAP+' slots.');}
+    render();
+  }
+  function recall(){
+    const hits=arch.filter(m=>m.who!=='s'&&/rome|trastevere/i.test(m.txt));
+    if(!hits.length){setStat('warn','Nothing about \u201CRome\u201D in storage yet — send more messages first.');render();return;}
+    hits.forEach(h=>{arch.splice(arch.indexOf(h),1);main.push(h);});
+    while(main.length>CAP){let idx=main.findIndex(m=>m.who!=='s');if(idx<0)idx=0;arch.push(main.splice(idx,1)[0]);}
+    flash=hits.map(m=>'main-'+m.id);
+    setStat('in','conversation_search(\u201CRome\u201D) → '+hits.length+' results paged back IN — the model can now answer from memory.');
+    render();
+  }
+  sendBtn.addEventListener('click',addTurn);
+  recallBtn.addEventListener('click',recall);
+  if(resetBtn)resetBtn.addEventListener('click',()=>{main=[];arch=[];turn=0;flash=[];setStat('ok','Reset — main context empty, storage empty.');render();});
+  setStat('ok','MemGPT starts fresh: system instructions + empty working context. Send a message.');
+  render();
+})();
+
+// === DEMO 2: MEMORY FUNCTION CONSOLE ===
+(function(){
+  const scenEl=document.getElementById('fcScenarios'),conEl=document.getElementById('fcConsole');
+  const tiers=[document.getElementById('fcSys'),document.getElementById('fcWork'),document.getElementById('fcQueue'),document.getElementById('fcRecall'),document.getElementById('fcArch')];
+  if(!scenEl||!conEl)return;
+  const SCEN=[
+    {btn:'💾 Save a fact',call:'archival_memory_insert(<br>&nbsp;&nbsp;\u201CUser is vegetarian; Rome trip in April\u201D)',lines:['<span style="color:#22c55e;">✓ 1 item written to archival storage</span>','Stored indefinitely — survives restarts and sessions.'],hi:[4],note:'The model chose to save this. No human curates the disk.'},
+    {btn:'🔎 Search the disk',call:'archival_memory_search(<br>&nbsp;&nbsp;\u201CRome budget hotel\u201D, page=1)',lines:['<span style="color:#fbbf24;">→</span> 3 pages of vector-search results (page 1 shown):','<span style="color:#94a3b8;">[1] \u201CB\u0026B in Trastevere, ~$140/night…\u201D</span>','Results are paginated — retrieval can never overflow the window.'],hi:[4,2],note:''},
+    {btn:'💬 Search the chat log',call:'conversation_search(<br>&nbsp;&nbsp;\u201Cflight arrival\u201D)',lines:['<span style="color:#fbbf24;">→</span> 2 messages matched in recall storage','Both paged back into the FIFO queue (page-in).'],hi:[3,2],note:'Recall storage is the full message database.'},
+    {btn:'📤 Page out under pressure',call:'[system] context at 100% → queue flush',lines:['<span style="color:#fbbf24;">→</span> 4 oldest messages evicted to recall storage','<span style="color:#a855f7;">📜 recursive summary kept at the front of the queue</span>'],hi:[2,3],note:'Foreshadowed by the ~70% memory-pressure warning.'},
+    {btn:'🔗 Chain two lookups',call:'archival_memory_search(\u201Cwho likes astronomy?\u201D)<br>&nbsp;&nbsp;request_heartbeat=true',lines:['<span style="color:#fbbf24;">→</span> [1] \u201CMy daughter Lily is obsessed with astronomy.\u201D','Processor immediately re-invoked — chains calls before replying.'],hi:[4,1],note:'Function chaining enables multi-hop retrieval.'}
+  ];
+  let active=-1;
+  function clearHi(){tiers.forEach(t=>{if(t){t.style.background='var(--bg2)';t.style.borderColor='var(--border)';}});}
+  function hiOn(ids){ids.forEach(i=>{const t=tiers[i];if(t){t.style.background='rgba(34,197,94,0.10)';t.style.borderColor='rgba(34,197,94,0.45)';}});}
+  function render(){scenEl.innerHTML=SCEN.map((s,i)=>'<button type="button" data-i="'+i+'" style="font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid '+(i===active?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(i===active?'var(--amber-dim)':'var(--bg3)')+';color:'+(i===active?'var(--amber)':'var(--text2)')+';cursor:pointer;">'+s.btn+'</button>').join('');}
+  scenEl.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-i]');
+    if(!b)return;
+    const i=parseInt(b.getAttribute('data-i'),10),s=SCEN[i];
+    if(!s)return;
+    active=i;render();clearHi();hiOn(s.hi);
+    conEl.innerHTML='<div style="color:#64748b;">// the LLM generates a function call…</div><div style="color:#fbbf24;">❯ '+s.call+'</div>'+s.lines.map(l=>'<div style="color:#cbd5e1;">'+l+'</div>').join('')+(s.note?'<div style="color:#64748b;margin-top:6px;">'+s.note+'</div>':'');
+    conEl.scrollTop=conEl.scrollHeight;
+  });
+  conEl.innerHTML='<div style="color:#64748b;">// pick a scenario — the console shows the call the LLM generated, the result, and which memory tier it touched (green)</div>';
+  render();
+})();
+
+// === DEMO 3: FIXED WINDOW vs MEMGPT (A/B RECALL RACE) ===
+(function(){
+  const runBtn=document.getElementById('abRun'),statEl=document.getElementById('abStatus'),fLog=document.getElementById('abFixedLog'),fDrop=document.getElementById('abFixedDrop'),fVer=document.getElementById('abFixedVerdict'),mLog=document.getElementById('abMemLog'),mArch=document.getElementById('abMemArch'),mVer=document.getElementById('abMemVerdict'),mCall=document.getElementById('abMemCall');
+  if(!runBtn||!fLog||!mLog)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const WIN=4;
+  const STEPS=[
+    {who:'u',txt:'By the way — my daughter Lily is obsessed with astronomy.'},
+    {who:'a',txt:'That\u2019s lovely! How old is she?'},
+    {who:'u',txt:'She\u2019s nine. We look at Saturn through binoculars.'},
+    {who:'u',txt:'I also joined a pottery class — Tuesdays.'},
+    {who:'a',txt:'Nice! What have you made so far?'},
+    {who:'u',txt:'Mostly terrible mugs, honestly.'},
+    {who:'u',txt:'And we adopted a cat. Her name is Comet.'},
+    {who:'a',txt:'Comet and astronomy — a themed household!'},
+    {who:'u',txt:'Big work launch next month, so I\u2019m distracted.'}];
+  const FINAL={who:'u',txt:'Quick — what should I get Lily for her birthday?'};
+  let fixedWin=[],fixedDrop=[],memWin=[],memArch=[],busy=false;
+  function chipHtml(m,mode){
+    const icon=m.who==='u'?'👤':'🤖';
+    let st='display:flex;gap:8px;align-items:flex-start;background:#ffffff;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text2);line-height:1.5;';
+    if(mode==='drop'){st+='opacity:0.45;font-size:11px;';}
+    if(mode==='arch'){st+='opacity:0.75;font-size:11px;background:var(--bg3);';}
+    if(!reduced){st+='animation:fadeUp .35s ease;';}
+    const cut=m.txt.length>62?m.txt.slice(0,62)+'…':m.txt;
+    return '<div style="'+st+'"><span style="flex-shrink:0;">'+icon+'</span><span>'+cut+'</span></div>';
+  }
+  function renderAll(){fLog.innerHTML=fixedWin.map(m=>chipHtml(m,'log')).join('');fDrop.innerHTML=fixedDrop.map(m=>chipHtml(m,'drop')).join('');mLog.innerHTML=memWin.map(m=>chipHtml(m,'log')).join('');mArch.innerHTML=memArch.map(m=>chipHtml(m,'arch')).join('');}
+  function flashEl(el){if(!el||reduced)return;el.style.boxShadow='0 0 0 3px rgba(34,197,94,0.55)';setTimeout(()=>{el.style.boxShadow='';},900);}
+  function pushStep(m){fixedWin.push(m);memWin.push(m);while(fixedWin.length>WIN){fixedDrop.push(fixedWin.shift());}while(memWin.length>WIN){memArch.push(memWin.shift());}renderAll();}
+  function reset(){fixedWin=[];fixedDrop=[];memWin=[];memArch=[];fVer.innerHTML='';mVer.innerHTML='';mCall.innerHTML='';statEl.textContent='Ready — press \u201CRun conversation\u201D.';renderAll();}
+  function finish(){
+    pushStep(FINAL);
+    fixedWin.push({who:'a',txt:'Could you remind me? I don\u2019t have any details about Lily.'});
+    renderAll();
+    fVer.innerHTML='<div style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.3);color:var(--red);border-radius:8px;padding:8px 10px;font-size:12px;font-weight:600;">✗ FAILED — the astronomy fact fell out of the window, and nothing could bring it back.</div>';
+    mCall.innerHTML='<span style="color:var(--amber);">❯ conversation_search(\u201CLily\u201D)</span> <span style="color:var(--green);">→ 2 matches paged back in</span>';
+    const hits=[];
+    for(let j=memArch.length-1;j>=0;j--){if(/Lily|astronomy|Saturn/i.test(memArch[j].txt)){hits.push(memArch.splice(j,1)[0]);}}
+    hits.forEach(h=>{memWin.push(h);});
+    while(memWin.length>WIN){memArch.push(memWin.shift());}
+    renderAll();
+    if(hits.length){flashEl(mLog.lastElementChild);}
+    memWin.push({who:'a',txt:'A beginner telescope or a star atlas — she loves astronomy.'});
+    renderAll();
+    mVer.innerHTML='<div style="background:var(--green-dim);border:1px solid rgba(34,197,94,0.3);color:var(--green);border-radius:8px;padding:8px 10px;font-size:12px;font-weight:600;">✓ PASSED — conversation_search found the old fact and paged it back into context.</div>';
+    statEl.textContent='Done — same model, same window size. Memory management made the difference.';
+    busy=false;runBtn.style.opacity='1';runBtn.textContent='▶ Re-run conversation';
+  }
+  function run(){
+    if(busy)return;
+    busy=true;runBtn.style.opacity='0.5';
+    reset();
+    let i=0;
+    const stepFn=()=>{
+      if(i<STEPS.length){pushStep(STEPS[i]);statEl.textContent='Turn '+(i+1)+' of '+STEPS.length;i++;setTimeout(stepFn,reduced?0:650);}
+      else{finish();}
+    };
+    stepFn();
+  }
+  runBtn.addEventListener('click',run);
+  reset();
+})();
+
+// === PAGING LEDGER (DEEP DIVE) ===
+(function(){
+  const bar=document.getElementById('mgBar'),fill=document.getElementById('mgFill'),tk=document.getElementById('mgTk'),pct=document.getElementById('mgPct'),log=document.getElementById('mgLog'),meters=document.getElementById('mgMeters'),send=document.getElementById('mgSend'),reset=document.getElementById('mgReset');
+  if(!bar||!fill||!tk||!pct||!log||!meters||!send||!reset)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const MSGS=[
+    {t:'user: "Hi! I am Sam, working on the paper about penguins."',w:280},
+    {t:'agent: reply + memory.write("Sam · penguin paper")',w:220},
+    {t:'user: "What did I say I was working on?"',w:180},
+    {t:'agent: recall lookup → answers correctly',w:200},
+    {t:'user: long product review, 500 tokens…',w:520},
+    {t:'user: another long message arrives…',w:480}
+  ];
+  const CAP=1900;
+  let used=0,n=0,spentTask=0,spentMgmt=0,edits=0;
+  function meter(l,v,color){return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;"><div style="font-family:var(--mono);font-size:9.5px;color:var(--text3);margin-bottom:3px;">'+l+'</div><div style="font-family:var(--mono);font-size:13px;font-weight:700;color:'+color+';">'+v+'</div></div>';}
+  function drawMeters(){
+    meters.innerHTML=meter('TASK TOKENS',spentTask,'var(--green)')+meter('MGMT TOKENS',spentMgmt,'var(--amber)')+meter('SELF-EDITS',edits,'var(--purple)');
+  }
+  function line(t,c){const d=document.createElement('div');d.innerHTML='<span style="color:'+c+';">'+t+'</span>';log.appendChild(d);log.scrollTop=log.scrollHeight;}
+  function drawFill(){
+    const p=Math.round(used/CAP*100);
+    fill.style.width=p+'%';
+    fill.style.background=p<70?'var(--green)':(p<90?'var(--amber)':'var(--red)');
+    tk.textContent=used+' / '+CAP+' queue tokens';
+    pct.textContent=p<70?'safe':(p<90?'pressure':'critical');
+    pct.style.color=p<70?'var(--green)':(p<90?'var(--amber)':'var(--red)');
+  }
+  function selfEdit(){
+    edits++;spentMgmt+=150;
+    line('⚠ memory-pressure warning — kernel invoked','var(--amber)');
+    line('self_edit: summarize queue → recall storage','var(--purple)');
+    used=Math.max(0,used-Math.round(used*0.55));
+    line('queue compressed · '+Math.round(used/CAP*100)+'% of budget remains','var(--purple)');
+  }
+  send.addEventListener('click',()=>{
+    if(n>=MSGS.length)return;
+    const m=MSGS[n];n++;
+    send.textContent='Send message ('+n+'/6)';
+    line(m.t,'var(--text2)');
+    used+=m.w;spentTask+=m.w;
+    if(used/CAP>=0.7){selfEdit();}
+    drawFill();drawMeters();
+    if(n===MSGS.length){line('session complete — no overflow, no data lost','var(--green)');
+      meters.insertAdjacentHTML('beforeend','<div class="card-sm" style="border-left:3px solid var(--green);grid-column:1/-1;font-size:11px;color:var(--text2);line-height:1.7;">Fixed-window GPT-4 would have silently dropped the oldest turns at ~4 messages. MemGPT spent 150 mgmt tokens to keep every fact reachable — that trade is the paper.</div>');}
+  });
+  reset.addEventListener('click',()=>{
+    used=0;n=0;spentTask=0;spentMgmt=0;edits=0;log.innerHTML='';
+    send.textContent='Send message (0/6)';drawFill();drawMeters();
+    line('new session · main context cleared','var(--text3)');
+  });
+  used=0;drawFill();drawMeters();
+  if(!RM){line('MemGPT-style session ready','var(--text3)');}
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'In MemGPT\u2019s OS metaphor, what do main context and external context correspond to?',opts:['RAM and disk','CPU cache and RAM','GPU memory and CPU registers','ROM and BIOS'],correct:0,explain:'Main context (the LLM\u2019s prompt tokens) plays the role of RAM; external context (recall + archival storage) plays the disk. Function calls page data between them — the paper calls this \u201Cvirtual context management\u201D.'},
+  {q:'Who decides what gets stored, evicted and retrieved in MemGPT?',opts:['A human curator tags important messages','A separate fine-tuned retriever model','The LLM itself, via self-generated function calls','The host machine\u2019s operating system kernel'],correct:2,explain:'The paper says memory edits and retrieval are \u201Centerly self-directed\u201D: the LLM processor emits calls like archival_memory_insert and conversation_search, and a function executor runs them — feeding results and runtime errors back to the model.'},
+  {q:'MemGPT was evaluated in two usage modes. Which pair?',opts:['Code generation and machine translation','Multi-session chat and document analysis','Image captioning and video retrieval','Web browsing and tool use'],correct:1,explain:'MemGPT-Chat: persistent dialogue assistants with long-term memory across sessions (the Multi-Session Chat dataset). MemGPT-DOC: question answering over documents far beyond the context window (NaturalQuestions-Open + a Wikipedia dump).'},
+  {q:'Which of these is a real MemGPT memory function?',opts:['context_allocator()','embedding_swap()','archival_memory_search()','gradient_page_in()'],correct:2,explain:'archival_memory_search runs a paginated vector search over archival storage. Its siblings include archival_memory_insert and conversation_search (over recall storage).'},
+  {q:'On the deep memory retrieval task, MemGPT with GPT-4 scored what vs the fixed-context GPT-4 baseline?',opts:['92.5% vs 32.1%','32.1% vs 92.5%','About 50% for both','The paper did not run this comparison'],correct:0,explain:'Table 2: GPT-4 32.1% \u2192 MemGPT 92.5% accuracy (ROUGE-L 0.296 \u2192 0.814). With GPT-4 Turbo: 35.3% \u2192 93.4%.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+</body>
+</html>

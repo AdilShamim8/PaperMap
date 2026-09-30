@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-MEM: Agentic Memory for LLM Agents — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the A-MEM paper (Xu et al., NeurIPS 2025), with playable demos for Zettelkasten-style note construction, dynamic link generation, memory evolution, and multi-hop retrieval on LoCoMo.">
+<meta name="keywords" content="A-MEM, agentic memory, Zettelkasten, LLM agents, memory evolution, link generation, note construction, LoCoMo, MemGPT, MemoryBank, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/A_MEM_Agentic_Memory_for_LLM_Agents.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="A-MEM: Agentic Memory for LLM Agents — Interactive Guide">
+<meta property="og:description" content="Build a slip-box, race static RAG against a memory network, and watch notes evolve — an interactive walkthrough of A-MEM.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/A_MEM_Agentic_Memory_for_LLM_Agents.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A-MEM — Interactive Guide">
+<meta name="twitter:description" content="How Zettelkasten-style notes give LLM agents self-organizing memory — with interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#zettelkasten">Zettelkasten</a>
+    <a class="nav-link" href="#linking">Linking</a>
+    <a class="nav-link" href="#evolution">Evolution</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">NeurIPS 2025</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#zettelkasten">Zettelkasten</a>
+  <a href="#linking">Linking</a>
+  <a href="#evolution">Evolution</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Notes That <em>Think</em> Back<br>A-MEM
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that gave LLM agents a Zettelkasten —
+    memory that writes structured notes, links them into a growing knowledge network,
+    and rewrites older notes when new experience arrives (Xu et al., Rutgers — NeurIPS 2025).
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2502.12110" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Agentic Memory Mechanisms</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">6</div>
+      <div class="stat-label">Foundation Models Tested</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">93%</div>
+      <div class="stat-label">Fewer Tokens (up to)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2025</div>
+      <div class="stat-label">NeurIPS Publication</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Paper Slips to <em>Living</em> Memory</h2>
+  <p class="section-desc">Agent memory has been through three eras — store everything, manage pages, and now self-organize. The arc starts in a paper slip-box from the 1950s.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">1950s → 1990s</div><div class="tl-title">Zettelkasten (Niklas Luhmann)</div><div class="tl-desc">The sociologist files ~90,000 numbered index cards — one atomic idea each, cross-referenced by hand. He calls the slip-box his "conversation partner"; it helps produce 70+ books.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2020</div><div class="tl-title">RAG (Lewis et al.)</div><div class="tl-desc">Chunk documents, embed them, retrieve the top-k by similarity at query time. Great for static knowledge — but the store never reorganizes itself.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023 · Apr</div><div class="tl-title">Generative Agents (Park et al.)</div><div class="tl-desc">Agent memory becomes a stream: every observation is appended and scored by recency, importance, and relevance, with "reflection" synthesizing higher-level thoughts.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2023 · Oct</div><div class="tl-title">MemGPT (Packer et al.)</div><div class="tl-desc">The LLM context becomes an operating system: the model itself pages memory between a small main context and external storage.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2024</div><div class="tl-title">Memory becomes a research field</div><div class="tl-desc">Mem0 adds graph layers to agent memory, and benchmarks like LoCoMo and LongMemEval start measuring long-term conversational memory.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2025 · Feb</div><div class="tl-title">🚀 A-MEM (Xu et al., Rutgers)</div><div class="tl-desc">Memory writes itself: notes with LLM-extracted attributes, self-generated links, and older notes that get rewritten as new ones arrive. Published at NeurIPS 2025.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">A slip-box is powerful because of <span class="highlight">organization, not storage</span>. Every new note is written in the context of the notes it relates to, and older notes are re-interpreted when new ones arrive. A-MEM turns exactly this loop into an algorithm for LLM agents.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE A-MEM LOOP FOR EVERY NEW MEMORY</div>
+        <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:var(--text2);">
+          new memory → <span style="color:var(--amber);font-weight:600;">① CONSTRUCT</span> note → <span style="color:var(--green);font-weight:600;">② LINK</span> to neighbors → <span style="color:var(--teal);font-weight:600;">③ EVOLVE</span> old notes → repeat
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">No predefined schema, no fixed workflow — the structure emerges from the content.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem with <em>Static</em> Memory</h2>
+  <p class="section-desc">LLM agents can call tools and plan, but their memory systems mostly just store and retrieve. The structure is fixed at design time — and nothing inside the store ever reorganizes.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🗄️</div>
+      <div class="problem-title">Static Memory Stores</div>
+      <ul class="problem-list">
+        <li>Developers must predefine storage structure, write points, and retrieval timing</li>
+        <li>Memories are written once and never re-organized — no consolidation</li>
+        <li>Relationships exist only as embedding similarity, computed at query time</li>
+        <li>Graph-database variants still rely on predefined schemas and relation types</li>
+        <li>Fixed operations generalize poorly across diverse tasks and long horizons</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🕸️</div>
+      <div class="problem-title">A-MEM's Agentic Memory</div>
+      <ul class="problem-list">
+        <li>The LLM itself extracts each note's keywords, tags, and contextual description</li>
+        <li>Links are decided at write time and stored — a persistent, growing network</li>
+        <li>New memories can rewrite older notes' descriptions and attributes</li>
+        <li>No predefined schema: structure emerges from the content itself</li>
+        <li>One adaptive mechanism across tasks, without workflow changes</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Analogy — The Library That Never Re-Catalogs</div>
+    <div class="two-col">
+      <div style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius);padding:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:6px;">SYSTEM A — THE STATIC LIBRARY</div>
+        <p style="font-size:12.5px;color:var(--text2);line-height:1.7;">Every book is dropped on a shelf in arrival order; the catalog is written once and never touched again. To answer a question you either read the whole library (a full context window) or trust a keyword match that cannot see across topics. Nothing inside ever changes.</p>
+      </div>
+      <div style="background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius);padding:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--green);margin-bottom:6px;">SYSTEM B — THE RESEARCHER'S SLIP-BOX</div>
+        <p style="font-size:12.5px;color:var(--text2);line-height:1.7;">Each new slip is filed next to related slips, arrows are drawn between them, and an old note's summary is rewritten when a new slip changes what it means. To answer a question: start anywhere and follow the thread.</p>
+      </div>
+    </div>
+    <p style="font-size:12.5px;color:var(--text3);margin-top:12px;">A-MEM is System B. Plain vector stores — and even graph schemas frozen at design time — are System A. The paper's critique: memory systems need "sophisticated memory organization", not just storage and retrieval.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ZETTELKASTEN + NOTE CONSTRUCTION -->
+<section id="zettelkasten">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The <em>Zettelkasten</em> Blueprint — Atomic Notes</h2>
+  <p class="section-desc">A-MEM's design follows the Zettelkasten method. Three slip-box principles become three mechanisms — starting with note construction.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:1.5rem;">
+    <div class="card-sm"><div style="font-weight:600;font-size:14px;margin-bottom:4px;">1️⃣ Atomic</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">One idea per slip, self-contained, so any note can be retrieved on its own. <span class="highlight">→ Note construction</span>: the LLM distills each observation into a structured note.</div></div>
+    <div class="card-sm"><div style="font-weight:600;font-size:14px;margin-bottom:4px;">2️⃣ Linked</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Slips reference each other; meaning lives in the web, not the slips. <span class="highlight">→ Link generation</span>: the LLM decides which existing notes relate to the new one.</div></div>
+    <div class="card-sm"><div style="font-weight:600;font-size:14px;margin-bottom:4px;">3️⃣ Evolving</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Old slips get rewritten as understanding grows. <span class="highlight">→ Memory evolution</span>: related old notes are updated when a new note arrives.</div></div>
+  </div>
+
+  <div class="formula-card">
+    <div class="formula-main">m<sub>i</sub> = { c<sub>i</sub>, t<sub>i</sub>, K<sub>i</sub>, G<sub>i</sub>, X<sub>i</sub>, e<sub>i</sub>, L<sub>i</sub> }</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">c</div><div class="fp-name">Content</div><div class="fp-desc">The raw interaction text, kept verbatim.</div></div>
+      <div class="formula-piece"><div class="fp-sym">t</div><div class="fp-name">Timestamp</div><div class="fp-desc">When the interaction happened.</div></div>
+      <div class="formula-piece"><div class="fp-sym">K</div><div class="fp-name">Keywords</div><div class="fp-desc">LLM-extracted key concepts of the memory.</div></div>
+      <div class="formula-piece"><div class="fp-sym">G</div><div class="fp-name">Tags</div><div class="fp-desc">LLM-generated labels for categorization.</div></div>
+      <div class="formula-piece"><div class="fp-sym">X</div><div class="fp-name">Contextual description</div><div class="fp-desc">The LLM's own summary of what the memory means — the piece that later evolves.</div></div>
+      <div class="formula-piece"><div class="fp-sym">e</div><div class="fp-name">Embedding</div><div class="fp-desc">Dense vector of concat(c, K, G, X) for fast similarity search.</div></div>
+      <div class="formula-piece"><div class="fp-sym">L</div><div class="fp-name">Links</div><div class="fp-desc">The set of other notes this note connects to.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">What a Constructed Note Looks Like</div>
+    <div style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.9;background:var(--bg3);padding:1rem;border-radius:var(--radius);overflow-x:auto;">
+      OBSERVATION&nbsp;&nbsp;"User asked for a quiet restaurant for dinner"<br>
+      <span style="color:var(--text3);">──────────────────────────────────────────────────</span><br>
+      c&nbsp;&nbsp;User asked for a quiet restaurant for dinner<br>
+      t&nbsp;&nbsp;2025-06-06 18:42<br>
+      K&nbsp;&nbsp;[quiet, restaurant, dinner]<br>
+      G&nbsp;&nbsp;[dining, preference]<br>
+      X&nbsp;&nbsp;<span style="color:var(--amber);">User prefers calm, low-noise dining venues; avoids loud or crowded restaurants.</span><br>
+      e&nbsp;&nbsp;f<sub>enc</sub>(concat(c, K, G, X))&nbsp;&nbsp;→ dense vector<br>
+      L&nbsp;&nbsp;[ ]&nbsp;&nbsp;<span style="color:var(--text3);">← filled in by link generation…</span>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">One LLM call with a construction prompt turns a raw sentence into a structured, retrievable, linkable note. In the experiments the text encoder is <span class="code-inline">all-minilm-l6-v2</span>, and top-k retrieval uses k=10 by default.</p>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Build the Slip-Box (Centerpiece)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Feed four observations into an empty memory, one at a time. Watch each note get <strong>constructed</strong> (attribute chips), <strong>linked</strong> (green connectors), and — on the last note — watch an <strong>older note get rewritten</strong>.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:0.75rem;">
+      <button class="btn-primary" id="slipboxBtn" type="button" style="font-size:13px;padding:8px 18px;">Add next observation →</button>
+      <button class="btn-outline" id="slipboxReset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+      <div id="slipboxStage" style="font-family:var(--mono);font-size:11.5px;color:var(--amber);">① construction → ② linking → ③ evolution</div>
+    </div>
+    <div id="slipboxStatus" style="font-size:12px;color:var(--text2);margin-bottom:1rem;min-height:18px;">The slip-box is empty. Add observations one by one.</div>
+    <div id="slipboxWall" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LINK GENERATION -->
+<section id="linking">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Link <em>Generation</em> — the Web Decides</h2>
+  <p class="section-desc">When a note joins the network, A-MEM shortlists neighbors with embedding similarity — then lets the LLM decide which connections actually mean something.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">How a New Note Finds Its Neighbors</div>
+    <div style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:2;background:var(--bg3);padding:1rem;border-radius:var(--radius);overflow-x:auto;">
+      new note m<sub>n</sub><br>
+      <span style="color:var(--blue);">① similarity</span>&nbsp;&nbsp;s<sub>n,j</sub> = e<sub>n</sub>·e<sub>j</sub> / (|e<sub>n</sub>||e<sub>j</sub>|)&nbsp;&nbsp;— cosine over all notes<br>
+      <span style="color:var(--blue);">② shortlist</span>&nbsp;&nbsp;top-k nearest notes (k = 10 in the experiments)<br>
+      <span style="color:var(--amber);">③ LLM judgment</span>&nbsp;&nbsp;prompt: do these notes share attributes or context?<br>
+      <span style="color:var(--green);">④ write links</span>&nbsp;&nbsp;L<sub>n</sub> updated — the note joins one or more "boxes"
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">Embedding retrieval is a cheap first filter that scales to large collections; the LLM-driven step is what catches subtle patterns, causal relationships, and conceptual connections that raw similarity misses.</p>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">"Boxes" — Zettelkasten Entry Points</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Related notes interconnect through their similar contextual descriptions — like the entry points of a Zettelkasten. One note can live in <strong>multiple boxes at once</strong>. When any note in a box is retrieved, the rest of the box is automatically accessible too.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Retrieval — Query, Then Follow the Thread</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">A query is embedded with the same encoder, the top-k most similar notes are retrieved — and then <strong>linked notes in the same box are automatically accessed</strong>. One seed hit plus hops along links: multi-hop reach without re-reading the whole history.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Static RAG vs A-MEM Retrieval Race</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same memory store, same query. The left column retrieves the top-3 chunks by cosine similarity only; the right column retrieves one note and <strong>follows its links</strong>. Run it and see what each system puts in the prompt.</p>
+    <div style="font-family:var(--mono);font-size:12.5px;color:var(--amber);background:var(--amber-dim);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius);padding:10px 12px;margin-bottom:1rem;">QUERY: "Plan a dinner for the user"</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="raceBtn" type="button" style="font-size:13px;padding:8px 18px;">Run query →</button>
+      <button class="btn-outline" id="raceReset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="raceCols">
+      <div style="background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius);padding:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:10px;">STATIC RAG — top-3 by similarity</div>
+        <div id="raceRag"></div>
+      </div>
+      <div style="background:rgba(34,197,94,0.04);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius);padding:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--green);margin-bottom:10px;">A-MEM — retrieve + follow links</div>
+        <div id="raceAmem"></div>
+      </div>
+    </div>
+    <div id="raceVerdict" style="margin-top:1rem;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MEMORY EVOLUTION -->
+<section id="evolution">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Memory <em>Evolution</em> — Notes That Rewrite Themselves</h2>
+  <p class="section-desc">The key differentiator: adding a note can update the notes it links to. Their contextual descriptions, keywords, and tags get rewritten — so the whole network stays coherent as experience accumulates.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">The Evolution Step</div>
+    <div style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:2;background:var(--bg3);padding:1rem;border-radius:var(--radius);overflow-x:auto;">
+      for each neighbor m<sub>j</sub> of the new note m<sub>n</sub>:<br>
+      &nbsp;&nbsp;m<sub>j</sub>* ← LLM( m<sub>n</sub> ∥ other neighbors ∥ m<sub>j</sub> )<br>
+      &nbsp;&nbsp;evolved note m<sub>j</sub>* <strong>replaces</strong> the original m<sub>j</sub> in memory
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">The LLM sees the new note, the surrounding neighborhood, and the old note — then decides whether the old note's context, keywords, and tags should change to absorb the new evidence.</p>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Why This Matters</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">A note written in January ("user is lactose-intolerant") can quietly become incomplete by June. Evolution folds new evidence into old notes, letting the system discover <strong>higher-order patterns across memories</strong> — the paper's words: "mimicking human learning processes". Memory becomes a living network, not a static store.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Evidence It Works</div>
+      <ul class="problem-list">
+        <li>Ablation on GPT-4o-mini: removing evolution drops multi-hop F1 from <strong>45.85 → 31.24</strong>; removing links too drops it to 24.55</li>
+        <li>t-SNE plots show A-MEM notes forming coherent clusters vs a dispersed baseline without links/evolution</li>
+        <li>As more memories arrive, the network develops "increasingly sophisticated knowledge structures"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Note Evolution Viewer</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a note and read its version history. Each time a related observation arrives, the LLM rewrites the note's contextual description — <strong>highlighted phrases show what changed</strong>.</p>
+    <div id="evoTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+    <div id="evoTimeline"></div>
+    <div id="evoCaption" style="font-size:12px;color:var(--text2);background:var(--bg3);border-radius:var(--radius);padding:10px 12px;margin-top:1rem;line-height:1.7;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Results — <em>Self-Organization</em> Pays Off</h2>
+  <p class="section-desc">On LoCoMo's long conversations (avg. ~9K tokens, up to 35 sessions, 7,512 QA pairs across 5 question types) and DialSim's multi-party TV-show dialogues, A-MEM beats ReadAgent, MemoryBank, MemGPT, and full-context baselines across six foundation models.</p>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">GPT-4o-mini · MULTI-HOP F1</div>
+      <div class="result-score" style="color:var(--amber);">45.85</div>
+      <div class="result-label">vs 25.52 (MemGPT) and 18.41 (full context)</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">≈2× the best baseline where reasoning chains matter</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">QWEN2.5-3B · AVG F1</div>
+      <div class="result-score" style="color:var(--blue);">12.57</div>
+      <div class="result-label">vs 4.61 for the full-context baseline</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">a 2.7× gain — the biggest relative jump of the six</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">DIALSIM · F1</div>
+      <div class="result-score" style="color:var(--teal);">3.45</div>
+      <div class="result-label">+35% over LoCoMo (2.55), +192% over MemGPT (1.18)</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">best on every metric: F1, BLEU-1, ROUGE-L/2, METEOR, SBERT</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">TOKENS PER ANSWER</div>
+      <div class="result-score" style="color:var(--green);">2,520</div>
+      <div class="result-label">vs 16,910 for full context (GPT-4o-mini)</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:15%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">85–93% token reduction; 1,216 with GPT-4o</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Average F1 on LoCoMo, by Backbone (Table 1)</div>
+    <table class="comp-table">
+      <thead><tr><th>Backbone</th><th>Full-context (LoCoMo)</th><th>Best memory baseline</th><th>A-MEM</th><th>Gain</th></tr></thead>
+      <tbody>
+        <tr><td>GPT-4o-mini</td><td>25.02</td><td>26.65 (MemGPT)</td><td class="comp-best">27.02</td><td>+0.4 · multi-hop 45.85 vs 25.52</td></tr>
+        <tr><td>GPT-4o</td><td>28.00</td><td>30.36 (MemGPT)</td><td class="comp-best">32.86</td><td>+2.5 · multi-hop 39.41 vs 17.29</td></tr>
+        <tr><td>Qwen2.5-1.5B</td><td>9.05</td><td>11.14 (MemoryBank)</td><td class="comp-best">18.23</td><td class="comp-best">+7.1 · 1.6×</td></tr>
+        <tr><td>Qwen2.5-3B</td><td>4.61</td><td>5.07 (MemGPT)</td><td class="comp-best">12.57</td><td class="comp-best">+8.0 · 2.7×</td></tr>
+        <tr><td>Llama 3.2-1B</td><td>11.25</td><td>13.18 (MemoryBank)</td><td class="comp-best">19.06</td><td class="comp-best">+5.9 · 1.4×</td></tr>
+        <tr><td>Llama 3.2-3B</td><td>6.88</td><td>6.19 (MemoryBank)</td><td class="comp-best">17.44</td><td class="comp-best">+10.6 · 2.5×</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">A-MEM ranks first on every category for all four open 1–3B models (method ranking 1.0) — and first on average for both GPT models, with the margin concentrated in multi-hop questions.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Ablation — Where the Gains Come From (GPT-4o-mini, multi-hop F1)</div>
+    <div style="margin-top:8px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:150px;text-align:right;">no links, no evolution</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:53%;background:var(--red);border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:46px;">24.55</div></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:150px;text-align:right;">links only (w/o evol.)</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:68%;background:var(--blue);border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:46px;">31.24</div></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:150px;text-align:right;">full A-MEM</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:100%;background:var(--amber);border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:46px;">45.85</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:6px;line-height:1.6;">Link generation is the foundation; memory evolution adds the refinements that push multi-hop reasoning from 31.24 to 45.85 — the two modules are complementary by design.</p>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Backbone Analysis — Smaller Models Gain More</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The four open 1–3B models see 1.4–2.7× average gains, while on GPT-4o-mini/-4o the full-context and MemGPT baselines stay competitive on single-hop and adversarial questions (strong parametric knowledge). Interpretation: a self-organized note network <strong>substitutes for parametric knowledge</strong> — the weaker the backbone, the more structure pays off.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Cost &amp; Scale</div>
+      <ul class="problem-list">
+        <li>~1,200 tokens per memory operation; under $0.0003 per operation</li>
+        <li>5.4s processing with GPT-4o-mini; 1.1s with local Llama 3.2-1B</li>
+        <li>Storage grows O(N); retrieval 0.31μs at 1K notes → 3.70μs at 1M notes</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="border:1px solid rgba(239,68,68,0.2);">
+    <div class="card-label" style="color:var(--red);">What A-MEM Did NOT Solve</div>
+    <ul class="problem-list">
+      <li>Memory organization quality is still bounded by the backbone LLM — different models write different descriptions and forge different links</li>
+      <li>Text-only: the system does not yet handle multimodal memories (images, audio), which the authors leave to future work</li>
+      <li>Every write costs extra LLM calls (construction, linking, evolution) — cheap per note, but heavier than append-only stores</li>
+      <li>On GPT-4o-mini single-hop and adversarial categories, full-context baselines still win individual categories</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Memory That Writes Itself</em></h2>
+  <p class="section-desc">A-MEM reframed agent memory from a storage problem to an organization problem — and connected 70 years of knowledge-management practice to LLM architecture.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧠 Self-organizing memory</div><div class="notice-text">Memory becomes an active process: notes generate their own context, links, and updates — no predefined schema, no fixed operations in the workflow.</div></div>
+    <div class="notice-card"><div class="notice-title">🗂️ The Zettelkasten bridge</div><div class="notice-text">A 20th-century note-taking method became a 2025 architecture — evidence that human knowledge-management practice is a rich design space for agents.</div></div>
+    <div class="notice-card"><div class="notice-title">🕸️ Note-graph retrieval</div><div class="notice-text">Retrieval means following the thread: linked "boxes" give multi-hop access to related memories without re-reading entire histories.</div></div>
+    <div class="notice-card"><div class="notice-title">📈 2025's memory ecosystem</div><div class="notice-text">A-MEM lands amid Mem0, MemGPT, MemoryBank, and a wave of surveys and benchmarks — the year agent memory became its own research field.</div></div>
+    <div class="notice-card"><div class="notice-title">🤏 Small-model empowerment</div><div class="notice-text">1.4–2.7× gains on 1–3B backbones: structured external memory substitutes for scale, making capable agents cheaper to run.</div></div>
+    <div class="notice-card"><div class="notice-title">🏭 Production path</div><div class="notice-text">A production-ready A-MEM ships inside AIOS (the LLM-agent operating system), and the benchmark evaluation code is open-source on GitHub.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Notes That <em>Rewrite Themselves</em></h2>
+  <p class="section-desc">A-MEM imports a 70-year-old idea from personal knowledge management — the Zettelkasten: atomic, linked notes that grow smarter as you add more. The twist that matters for agents: when a new note arrives, older notes' descriptions are <em>rewritten</em> in light of it. Memory stops being a log and becomes an interpretation.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">🗂️</div>
+      <div class="problem-title">What a Note Knows About Itself</div>
+      <ul class="problem-list">
+        <li>Every note = {content, timestamp, keywords, tags, contextual description, embedding, links}</li>
+        <li>Attributes extracted by the LLM itself at write time — no hand schema</li>
+        <li>Links are LLM decisions over embedding-shortlisted neighbors; "boxes" group related notes</li>
+        <li>The rewrite loop: new evidence arrives → older descriptions update → retrieval quality compounds</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">🧾</div>
+      <div class="problem-title">What It Costs, and What It Risks</div>
+      <ul class="problem-list">
+        <li>Every write triggers attribute extraction + link decisions + possible rewrites — <$0.0003 per op, but ops multiply</li>
+        <li>Evolution is a bet: rewriting can also drift notes away from what was actually said</li>
+        <li>Retrieval still rides embeddings — the semantic-shortcut limits LoCoMo-Plus exposes remain upstream</li>
+        <li>Links accumulate: neighborhood context grows with the store — curation is unsolved at million-note scale</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Watch a Memory Evolve</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Three notes arrive over three sessions. Watch the first note's contextual description rewrite itself as evidence accumulates, watch links form and thicken, and then run the multi-hop query that needs all three notes at once — the retrieval pattern where A-MEM beat ReadAgent, MemoryBank, MemGPT and full-context across six backbones.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <button class="btn-primary" id="amStep" type="button" style="font-size:12.5px;padding:8px 16px;">▶ Session 1: first note</button>
+        <button class="btn-outline" id="amQuery" type="button" style="font-size:12.5px;padding:8px 16px;">🔍 Run multi-hop query</button>
+        <span id="amTag" style="font-family:var(--mono);font-size:10.5px;color:var(--text3);align-self:center;"></span>
+      </div>
+      <div id="amNotes" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:12px;"></div>
+      <div id="amResult"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Evolution is the differentiator; efficiency is the by-product</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">Multi-hop F1 of 45.85 with GPT-4o-mini — and 2.7× average improvement on a 3B backbone — while spending up to 93% fewer tokens per answer: because the notes already did the synthesis, the model reads a curated neighborhood instead of a transcript. O(N) storage keeps the bet affordable. The Zettelkasten lineage is explicit design honesty: the paper cites the method's human origin. Where the lineage continues: <a href="./Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html" style="color:var(--amber);font-weight:600;text-decoration:none;">Generative Agents</a> (proto-evolution via reflection), <a href="./MemGPT_Towards_LLMs_as_Operating_Systems.html" style="color:var(--amber);font-weight:600;text-decoration:none;">MemGPT</a> (capacity management), and the benchmarks that grade it: <a href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LongMemEval</a> and <a href="./LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LoCoMo-Plus</a>.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🔗 Links as retrieval pre-computation</div><div class="notice-text">A multi-hop query needs notes that do not resemble each other. Links are the bridge infrastructure embeddings cannot build — relation decided at write time, exploited at read time.</div></div>
+    <div class="notice-card"><div class="notice-title">✍️ The description is the index</div><div class="notice-text">Raw content stays immutable; the contextual description rewrites. That separation — evidence preserved, interpretation updated — is what makes evolution auditable.</div></div>
+    <div class="notice-card"><div class="notice-title">📦 Boxes</div><div class="notice-text">Zettelkasten "boxes" surface each other at retrieval: related neighborhoods arrive together. Structured browsing, not just nearest-neighbor.</div></div>
+    <div class="notice-card"><div class="notice-title">💰 $0.0003 per operation</div><div class="notice-text">Memory management priced at production scale: a million-note lifetime of operations costs less than one frontier-model page of context. The economics complete the argument.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the A-MEM paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ A-MEM (Xu et al., Rutgers — NeurIPS 2025) gives LLM agents Zettelkasten-style memory: atomic, linked, evolving notes.</div>
+    <div class="card-sm">✅ Every note = {content, timestamp, keywords, tags, contextual description, embedding, links} — attributes extracted by the LLM itself.</div>
+    <div class="card-sm">✅ Links are LLM decisions over embedding-shortlisted neighbors at write time; "boxes" group related notes and surface each other at retrieval.</div>
+    <div class="card-sm">✅ Memory evolution rewrites older notes' descriptions as new evidence arrives — the differentiator vs static stores.</div>
+    <div class="card-sm">✅ Beats ReadAgent, MemoryBank, MemGPT and full-context on LoCoMo across 6 backbones (multi-hop F1 45.85 on GPT-4o-mini; 2.7× average on Qwen2.5-3B) and on DialSim.</div>
+    <div class="card-sm">✅ Up to 93% fewer tokens per answer, under $0.0003 per memory operation, O(N) storage — practical at million-note scale.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2502.12110" target="_blank" rel="noopener noreferrer">"A-MEM: Agentic Memory for LLM Agents"</a> (Xu et al., 2025)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2502.12110" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./A_Survey_on_the_Memory_Mechanism_of_LLM_Based_Agents.html">Memory Survey Guide</a>
+    <a class="footer-link" href="./Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">Generative Agents Guide</a>
+    <a class="footer-link" href="./MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','zettelkasten','linking','evolution','results','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === DEMO 1: BUILD THE SLIP-BOX ===
+(function(){
+  const wall=document.getElementById('slipboxWall'),btn=document.getElementById('slipboxBtn'),rst=document.getElementById('slipboxReset'),stat=document.getElementById('slipboxStatus'),stage=document.getElementById('slipboxStage');
+  if(!wall||!btn||!rst||!stat||!stage)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const NOTES=[
+    {n:1,obs:'“User asked for a quiet restaurant for dinner”',kw:['quiet','restaurant','dinner'],tags:['dining','preference'],ctx:'User prefers calm, low-noise dining venues and avoids loud or crowded restaurants.',links:[]},
+    {n:2,obs:'“User mentioned they are lactose intolerant”',kw:['lactose','dairy','intolerance'],tags:['dining','health'],ctx:'User cannot digest dairy — avoid milk, cheese and cream when suggesting food.',links:[[1,'both dining preferences']]},
+    {n:3,obs:'“User booked a table for Friday at 7pm”',kw:['booking','Friday','7pm'],tags:['dining','schedule'],ctx:'User has a dinner booking on Friday at 7pm — likely the dinner to plan around.',links:[[1,'the dinner being booked'],[2,'menu constraints for this booking']]},
+    {n:4,obs:'“User’s partner is vegetarian”',kw:['partner','vegetarian'],tags:['dining','household'],ctx:'The user’s partner eats vegetarian — group meals need a vegetarian option.',links:[[2,'combined dietary constraints'],[3,'same Friday table']],evolve:{target:2,before:'User cannot digest dairy — avoid milk, cheese and cream when suggesting food.',after:'Both the user and their partner have dietary constraints: the user is lactose-intolerant (no dairy) and the partner is vegetarian — prefer restaurants with dairy-free and vegetarian menus, a quiet setting, booked Friday 7pm.'}}
+  ];
+  let step=0;const timers=[];
+  function later(fn,ms){if(RM){fn();}else{timers.push(setTimeout(fn,ms));}}
+  function chip(txt,cls){return `<span class="pill ${cls}" style="display:inline-block;margin:0 4px 4px 0;${RM?'':'animation:fadeUp .4s ease;'}">${txt}</span>`;}
+  function evolve(ev){
+    stage.textContent='③ memory evolution';
+    const card=document.getElementById('sb-card-'+ev.target);
+    if(!card)return;
+    card.style.borderLeftColor='var(--teal)';
+    if(!RM)card.style.animation='pulse 1.6s ease';
+    document.getElementById('sb-ctx-'+ev.target).innerHTML=`<div style="font-size:12px;line-height:1.6;background:var(--bg2);border-radius:var(--radius);padding:8px 10px;margin-bottom:4px;${RM?'':'animation:fadeUp .5s ease;'}"><span class="pill pill-amber" style="display:inline-block;margin-bottom:4px;">⟳ evolved after note 4</span><div style="color:var(--text3);text-decoration:line-through;font-size:11.5px;margin-bottom:6px;">${ev.before}</div><div style="background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);border-radius:6px;padding:8px 10px;color:var(--text);">${ev.after}</div></div>`;
+    stat.textContent='Memory evolution: note 4 made note 2 incomplete — its description was rewritten to cover both dietary constraints.';
+  }
+  function addNote(){
+    if(step>=NOTES.length)return;
+    const d=NOTES[step];step++;
+    const card=document.createElement('div');
+    card.className='card-sm';card.id='sb-card-'+d.n;
+    card.style.cssText='border-left:3px solid var(--amber);';
+    if(!RM)card.style.animation='fadeUp .5s ease';
+    card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">NOTE ${d.n}</span><span class="pill pill-amber">constructed</span></div><div style="font-size:13px;color:var(--text);line-height:1.5;margin-bottom:8px;">${d.obs}</div><div id="sb-kw-${d.n}"></div><div id="sb-ctx-${d.n}"></div><div id="sb-lk-${d.n}"></div>`;
+    wall.appendChild(card);
+    stage.textContent='① note construction';
+    stat.textContent=`Note ${d.n} constructed — the LLM extracted ${d.kw.length} keywords, ${d.tags.length} tags and a contextual description from the raw observation.`;
+    later(()=>{
+      document.getElementById('sb-kw-'+d.n).innerHTML=`<div style="display:flex;flex-wrap:wrap;margin-bottom:4px;">${d.kw.map(k=>chip(k,'pill-blue')).join('')}${d.tags.map(t=>chip('#'+t,'pill-purple')).join('')}</div>`;
+      document.getElementById('sb-ctx-'+d.n).innerHTML=`<div style="font-size:12px;color:var(--text2);line-height:1.6;background:var(--bg2);border-radius:var(--radius);padding:8px 10px;margin-bottom:4px;"><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">CTX · </span>${d.ctx}</div>`;
+    },700);
+    later(()=>{
+      if(d.links.length)stage.textContent='② link generation';
+      d.links.forEach((l,i)=>{later(()=>{
+        const lk=document.getElementById('sb-lk-'+d.n);
+        if(lk)lk.insertAdjacentHTML('beforeend',chip('↔ note '+l[0]+' · '+l[1],'pill-green'));
+        const tl=document.getElementById('sb-lk-'+l[0]);
+        if(tl)tl.insertAdjacentHTML('beforeend',chip('↔ note '+d.n+' · '+l[1],'pill-green'));
+        stat.textContent=`Link generated: note ${d.n} ↔ note ${l[0]} — ${l[1]}.`;
+      },i*450);});
+    },1500);
+    if(d.evolve)later(()=>evolve(d.evolve),1500+d.links.length*450+800);
+    if(step>=NOTES.length){btn.disabled=true;btn.textContent='Slip-box complete';btn.style.opacity='0.6';}
+  }
+  function reset(){
+    timers.forEach(clearTimeout);timers.length=0;step=0;wall.innerHTML='';
+    stage.textContent='① construction → ② linking → ③ evolution';
+    stat.textContent='The slip-box is empty. Add observations one by one.';
+    btn.disabled=false;btn.textContent='Add next observation →';btn.style.opacity='1';
+  }
+  btn.addEventListener('click',addNote);
+  rst.addEventListener('click',reset);
+})();
+
+// === DEMO 2: STATIC RAG VS A-MEM RACE ===
+(function(){
+  const btn=document.getElementById('raceBtn'),rst=document.getElementById('raceReset'),rag=document.getElementById('raceRag'),amem=document.getElementById('raceAmem'),verdict=document.getElementById('raceVerdict');
+  if(!btn||!rst||!rag||!amem||!verdict)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const timers=[];
+  function later(fn,ms){if(RM){fn();}else{timers.push(setTimeout(fn,ms));}}
+  const RAG=[[0.86,'note 1 · “quiet restaurant for dinner”',1],[0.71,'note 5 · “ordered takeout sushi Tuesday”',0],[0.69,'note 3 · “booked a table for Friday 7pm”',1]];
+  const MISSED=[[0.38,'note 2 · “lactose intolerant”'],[0.35,'note 4 · “partner is vegetarian”']];
+  const AMEM=[
+    {tag:'hop 1 · similarity',main:'note 1 · “quiet restaurant for dinner”',det:'seed hit — cosine 0.86, the highest match',c:'blue'},
+    {tag:'hop 2 · follow link',main:'note 1 ↔ note 2',det:'same “dining preferences” box → dairy-free constraint found',c:'green'},
+    {tag:'hop 3 · follow link',main:'note 2 ↔ note 4',det:'same “dietary constraints” box → partner is vegetarian',c:'green'}
+  ];
+  function ragRow(r){const [s,n,ok]=r;return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;${RM?'':'animation:fadeUp .4s ease;'}"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:34px;">${s.toFixed(2)}</div><div style="flex:1;height:14px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${s*100}%;background:${ok?'var(--green)':'var(--red)'};border-radius:4px;${RM?'':'animation:scaleIn .6s ease;'}transform-origin:left;"></div></div><div style="font-size:11.5px;color:var(--text2);flex:1.6;">${n}</div><div style="font-family:var(--mono);font-size:11px;">${ok?'<span style="color:var(--green);">✓</span>':'<span style="color:var(--red);">✗</span>'}</div></div>`;}
+  function missedRow(m){const [s,n]=m;return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;opacity:0.55;${RM?'':'animation:fadeUp .4s ease;'}"><div style="font-family:var(--mono);font-size:11px;color:var(--red);width:34px;">${s.toFixed(2)}</div><div style="flex:1;height:14px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${s*100}%;background:var(--red);opacity:0.5;border-radius:4px;"></div></div><div style="font-size:11.5px;color:var(--text2);flex:1.6;">${n} <span style="color:var(--red);font-family:var(--mono);font-size:10px;">never retrieved</span></div></div>`;}
+  function amemRow(a){return `<div style="background:var(--${a.c}-dim);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:6px;${RM?'':'animation:fadeUp .4s ease;'}"><span class="pill pill-${a.c}">${a.tag}</span><div style="font-size:12px;color:var(--text);margin-top:4px;">${a.main}</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">${a.det}</div></div>`;}
+  function clearAll(){
+    timers.forEach(clearTimeout);timers.length=0;
+    rag.innerHTML='<div style="font-size:12px;color:var(--text3);">Press “Run query” to retrieve the top-3 chunks by similarity…</div>';
+    amem.innerHTML='<div style="font-size:12px;color:var(--text3);">Press “Run query” to retrieve one note and follow its links…</div>';
+    verdict.innerHTML='';
+  }
+  btn.addEventListener('click',()=>{
+    clearAll();
+    rag.innerHTML='';amem.innerHTML='';
+    RAG.forEach((r,i)=>later(()=>rag.insertAdjacentHTML('beforeend',ragRow(r)),200+i*420));
+    const mt=200+RAG.length*420+250;
+    MISSED.forEach((m,i)=>later(()=>rag.insertAdjacentHTML('beforeend',missedRow(m)),mt+i*300));
+    later(()=>rag.insertAdjacentHTML('beforeend','<div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-top:6px;">2 of 4 constraints in the prompt — both dietary notes missed</div>'),mt+MISSED.length*300+200);
+    AMEM.forEach((a,i)=>later(()=>amem.insertAdjacentHTML('beforeend',amemRow(a)),200+i*640));
+    later(()=>amem.insertAdjacentHTML('beforeend','<div style="font-family:var(--mono);font-size:11px;color:var(--green);margin-top:6px;">all 4 constraints in the prompt — one seed + two hops</div>'),200+AMEM.length*640+200);
+    later(()=>{verdict.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div class="card-sm" style="border:1px solid rgba(239,68,68,0.25);"><div style="font-weight:600;font-size:13px;color:var(--red);margin-bottom:4px;">✗ Static RAG</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">The prompt knows “quiet” and “7pm” but never sees the dietary notes — the plan suggests a cheese-heavy menu with no vegetarian main.</div></div><div class="card-sm" style="border:1px solid rgba(34,197,94,0.25);"><div style="font-weight:600;font-size:13px;color:var(--green);margin-bottom:4px;">✓ A-MEM</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">One seed hit plus two link hops surfaces every constraint: quiet, Friday 7pm, dairy-free, vegetarian.</div></div></div>';},Math.max(mt+MISSED.length*300+900,200+AMEM.length*640+800));
+  });
+  rst.addEventListener('click',clearAll);
+  clearAll();
+})();
+
+// === DEMO 3: NOTE EVOLUTION VIEWER ===
+(function(){
+  const tabs=document.getElementById('evoTabs'),tl=document.getElementById('evoTimeline'),cap=document.getElementById('evoCaption');
+  if(!tabs||!tl||!cap)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const NOTES={
+    run:{label:'🏃 the runner',versions:[
+      {v:'v1',trig:'initial write — “User jogs every morning before work”',txt:'User exercises in the morning before work.'},
+      {v:'v2',trig:'new note — “User bought trail-running shoes”',txt:'User is a <hl>regular runner</hl> who prefers <hl>morning sessions</hl> and is now <hl>training for trail runs</hl>.'},
+      {v:'v3',trig:'new note — “User complained of knee pain after a long run”',txt:'A regular runner (morning, trail) <hl>currently managing knee pain</hl> — <hl>low-impact alternatives</hl> may now suit better.'}],why:'By v3, a query like “suggest exercise for the user” hits a note that already knows about the knee pain — the agent does not need to also retrieve the original complaint.'},
+    mail:{label:'📧 the email rules',versions:[
+      {v:'v1',trig:'initial write — “User prefers email over phone calls”',txt:'User prefers email over phone calls.'},
+      {v:'v2',trig:'new note — “User created a separate work email address”',txt:'User keeps <hl>work and personal email separate</hl>; work topics should go to <hl>the work address</hl>.'},
+      {v:'v3',trig:'new note — “User asked for weekly digests after inbox overload”',txt:'Email preferred (work + personal split) but <hl>only weekly digests</hl> — <hl>avoid multiple messages per day</hl>.'}],why:'A query like “how should I send this report?” now matches a note that already encodes the digest rule — no full-history scan needed.'},
+    es:{label:'🌮 the Spanish learner',versions:[
+      {v:'v1',trig:'initial write — “User is learning Spanish”',txt:'User is learning Spanish.'},
+      {v:'v2',trig:'new note — “User passed the A1 exam”',txt:'User has reached <hl>A1 level</hl> in Spanish.'},
+      {v:'v3',trig:'new note — “User booked a trip to Mexico City”',txt:'An <hl>A1-level learner preparing for a trip to Mexico City</hl> — <hl>practical travel phrases</hl> are most relevant.'}],why:'The trip query and the learning note now meet inside one evolved description — a connection the memory system discovered on its own, not one hard-coded by a developer.'}
+  };
+  let cur='run';
+  function hl(s){return s.replace(/<hl>/g,'<span style="background:var(--amber-dim);color:var(--amber);padding:0 4px;border-radius:4px;font-weight:600;">').replace(/<\/hl>/g,'</span>');}
+  function render(){
+    tabs.innerHTML=Object.keys(NOTES).map(k=>`<button type="button" data-k="${k}" style="font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${NOTES[k].label}</button>`).join('');
+    tl.innerHTML=NOTES[cur].versions.map((ver,i)=>`${i>0?`<div style="font-family:var(--mono);font-size:10.5px;color:var(--text3);padding:4px 0 4px 14px;${RM?'':'animation:fadeUp .4s ease;'}">↓ a related note arrived — the LLM rewrote this note’s description</div>`:''}<div class="card-sm" style="${RM?'':'animation:fadeUp .5s ease;animation-delay:'+(i*0.28)+'s;'}"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;"><span class="pill ${i===0?'pill-blue':'pill-amber'}">${ver.v}</span><span style="font-family:var(--mono);font-size:10.5px;color:var(--text3);">${ver.trig}</span></div><div style="font-size:12.5px;color:var(--text2);line-height:1.7;">${hl(ver.txt)}</div></div>`).join('');
+    cap.innerHTML='<strong>Why it matters:</strong> '+NOTES[cur].why;
+  }
+  tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur=b.getAttribute('data-k');render();});
+  render();
+})();
+
+// === NOTE EVOLUTION (DEEP DIVE) ===
+(function(){
+  const notes=document.getElementById('amNotes'),step=document.getElementById('amStep'),query=document.getElementById('amQuery'),tag=document.getElementById('amTag'),result=document.getElementById('amResult');
+  if(!notes||!step||!query||!tag||!result)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const N=[
+    {t:'S1 · "I adopted a puppy last week — housetraining is brutal."',tags:'#pets #routine',desc:['User has a young dog; early training stage.','User has a young dog; training limits free time and sleep.','User is time-constrained by housetraining a young dog — a causal factor in schedule, travel and activity choices.'],links:[]},
+    {t:'S2 · "We cancelled the hiking trip — can not leave the dog alone yet."',tags:'#travel #constraint',desc:['Travel constrained by the dog — link to pet note.','Housetraining causally blocks overnight travel — an active state constraint on weekends.'],links:[0]},
+    {t:'S4 · "Looking for weekend ideas that fit my current life."',tags:'#planning #help',desc:['Request for activity recommendations; read links to infer constraints.'],links:[0,1]}
+  ];
+  let stage=0;
+  function noteCard(i,ev){
+    const n=N[i];
+    const desc=ev>=n.desc.length?n.desc[n.desc.length-1]:n.desc[Math.min(ev,n.desc.length-1)];
+    const links=n.links.map(l=>'<span style="display:inline-block;background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:2px 7px;margin:2px 4px 0 0;font-size:9.5px;color:var(--blue);">↔ note-'+(l+1)+'</span>').join('');
+    return '<div style="background:var(--bg2);border:1px solid '+(i===2?'rgba(59,130,246,.5)':'rgba(34,197,94,.4)')+';border-radius:var(--radius);padding:10px 12px;'+(RM?'':'opacity:0;animation:fadeUp .45s ease forwards;')+'">'
+      +'<div style="font-size:11.5px;color:var(--text1);line-height:1.6;">'+n.t+'</div>'
+      +'<div style="font-family:var(--mono);font-size:9.5px;color:var(--text3);margin:5px 0;">'+n.tags+'</div>'
+      +'<div style="font-size:10.5px;color:var(--purple);line-height:1.5;"><strong>desc:</strong> '+desc+'</div>'
+      +'<div style="margin-top:5px;">'+links+'</div></div>';
+  }
+  function draw(){
+    notes.innerHTML=N.slice(0,Math.max(1,stage)).map((n,i)=>noteCard(i,stage-1-i)).join('');
+    tag.textContent=['session 1 · note created, attributes extracted','session 2 · new note links back · note-1 description rewritten','session 4 · request note reads both links'][Math.min(stage,2)];
+  }
+  step.addEventListener('click',()=>{
+    if(stage<3){stage++;draw();step.textContent=stage<3?'▶ Session '+(stage+1)+': next note arrives':'✓ All notes written';
+      if(stage===2){result.innerHTML='';}}
+  });
+  query.addEventListener('click',()=>{
+    if(stage<3){result.innerHTML='<div class="card-sm" style="border-left:3px solid var(--amber);font-size:12px;color:var(--text2);">Advance all sessions first — the query needs the whole neighborhood.</div>';return;}
+    result.innerHTML='<div class="card-sm animate-in" style="border-left:3px solid var(--green);"><div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;">MULTI-HOP QUERY · "Recommend weekend activities."</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">The query text shares no keywords with note-1 or note-2. Embedding search on "weekend activities" alone would surface nothing causal. Via links, the request note pulls its neighborhood: <em>young dog → overnight travel blocked</em> → the honest recommendation is daytime, dog-friendly, near-home activities — the 45.85 F1 pattern, synthesized from three unrelated sentences.</div></div>';
+    if(!RM){result.classList.remove('animate-in');void result.offsetWidth;result.classList.add('animate-in');}
+  });
+  if(RM||!('IntersectionObserver' in window)){stage=1;draw();}
+  else{const io=new IntersectionObserver(en=>{if(en.some(e=>e.isIntersecting)){stage=1;draw();io.disconnect();}},{threshold:0.3});io.observe(notes);}
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'Which knowledge-management method inspired A-MEM’s memory design?',opts:['Bullet journaling','The Zettelkasten slip-box method','The Cornell note-taking system','A relational database schema'],correct:1,explain:'A-MEM follows the Zettelkasten method — atomic notes, flexible linking, and continuous evolution — the same principles behind Niklas Luhmann’s paper slip-box.'},
+  {q:'What are A-MEM’s three core mechanisms?',opts:['Chunking, embedding, and retrieval','Summarization, compression, and eviction','Note construction, link generation, and memory evolution','Indexing, caching, and garbage collection'],correct:2,explain:'Every new memory goes through note construction (extract keywords, tags, and a contextual description), link generation (connect it to related notes), and memory evolution (update older notes).'},
+  {q:'What does “memory evolution” mean in A-MEM?',opts:['Old memories are deleted when new ones arrive','The contextual descriptions and attributes of existing notes are updated when related new notes arrive','All notes are re-embedded every night','The vector database is rebuilt from scratch after each session'],correct:1,explain:'When a new note links to older neighbors, the LLM may rewrite those notes’ contextual descriptions, keywords, and tags — the evolved note replaces the original, keeping the network coherent.'},
+  {q:'On LoCoMo with GPT-4o-mini, what multi-hop F1 did A-MEM achieve — roughly 2× the best baseline?',opts:['18.41','27.02','45.85','50.03'],correct:2,explain:'A-MEM scored 45.85 multi-hop F1, vs 25.52 for MemGPT and 18.41 for the full-context baseline. (50.03 is A-MEM’s adversarial-question score.)'},
+  {q:'How does A-MEM fundamentally differ from static RAG memory?',opts:['It retrieves from a much larger vector store','It fine-tunes the LLM on past conversations','Its agency is at storage time — the memory structure itself self-organizes with links and evolution','It uses a longer context window instead of retrieval'],correct:2,explain:'Agentic RAG decides when and what to retrieve but keeps a static knowledge base. A-MEM’s agency is more fundamental: descriptions, links, and organization of the stored memory change as notes arrive.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

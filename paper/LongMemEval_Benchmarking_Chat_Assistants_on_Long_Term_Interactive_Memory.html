@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of LongMemEval, the ICLR 2025 benchmark for chat-assistant memory, with interactive demos for knowledge updates, abstention, and the history-growth stress test.">
+<meta name="keywords" content="LongMemEval, long-term memory, chat assistants, benchmark, ICLR 2025, knowledge updates, abstention, temporal reasoning, multi-session reasoning, RAG, session decomposition, Chain-of-Note, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the LongMemEval benchmark: 500 questions, 5 memory abilities, ~115K-token histories, and why chat assistants forget.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LongMemEval — Interactive Guide">
+<meta name="twitter:description" content="Can chat assistants remember you across months of chat? Play with knowledge updates, abstention, and history-growth stress tests.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#abilities">Abilities</a>
+    <a class="nav-link" href="#construction">Design</a>
+    <a class="nav-link" href="#solutions">Solutions</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">ICLR 2025</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#abilities">Abilities</a>
+  <a href="#construction">Design</a>
+  <a href="#solutions">Solutions</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    The <em>Long</em>-Term<br>Memory Test
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to LongMemEval — the benchmark that embeds 500 carefully curated
+    questions inside ~115K-token multi-session chat histories to find out whether chat assistants
+    truly remember you. Long-context LLMs drop 30–60%. Commercial memory features fall even harder.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2410.10813" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">500</div>
+      <div class="stat-label">Questions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Memory Abilities</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">~115K</div>
+      <div class="stat-label">Tokens of History (S)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2024</div>
+      <div class="stat-label">Year Released</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Session <em>Amnesia</em> to Memory Wars</h2>
+  <p class="section-desc">Chat assistants gained "memory" features remarkably fast — but nobody had a rigorous way to grade them. LongMemEval arrived to fill exactly that gap.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2022</div><div class="tl-title">Session amnesia</div><div class="tl-desc">Chat assistants start fresh every conversation. Early long-term dialogue work (MSC, DuLeMon — Xu et al., 2022) grades generated replies, not memory accuracy.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023 · Oct</div><div class="tl-title">MemGPT (Packer et al.)</div><div class="tl-desc">Treats the LLM like an operating system with paged conversational memory. Memory becomes an architecture problem — not just a longer prompt.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2024 · Early</div><div class="tl-title">Memory goes commercial</div><div class="tl-desc">ChatGPT and Coze ship memory features that store user facts. Academic benchmarks appear too — but each covers a slice: MemoryBank (194 questions, ~5K tokens), LoCoMo, PerLTQA, DialSim.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024</div><div class="tl-title">The design space gets mapped</div><div class="tl-desc">Surveys and systems explore compression, indexing, and retrieval for LLM memory. Still no benchmark scores all five memory abilities at realistic length.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2024 · Oct</div><div class="tl-title">🚀 LongMemEval (Wu et al.)</div><div class="tl-desc">500 questions, 5 abilities, histories of ~115K tokens (scalable to ~1.5M). Long-context LLMs drop 30–60%; commercial systems score 30–70% in a simpler setting.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2025 →</div><div class="tl-title">Memory as a battleground</div><div class="tl-desc">Accepted at ICLR 2025. Dataset and code released on GitHub and Hugging Face; memory becomes a headline feature — and LongMemEval the yardstick.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Long-term memory is <span class="highlight">not storage</span>. A real memory must recall scattered facts, merge them across sessions, respect timestamps, overwrite stale facts, and admit when something was never said. Recalling isolated user facts — today's "memory" feature — misses almost all of that.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">A FACT THAT CHANGES (THE PAPER'S HARDEST TRAP)</div>
+        <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);">
+          <span style="color:var(--text3);">S3:</span> "I live in <span style="color:var(--blue);font-weight:600;">Boston</span>"<br>
+          <span style="color:var(--text3);">S17:</span> "I just moved to <span style="color:var(--teal);font-weight:600;">Austin</span>"<br>
+          <span style="color:var(--text3);">S31:</span> "moved back to <span style="color:var(--amber);font-weight:600;">Boston</span>!"<br>
+          <span style="color:var(--text3);">Q:</span> where do I live <em>now</em>?
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">The correct answer exists only at the moment of asking — stale copies are landmines.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Chatbots with <em>Amnesia</em></h2>
+  <p class="section-desc">Everyone sells "memory" — but the tests of that memory were short, synthetic, or single-ability. Here is the gap LongMemEval was built to fill.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🕳️</div>
+      <div class="problem-title">How Memory Was Tested Before</div>
+      <ul class="problem-list">
+        <li>Standard QA benchmarks are single-session — no memory involved at all</li>
+        <li>MemoryBank: 194 questions over ~5K-token histories</li>
+        <li>LoCoMo and DialSim: ~10K-token dialogues or synthetic TV-world agents</li>
+        <li>PerLTQA scales to ~1M tokens but skips knowledge updates</li>
+        <li>Commercial "memory" means recalling isolated user facts</li>
+        <li>None of them scores all five memory abilities</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🧠</div>
+      <div class="problem-title">LongMemEval's Answer</div>
+      <ul class="problem-list">
+        <li>500 questions covering all 5 abilities — including updates and abstention</li>
+        <li>Engineered histories averaging ~115K tokens, scalable to ~1.5M</li>
+        <li>Evidence scattered across up to 6 sessions, at any position</li>
+        <li>Timestamped sessions enable real temporal reasoning</li>
+        <li>Every question ships with labeled evidence sessions (oracle labels)</li>
+        <li>Two fixed settings (S and M) for apples-to-apples comparison</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">The Analogy — The Birthday Friend</div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;">Imagine a friend who remembers your birthday — but not that you moved cities, changed jobs, or asked them to stop recommending seafood. That is today's assistant memory: strong on isolated facts, weak on everything that makes memory <em>useful</em>. LongMemEval grades the whole picture: recall, synthesis, time, change, and honest ignorance.</p>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Abstention Detector</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Some questions below have answers in the memory snippets; some don't — the paper calls these "false premise" questions (30 of the 500). For each card, decide: should the assistant <strong>answer</strong>, or <strong>abstain</strong> ("I don't know")? Correct abstentions score points too.</p>
+    <div id="absScore" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;margin-bottom:1rem;"></div>
+    <div id="absCards"></div>
+    <div style="margin-top:1rem;"><button class="btn-outline" id="absReset" type="button" style="font-size:13px;padding:8px 18px;">↺ Play Again</button></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABILITIES -->
+<section id="abilities">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Five Abilities, <em>Seven</em> Question Types</h2>
+  <p class="section-desc">LongMemEval defines long-term memory as five skills, then maps them onto seven concrete question types — from "what did I say in March?" to "I never told you that." Examples below are written in the paper's style.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">Ability 1 · Information Extraction (IE)</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Recall specific details buried in extensive histories — mentioned by the <strong>user</strong> or by the <strong>assistant</strong>. Question types: <span class="pill pill-blue">single-session-user</span> <span class="pill pill-blue">single-session-assistant</span> <span class="pill pill-blue">single-session-preference</span></p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.7;">Q: "Which gym did the user say they switched to?"</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Ability 2 · Multi-Session Reasoning (MR)</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Synthesize information <strong>across two or more sessions</strong> — aggregation and comparison. Most LongMemEval questions need this; evidence can span up to 6 sessions. Question type: <span class="pill pill-purple">multi-session</span></p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.7;">Q: "How many books did the user finish this year, across all their reading updates?"</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Ability 3 · Temporal Reasoning (TR)</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Reason about <strong>when</strong>: both explicit time mentions in text ("last weekend") and timestamp metadata on each session. Question type: <span class="pill" style="background:var(--teal-dim);color:var(--teal);border:1px solid rgba(20,184,166,0.2);">temporal-reasoning</span></p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.7;">Q: "Which restaurant did the assistant recommend most recently?"</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Ability 4 · Knowledge Updates (KU)</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Recognize that the user's life <strong>changed</strong> — new city, new job — and keep memory current instead of stale. Question type: <span class="pill pill-amber">knowledge-update</span></p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.7;">Q: "Where does the user live now, after all their moves?"</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Ability 5 · Abstention (ABS)</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">Identify questions seeking information <strong>never mentioned</strong> in the history — and answer "I don't know." 30 questions are ordinary items rewritten with a false premise. Question type: <span class="pill pill-red">abstention</span></p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.7;">Q: "What's the user's favorite podcast?" — never discussed. ✓ "I don't know."</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Why Seven Types, Not Five?</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">Each ability gets concrete, testable forms. IE splits into <strong>user-said</strong>, <strong>assistant-said</strong>, and <strong>preference</strong> (using remembered user info in a reply). The other four map 1-to-1. Every question also has a <strong>reference session</strong> and labeled evidence turns for scoring recall, not just answers.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Knowledge Update Timeline (Centerpiece)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A user fact changes across three sessions. Read the timeline, then <strong>click the session whose fact is current right now</strong>. This is the paper's hardest trap: systems love stale facts.</p>
+    <div id="kuMeta" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;margin-bottom:1rem;"></div>
+    <div id="kuQuestion" style="background:var(--bg3);border-left:3px solid var(--amber);border-radius:var(--radius);padding:12px 16px;font-family:var(--mono);font-size:13px;color:var(--text);margin-bottom:1rem;"></div>
+    <div id="kuTimeline" style="display:flex;flex-direction:column;gap:10px;margin-bottom:1rem;"></div>
+    <div id="kuVerdict" style="min-height:24px;font-size:13px;margin-bottom:1rem;"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn-primary" id="kuNext" type="button" style="font-size:13px;padding:8px 18px;display:none;">Next Round →</button>
+      <button class="btn-outline" id="kuReset" type="button" style="font-size:13px;padding:8px 18px;">↺ Restart</button>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONSTRUCTION -->
+<section id="construction">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Question-First <em>Construction</em></h2>
+  <p class="section-desc">Don't generate a chat log and hope for questions. Start from a question that <em>needs</em> memory — then grow months of history around it, backward, so the answer is scattered, timestamped, and hard.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">LongMemEval instance = ( S , q , t_q , a )</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">S</div><div class="fp-name">Chat History</div><div class="fp-desc">A timestamped sequence of user–assistant sessions: ~115K tokens (setting S) or 500 sessions ≈ 1.5M tokens (setting M).</div></div>
+      <div class="formula-piece"><div class="fp-sym">q</div><div class="fp-name">The Question</div><div class="fp-desc">Asked in a fresh session, long after the evidence was buried in S.</div></div>
+      <div class="formula-piece"><div class="fp-sym">t_q</div><div class="fp-name">Question Date</div><div class="fp-desc">The "now" the question is anchored to — the reference point for temporal reasoning.</div></div>
+      <div class="formula-piece"><div class="fp-sym">a</div><div class="fp-name">Answer + Evidence</div><div class="fp-desc">The gold answer, plus labeled evidence sessions and turns for oracle retrieval scoring.</div></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:1.5rem;">
+    <div class="card-sm"><div class="card-label">Step 1 · Design</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Questions start from an ontology of 164 user attributes (lifestyle, belongings, life events, situations, demographics). An LLM proposes ~1,000 candidates per type; human experts keep and rewrite the best ~5%.</div></div>
+    <div class="card-sm"><div class="card-label">Step 2 · Decompose</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Each answer is manually split into evidence statements — with timestamps assigned if the fact involves time.</div></div>
+    <div class="card-sm"><div class="card-label">Step 3 · Simulate</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Llama 3 70B self-chats a task-oriented session per statement. The user LLM reveals evidence <em>indirectly</em>: "I bought a new car" becomes a question about car insurance.</div></div>
+    <div class="card-sm"><div class="card-label">Step 4 · Scatter</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Evidence sessions are shuffled among filler sessions — 25% ShareGPT, 25% UltraChat, 50% simulated — then timestamps resolved around evidence anchors.</div></div>
+    <div class="card-sm"><div class="card-label">Step 5 · Verify</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Humans screen and edit every session: check evidence inclusion, spread evidence positions, and rephrase LLM-sounding time mentions into natural speech. ~400 human hours in total.</div></div>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">ATTRIBUTES</div><div class="result-score" style="color:var(--amber);">164</div><div class="result-label">user attributes in the question ontology</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">CANDIDATES / TYPE</div><div class="result-score" style="color:var(--blue);">~1,000</div><div class="result-label">LLM-proposed questions per type</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:70%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">FINAL YIELD</div><div class="result-score" style="color:var(--teal);">~5%</div><div class="result-label">survive human filtering and rewriting</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:5%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">EVIDENCE SPAN</div><div class="result-score" style="color:var(--purple);">≤ 6</div><div class="result-label">sessions a single answer can be scattered across</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:60%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SOLUTIONS -->
+<section id="solutions">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Three Ways to Give an Assistant <em>Memory</em></h2>
+  <p class="section-desc">The paper unifies memory systems into three stages — indexing, retrieval, reading — and stress-tests the three most common families. Each one fails differently.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">The Three Memory Solution Families on LongMemEval</div>
+    <table class="comp-table">
+      <thead><tr><th>Approach</th><th>How It Works</th><th>Where It Wins</th><th>Where It Fails</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Long-context reading</strong><br><span style="font-size:11px;color:var(--text3);">GPT-4o, Llama 3.1, Phi-3…</span></td>
+          <td>Feed the entire chat history into the LLM's context window. No memory system at all.</td>
+          <td>No architecture change; near-oracle accuracy when only evidence sessions are given (GPT-4o: 0.870).</td>
+          <td class="comp-worst">30–60% accuracy drop at ~115K tokens; lost-in-the-middle; ~1.5M tokens (setting M) is simply unreachable.</td>
+        </tr>
+        <tr>
+          <td><strong>RAG memory</strong><br><span style="font-size:11px;color:var(--text3);">index → retrieve → read</span></td>
+          <td>Index sessions or rounds, retrieve the top-k relevant items for the question, read them with the LLM.</td>
+          <td class="comp-best">Works at 1.5M tokens. Optimized (rounds + fact-expanded keys + CoN) GPT-4o reaches 0.720 on M.</td>
+          <td class="comp-worst">Retrieval misses — especially on knowledge updates (fetches the new fact, misses the old one). Weak readers choke past ~3K retrieved tokens.</td>
+        </tr>
+        <tr>
+          <td><strong>Fact-summary memory</strong><br><span style="font-size:11px;color:var(--text3);">MemoryBank-style; ChatGPT, Coze</span></td>
+          <td>Compress sessions into user facts stored in a memory bank; recall facts at query time.</td>
+          <td>Cheap, plug-and-play; easy to inspect and edit; this is what commercial products ship.</td>
+          <td class="comp-worst">Information loss on details; ChatGPT "tended to overwrite crucial information"; Coze "failed to record indirectly provided user information."</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Quotes from the paper's human study of commercial systems (Section 3.4). Even the RAG winner is only ~0.72 — long-term memory remains unsolved.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">The Unified Framework — 3 Stages × 4 Control Points</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:1rem;">Every memory design — including ChatGPT's and Coze's — can be described as choices at four control points. The paper's experiments turn each knob and measure what happens:</p>
+    <div class="notice-grid">
+      <div class="notice-card"><div class="notice-title">CP1 · Value (indexing)</div><div class="notice-text">Decompose sessions into individual <strong>rounds</strong> — better granularity for retrieval and reading. Compressing to summaries or facts loses information (except on multi-session questions, where facts help).</div></div>
+      <div class="notice-card"><div class="notice-title">CP2 · Key (indexing)</div><div class="notice-text">Expand each item's key with extracted user facts: <strong>fact-augmented key expansion</strong> adds +9.4% average recall@k and +5.4% end-to-end accuracy across models.</div></div>
+      <div class="notice-card"><div class="notice-title">CP3 · Query (retrieval)</div><div class="notice-text">Naive similarity search fails on "last weekend"-style questions. <strong>Time-aware query expansion</strong> narrows the search range: +6.8–11.3% recall on temporal-reasoning questions.</div></div>
+      <div class="notice-card"><div class="notice-title">CP4 · Reading strategy</div><div class="notice-text">Present retrieved items as structured JSON and read with <strong>Chain-of-Note</strong> (extract notes per item, then reason). Up to 10 absolute points — even with perfect retrieval.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Results: <em>Everyone</em> Forgets</h2>
+  <p class="section-desc">Long-context LLMs drop 30–60% as history grows to ~115K tokens. Commercial memory features fall even harder against offline reading. "Long context" and "long memory" are different products.</p>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">GPT-4o · FULL CONTEXT</div><div class="result-score" style="color:var(--amber);">0.606</div><div class="result-label">on ~115K-token histories — vs 0.870 evidence-only (−30.3%)</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:66%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">LLAMA 3.1 70B · FULL CONTEXT</div><div class="result-score" style="color:var(--red);">0.334</div><div class="result-label">vs 0.744 evidence-only (−55.1%)</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:36%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">CHATGPT · GPT-4o MEMORY</div><div class="result-score" style="color:var(--blue);">0.577</div><div class="result-label">online memory vs 0.918 offline reading (−37%)</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:63%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">COZE · GPT-4o MEMORY</div><div class="result-score" style="color:var(--red);">0.330</div><div class="result-label">online memory vs 0.918 offline reading (−64%)</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:36%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — History Growth Stress Test</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a model, then toggle the memory solution. Watch what happens as the history grows from <strong>evidence-only</strong>, to <strong>~115K tokens (S)</strong>, to <strong>500 sessions ≈ 1.5M tokens (M)</strong>.</p>
+    <div id="hgTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;"></div>
+    <div id="hgModes" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+    <div id="hgBars"></div>
+    <div id="hgCaption" style="font-size:12px;color:var(--text2);margin-top:1rem;line-height:1.7;"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:10px;">Real numbers from the paper (Table 8, five additional LLMs): "read everything" = direct long-context reading of the full history; "RAG memory" = retrieval over round-granularity values with fact-expanded keys. QA accuracy, LLM-judge evaluated.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Commercial Assistants, by Ability (human study, simplified setting)</div>
+    <table class="comp-table">
+      <thead><tr><th>System</th><th>LLM</th><th>IE</th><th>MR</th><th>KU</th><th>TR</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="2"><strong>ChatGPT</strong></td><td>GPT-4o-mini</td><td class="comp-best">1.000</td><td>0.647</td><td>0.667</td><td>0.652</td></tr>
+        <tr><td>GPT-4o</td><td>0.688</td><td>0.441</td><td class="comp-best">0.833</td><td>0.435</td></tr>
+        <tr><td rowspan="2"><strong>Coze</strong></td><td>GPT-4o</td><td>0.813</td><td>0.147</td><td>0.208</td><td>0.391</td></tr>
+        <tr><td>GPT-3.5-turbo</td><td>0.625</td><td class="comp-worst">0.118</td><td>0.375</td><td class="comp-worst">0.043</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Setting: 97 questions with 3–6-session histories (~10× shorter than LongMemEval-S), single-session-assistant and abstention questions skipped. IE = information extraction, MR = multi-session reasoning, KU = knowledge updates, TR = temporal reasoning. Multi-session and temporal reasoning are where commercial memory collapses — Coze's temporal score with GPT-3.5 is 0.043.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Which Ability Is Hardest?</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>For commercial systems:</strong> multi-session reasoning and temporal reasoning — aggregation across sessions and time is where fact-list memories fall apart.</li>
+        <li><strong>For RAG systems:</strong> knowledge updates. In the error analysis, ~10% of correctly answered questions were answered despite retrieval failure — and they were mostly knowledge-update items where the retriever found the updated fact but missed the information before the update.</li>
+        <li><strong>For everyone:</strong> 15–19% of all instances had correct retrieval but wrong generation — reading is its own failure mode.</li>
+      </ul>
+    </div>
+    <div class="card" style="background:rgba(239,68,68,0.03);border-color:rgba(239,68,68,0.15);">
+      <div class="card-label">What LongMemEval Did NOT Solve</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Histories are engineered (self-chat + public corpora), not organic human logs — realism is approximated, not guaranteed.</li>
+        <li>The best memory design still only reaches ~0.72 accuracy on M — a ceiling, not a finish line.</li>
+        <li>Scoring relies on a GPT-4o judge (≥90% agreement with experts, but open-ended preference and abstention answers drift).</li>
+        <li>Online cost and latency of memory operations — the price a product pays — are not measured.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — Memory Gets a <em>Yardstick</em></h2>
+  <p class="section-desc">LongMemEval turned "our assistant remembers you" from a marketing claim into a measurable score. Here is what it changed.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">📏 A yardstick for memory</div><div class="notice-text">500 questions, two fixed settings (S: ~115K tokens, M: 500 sessions ≈ 1.5M), oracle labels for recall — released on GitHub and Hugging Face for anyone to test against.</div></div>
+    <div class="notice-card"><div class="notice-title">🔄 The knowledge-update trap</div><div class="notice-text">Commercial banks overwrite crucial information; RAG retrievers fetch the updated fact and miss the old one. Updates are now a first-class evaluation target.</div></div>
+    <div class="notice-card"><div class="notice-title">🙅 Abstention became an ability</div><div class="notice-text">30 false-premise questions grade "I don't know" as a correct answer — memory includes knowing what was never said.</div></div>
+    <div class="notice-card"><div class="notice-title">🎓 A training signal</div><div class="notice-text">Labeled evidence sessions and turns turn memory from a prompt trick into a trainable behavior — supervised data for fine-tuning and aligning future memory-aware assistants.</div></div>
+    <div class="notice-card"><div class="notice-title">🏭 Products, measured</div><div class="notice-text">ChatGPT: 0.577. Coze: 0.330. Offline reading with the same LLM: 0.918. A memory feature is not the same thing as memory ability.</div></div>
+    <div class="notice-card"><div class="notice-title">🧠 Long context ≠ long memory</div><div class="notice-text">A giant window is not a memory: 30–60% drops at ~115K tokens, and 1.5M tokens is unreachable. Retrieval-based memory keeps small models alive at scale.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The <em>Oracle Cliff</em>: What Long Contexts Actually Cost</h2>
+  <p class="section-desc">LongMemEval's most-quoted experiment is a subtraction. Give GPT-4o only the evidence it needs — the "oracle" setting — and it answers at 0.870. Give it the same facts buried in a ~115K-token chat history and it falls to 0.606. The difference is pure context length: nothing new to find, everything new to ignore.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">🏗️</div>
+      <div class="problem-title">A Benchmark Built Backward</div>
+      <ul class="problem-list">
+        <li>Question-first construction: design the question, then generate months of history <em>backward</em> so the answer is scattered and timestamped</li>
+        <li>500 questions × 5 abilities: extraction, multi-session reasoning, knowledge updates, temporal reasoning, abstention</li>
+        <li>Average histories ~115K tokens (~40 sessions), scalable to 1.5M — far beyond any earlier memory benchmark</li>
+        <li>Abstention is graded: knowing what you no longer know is an ability, not a refusal</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">📉</div>
+      <div class="problem-title">The Cliff, Measured Three Ways</div>
+      <ul class="problem-list">
+        <li>Long-context LLMs drop 30–60% from oracle to full history: GPT-4o 0.870 → 0.606</li>
+        <li>Commercial memory underdelivers: ChatGPT 0.577, Coze 0.330 — vs 0.918 for offline reading with the same LLM</li>
+        <li>Knowledge updates are the trap: models prefer <em>early</em> facts over <em>current</em> ones — primacy over recency</li>
+        <li>Every long-context fix (needle tests) had trained on retrieval, not update-aware reasoning over months</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Update Trap and the Cliff</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">First: a knowledge-update question the way a model sees it — two facts, months apart, one current. Pick the answer a well-behaved memory system gives. Then: the cliff chart, oracle vs full history for three systems — the exact comparison that reframed long-context marketing.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE UPDATE TRAP · SESSION 3 vs SESSION 38</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:12px;">Session 3: "I moved apartments — I am in Oakland now, near Lake Merritt." · Session 38: "Finally left the Bay — I am in Austin these days."<br><span style="color:var(--text1);font-weight:600;">Q: Which neighborhood is the user's doctor most convenient to today?</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <button class="btn-outline" id="lmOld" type="button" style="font-size:12.5px;padding:8px 16px;">"Near Lake Merritt"</button>
+        <button class="btn-outline" id="lmNew" type="button" style="font-size:12.5px;padding:8px 16px;">"Somewhere in Austin"</button>
+        <button class="btn-outline" id="lmAbstain" type="button" style="font-size:12.5px;padding:8px 16px;">"I do not know the neighborhood"</button>
+      </div>
+      <div id="lmTrap" style="margin-bottom:16px;"></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;padding-top:12px;border-top:1px dashed var(--border);">THE ORACLE CLIFF · SAME FACTS, DIFFERENT CONTEXT</div>
+      <div id="lmCliff"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">The winning recipe was engineering, not heroics</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The paper's best configuration is a checklist: round decomposition (answer per round, then aggregate), fact-expanded keys (+9.4% recall), time-aware queries, and Chain-of-Note JSON reading. None of it is a new model — all of it is memory <em>management</em>, which is the survey's vocabulary vindicated. Where this goes next: <a href="./LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LoCoMo-Plus</a> pushes beyond factual recall to behavioral consistency, and the systems it grades include <a href="./A_MEM_Agentic_Memory_for_LLM_Agents.html" style="color:var(--amber);font-weight:600;text-decoration:none;">A-MEM</a> and <a href="./MemGPT_Towards_LLMs_as_Operating_Systems.html" style="color:var(--amber);font-weight:600;text-decoration:none;">MemGPT</a>.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🎯 Primacy over recency</div><div class="notice-text">Models prefer early-learned facts over updated ones — the reverse of what a memory system needs. Long contexts amplify the bias: more history, more stale anchors.</div></div>
+    <div class="notice-card"><div class="notice-title">🤐 Abstention as ability 5</div><div class="notice-text">When the history is silent, the correct answer is "I do not know." Grading abstention stops benchmarks from rewarding confident fabrication.</div></div>
+    <div class="notice-card"><div class="notice-title">🏬 Commercial memory ≠ memory research</div><div class="notice-text">ChatGPT 0.577 and Coze 0.330 against 0.918 offline: shipped memory systems are convenience features, not yet knowledge custodians.</div></div>
+    <div class="notice-card"><div class="notice-title">🧱 500K-token stress mode</div><div class="notice-text">The scalable protocol (~500 sessions) exists to keep the benchmark ahead of context windows — the test hardens as the models grow.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the LongMemEval paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper (which is, after all, the point).</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ 500 questions × 5 abilities: information extraction, multi-session reasoning, knowledge updates, temporal reasoning, abstention.</div>
+    <div class="card-sm">✅ Histories average ~115K tokens (≈40 sessions), scalable to 500 sessions ≈ 1.5M tokens — far beyond any prior memory benchmark.</div>
+    <div class="card-sm">✅ Question-first construction: design the question, then generate months of history backward so the answer is scattered and timestamped.</div>
+    <div class="card-sm">✅ Long-context LLMs drop 30–60% at ~115K tokens — GPT-4o falls from 0.870 (evidence-only) to 0.606.</div>
+    <div class="card-sm">✅ Commercial memory underperforms: ChatGPT 0.577 and Coze 0.330 vs 0.918 for offline reading with the same LLM.</div>
+    <div class="card-sm">✅ Best recipe found: round decomposition + fact-expanded keys (+9.4% recall) + time-aware queries + Chain-of-Note JSON reading.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2410.10813" target="_blank" rel="noopener noreferrer">"LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory"</a> (Wu et al., 2024)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2410.10813" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT Guide</a>
+    <a class="footer-link" href="./Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">Generative Agents Guide</a>
+    <a class="footer-link" href="./LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html">LoCoMo+ Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','abilities','construction','solutions','results','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === DEMO 2: ABSTENTION DETECTOR ===
+(function(){
+  const cardsEl=document.getElementById('absCards');
+  const scoreEl=document.getElementById('absScore');
+  const resetEl=document.getElementById('absReset');
+  if(!cardsEl||!scoreEl||!resetEl)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const CASES=[
+    {q:'Which coffee shop does the user go to?',snips:[
+      {id:'S12 · May 2',text:'"I\'ve been going to Blue Bottle every morning before work — the baristas know my order by heart."'}
+    ],should:false,why:'The fact is right there in S12 — abstaining here would be over-caution. Abstention is calibrated ignorance, not blanket refusal.'},
+    {q:"What's the user's favorite podcast?",snips:[
+      {id:'S9 · Apr 14',text:'"Finished three audiobooks this month — mostly science fiction."'},
+      {id:'S21 · Jun 3',text:'"Still watching Severance. I can\'t stop thinking about the finale."'}
+    ],should:true,why:'Books and TV are mentioned — podcasts never are. This is a false-premise question: LongMemEval\'s 30 ABS items expect exactly this "I don\'t know".'},
+    {q:"What breed is the user's dog?",snips:[
+      {id:'S7 · Apr 2',text:'"I volunteer at the animal shelter on weekends — hard to leave without adopting one, honestly."'},
+      {id:'S26 · Jun 16',text:'"My apartment is tiny, so a dog would be unfair to it. Maybe someday."'}
+    ],should:true,why:'The user volunteers around animals and explicitly has no dog. Inventing a breed is a hallucination — the correct memory move is abstention.'},
+    {q:'When did the user last visit their parents?',snips:[
+      {id:'S18 · May 27',text:'"I drove up to my parents\' place in Portland over Memorial Day weekend."'},
+      {id:'S27 · Jul 1',text:'"My parents are coming to me this time — hosting them for the Fourth."'}
+    ],should:false,why:'The last visit is in S18: Memorial Day weekend. S27 only says the parents will visit next — a temporal-reasoning twist, not a missing fact.'}
+  ];
+  let picked=0,score=0;
+  function verdictHTML(c,choice,ok){
+    const head=ok?'✓ +1 — '+(c.should?'correct abstention':'correct answer'):'✗ +0 — '+(c.should?'hallucination':'over-caution');
+    const color=ok?'var(--green)':'var(--red)';
+    return '<div style="margin-top:10px;padding:10px 12px;border-radius:var(--radius);background:'+(ok?'var(--green-dim)':'var(--red-dim)')+';color:'+color+';font-size:12px;line-height:1.7;"><strong>'+head+'</strong> — '+c.why+'</div>';
+  }
+  function render(){
+    picked=0;score=0;
+    scoreEl.textContent='Score: 0 / '+CASES.length;
+    cardsEl.innerHTML=CASES.map((c,ci)=>(
+      '<div class="card-sm" style="margin-bottom:10px;">'+
+      '<div style="font-family:var(--mono);font-size:13px;color:var(--text);margin-bottom:8px;"><span style="color:var(--amber);">Q'+(ci+1)+'.</span> "'+c.q+'"</div>'+
+      c.snips.map(s=>('<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:8px 10px;margin-bottom:6px;"><span style="font-family:var(--mono);font-size:10px;color:var(--text3);">'+s.id+'</span><div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.6;">'+s.text+'</div></div>')).join('')+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;" id="absBtns-'+ci+'">'+
+      '<button type="button" class="btn-primary" style="font-size:12px;padding:6px 14px;" data-case="'+ci+'" data-choice="answer">💬 Answer it</button>'+
+      '<button type="button" class="btn-outline" style="font-size:12px;padding:6px 14px;" data-case="'+ci+'" data-choice="abstain">🙅 Abstain</button>'+
+      '</div><div id="absV-'+ci+'"></div></div>'
+    )).join('');
+    cardsEl.querySelectorAll('button[data-case]').forEach(b=>{
+      b.addEventListener('click',()=>{
+        const ci=+b.getAttribute('data-case');
+        const choice=b.getAttribute('data-choice');
+        const c=CASES[ci];
+        const ok=(choice==='abstain')===c.should;
+        if(ok)score++;
+        document.getElementById('absV-'+ci).innerHTML=verdictHTML(c,choice,ok);
+        const btns=document.getElementById('absBtns-'+ci);
+        btns.style.pointerEvents='none';btns.style.opacity='0.45';
+        picked++;
+        scoreEl.textContent='Score: '+score+' / '+CASES.length+(picked===CASES.length?(score===CASES.length?' — flawless memory!':' — memory is hard, even for humans.'):'');
+      });
+    });
+  }
+  resetEl.addEventListener('click',render);
+  render();
+})();
+
+// === DEMO 1: KNOWLEDGE UPDATE TIMELINE (CENTERPIECE) ===
+(function(){
+  const metaEl=document.getElementById('kuMeta');
+  const qEl=document.getElementById('kuQuestion');
+  const tlEl=document.getElementById('kuTimeline');
+  const vdEl=document.getElementById('kuVerdict');
+  const nextBtn=document.getElementById('kuNext');
+  const resetBtn=document.getElementById('kuReset');
+  if(!metaEl||!qEl||!tlEl||!vdEl||!nextBtn||!resetBtn)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const ROUNDS=[
+    {attr:'Home city',question:'"Which city does the user live in right now?" (asked July 1)',sessions:[
+      {id:'Session 17 · Apr 28',fact:'Moved to Austin',text:'"I just moved to Austin for the new job. Boxes everywhere."'},
+      {id:'Session 3 · Mar 5',fact:'Lives in Boston',text:'"I\'ve lived in Boston for five years — I even love the winters."'},
+      {id:'Session 31 · Jun 12',fact:'Back in Boston',text:'"Austin was only a six-month contract — we moved back to Boston last week!"',correct:true}
+    ],explain:'The newest fact (Jun 12) wins: Boston → Austin → back to Boston. Sessions are shown in <em>retrieval order</em>, not chronological order — sorting by timestamp is exactly the design choice the paper prescribes for memory reading. LongMemEval\'s error analysis found retrievers often fetch the updated fact but miss the earlier evidence it supersedes, so systems confidently answer with stale facts.'},
+    {attr:'Job',question:'"What is the user\'s current job?" (asked July 20)',sessions:[
+      {id:'Session 38 · Jul 2',fact:'Head of design dept.',text:'"The college just promoted me to head of the design department!"',correct:true},
+      {id:'Session 6 · Mar 18',fact:'Studio designer',text:'"I\'m a graphic designer at a small studio downtown."'},
+      {id:'Session 22 · May 9',fact:'Teaching design',text:'"I left the studio — I\'m teaching design at the community college now."'}
+    ],explain:'Promotion supersedes teaching, which superseded the studio job — even though the current fact was retrieved <em>first</em>. Knowledge updates are defined as recognizing "changes in the user\'s personal information and updating the knowledge of the user dynamically over time." The paper found ChatGPT "tended to overwrite crucial information as the chat continues" — the opposite failure: losing the trail entirely.'},
+    {attr:'Diet',question:'"What is the user\'s current diet?" (asked July 5)',sessions:[
+      {id:'Session 4 · Mar 10',fact:'Vegetarian',text:'"I\'ve been vegetarian for three years — it stuck."'},
+      {id:'Session 34 · Jun 25',fact:'Eats everything',text:'"Gave up on restrictions entirely — I eat everything these days, and honestly feel better."',correct:true},
+      {id:'Session 19 · Apr 30',fact:'Pescatarian',text:'"My doctor suggested adding fish — so pescatarian now, I guess."'}
+    ],explain:'Two updates in a row, and the current fact sits in the <em>middle</em> of the retrieved pile. This is why LongMemEval timestamps every session and anchors each question to a question date — the correct answer only exists relative to "now."'}
+  ];
+  let r=0,score=0,answered=false;
+  function sessionCard(s,i){
+    return '<div class="kuSess" data-i="'+i+'" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:border-color .2s,background .2s;'+(reduced?'':'opacity:0;animation:fadeUp .5s ease forwards;animation-delay:'+(i*0.12)+'s;')+'">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;">'+
+      '<span style="font-family:var(--mono);font-size:11px;color:var(--text3);">'+s.id+'</span>'+
+      '<span class="kuChip" style="font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:12px;border:1px solid var(--border2);color:var(--text3);">fact: '+s.fact+'</span>'+
+      '</div>'+
+      '<div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.6;">'+s.text+'</div>'+
+      '</div>';
+  }
+  function render(){
+    const rd=ROUNDS[r];
+    answered=false;
+    metaEl.textContent='Round '+(r+1)+' / '+ROUNDS.length+' · '+rd.attr+' · Score: '+score;
+    qEl.textContent=rd.question;
+    tlEl.innerHTML=rd.sessions.map(sessionCard).join('');
+    vdEl.innerHTML='';
+    nextBtn.style.display='none';
+    tlEl.querySelectorAll('.kuSess').forEach(card=>{
+      card.addEventListener('mouseenter',()=>{if(!answered)card.style.borderColor='rgba(245,158,11,0.4)';});
+      card.addEventListener('mouseleave',()=>{if(!answered)card.style.borderColor='var(--border)';});
+      card.addEventListener('click',()=>pick(+card.getAttribute('data-i')));
+    });
+  }
+  function pick(i){
+    if(answered)return;
+    answered=true;
+    const rd=ROUNDS[r];
+    const ok=!!rd.sessions[i].correct;
+    if(ok)score++;
+    tlEl.querySelectorAll('.kuSess').forEach((card,ci)=>{
+      card.style.cursor='default';
+      const chip=card.querySelector('.kuChip');
+      const isCur=!!rd.sessions[ci].correct;
+      if(isCur){
+        card.style.background='var(--green-dim)';card.style.borderColor='rgba(34,197,94,0.35)';
+        chip.textContent='✓ CURRENT';chip.style.color='var(--green)';chip.style.borderColor='rgba(34,197,94,0.35)';
+      }else if(ci===i){
+        card.style.background='var(--red-dim)';card.style.borderColor='rgba(239,68,68,0.35)';
+        chip.textContent='✗ STALE';chip.style.color='var(--red)';chip.style.borderColor='rgba(239,68,68,0.35)';
+      }else{
+        card.style.opacity='0.55';
+        chip.textContent='superseded';
+      }
+    });
+    vdEl.innerHTML='<div style="padding:12px 14px;border-radius:var(--radius);background:'+(ok?'var(--green-dim)':'var(--red-dim)')+';color:'+(ok?'var(--green)':'var(--red)')+';font-size:12px;line-height:1.7;">'+
+      '<strong>'+(ok?'✓ Correct — that is the current fact.':'✗ Not quite — you picked a stale fact.')+'</strong> '+rd.explain+'</div>';
+    metaEl.textContent='Round '+(r+1)+' / '+ROUNDS.length+' · '+rd.attr+' · Score: '+score;
+    if(r<ROUNDS.length-1){nextBtn.textContent='Next Round →';nextBtn.style.display='inline-block';}
+    else{nextBtn.textContent='Finish →';nextBtn.style.display='inline-block';}
+  }
+  nextBtn.addEventListener('click',()=>{
+    if(r<ROUNDS.length-1){r++;render();}
+    else{
+      tlEl.innerHTML='';
+      qEl.textContent='';
+      nextBtn.style.display='none';
+      metaEl.textContent='Done · Final score: '+score+' / '+ROUNDS.length;
+      vdEl.innerHTML='<div style="padding:14px 16px;border-radius:var(--radius);background:var(--amber-dim);color:var(--amber);font-size:13px;line-height:1.8;"><strong>'+(score===3?'Flawless — you out-memory most systems in the paper.':score===2?'Solid — one stale fact slipped past you. The paper\'s systems do worse.':'The trap got you — and it gets the models too. That\'s the point of knowledge-update questions.')+'</strong><br>On LongMemEval, GPT-4o with full context answered only 60.6% overall; commercial memory systems scored 30–70% even in a much simpler setting.</div>';
+    }
+  });
+  resetBtn.addEventListener('click',()=>{r=0;score=0;render();});
+  render();
+})();
+
+// === DEMO 3: HISTORY GROWTH STRESS TEST ===
+(function(){
+  const tabsEl=document.getElementById('hgTabs');
+  const modesEl=document.getElementById('hgModes');
+  const barsEl=document.getElementById('hgBars');
+  const capEl=document.getElementById('hgCaption');
+  if(!tabsEl||!modesEl||!barsEl||!capEl)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const MODELS=[
+    {name:'Mistral-Nemo 12B',oracle:68.8,lcS:16.2,ragS:66.6,ragM:59.8},
+    {name:'Qwen2.5 7B',oracle:28.2,lcS:12.8,ragS:46.2,ragM:42.4},
+    {name:'Phi-3.5-mini 4B',oracle:48.8,lcS:31.2,ragS:57.0,ragM:46.8},
+    {name:'Llama-3.2 3B',oracle:52.2,lcS:0.8,ragS:50.8,ragM:47.0}
+  ];
+  const MODES=[
+    {id:'lc',label:'📖 Read everything (long-context)'},
+    {id:'rag',label:'🔍 RAG memory (rounds + fact keys)'}
+  ];
+  let mi=0,mode='lc';
+  function btn(txt,active){
+    return 'font-family:var(--mono);font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid '+(active?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(active?'var(--amber-dim)':'var(--bg3)')+';color:'+(active?'var(--amber)':'var(--text2)')+';cursor:pointer;';
+  }
+  function barRow(label,val,color){
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">'+
+      '<div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:190px;text-align:right;flex-shrink:0;">'+label+'</div>'+
+      '<div style="flex:1;height:24px;background:var(--bg4);border-radius:4px;overflow:hidden;">'+
+      '<div style="height:100%;width:'+val.toFixed(1)+'%;background:'+color+';border-radius:4px;'+(reduced?'':'animation:scaleIn .8s ease;')+'transform-origin:left;"></div></div>'+
+      '<div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:44px;flex-shrink:0;">'+val.toFixed(1)+'</div></div>';
+  }
+  function noBarRow(label){
+    return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">'+
+      '<div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:190px;text-align:right;flex-shrink:0;">'+label+'</div>'+
+      '<div style="flex:1;"><span style="display:inline-block;font-family:var(--mono);font-size:11px;color:var(--red);background:var(--red-dim);border:1px solid rgba(239,68,68,0.25);border-radius:6px;padding:3px 10px;">✕ history exceeds the context window</span></div></div>';
+  }
+  function render(){
+    const m=MODELS[mi];
+    tabsEl.innerHTML=MODELS.map((mm,i)=>'<button type="button" style="'+btn(mm.name,i===mi)+'" data-mi="'+i+'">'+mm.name+'</button>').join('');
+    modesEl.innerHTML=MODES.map(mm=>'<button type="button" style="'+btn(mm.label,mode===mm.id)+'" data-mode="'+mm.id+'">'+mm.label+'</button>').join('');
+    let rows='',caption='';
+    if(mode==='lc'){
+      rows=barRow('Oracle · evidence only',m.oracle,'var(--amber)')+
+           barRow('S · ~115K tokens',m.lcS,'var(--red)')+
+           noBarRow('M · ~1.5M tokens');
+      caption='<strong>Reading everything collapses.</strong> On '+m.name+', accuracy falls from '+m.oracle+' (evidence sessions only) to '+m.lcS+' when the model must read the whole ~115K-token history'+(m.lcS<2?' — a near-total collapse':'')+'. And at 1.5M tokens there is nothing to read: the history no longer fits in any window. This is the paper\'s "long-context LLMs show a 30%–60% performance drop," in miniature.';
+    }else{
+      rows=barRow('Oracle · evidence only',m.oracle,'var(--amber)')+
+           barRow('S · retrieve top-10 rounds',m.ragS,'var(--green)')+
+           barRow('M · retrieve top-10 rounds',m.ragM,'var(--teal)');
+      caption='<strong>Memory beats reading.</strong> The same model keeps '+m.ragS+' accuracy at ~115K tokens and '+m.ragM+' at ~1.5M tokens — within a few points of its evidence-only ceiling — because a 1.5B retriever hands it just the top-10 relevant rounds, with fact-expanded keys. Long-term memory is a retrieval-and-reading problem, not a window-size problem.';
+    }
+    barsEl.innerHTML=rows;
+    capEl.innerHTML=caption;
+    tabsEl.querySelectorAll('button[data-mi]').forEach(b=>b.addEventListener('click',()=>{mi=+b.getAttribute('data-mi');render();}));
+    modesEl.querySelectorAll('button[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.getAttribute('data-mode');render();}));
+  }
+  render();
+})();
+
+// === UPDATE TRAP + CLIFF (DEEP DIVE) ===
+(function(){
+  const oldB=document.getElementById('lmOld'),newB=document.getElementById('lmNew'),abB=document.getElementById('lmAbstain'),trap=document.getElementById('lmTrap'),cliff=document.getElementById('lmCliff');
+  if(!oldB||!newB||!abB||!trap||!cliff)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function judge(which){
+    const R={
+      old:['var(--red)','✗ The Oakland answer','Primacy bias wins: the early fact is more "familiar", so the model reaches for session 3 and answers a question the user asked months ago. This exact failure pattern drove the knowledge-update ability scores down.'],
+      new:['var(--amber)','△ Better — but invented precision','"Austin" is right, but no session ever names a neighborhood there. Confidently supplying one is fabrication on top of retrieval — the honesty failure TruthfulQA warned about.'],
+      abstain:['var(--green)','✓ The graded-correct answer','The user lives in Austin; the neighborhood is not in the history. Abstention is ability #5 in LongMemEval — knowing what the memory does not contain.']
+    }[which];
+    trap.innerHTML='<div class="card-sm animate-in" style="border-left:3px solid '+R[0]+';"><div style="font-size:12px;font-weight:600;color:'+R[0]+';margin-bottom:4px;">'+R[1]+'</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">'+R[2]+'</div></div>';
+    if(!RM){trap.classList.remove('animate-in');void trap.offsetWidth;trap.classList.add('animate-in');}
+    [oldB,newB,abB].forEach(b=>b.className='btn-outline');
+    ({old:oldB,new:newB,abstain:abB})[which].className='btn-primary';
+  }
+  oldB.addEventListener('click',()=>judge('old'));
+  newB.addEventListener('click',()=>judge('new'));
+  abB.addEventListener('click',()=>judge('abstain'));
+  const rows=[
+    {l:'GPT-4o · oracle evidence',v:87.0,c:'var(--green)'},
+    {l:'GPT-4o · full 115K history',v:60.6,c:'var(--red)'},
+    {l:'ChatGPT · shipped memory',v:57.7,c:'var(--red)'},
+    {l:'Coze · shipped memory',v:33.0,c:'var(--red)'},
+    {l:'offline reading · same LLM',v:91.8,c:'var(--green)'}
+  ];
+  function drawCliff(){
+    cliff.innerHTML=rows.map((r,i)=>'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="font-family:var(--mono);font-size:10.5px;color:var(--text2);width:185px;flex-shrink:0;">'+r.l+'</div><div style="flex:1;height:13px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div style="height:100%;width:'+r.v+'%;background:'+r.c+';border-radius:6px;transform-origin:left;'+(RM?'':'animation:scaleIn .7s ease '+(i*110)+'ms backwards;')+'"></div></div><div style="font-family:var(--mono);font-size:11px;font-weight:600;color:'+r.c+';width:40px;text-align:right;flex-shrink:0;">'+r.v+'</div></div>').join('')
+      +'<div style="font-size:11.5px;color:var(--text3);line-height:1.7;margin:4px 0 0 195px;">the 26.4-point gap between the first two bars is the paper: nothing new to find, everything new to ignore.</div>';
+  }
+  if(RM||!('IntersectionObserver' in window)){drawCliff();}
+  else{const io=new IntersectionObserver(en=>{if(en.some(e=>e.isIntersecting)){drawCliff();io.disconnect();}},{threshold:0.3});io.observe(cliff);}
+})();
+
+const QUIZ_DATA=[
+  {q:'Which of these is one of LongMemEval\'s five core memory abilities?',opts:['Document summarization','Translation quality','Abstention — admitting when the answer is not in memory','Arithmetic over long numbers'],correct:2,explain:'The five abilities are information extraction, multi-session reasoning, knowledge updates, temporal reasoning, and abstention. LongMemEval includes 30 "false premise" questions that can only be passed by refusing to answer.'},
+  {q:'LongMemEval is built "question-first." What does that mean?',opts:['Questions are generated after the chat history, using whatever facts happen to appear','A question and its evidence are designed first, then months of chat history are generated backward so the answer is scattered inside','The questions are copied from real user chat logs','The assistant writes its own questions to test itself'],correct:1,explain:'Each question starts from a 164-attribute user ontology: ~1,000 LLM-proposed candidates per type, ~5% survive human rewriting, and then evidence sessions are simulated, scattered among filler sessions (25% ShareGPT, 25% UltraChat, 50% simulated), and timestamped.'},
+  {q:'What is the "knowledge update" trap the paper exposes?',opts:['Models store too many facts and get confused','Systems answer with stale facts — and retrievers often fetch the update while missing the earlier fact it replaced','Users change their names too often','Models cannot read timestamps at all'],correct:1,explain:'The paper found ChatGPT "tended to overwrite crucial information as the chat continues," while RAG retrievers mostly failed KU questions by retrieving the updated fact but not the pre-update evidence.'},
+  {q:'How did advanced long-context LLMs do with the whole ~115K-token history in their window?',opts:['They matched their evidence-only oracle accuracy','They refused to answer long inputs','They improved slightly','They dropped 30–60% relative — GPT-4o fell from 0.870 to 0.606'],correct:3,explain:'Reading the full LongMemEval-S history cost GPT-4o 30.3% relative accuracy and Llama 3.1 70B 55.1% (0.744 → 0.334) — the "lost-in-the-middle" phenomenon at benchmark scale.'},
+  {q:'Which memory design did the paper find works best?',opts:['Feed the entire history into the model','Store one summary per session and read the summaries','Retrieve round-granularity items with fact-expanded keys, then read with Chain-of-Note in JSON','Store every user fact in a flat list, like commercial assistants'],correct:2,explain:'Decomposing sessions into rounds, expanding keys with extracted user facts (+9.4% recall@k), time-aware query expansion (+6.8–11.3% on temporal questions), and Chain-of-Note with JSON format (up to +10 points) — together the strongest memory design.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoCoMo-Plus: Beyond-Factual Cognitive Memory Evaluation — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the LoCoMo-Plus paper (2026), with playable demos for recall vs cognitive memory, the four latent constraints, and how performance collapses as conversations grow.">
+<meta name="keywords" content="LoCoMo-Plus, cognitive memory, long-term conversational memory, LLM agents, cue-trigger semantic disconnect, constraint consistency, memory benchmark, LoCoMo, LongMemEval, Mem0, A-Mem, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="LoCoMo-Plus: Beyond-Factual Cognitive Memory Evaluation — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the 2026 benchmark that tests whether LLM agents can apply implicit goals, states, and values — not just recall facts.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LoCoMo-Plus — Interactive Guide">
+<meta name="twitter:description" content="Learn how the 2026 LoCoMo-Plus benchmark grades cognitive memory by constraint consistency, with animations and interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#framework">Framework</a>
+    <a class="nav-link" href="#abilities">Abilities</a>
+    <a class="nav-link" href="#construction">Construction</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2026</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#framework">Framework</a>
+  <a href="#abilities">Abilities</a>
+  <a href="#construction">Construction</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Memory <em>Beyond</em> Facts<br>LoCoMo-Plus
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the 2026 benchmark that asks a harder question about LLM
+    agents: not "can you recall what I said?" but "can you remember my goals, states, and
+    values — and let those latent constraints steer your advice hundreds of turns later?"
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2602.10715" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Latent Constraints (causal · state · goal · value)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">17</div>
+      <div class="stat-label">Methods Benchmarked</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">26.06</div>
+      <div class="stat-label">Best Cognitive Score / 100 (gemini-2.5-pro)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2026</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Recall to <em>Remembering</em> You</h2>
+  <p class="section-desc">Long-term conversational memory went from a developer hack to a measured capability in about three years — but the yardstick kept measuring the same thing: facts. LoCoMo-Plus changes the yardstick.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2023</div><div class="tl-title">MemGPT &amp; toolkit memory</div><div class="tl-desc">Packer et al. treat the LLM like an operating system — a small working context plus paged long-term storage. LangChain and LlamaIndex ship summary &amp; buffer chat memories.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2024 · Feb</div><div class="tl-title">LoCoMo (Maharana et al.)</div><div class="tl-desc">Humans and bots chat for ~300 turns, then models face single-hop, multi-hop, temporal, commonsense, and adversarial questions. Very long-term memory gets its benchmark (ACL 2024).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2024</div><div class="tl-title">Memory ships — and gets measured</div><div class="tl-desc">ChatGPT rolls out persistent memory with user controls (OpenAI). LongMemEval (Wu et al.) probes 500 questions across 5 memory abilities — still mostly explicit facts.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2025</div><div class="tl-title">Memory systems bloom</div><div class="tl-desc">A-MEM (Xu et al.) gives agents self-organizing memory; Mem0 (Chhikara et al.) ships a production memory layer; Claude gains memory for teams (Anthropic, 2025).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2026 · Feb</div><div class="tl-title">🚀 LoCoMo-Plus (Li et al.)</div><div class="tl-desc">Memory is not a retrieval problem. LoCoMo-Plus tests <em>cognitive memory</em> under cue–trigger semantic disconnect, graded by constraint consistency — not string overlap.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">Next →</div><div class="tl-title">The open frontier</div><div class="tl-desc">Belief revision, emotional dynamics, multi-agent memory — named as out-of-scope in the paper's limitations — still await benchmarks of their own.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Real memory <span class="highlight">constrains behavior</span> instead of answering quizzes. In the paper's own motivating example, a user says they're preparing for an important exam and want to minimize distractions. Much later, they ask: <em>"Should I start watching that new TV series everyone is talking about?"</em></p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">No fact is being recalled — several replies look perfectly fine in isolation. The right one depends on remembering the earlier goal and noticing the conflict. Benchmarks built on factual recall can't see this skill at all.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE TWO MOMENTS, SIDE BY SIDE</div>
+        <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);">
+          <div>🎙️ <span style="color:var(--blue);font-weight:600;">Turn 12:</span> "Prepping for a big exam — want zero distractions."</div>
+          <div style="color:var(--text3);">… ~40 turns of work, family, and travel talk …</div>
+          <div>🎬 <span style="color:var(--purple);font-weight:600;">Turn 260:</span> "Should I start that new series everyone's talking about?"</div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">The link is cognitive, not lexical — cue and trigger share almost no keywords.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem with <em>Pop-Quiz</em> Memory</h2>
+  <p class="section-desc">Existing benchmarks mostly check whether a model can find a fact that was explicitly stated earlier. But in real conversations, memory's job is subtler: it quietly constrains every later response.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🗂️</div>
+      <div class="problem-title">Recall-Only Evaluation</div>
+      <ul class="problem-list">
+        <li>Facts are stated explicitly, then queried with strong semantic alignment</li>
+        <li>Task disclosure — "this question tests memory" — leaks the intent to the model</li>
+        <li>EM, token-F1, BLEU, ROUGE grade surface overlap, not behavioral sense</li>
+        <li>Many valid answers receive different scores; length and verbosity skew results</li>
+        <li>The result: memory becomes a retrieval problem it never really was</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🧠</div>
+      <div class="problem-title">LoCoMo-Plus's Constraint View</div>
+      <ul class="problem-list">
+        <li>Implicit constraints — user state, goals, values, causal context — drive behavior</li>
+        <li>Queries arrive as natural continuations, with no task announcement</li>
+        <li>Correct = consistent with the latent constraint, in any surface form</li>
+        <li>Cues are semantically disconnected from their triggers — retrieval can't shortcut</li>
+        <li>Exposes failures that existing benchmarks never capture</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Recall vs Reason: Same Memory, Two Questions</div>
+    <div id="abDemo"></div>
+  </div>
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-label">An Analogy</div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;">A friend who aces trivia night about your life — your job, your dog's name, your birthday — but offers you an espresso at 11pm before your 6am flight has <span class="highlight">facts, not memory</span>. Facts answer queries; memory shapes behavior when nobody is querying anything. LoCoMo-Plus is the first benchmark in this lineage built to grade the second kind.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FRAMEWORK -->
+<section id="framework">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Two <em>Levels</em> of Memory</h2>
+  <p class="section-desc">The paper's formal framing splits conversational memory in two. Level-1 is what every prior benchmark measures. Level-2 is what actually makes an assistant feel like it knows you.</p>
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">Level-1 · Factual Memory</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Relevant information is <strong>explicitly stated</strong> in the history and can be directly recalled or reasoned over — localized object-centric facts ("my dog is named Pepper") and event-oriented episodic details ("we hiked on May 3rd"). Each query admits a single well-defined ground-truth answer, and correctness is string or semantic similarity against it. This is the regime of LoCoMo, LongMemEval, and most QA-style memory tests.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Level-2 · Cognitive Memory</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Realistic conversations depend on <strong>implicit constraints</strong> inferred from prior turns — user state, goals, preferences, values, causal context. There is no single correct response: the history induces a latent constraint <span class="code-inline">c</span> that restricts the space of behaviorally valid outputs. Any response inside that space counts, regardless of wording. This is the regime LoCoMo-Plus opens for measurement.</p>
+    </div>
+  </div>
+  <div class="formula-card">
+    <div class="formula-main">Given history ℋ = {u₁,a₁, …, uₜ,aₜ} and query qₜ₊₁:<br>aₜ₊₁ is correct ⟺ aₜ₊₁ ∈ 𝒜𝒸 = { a | a is consistent with c }</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">ℋ</div><div class="fp-name">Interaction history</div><div class="fp-desc">The full multi-turn conversation — user turns u and agent turns a, possibly hundreds of turns long.</div></div>
+      <div class="formula-piece"><div class="fp-sym">c</div><div class="fp-name">Latent constraint</div><div class="fp-desc">What the history implicitly induces — a goal, state, causal fact, or value the user holds. Never restated at query time.</div></div>
+      <div class="formula-piece"><div class="fp-sym">𝒜𝒸</div><div class="fp-name">Valid response space</div><div class="fp-desc">The set of all responses consistent with c. Many surface forms; one behavioral requirement.</div></div>
+      <div class="formula-piece"><div class="fp-sym">∈</div><div class="fp-name">Membership, not matching</div><div class="fp-desc">Correctness is membership in 𝒜𝒸 — not string overlap with one reference answer. This is "constraint consistency."</div></div>
+    </div>
+  </div>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🎯 The target skill</div><div class="notice-text">Retain and apply latent constraints across long contexts, even when the downstream query looks unrelated to the original cue.</div></div>
+    <div class="notice-card"><div class="notice-title">🔌 Cue–trigger disconnect</div><div class="notice-text">The trigger query is deliberately low in semantic similarity to its cue — similarity-based retrieval cannot bridge the gap.</div></div>
+    <div class="notice-card"><div class="notice-title">🧩 Four constraint types</div><div class="notice-text">Cognitive memory is decomposed into causal, state, goal, and value — four interacting latent signals that shape behavior.</div></div>
+    <div class="notice-card"><div class="notice-title">📊 New yardstick</div><div class="notice-text">A unified constraint-consistency framework replaces task-disclosed prompts and string-matching metrics for both memory levels.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABILITIES -->
+<section id="abilities">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The Four <em>Latent</em> Constraints</h2>
+  <p class="section-desc">LoCoMo-Plus decomposes cognitive memory into four constraint types. Every instance in the benchmark is a cue that plants one of them — and a trigger, far away in the conversation, that only makes sense if the model kept it. The examples below are drawn directly from the paper's Appendix C.</p>
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Cognitive Constraint Explorer</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a constraint type. Read the cue (buried early in a long chat), then the trigger (months later). Ask yourself: could any retrieval system connect these two? Almost no words overlap.</p>
+    <div id="cogTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+    <div id="cogBody"></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Why retrieval can't shortcut this</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Semantic filtering at build time:</strong> BM25 and MPNet similarity scoring removes any cue–trigger pair where the cue is repeated, paraphrased, or recoverable from the query alone.</li>
+        <li><strong>Triggers are underspecified:</strong> in isolation, several responses look reasonable — only cue-consistent ones are valid.</li>
+        <li><strong>Temporal gap by design:</strong> each pair carries a gap indicator t (a week to several months), so the cue is buried under turns of interference.</li>
+        <li><strong>First-person voice:</strong> triggers sound like natural self-reflection, not quiz questions.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">How responses get graded</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>No task disclosure:</strong> the query arrives as a plain dialogue continuation — the model is never told "this is a memory test."</li>
+        <li><strong>Evidence-grounded LLM judge:</strong> an LLM checks whether the response acknowledges or adapts to the cue (gemini-2.5-flash as the main judge).</li>
+        <li><strong>Binary labels for cognitive questions:</strong> the criterion is presence or absence of memory-aware behavior — not partial string credit.</li>
+        <li><strong>Judge audited:</strong> human–human agreement 0.903; human–judge agreement 0.801–0.820; scores stable across judge backbones (|Δ| ≤ 3.33 points).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONSTRUCTION -->
+<section id="construction">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Building <em>Cue–Trigger</em> Pairs</h2>
+  <p class="section-desc">LoCoMo-Plus instances are constructed from scratch and embedded into LoCoMo's long dialogues. The pipeline is deliberately heavy on human validation and filtering — diagnostic coverage is prioritized over scale.</p>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">The Six-Stage Construction Pipeline</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:8px;">
+      <div class="card-sm"><div class="card-label">Step 1 · Generate</div><div style="font-size:12.5px;color:var(--text2);line-height:1.7;">An LLM writes short two-turn cue dialogues that <em>implicitly</em> convey state, goals, preferences, or values — naturalistic, never explicit facts. Temperature 0.7, 256-token cap, 50 samples per relation type across the 4 types.</div></div>
+      <div class="card-sm"><div class="card-label">Step 2 · Verify memory-worthiness</div><div style="font-size:12.5px;color:var(--text2);line-height:1.7;">Humans keep only cues that are persistent or behaviorally constraining, not trivially inferable from local context, and plausibly useful to remember. Everything else is discarded.</div></div>
+      <div class="card-sm"><div class="card-label">Step 3 · Build triggers</div><div style="font-size:12.5px;color:var(--text2);line-height:1.7;">Per cue, five candidate trigger queries — first-person, semantically distant, one week to several months later, each a distinct cognitive angle. Every pair gets a temporal gap indicator t.</div></div>
+      <div class="card-sm"><div class="card-label">Step 4 · Filter semantically</div><div style="font-size:12.5px;color:var(--text2);line-height:1.7;">BM25 and MPNet similarity scoring strips out any pair where the cue is repeated, paraphrased, or recoverable from the trigger alone — no lexical shortcuts allowed.</div></div>
+      <div class="card-sm"><div class="card-label">Step 5 · Validate elicitation</div><div style="font-size:12.5px;color:var(--text2);line-height:1.7;">A final human check: does a helpful response genuinely require recalling and applying the cue? Only validated cue–trigger pairs survive.</div></div>
+      <div class="card-sm"><div class="card-label">Step 6 · Embed in LoCoMo</div><div style="font-size:12.5px;color:var(--text2);line-height:1.7;">Each pair is inserted into a ~300-turn LoCoMo dialogue: the cue early, the trigger after the specified gap, surrounded by realistic distractor turns.</div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Old Evaluation vs LoCoMo-Plus Evaluation</div>
+    <table class="comp-table">
+      <thead><tr><th>Aspect</th><th>LoCoMo-style protocol</th><th>LoCoMo-Plus framework</th></tr></thead>
+      <tbody>
+        <tr><td>Input side</td><td>Task-disclosed prompts — the model is told which memory skill is tested</td><td class="comp-best">Natural dialogue continuations, no task disclosure</td></tr>
+        <tr><td>Output side</td><td>EM, token-F1, BLEU, ROUGE vs a reference string</td><td class="comp-best">LLM judge scores constraint consistency, grounded in dialogue evidence</td></tr>
+        <tr><td>Ground truth</td><td>One reference answer per question</td><td class="comp-best">A valid response space 𝒜𝒸 — many correct surface forms</td></tr>
+        <tr><td>Labels</td><td>Binary correctness (typical QA)</td><td class="comp-best">3-level (correct / partial / wrong) for factual &amp; commonsense; binary for temporal, adversarial, cognitive</td></tr>
+        <tr><td>Known bias</td><td class="comp-worst">Prompt adaptation + length bias (scores peak near the 5.18-token average reference length)</td><td>Judge robustness measured against humans (0.801–0.820) and across backbones</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">GENERATION MODELS</div><div class="result-score" style="color:var(--blue);">5</div><div class="result-label">gpt-5-nano, gpt-4o, gpt-4.1, gemini-2.5-flash, gemini-2.5-pro — used only to build data</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:55%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">TRIGGERS PER CUE</div><div class="result-score" style="color:var(--teal);">5</div><div class="result-label">distinct cognitive angles, then filtered down</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:55%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">TEMPERATURE</div><div class="result-score" style="color:var(--purple);">0.7</div><div class="result-label">stochastic decoding for diversity, 256-token cap</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:35%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">HUMAN PASSES</div><div class="result-score" style="color:var(--amber);">2</div><div class="result-label">memory-worthiness check + elicitation validation</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:30%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Everyone <em>Falls</em> — Even the Best</h2>
+  <p class="section-desc">The paper evaluates 17 methods across four categories: open-source LLMs, closed-source LLMs, RAG pipelines, and dedicated memory systems. One pattern holds everywhere — a large, persistent gap between factual and cognitive memory.</p>
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Table 1 Highlights — LoCoMo (factual average) vs LoCoMo-Plus (cognitive)</div>
+    <table class="comp-table">
+      <thead><tr><th>Method</th><th>LoCoMo Avg</th><th>LoCoMo-Plus</th><th>Gap</th></tr></thead>
+      <tbody>
+        <tr><td class="comp-best">gemini-2.5-pro</td><td>71.78</td><td class="comp-best">26.06</td><td>45.72</td></tr>
+        <tr><td>gemini-2.5-flash</td><td>69.25</td><td>24.67</td><td>44.58</td></tr>
+        <tr><td>gpt-4o (full context)</td><td>62.99</td><td>21.05</td><td>41.94</td></tr>
+        <tr><td>gpt-4.1</td><td>62.21</td><td>18.63</td><td>43.58</td></tr>
+        <tr><td>Qwen3-14B</td><td>59.65</td><td>19.09</td><td>40.56</td></tr>
+        <tr><td>A-Mem (GPT-4o)</td><td>59.64</td><td>17.20</td><td>42.44</td></tr>
+        <tr><td>SeCom (GPT-4o)</td><td>57.53</td><td>14.90</td><td>42.63</td></tr>
+        <tr><td>Mem0 (GPT-4o)</td><td>57.24</td><td>15.80</td><td>41.44</td></tr>
+        <tr><td>gpt-5-nano</td><td>54.96</td><td>14.84</td><td>40.12</td></tr>
+        <tr><td>RAG top-5, emb-large (GPT-4o)</td><td>45.32</td><td>15.55</td><td>29.77</td></tr>
+        <tr><td class="comp-worst">Qwen2.5-7B-Instruct</td><td>45.31</td><td class="comp-worst">9.57</td><td>35.74</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Scores / 100. Gaps run ~12–46 points across all 17 methods. Memory systems and retrieval pipelines do not close the cognitive gap — and differences between methods compress toward uniformly low performance.</p>
+  </div>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">GEMINI-2.5-PRO</div><div class="result-score" style="color:var(--amber);">26.06</div><div class="result-label">best cognitive score — vs 71.78 factual average</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:26%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">−45.72 gap from its own Level-1 score</div></div>
+    <div class="result-card"><div class="result-model">GPT-4O (FULL CONTEXT)</div><div class="result-score" style="color:var(--blue);">21.05</div><div class="result-label">cognitive score — vs 62.99 factual average</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:21%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">context length alone doesn't save cognitive memory</div></div>
+    <div class="result-card"><div class="result-model">A-MEM (GPT-4O)</div><div class="result-score" style="color:var(--teal);">17.20</div><div class="result-label">best memory system on LoCoMo-Plus</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:17%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">structured agentic memory still −42.44 from its factual avg</div></div>
+    <div class="result-card"><div class="result-model">RAG TOP-5 (EMB-LARGE)</div><div class="result-score" style="color:var(--red);">15.55</div><div class="result-label">cognitive score — retrieval-only baseline</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:16%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">similarity search can't find semantically distant cues</div></div>
+  </div>
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Bias Finding 1 · Prompt Disclosure</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">When benchmarks announce the task ("this is a temporal-reasoning question"), measured ability profiles shift — temporal and adversarial categories get <span class="highlight">disproportionately inflated</span> scores under task-disclosed evaluation. Reported gains partly reflect sensitivity to prompts, not stable memory behavior. Real users never announce "this query requires memory."</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Bias Finding 2 · Length Sensitivity</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">EM, F1, BLEU, and ROUGE all vary systematically with output length — scores <span class="highlight">peak near the average reference length (5.18 tokens)</span> and degrade as generations get shorter or longer. Models are penalized or favored by verbosity alone, regardless of semantic correctness — a systematic bias in cross-model comparison.</p>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Memory Stress Timeline</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Grow the conversation one session at a time and watch what happens to the three memory types — the shape of the collapse follows the paper's Figure 7 finding.</p>
+    <div id="stressChips" style="display:flex;gap:6px;flex-wrap:wrap;min-height:30px;margin-bottom:1rem;"></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" type="button" id="growBtn" style="font-size:13px;padding:8px 18px;">Grow history ▸</button>
+      <button class="btn-outline" type="button" id="stressReset" style="font-size:13px;padding:8px 18px;">↺ Reset</button>
+      <div id="stressMeta" style="font-family:var(--mono);font-size:12px;color:var(--text2);"></div>
+    </div>
+    <div id="stressBars" style="display:flex;gap:14px;align-items:flex-end;"></div>
+    <p style="font-size:11.5px;color:var(--text3);margin-top:12px;line-height:1.6;">Illustrative rendering of the paper's Figure 7 (100 representative cases per memory type, varying dialogue turns): object recall stays robust, episodic recall degrades steadily, cognitive memory collapses rapidly as context grows. Bar heights are qualitative, not measured values.</p>
+  </div>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">REFERENCE LENGTH</div><div class="result-score" style="color:var(--blue);">5.18</div><div class="result-label">avg tokens in ground-truth answers — where string metrics peak</div></div>
+    <div class="result-card"><div class="result-model">RAG RETRIEVAL</div><div class="result-score" style="color:var(--teal);">Top-5</div><div class="result-label">dialogue segments retrieved per query, appended to the prompt</div></div>
+    <div class="result-card"><div class="result-model">HUMAN AGREEMENT</div><div class="result-score" style="color:var(--green);">0.903</div><div class="result-label">between the two human annotators (judge: 0.801–0.820 vs humans)</div></div>
+    <div class="result-card"><div class="result-model">LENGTH STUDY</div><div class="result-score" style="color:var(--purple);">100</div><div class="result-label">representative cases per memory type, varying dialogue turns</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Measuring</em> What Matters</h2>
+  <p class="section-desc">LoCoMo-Plus reframes what "remembering" means for an LLM agent — and hands the field a yardstick that can actually see the difference.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🧭 A new definition of memory</div><div class="notice-text">Constraint consistency replaces recall: memory is graded by whether behavior respects latent constraints (causal, state, goal, value), not by string overlap.</div></div>
+    <div class="notice-card"><div class="notice-title">🕳️ A blind spot, exposed</div><div class="notice-text">Failures that LoCoMo- and LongMemEval-style factual QA never surface — models silently forgetting your goals — now have a benchmark that catches them.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Evaluation hygiene</div><div class="notice-text">Shows that task-disclosed prompting and EM/F1/BLEU/ROUGE distort scores (prompt bias + length bias) — and offers a unified, judge-based alternative.</div></div>
+    <div class="notice-card"><div class="notice-title">📉 A 2026 reality check</div><div class="notice-text">The best method scores 26.06 on cognitive memory. Memory systems don't close the gap (A-Mem 17.20, Mem0 15.80, SeCom 14.90) — differences compress toward uniformly low scores.</div></div>
+    <div class="notice-card"><div class="notice-title">🔍 Retrieval is not memory</div><div class="notice-text">Cue–trigger semantic disconnect defeats BM25 and embedding search by construction — remembering must mean applying, not finding.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Open and auditable</div><div class="notice-text">The benchmark, judge prompts, annotations, and LLM-judge rationales are released at github.com/xjtuleeyf/Locomo-Plus for inspection and reproducibility.</div></div>
+  </div>
+  <div class="card" style="border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.03);">
+    <div class="card-label" style="color:var(--red);">What It Did NOT Solve</div>
+    <ul class="problem-list" style="margin-top:6px;">
+      <li><strong>Scope:</strong> no belief revision, emotional dynamics, or multi-agent memory — the constraints modeled are static per conversation.</li>
+      <li><strong>Scale:</strong> deliberately small and diagnostic — unsuitable for training or fine-tuning large models.</li>
+      <li><strong>Judge dependence:</strong> despite audits, results may remain sensitive to the choice of judge model and prompt design.</li>
+      <li><strong>Language &amp; systems:</strong> experiments are English-only, across one specific set of backbones, retrieval pipelines, and memory systems.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Memory Beyond Recall: Grading <em>Consistency</em></h2>
+  <p class="section-desc">LoCoMo-Plus makes the hardest distinction in memory evaluation: remembering facts is Level 1; behaving consistently with latent constraints is Level 2. A system that can recite "user has a puppy" and still recommends a spa weekend has a memory and no understanding — and on this benchmark, every one of 17 methods bleeds points between the two levels.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">🎯</div>
+      <div class="problem-title">A Benchmark Built to Resist Shortcuts</div>
+      <ul class="problem-list">
+        <li>Cue-trigger pairs are semantically disconnected — the trigger shares almost no words with the cue</li>
+        <li>BM25 and embedding retrieval cannot shortcut the task by construction</li>
+        <li>Human-validated pairs embedded in ~300-turn LoCoMo dialogues — built to measure, not to train on</li>
+        <li>LLM judges, evidence-grounded: 0.903 human-human agreement, stable across judge backbones</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">📉</div>
+      <div class="problem-title">The Universal Drop</div>
+      <ul class="problem-list">
+        <li>17 methods tested — from Qwen2.5-3B to gemini-2.5-pro, Mem0, A-Mem, SeCom — <em>all</em> drop 12–46 points</li>
+        <li>Best cognitive score: 26.06 — the ceiling of the entire field on constraint consistency</li>
+        <li>Level-1 factual recall stays respectable: recall is solved, cognition is not</li>
+        <li>No task disclosure to the system — zero-shot constraint application, the honest setting</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Semantic Disconnect</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Run the retrieval both ways on the same trigger. BM25 scores overlap between the cue and the trigger — watch it find nothing. Then run constraint-aware reading: the cue is reachable, the constraint applicable, and the response graded against the space of consistent answers 𝒜𝒸.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:14px;">
+        <div class="card-sm" style="border-left:3px solid var(--blue);"><div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px;">THE CUE · SESSION 2</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">"We adopted a golden retriever puppy — she cries if left alone for even an hour."</div></div>
+        <div class="card-sm" style="border-left:3px solid var(--amber);"><div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px;">THE TRIGGER · SESSION 31</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">"Plan me a perfect weekend — I need to get out of the house."</div></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button class="btn-primary" id="lcBm25" type="button" style="font-size:12.5px;padding:8px 16px;">Run BM25 / embedding match</button>
+        <button class="btn-outline" id="lcConstraint" type="button" style="font-size:12.5px;padding:8px 16px;">Run constraint-aware reading</button>
+      </div>
+      <div id="lcOut"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">The next benchmark always measures what current systems fake</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The trajectory of this track is now legible: <a href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LongMemEval</a> asked whether facts survive length; LoCoMo-Plus asks whether <em>implications</em> survive at all. Causal, state, goal and value constraints have a whole answer space 𝒜𝒸, not one string — which is why LLM-judge evaluation with evidence grounding was the only scoring that worked (0.903 human agreement). Every memory system graded here, including <a href="./A_MEM_Agentic_Memory_for_LLM_Agents.html" style="color:var(--amber);font-weight:600;text-decoration:none;">A-MEM</a>, inherits the same homework: representation must carry meaning, not just tokens.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">📚 Two levels, one ladder</div><div class="notice-text">Level-1: explicit facts, single ground truth. Level-2: implicit constraints, a space of valid behaviors. Systems 40+ points apart on Level-1 converge near 20 on Level-2 — difficulty equalizes the field.</div></div>
+    <div class="notice-card"><div class="notice-title">🚫 No leakage by design</div><div class="notice-text">No task disclosure, no fine-tuning on the benchmark: the dialogues exist to measure, not to train. Contamination-proofing as a first-class design goal.</div></div>
+    <div class="notice-card"><div class="notice-title">🧑‍⚖️ Judging the space</div><div class="notice-text">With a valid-answer space rather than a string, evaluation needs judgment — hence evidence-grounded LLM judges with 0.801–0.820 human agreement, stable across judge backbones.</div></div>
+    <div class="notice-card"><div class="notice-title">🏁 26.06</div><div class="notice-text">The best cognitive score across 17 methods. Hold that number: it is the field's frontier, and it is a failing grade. Benchmarks exist to be humbled by exactly this.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the LoCoMo-Plus paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper (yes — memory pun intended).</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Memory ≠ recall: LoCoMo-Plus grades constraint consistency — does behavior respect latent constraints (causal, state, goal, value), not strings.</div>
+    <div class="card-sm">✅ Cue–trigger semantic disconnect: triggers share almost no words with their cues, so BM25/embedding retrieval cannot shortcut the task.</div>
+    <div class="card-sm">✅ Two levels: Level-1 factual memory (explicit facts, one ground truth) vs Level-2 cognitive memory (implicit constraints, a whole space 𝒜𝒸 of valid answers).</div>
+    <div class="card-sm">✅ Evaluation reform: no task disclosure, evidence-grounded LLM judges — 0.903 human–human agreement, 0.801–0.820 human–judge, stable across judge backbones.</div>
+    <div class="card-sm">✅ 17 methods, one verdict: every method — from Qwen2.5-3B to gemini-2.5-pro, Mem0, A-Mem, SeCom — drops 12–46 points; the best cognitive score is 26.06.</div>
+    <div class="card-sm">✅ Diagnostic by design: human-validated cue–trigger pairs embedded in ~300-turn LoCoMo dialogues — built to measure, not to train on.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2602.10715" target="_blank" rel="noopener noreferrer">"Locomo-Plus: Beyond-Factual Cognitive Memory Evaluation Framework for LLM Agents"</a> (Li et al., 2026)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2602.10715" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html">LongMemEval Guide</a>
+    <a class="footer-link" href="./A_MEM_Agentic_Memory_for_LLM_Agents.html">A-MEM Guide</a>
+    <a class="footer-link" href="./MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','framework','abilities','construction','results','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === DEMO 1: RECALL VS REASON (A/B) ===
+(function(){
+  const el=document.getElementById('abDemo');
+  if(!el)return;
+  const mems=[
+    {s:'Session 1 · March',x:'“I finally registered for the CPA exam in June — I want zero distractions until then.”',hot:true},
+    {s:'Session 4 · April',x:'“My sister keeps raving about that new mystery series everyone’s talking about.”',hot:false},
+    {s:'Session 9 · May',x:'“I’ve been bingeing true-crime podcasts on my commute — love them.”',hot:false},
+    {s:'Session 14 · June',x:'“Work’s been quiet — I’ve been meal-prepping every Sunday.”',hot:false}
+  ];
+  const qs={
+    A:{tag:'QUESTION A · LEVEL-1 FACTUAL',color:'var(--blue)',q:'Which exam is Maya preparing for?',
+       opts:['The CPA exam','The bar exam','The nursing boards exam','The piano grade exam'],correct:0,
+       verdict:'Trivial lookup: the string “CPA exam” literally appears in Session 1. Exact match, token-F1, or a single retrieval hop nails it — this is what LoCoMo-style benchmarks measure.'},
+    B:{tag:'QUESTION B · LEVEL-2 COGNITIVE',color:'var(--purple)',q:'Forty turns later, Maya asks: “Should I finally start that new series tonight?”',
+       opts:['“Yes! Start tonight — you’ll binge it in a weekend.”','“Maybe wait until after your June exam — you wanted zero distractions; your sister can watch it with you after.”','“Only if it has fewer than five episodes.”','“No — you don’t really enjoy TV.”'],correct:1,
+       verdict:'No string in the history answers this. The cue (June exam, zero distractions) shares almost no words with the trigger (new series) — that is cue–trigger semantic disconnect. Correctness = constraint consistency: any reply that works around the exam lands inside the valid space 𝒜𝒸.'}
+  };
+  const state={A:null,B:null};
+  function chips(){
+    return '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-bottom:1rem;">'+mems.map(m=>'<div style="background:'+(m.hot?'var(--amber-dim)':'var(--bg3)')+';border:1px solid '+(m.hot?'rgba(245,158,11,0.3)':'var(--border)')+';border-radius:10px;padding:8px 10px;"><div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:3px;">'+m.s+'</div><div style="font-size:12px;color:var(--text2);line-height:1.55;">'+m.x+'</div></div>').join('')+'</div>';
+  }
+  function qcard(side){
+    const d=qs[side];
+    return '<div class="card" style="padding:1.2rem;"><div style="font-family:var(--mono);font-size:10px;letter-spacing:0.06em;color:'+d.color+';margin-bottom:6px;">'+d.tag+'</div><div style="font-weight:600;font-size:14px;margin-bottom:10px;line-height:1.6;">'+d.q+'</div><div>'+d.opts.map((o,i)=>'<button type="button" id="ab'+side+i+'" onclick="window._abAnswer(\''+side+'\','+i+')" style="display:block;width:100%;text-align:left;margin-bottom:6px;border:1px solid var(--border);border-radius:8px;background:var(--bg3);padding:8px 12px;font-size:12.5px;color:var(--text2);cursor:pointer;font-family:var(--sans);line-height:1.5;">'+o+'</button>').join('')+'</div><div id="abV'+side+'" style="display:none;font-size:12px;color:var(--text2);background:var(--bg3);border-radius:8px;padding:10px 12px;line-height:1.65;margin-top:8px;"></div></div>';
+  }
+  function render(){
+    state.A=null;state.B=null;
+    el.innerHTML='<p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.7;">Maya has chatted with her assistant for months; it saw the four fragments below (the highlighted one is a <em>cue</em>). Answer both questions — the history is identical, the memory demand is not. <span style="color:var(--text3);font-size:11px;">Scenario adapted from the paper’s motivating example.</span></p>'+chips()+'<div class="two-col">'+qcard('A')+qcard('B')+'</div><div style="display:flex;gap:8px;margin-top:1rem;align-items:center;flex-wrap:wrap;"><button class="btn-primary" type="button" onclick="window._abReset()" style="font-size:13px;padding:8px 18px;">↺ Play Again</button><div id="abSummary" style="font-family:var(--mono);font-size:12.5px;color:var(--amber);font-weight:600;"></div></div><div id="abVerdict" style="margin-top:1rem;"></div>';
+  }
+  window._abAnswer=function(side,i){
+    if(state[side]!==null)return;
+    state[side]=i;
+    const d=qs[side];
+    d.opts.forEach(function(_,j){
+      const b=document.getElementById('ab'+side+j);
+      if(!b)return;
+      b.style.pointerEvents='none';
+      if(j===d.correct){b.style.background='var(--green-dim)';b.style.borderColor='rgba(34,197,94,0.35)';b.style.color='var(--green)';b.innerHTML='✓ '+b.innerHTML;}
+      else if(j===i){b.style.background='var(--red-dim)';b.style.borderColor='rgba(239,68,68,0.35)';b.style.color='var(--red)';b.innerHTML='✗ '+b.innerHTML;}
+      else{b.style.opacity='0.55';}
+    });
+    const v=document.getElementById('abV'+side);
+    if(v){v.style.display='block';v.innerHTML=(i===d.correct?'<strong style="color:var(--green);">✓ Correct.</strong> ':'<strong style="color:var(--red);">✗ Not quite.</strong> ')+d.verdict;}
+    if(state.A!==null&&state.B!==null){
+      const sm=document.getElementById('abSummary');
+      if(sm){sm.textContent='Both answered — see the comparison ↓';}
+      const vd=document.getElementById('abVerdict');
+      if(vd){
+        vd.innerHTML='<div class="card" style="border-color:rgba(245,158,11,0.3);"><div class="card-label">Why only Question B tests memory</div><div class="two-col"><div><div style="font-family:var(--mono);font-size:11px;color:var(--blue);margin-bottom:6px;">QUESTION A NEEDED</div><ul class="problem-list"><li>Find an explicitly stated fact</li><li>Strong cue–query semantic alignment</li><li>A string metric or one retrieval hop</li><li>One right answer to match</li></ul></div><div><div style="font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:6px;">QUESTION B NEEDED</div><ul class="problem-list"><li>Retain a latent constraint <em>c</em> (exam + no distractions)</li><li>Bridge a semantic disconnect — no shared keywords</li><li>Recognize the conflict and adapt behavior</li><li>Produce <em>any</em> response inside 𝒜𝒸</li></ul></div></div><p style="font-size:12.5px;color:var(--text2);margin-top:10px;line-height:1.7;">A model can be great at A and hopeless at B — and LoCoMo-Plus exists because that difference was invisible to recall-based benchmarks. The paper shows it is exactly where 17 methods, including the strongest 2025–2026 models, fall to 26.06 or below.</p></div>';
+        vd.querySelectorAll('.problem-list li').forEach(function(li){li.style.fontSize='12.5px';});
+        if(!window.matchMedia('(prefers-reduced-motion:reduce)').matches){vd.firstElementChild.style.animation='fadeUp .5s ease';}
+      }
+    }
+  };
+  window._abReset=function(){render();};
+  render();
+})();
+
+// === DEMO 2: COGNITIVE CONSTRAINT EXPLORER ===
+(function(){
+  const tabsEl=document.getElementById('cogTabs');
+  const bodyEl=document.getElementById('cogBody');
+  if(!tabsEl||!bodyEl)return;
+  const anim=window.matchMedia('(prefers-reduced-motion:reduce)').matches?'':'animation:fadeUp .45s ease;';
+  const AB={
+    causal:{name:'Causal',pill:'pill-amber',color:'var(--amber)',gap:'months later',
+      cue:'A: “Since my cousin got diagnosed with Type 2 diabetes, I cut sugary drinks completely out of my diet.”\nB: “That family scare clearly changed your habits.”',
+      trig:'A: “It’s strange, I barely recognize the person who used to grab whatever sounded good without thinking about long-term consequences.”',
+      why:'The trigger never mentions diabetes or diets. A memory-aware reply connects the earlier family scare to today’s self-reflection — a past cause shaping a present change.',
+      recall:'A recall version would be: “Why did you stop drinking sugary drinks?” — answerable by one retrieval hop.'},
+    state:{name:'State',pill:'pill-blue',color:'var(--blue)',gap:'weeks later',
+      cue:'A: “I got yelled at by my boss for a mistake I can’t stop thinking about, and I feel hollow.”\nB: “That’ll pass; give yourself credit for fixing it and move on.”',
+      trig:'A: “I redesigned the workflow to make sure the same mistake can’t happen again and asked two coworkers to double-check it.”',
+      why:'The later line never restates the distress. You must remember the earlier incident and infer that lingering anxiety is driving the careful, double-checked behavior.',
+      recall:'A recall version would be: “How did the mistake at work make you feel?” — a lookup of an explicitly stated emotion.'},
+    goal:{name:'Goal',pill:'pill-green',color:'var(--green)',gap:'several months later',
+      cue:'A: “I’m saving up specifically for a vintage convertible because I’ve always dreamed of owning a classic car.”\nB: “That sounds like a stylish goal.”',
+      trig:'A: “Lately I’ve realized my happiest moments come from camping trips, not from buying things.”',
+      why:'Nothing is queried. The model must notice that a new reflection might re-evaluate an old dream — goal memory is dynamic, not a stored string.',
+      recall:'A recall version would be: “What car are you saving up for?” — pure fact retrieval.'},
+    value:{name:'Value',pill:'pill-purple',color:'var(--purple)',gap:'later',
+      cue:'A: “I turn down clients with unrealistic timelines because I value my team’s well-being more than profit.”\nB: “That says a lot about the kind of leader you are.”',
+      trig:'A: “I watched my kid fall asleep over homework and suddenly realized I’ve protected my team from burnout for years while ignoring how exhausted my own family looks.”',
+      why:'No fact is requested. Correct handling recalls the earlier principle (team well-being over profit) and recognizes the same tension surfacing in a different role — parent.',
+      recall:'A recall version would be: “What do you value more than profit?” — trivia, not cognition.'}
+  };
+  let cur='causal';
+  function render(){
+    tabsEl.innerHTML=Object.keys(AB).map(k=>'<button type="button" onclick="window._pickCog(\''+k+'\')" style="font-family:var(--mono);font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid '+(k===cur?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(k===cur?'var(--amber-dim)':'var(--bg3)')+';color:'+(k===cur?'var(--amber)':'var(--text2)')+';cursor:pointer;">'+AB[k].name+'</button>').join('');
+    const d=AB[cur];
+    bodyEl.innerHTML='<div class="card" style="'+anim+'"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;"><span class="pill '+d.pill+'">'+d.name+' constraint</span><span style="font-family:var(--mono);font-size:11px;color:var(--text3);">trigger arrives '+d.gap+'</span></div>'
+      +'<div style="background:var(--bg3);border-left:3px solid '+d.color+';border-radius:8px;padding:10px 12px;margin-bottom:10px;"><div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:5px;">CUE — BURIED EARLY IN THE CONVERSATION</div><div style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.8;white-space:pre-line;">'+d.cue+'</div></div>'
+      +'<div style="background:var(--purple-dim);border-left:3px solid var(--purple);border-radius:8px;padding:10px 12px;margin-bottom:10px;"><div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:5px;">TRIGGER — ARRIVES MUCH LATER</div><div style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.8;">'+d.trig+'</div></div>'
+      +'<div style="font-size:13px;color:var(--text2);line-height:1.75;"><strong>Why this is beyond fact storage:</strong> '+d.why+'</div>'
+      +'<div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.6;">🔍 '+d.recall+'</div></div>';
+  }
+  window._pickCog=function(k){cur=k;render();};
+  render();
+})();
+
+// === DEMO 3: MEMORY STRESS TIMELINE ===
+(function(){
+  const btn=document.getElementById('growBtn');
+  const resetBtn=document.getElementById('stressReset');
+  const chipsEl=document.getElementById('stressChips');
+  const barsEl=document.getElementById('stressBars');
+  const metaEl=document.getElementById('stressMeta');
+  if(!btn||!chipsEl||!barsEl||!metaEl)return;
+  const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const SESSIONS=['S1 · weekend plans','S2 · new job','S3 · cycling injury','S4 · sister’s wedding','S5 · exam crunch'];
+  const STAGES=[
+    {turns:'~30 turns',tier:'Tier 1 — fact lookup',tcol:'var(--green)',bars:{obj:94,epi:88,cog:78}},
+    {turns:'~80 turns',tier:'Tier 1 — fact lookup',tcol:'var(--green)',bars:{obj:93,epi:79,cog:56}},
+    {turns:'~150 turns',tier:'Tier 2 — scattered facts & inference',tcol:'var(--amber)',bars:{obj:92,epi:67,cog:31}},
+    {turns:'~230 turns',tier:'Tier 2 — scattered facts & inference',tcol:'var(--amber)',bars:{obj:91,epi:55,cog:14}},
+    {turns:'~300+ turns',tier:'Tier 3 — cognitive memory demand',tcol:'var(--red)',bars:{obj:90,epi:44,cog:6}}
+  ];
+  const LBL={obj:['Object recall','var(--blue)'],epi:['Episodic recall','var(--teal)'],cog:['Cognitive memory','var(--red)']};
+  let stage=0;
+  function renderChips(animNew){
+    chipsEl.innerHTML=SESSIONS.slice(0,stage+1).map(function(s,i){
+      const isNew=(i===stage)&&animNew&&!reduce;
+      return '<span style="font-family:var(--mono);font-size:11px;background:'+(i===stage?'var(--amber-dim)':'var(--bg3)')+';color:'+(i===stage?'var(--amber)':'var(--text2)')+';border:1px solid '+(i===stage?'rgba(245,158,11,0.3)':'var(--border)')+';border-radius:20px;padding:4px 10px;'+(isNew?'opacity:0;animation:fadeUp .4s ease forwards;':'')+'">'+s+'</span>';
+    }).join('');
+  }
+  function renderBars(){
+    const b=STAGES[stage].bars;
+    barsEl.innerHTML=Object.keys(LBL).map(function(k){
+      return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;max-width:150px;"><div style="font-family:var(--mono);font-size:13px;font-weight:600;color:'+LBL[k][1]+';">'+b[k]+'</div><div style="width:100%;height:120px;background:var(--bg4);border-radius:8px;display:flex;align-items:flex-end;overflow:hidden;"><div style="width:100%;height:'+b[k]+'%;background:'+LBL[k][1]+';border-radius:8px 8px 0 0;'+(reduce?'':'transition:height .7s cubic-bezier(.2,.8,.2,1);')+'"></div></div><div style="font-size:11px;color:var(--text2);text-align:center;line-height:1.4;">'+LBL[k][0]+'</div></div>';
+    }).join('');
+  }
+  function renderMeta(){
+    const st=STAGES[stage];
+    metaEl.innerHTML='History: <strong>'+st.turns+'</strong> · Question tier: <strong style="color:'+st.tcol+';">'+st.tier+'</strong>';
+  }
+  function update(animNew){renderChips(animNew);renderBars();renderMeta();btn.textContent=stage>=STAGES.length-1?'History maxed — reset ↺':'Grow history ▸';}
+  btn.addEventListener('click',function(){
+    if(stage>=STAGES.length-1){stage=0;update(false);return;}
+    stage++;update(true);
+  });
+  if(resetBtn){resetBtn.addEventListener('click',function(){stage=0;update(false);});}
+  update(false);
+})();
+
+// === SEMANTIC DISCONNECT (DEEP DIVE) ===
+(function(){
+  const out=document.getElementById('lcOut'),bm=document.getElementById('lcBm25'),ca=document.getElementById('lcConstraint');
+  if(!out||!bm||!ca)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function card(border,title,body){
+    return '<div class="card-sm animate-in" style="border-left:3px solid '+border+';"><div style="font-size:12px;font-weight:600;color:'+border+';margin-bottom:4px;">'+title+'</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">'+body+'</div></div>';
+  }
+  function show(which){
+    if(which==='bm25'){
+      out.innerHTML=card('var(--red)','RETRIEVAL SCORES — nothing to match',
+        'Shared tokens between cue and trigger: <strong>~0</strong>. BM25 ranks on lexical overlap; embeddings score "golden retriever puppy" vs "perfect weekend" near zero similarity. The cue is never retrieved, the constraint never applied, and the plan comes back as a generic weekend itinerary — the 12–46 point drop, replayed in one click.');
+    }else{
+      out.innerHTML=card('var(--green)','CONSTRAINT-AWARE READING — the implication is reachable',
+        'A reader that maintains <em>understanding</em> rather than strings encodes: puppy + cannot be left alone → overnight absence blocked → any weekend plan requiring travel violates a live constraint. Consistent answers share the shape "daytime · dog-friendly · near home" — the space 𝒜𝒸 the benchmark grades against, reachable only through representation, not matching.');
+    }
+    if(!RM){out.classList.remove('animate-in');void out.offsetWidth;out.classList.add('animate-in');}
+    bm.className=which==='bm25'?'btn-primary':'btn-outline';
+    ca.className=which==='ca'?'btn-primary':'btn-outline';
+  }
+  bm.addEventListener('click',()=>show('bm25'));
+  ca.addEventListener('click',()=>show('ca'));
+  if(RM||!('IntersectionObserver' in window)){out.innerHTML='<div style="font-size:12px;color:var(--text3);">Run either retrieval mode to compare.</div>';}
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'What gap does LoCoMo-Plus target in existing long-term memory benchmarks?',opts:['They only test surface-level factual recall, while real responses often depend on implicit constraints like user state, goals, or values','They are too short to exercise long-term memory at all','They only work for non-English conversations','They require human annotators at inference time'],correct:0,explain:'The paper observes that existing benchmarks equate conversational memory with explicit factual recall — information clearly stated earlier and later queried with strong semantic alignment — while realistic interactions hinge on implicit, behaviorally constraining signals.'},
+  {q:'Cognitive memory in LoCoMo-Plus is decomposed into four latent constraints. Which set is correct?',opts:['Encoding, storage, retrieval, forgetting','Causal, state, goal, value','Single-hop, multi-hop, temporal, adversarial','Recall, precision, fluency, consistency'],correct:1,explain:'Figure 2 decomposes cognitive memory into causal, state, goal, and value constraints. (Single-hop, multi-hop, temporal, and adversarial are LoCoMo’s factual question categories.)'},
+  {q:'What does “cue–trigger semantic disconnect” mean?',opts:['The cue is deleted from the conversation before the trigger arrives','The trigger query is deliberately semantically distant from the cue, so similarity-based retrieval cannot bridge them','The trigger is asked immediately after the cue in the same session','The cue and the trigger are written in different languages'],correct:1,explain:'LoCoMo-Plus builds instances where the trigger has low surface and semantic similarity to its cue; pairs with high BM25 or MPNet similarity are filtered out, so no retrieval shortcut exists.'},
+  {q:'Which statement matches the paper’s Table 1 findings?',opts:['GPT-4o nearly solves LoCoMo-Plus out of the box','Memory systems like A-Mem and Mem0 close the gap to under 2 points','Every method category — open LLMs, closed LLMs, RAG, memory systems — drops sharply from LoCoMo to LoCoMo-Plus, with differences compressing toward uniformly low scores','Only small open-source models struggle with cognitive memory'],correct:2,explain:'All 17 methods show large gaps (~12–46 points). The best, gemini-2.5-pro, scores 26.06 on LoCoMo-Plus versus a 71.78 factual average (−45.72); memory systems like A-Mem (17.20), Mem0 (15.80), and SeCom (14.90) also fall far behind their factual scores.'},
+  {q:'In LoCoMo-Plus, how is a response to a cognitive question judged “correct”?',opts:['Exact string match against a single reference answer','A BLEU score above 0.5 against the reference','A majority vote from live users within 24 hours','An evidence-grounded LLM judge checks whether the response acknowledges or adapts to the cue — membership in the valid response space, with binary labels'],correct:3,explain:'Constraint consistency: queries come with no task disclosure, and the judge grades whether behavior reflects the latent constraint. Reliability was audited — 0.903 human–human agreement, 0.801–0.820 human–judge, and stable scores across judge backbones.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
