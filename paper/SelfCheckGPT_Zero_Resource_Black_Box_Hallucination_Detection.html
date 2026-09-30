@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the SelfCheckGPT paper, with live demos for sampling consistency, sentence-level hallucination scanning, and variant score comparisons.">
+<meta name="keywords" content="SelfCheckGPT, hallucination detection, LLM, black-box, zero-resource, sampling consistency, BERTScore, NLI, EMNLP 2023, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the SelfCheckGPT paper with practical intuition and demos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SelfCheckGPT — Interactive Guide">
+<meta name="twitter:description" content="Learn how sampling consistency detects LLM hallucinations, with animations and interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#method">Method</a>
+    <a class="nav-link" href="#variants">Variants</a>
+    <a class="nav-link" href="#pipeline">Pipeline</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">EMNLP 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#method">Method</a>
+  <a href="#variants">Variants</a>
+  <a href="#pipeline">Pipeline</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    The Model <em>Checks</em> Itself<br>SelfCheckGPT
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that taught LLMs to fact-check themselves —
+    sample the same model many times, and watch hallucinations contradict their own
+    alternatives. No external database, no token probabilities, no extra annotators.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2303.08896" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">5</div><div class="stat-label">Scoring Variants</div></div>
+    <div class="stat"><div class="stat-num">N=20</div><div class="stat-label">Samples Drawn</div></div>
+    <div class="stat"><div class="stat-num">93.4</div><div class="stat-label">Best Sentence AUC-PR</div></div>
+    <div class="stat"><div class="stat-num">0</div><div class="stat-label">External Databases</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Confident Errors to <em>Self-Checking</em></h2>
+  <p class="section-desc">SelfCheckGPT arrived after three years of hand-wringing about hallucinations. Each earlier fix needed something extra — internals, databases, annotators. This one needed only the model itself.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2020</div><div class="tl-title">GPT-3: fluent but unfaithful</div><div class="tl-desc">175B parameters make <a href="./Language_Models_are_Few_Shot_Learners.html" style="color:var(--amber);text-decoration:none;">GPT-3</a> stunningly fluent — and equally confident when inventing facts. Fluency stops being a signal of truth.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2021–22</div><div class="tl-title">External fact-checking pipelines</div><div class="tl-desc">Claim detection → evidence retrieval → verdict. Powerful, but bolted onto external databases with complex modules — and datasets built by perturbing real text (Liu et al., 2022) may not reflect true LLM hallucination.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2022</div><div class="tl-title">Sampling + self-evaluation</div><div class="tl-desc"><a href="./Self_Consistency.html" style="color:var(--amber);text-decoration:none;">Self-consistency</a> (Wang et al.) votes over sampled reasoning paths; Kadavath et al. show LLMs can estimate their own correctness — but many of these methods need token probabilities or careful prompting.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Mar</div><div class="tl-title">🚀 SelfCheckGPT preprint</div><div class="tl-desc">Manakul, Liusie &amp; Gales (University of Cambridge): sample N stochastic responses, measure consistency, flag hallucinations — zero-resource and black-box.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2023 · Dec</div><div class="tl-title">EMNLP 2023 + dataset release</div><div class="tl-desc">Published at the EMNLP 2023 main conference, with the wiki_bio_gpt3_hallucination dataset (238 GPT-3 passages, 1,908 annotated sentences) and open-source code.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024 →</div><div class="tl-title">The self-verification wave</div><div class="tl-desc">Sampling-based detection and self-checking became a standard tool in the LLM-trust toolbox, with a long tail of follow-ups chasing cheaper and sharper consistency checks.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">A language model that <span class="highlight">truly knows</span> a concept has a peaked probability distribution: every sample lands near the same facts. A model that doesn't know has a flat distribution — each sample drifts to a different invention. <strong>Sampling is a probe into what the model actually memorized.</strong></p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">KNOWN VS UNKNOWN CONCEPT (ILLUSTRATIVE)</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2.1;color:var(--text2);">
+          <span style="color:var(--blue);">"Lionel Messi is a _"</span> → <span style="color:var(--green);font-weight:600;">footballer</span> <span style="color:var(--text3);">(peaked — model knows)</span><br>
+          <span style="color:var(--blue);">"John Smith is a _"</span> → <span style="color:var(--red);font-weight:600;">flat distribution</span> <span style="color:var(--text3);">(model guesses)</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">A guess sampled five times gives five different answers. That drift is the hallucination signal.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem — <em>Fluent but Unfaithful</em></h2>
+  <p class="section-desc">Every pre-2023 hallucination detector demanded something you don't have when you're talking to a chatbot through an API. SelfCheckGPT's whole bet is to need nothing but the conversation itself.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🧪</div>
+      <div class="problem-title">Detecting Hallucinations the Old Way</div>
+      <ul class="problem-list">
+        <li><strong>White-box:</strong> truth classifiers over hidden states (Azaria &amp; Mitchell, 2023) need model internals — never exposed by APIs — plus labelled training data</li>
+        <li><strong>Grey-box:</strong> token probabilities and entropy correlate with factuality, but many APIs (e.g. ChatGPT at the time) return text only</li>
+        <li><strong>Fact verification:</strong> retrieve evidence from external databases — complex multi-stage pipelines, and facts can only be checked against what the database covers</li>
+        <li><strong>Proxy models:</strong> run a second open-source LLM to score the first — its probabilities transfer poorly (LLaMA-30B correlations were weak)</li>
+        <li><strong>Benchmarks:</strong> datasets built by perturbing factual text may not reflect how LLMs actually hallucinate</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔁</div>
+      <div class="problem-title">SelfCheckGPT's Bet</div>
+      <ul class="problem-list">
+        <li>Needs only what you already have: the model and its own outputs</li>
+        <li><strong>Black-box:</strong> works through any text-only API — no logits, no internals</li>
+        <li><strong>Zero-resource:</strong> no external database, no retrieval stack, no annotators in the loop</li>
+        <li>Sentence-level scores in [0,1] — find <em>which</em> sentence is the lie, not just that the passage is bad</li>
+        <li>Free by-product: average the sentence scores and you can rank whole passages by factuality</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">The Cross-Examination Card</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.8;">Ask a student the same question five separate times. If they <em>know</em>, the story stays stable — details wiggle, facts don't. If they're <em>confabulating</em>, every retell invents something new. An LLM is no different.</p>
+    <div class="two-col">
+      <div style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.9;">
+        <div style="color:var(--green);font-weight:600;margin-bottom:4px;">KNOWN TOPIC</div>
+        Q: "When was the telescope invented?"<br>
+        A¹: "1608, in the Netherlands."<br>
+        A²: "1608 — Dutch spectacle-makers."<br>
+        A³: "1608, credited to Lipperhey."<br>
+        <span style="color:var(--green);">→ consistent → likely known</span>
+      </div>
+      <div style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.9;">
+        <div style="color:var(--red);font-weight:600;margin-bottom:4px;">UNKNOWN TOPIC</div>
+        Q: "When was the Felton Scope invented?"<br>
+        A¹: "1874, in Austria."<br>
+        A²: "1912, in Britain."<br>
+        A³: "1820, in France."<br>
+        <span style="color:var(--red);">→ divergent → likely hallucinated</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="method">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Core Idea — <em>Sample and Compare</em></h2>
+  <p class="section-desc">Generate the main response deterministically, then draw N stochastic samples of the same prompt. For every sentence in the response, measure how well the samples support it. Unsupported sentences are the hallucinations.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">𝒮<sub>BERT</sub>(i) = 1 − (1/N) Σ<sub>n=1</sub><sup>N</sup> max<sub>k</sub> BERTScore( r<sub>i</sub> , s<sub>k</sub><sup>n</sup> )</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:6px;">SelfCheckGPT with BERTScore — Equation (1) of the paper. The other variants swap the comparison, not the recipe.</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">r<sub>i</sub></div><div class="fp-name">Sentence i of the response</div><div class="fp-desc">The main output R is split into sentences; each one is assessed on its own.</div></div>
+      <div class="formula-piece"><div class="fp-sym">s<sub>k</sub><sup>n</sup></div><div class="fp-name">Sentence k of sample n</div><div class="fp-desc">One of the N stochastic re-generations of the same prompt (S¹…Sᴺ).</div></div>
+      <div class="formula-piece"><div class="fp-sym">max<sub>k</sub></div><div class="fp-name">Best match per sample</div><div class="fp-desc">Compare r<sub>i</sub> against every sentence in sample n and keep the most similar one.</div></div>
+      <div class="formula-piece"><div class="fp-sym">1 − avg</div><div class="fp-name">Inconsistency score</div><div class="fp-desc">Flip the average similarity: 0.0 = fully supported (factual), 1.0 = no sample agrees (hallucinated).</div></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">Black-box, Literally</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The main response is generated at <span class="code-inline">temperature 0.0</span> with beam search; the N=<strong>20</strong> samples use the <em>same prompt</em> at <span class="code-inline">temperature 1.0</span> — random sampling. If sampling were deterministic, every "sample" would be identical and the probe would be useless. In the paper's WikiBio setup the prompt is simply: <span class="code-inline">"This is a Wikipedia passage about {concept}:"</span></p>
+    </div>
+    <div class="card">
+      <div class="card-label">What the Score Measures</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Each sentence gets 𝒮(i) ∈ [0.0, 1.0] — <span style="color:var(--green);font-weight:600;">0.0 = grounded in the model's knowledge</span>, <span style="color:var(--red);font-weight:600;">1.0 = contradicted by every sample</span>. Sentences can then be thresholded individually, and a passage-level factuality score (the average) ranks whole passages — the paper shows both work.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;border:1px solid rgba(15,23,42,0.2);">
+    <div style="background:#0f172a;border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:1rem 1.5rem;display:flex;align-items:center;gap:10px;">
+      <span style="width:11px;height:11px;border-radius:50%;background:#ef4444;display:inline-block;"></span>
+      <span style="width:11px;height:11px;border-radius:50%;background:#f59e0b;display:inline-block;"></span>
+      <span style="width:11px;height:11px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
+      <span style="font-family:var(--mono);font-size:11px;color:#94a3b8;margin-left:8px;">selfcheckgpt · judge console — interactive demo 1</span>
+    </div>
+    <div style="background:#0f172a;padding:1.5rem;border-radius:0 0 var(--radius-lg) var(--radius-lg);font-family:var(--mono);">
+      <div style="font-family:var(--sans);font-size:13px;color:#94a3b8;margin-bottom:1rem;line-height:1.7;">One prompt, five samples. Toggle the concept and watch what sampling reveals: a <strong style="color:#e2e8f0;">known</strong> fact keeps re-appearing; a <strong style="color:#e2e8f0;">hallucinated</strong> fact dissolves into five different stories.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+        <button id="driftKnownBtn" type="button" style="font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid rgba(34,197,94,0.4);background:rgba(34,197,94,0.12);color:#4ade80;cursor:pointer;">Known fact</button>
+        <button id="driftHallBtn" type="button" style="font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid rgba(148,163,184,0.25);background:transparent;color:#94a3b8;cursor:pointer;">Hallucinated fact</button>
+      </div>
+      <div id="driftPrompt" style="background:#1e293b;border:1px solid rgba(148,163,184,0.15);border-radius:10px;padding:1rem;font-size:12.5px;color:#e2e8f0;line-height:1.9;white-space:pre-line;margin-bottom:1rem;"></div>
+      <button id="driftSampleBtn" type="button" style="width:100%;font-family:var(--mono);font-size:13px;padding:9px 18px;border-radius:8px;border:1px solid rgba(245,158,11,0.45);background:rgba(245,158,11,0.14);color:#fbbf24;cursor:pointer;font-weight:600;">↻ Sample 5 responses (T = 1.0)</button>
+      <div id="driftSamples" style="margin-top:1rem;"></div>
+      <div style="margin-top:1.25rem;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#94a3b8;margin-bottom:6px;">
+          <span>CONSISTENCY ACROSS SAMPLES</span>
+          <span id="driftMeterLabel">awaiting samples…</span>
+        </div>
+        <div style="height:12px;background:rgba(148,163,184,0.15);border-radius:6px;overflow:hidden;">
+          <div id="driftMeter" style="height:100%;width:0%;border-radius:6px;transition:width .9s ease, background .3s;"></div>
+        </div>
+      </div>
+      <div id="driftVerdict" style="margin-top:1rem;background:#1e293b;border:1px solid rgba(148,163,184,0.15);border-radius:10px;padding:12px 14px;font-size:12.5px;color:#94a3b8;line-height:1.8;font-family:var(--sans);min-height:20px;"></div>
+      <div style="font-size:11px;color:#64748b;margin-top:10px;font-family:var(--sans);">Illustrative demo — the paper's real runs draw N=20 samples per passage with GPT-3 (text-davinci-003) and score every sentence.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VARIANTS -->
+<section id="variants">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Five Ways to Measure <em>Consistency</em></h2>
+  <p class="section-desc">The recipe is fixed: response + N samples. The free choice is <em>how</em> to decide whether a sentence is "consistent" with the samples. The paper ships five interchangeable scorers — four classic ones plus asking an LLM directly.</p>
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">① BERTScore — similarity</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Embed every sentence (RoBERTa-Large backbone) and compare the response sentence with the <strong>most similar sentence in each sample</strong>. If even the best matches are dissimilar, nothing in the samples supports the sentence.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.6rem 0.9rem;font-family:var(--mono);font-size:11.5px;color:var(--text2);margin-top:8px;">score = 1 − avg( best BERTScore per sample )</div>
+    </div>
+    <div class="card">
+      <div class="card-label">② QA — question the facts</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Generate multiple-choice questions <em>about</em> the sentence (MQAG framework), then let an answering system answer each question using each sample. If the samples give different answers than the response — inconsistent.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.6rem 0.9rem;font-family:var(--mono);font-size:11.5px;color:var(--text2);margin-top:8px;">score = #answer-mismatches / #questions</div>
+    </div>
+    <div class="card">
+      <div class="card-label">③ n-gram — word counts</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Train a tiny n-gram language model <em>on the samples themselves</em> (response tokens get +1 smoothing). A sentence full of words the samples never use gets a low probability. The cheapest variant needs no extra model at all: <strong>unigram (max)</strong> — find the sentence's rarest word and count its occurrences.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.6rem 0.9rem;font-family:var(--mono);font-size:11.5px;color:var(--text2);margin-top:8px;">score ∝ −log P(sentence | samples)</div>
+    </div>
+    <div class="card">
+      <div class="card-label">④ NLI — entailment</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Treat each sample as a premise and the sentence as a hypothesis; a DeBERTa-v3-large model fine-tuned on MNLI estimates P(contradiction), using only the entailment and contradiction logits. Average over all samples.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.6rem 0.9rem;font-family:var(--mono);font-size:11.5px;color:var(--text2);margin-top:8px;">score = avg( P(contradict | sample, sentence) )</div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">⑤ Prompt — ask the model directly</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Skip the machinery: paste a sample into an LLM (GPT-3 or ChatGPT) plus the sentence and ask <em>"Is the sentence supported by the context above? Answer Yes or No."</em> Map {Yes: 0.0, No: 1.0, N/A: 0.5} and average. GPT-3 answered Yes/No 98% of the time — but less capable models (text-curie-001, LLaMA) failed at this consistency assessment, so the judge needs to be strong.</p>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Variant Showdown</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Two sentences from one response — one factual, one hallucinated. Pick a variant to see exactly how it turns samples into a score, and where it lands on the paper's leaderboard.</p>
+    <div id="showdownTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+    <div id="showdownBody"></div>
+    <div style="font-size:12px;color:var(--text3);margin:1rem 0 0.5rem;font-family:var(--mono);">SENTENCE-LEVEL AUC-PR · NON-FACTUAL DETECTION (WIKIBIO, TABLE 2)</div>
+    <div id="showdownChart"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PIPELINE -->
+<section id="pipeline">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">The <em>Pipeline</em>, Step by Step</h2>
+  <p class="section-desc">Six steps, one model, zero external resources. This is the full recipe as run on the WikiBio GPT-3 dataset — and the same recipe you could run against any API today.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:1.5rem;">
+    <div class="card-sm" style="border-left:3px solid var(--blue);"><div style="font-family:var(--mono);font-size:11px;color:var(--blue);margin-bottom:6px;">STEP 1 · ASK ONCE</div><div style="font-size:13px;color:var(--text2);line-height:1.7;">Prompt the model at <span class="code-inline">temperature 0.0</span> with beam search → the main response R, e.g. a full biography passage.</div></div>
+    <div class="card-sm" style="border-left:3px solid var(--teal);"><div style="font-family:var(--mono);font-size:11px;color:var(--teal);margin-bottom:6px;">STEP 2 · SAMPLE N=20</div><div style="font-size:13px;color:var(--text2);line-height:1.7;">Same prompt, <span class="code-inline">temperature 1.0</span> → stochastic samples S¹…S²⁰. Each is a fresh roll of the model's dice.</div></div>
+    <div class="card-sm" style="border-left:3px solid var(--purple);"><div style="font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:6px;">STEP 3 · SPLIT</div><div style="font-size:13px;color:var(--text2);line-height:1.7;">Break R into sentences r₁ … r_I. Detection happens per sentence — that's what makes the output <em>actionable</em>.</div></div>
+    <div class="card-sm" style="border-left:3px solid var(--amber);"><div style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:6px;">STEP 4 · SCORE</div><div style="font-size:13px;color:var(--text2);line-height:1.7;">For every r<sub>i</sub>, compare against all 20 samples with any variant → inconsistency score 𝒮(i) ∈ [0,1].</div></div>
+    <div class="card-sm" style="border-left:3px solid var(--red);"><div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:6px;">STEP 5 · THRESHOLD</div><div style="font-size:13px;color:var(--text2);line-height:1.7;">Sentences whose score crosses the cut are flagged: <span style="color:var(--red);">⚠ likely hallucination</span>. Flag, rewrite, or drop them.</div></div>
+    <div class="card-sm" style="border-left:3px solid var(--green);"><div style="font-family:var(--mono);font-size:11px;color:var(--green);margin-bottom:6px;">STEP 6 · RANK</div><div style="font-size:13px;color:var(--text2);line-height:1.7;">Average the sentence scores → a passage-level factuality score. Rank thousands of passages without any labelling.</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">More Samples, Better — Smoothly</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The paper varies the sample count: performance rises <strong>smoothly</strong> with N and shows diminishing gains — and the n-gram variant needs the most samples before it plateaus. Sampling cost buys accuracy on a predictable curve, so you pick your own point on it.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Dataset Glance — WikiBio GPT-3</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:8px;">
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--amber);">238</div><div style="font-size:11px;color:var(--text2);">passages generated</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--blue);">1,908</div><div style="font-size:11px;color:var(--text2);">annotated sentences</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--teal);">184.7</div><div style="font-size:11px;color:var(--text2);">tokens / passage (±36.9)</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--purple);">20</div><div style="font-size:11px;color:var(--text2);">samples per passage</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Results — <em>Detecting the Drift</em></h2>
+  <p class="section-desc">GPT-3 wrote Wikipedia-style biographies for 238 real people; humans labelled every sentence. The headline: the model hallucinated a lot — and sampling caught it.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">How Bad Was It? (Human Annotation)</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:8px;">
+      <div class="card-sm"><div style="font-family:var(--mono);font-size:1.4rem;font-weight:600;color:var(--red);">39.9%</div><div style="font-size:11px;color:var(--text2);">major-inaccurate — fully hallucinated sentences</div></div>
+      <div class="card-sm"><div style="font-family:var(--mono);font-size:1.4rem;font-weight:600;color:var(--amber);">33.1%</div><div style="font-size:11px;color:var(--text2);">minor-inaccurate — related but partly wrong</div></div>
+      <div class="card-sm"><div style="font-family:var(--mono);font-size:1.4rem;font-weight:600;color:var(--green);">27.0%</div><div style="font-size:11px;color:var(--text2);">accurate sentences</div></div>
+      <div class="card-sm"><div style="font-family:var(--mono);font-size:1.4rem;font-weight:600;color:var(--text);">~73%</div><div style="font-size:11px;color:var(--text2);">of all sentences at least partly non-factual</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">Inter-annotator agreement (Cohen's κ): 0.748 for the 2-class task, 0.595 for 3-class. The passage-level histogram even shows a sharp peak at score 1.0 — "total hallucination", where the whole biography is fabricated.</p>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">w/ BERTSCORE</div>
+      <div class="result-score" style="color:var(--blue);">81.96</div>
+      <div class="result-label">sentence-level AUC-PR</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:82%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">w/ QA</div>
+      <div class="result-score" style="color:var(--teal);">84.26</div>
+      <div class="result-label">sentence-level AUC-PR</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:84%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">w/ UNIGRAM (MAX)</div>
+      <div class="result-score" style="color:var(--purple);">85.63</div>
+      <div class="result-label">sentence-level AUC-PR</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:86%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">w/ NLI</div>
+      <div class="result-score" style="color:var(--green);">92.50</div>
+      <div class="result-label">sentence-level AUC-PR</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:92%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">w/ PROMPT</div>
+      <div class="result-score" style="color:var(--amber);">93.42</div>
+      <div class="result-label">sentence-level AUC-PR — best overall</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:93%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Table 2 (excerpt) — Sentence-level Detection &amp; Passage-level Ranking</div>
+    <table class="comp-table">
+      <thead><tr><th>Method</th><th>Access</th><th>AUC-PR (NonFact)</th><th>Pearson</th><th>Spearman</th></tr></thead>
+      <tbody>
+        <tr><td>Random baseline</td><td>—</td><td>72.96</td><td>—</td><td>—</td></tr>
+        <tr><td>GPT-3 Avg(−log p)</td><td>grey-box</td><td>83.21</td><td>57.04</td><td>53.93</td></tr>
+        <tr><td>GPT-3 Max(−log p)</td><td>grey-box</td><td>87.51</td><td>57.83</td><td>55.69</td></tr>
+        <tr><td>LLaMA-30B Avg(−log p)</td><td>black-box proxy</td><td>75.43</td><td>21.72</td><td>20.20</td></tr>
+        <tr><td>SelfCheckGPT w/ BERTScore</td><td>black-box</td><td>81.96</td><td>58.18</td><td>55.90</td></tr>
+        <tr><td>SelfCheckGPT w/ QA</td><td>black-box</td><td>84.26</td><td>61.07</td><td>59.29</td></tr>
+        <tr><td>SelfCheckGPT w/ Unigram (max)</td><td>black-box</td><td>85.63</td><td>64.71</td><td>64.91</td></tr>
+        <tr><td>SelfCheckGPT w/ NLI</td><td>black-box</td><td>92.50</td><td>74.14</td><td>73.78</td></tr>
+        <tr class="comp-best"><td>SelfCheckGPT w/ Prompt</td><td>black-box</td><td>93.42</td><td>78.32</td><td>78.30</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Pearson / Spearman = correlation with human passage-level factuality judgements. SelfCheckGPT beats the grey-box probability baselines while needing only text — and proxy-LLM probabilities transfer badly.</p>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Sentence-Level Scanner</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A five-sentence passage (illustrative). Run the check: each sentence is scored against the samples, and anything inconsistent gets flagged — just like Step 5 of the pipeline.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="scanRunBtn" type="button" style="font-size:13px;padding:8px 18px;">▶ Run SelfCheck</button>
+      <button class="btn-outline" id="scanResetBtn" type="button" style="font-size:13px;padding:8px 18px;">↺ Reset</button>
+    </div>
+    <div id="scanArea"></div>
+    <div id="scanComposite" style="margin-top:1rem;background:var(--bg3);border-radius:var(--radius);padding:12px 14px;font-family:var(--mono);font-size:12.5px;color:var(--text2);min-height:20px;"></div>
+    <div style="font-size:11px;color:var(--text3);margin-top:8px;">Scores are illustrative; the real pipeline scores each sentence against N=20 sampled responses.</div>
+  </div>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🔍 Grey-box is strong — if you can get it</div><div class="notice-text">GPT-3's own token probabilities detect factual sentences at 53.97 AUC-PR (random: 27.04). The catch: most APIs never expose them.</div></div>
+    <div class="notice-card"><div class="notice-title">⚡ The cheapest variant over-delivers</div><div class="notice-text">Unigram (max) just looks for the rarest word in the sentence across all 20 samples — "if a token appears once, it's likely non-factual" — and still scores 85.63.</div></div>
+    <div class="notice-card"><div class="notice-title">🪞 The model can self-check</div><div class="notice-text">An ablation with only 4 samples: GPT-3 prompted to judge its own sentences beats the unigram method — and ChatGPT is slightly better still.</div></div>
+    <div class="notice-card"><div class="notice-title">📚 Samples vs stored knowledge</div><div class="notice-text">Using the real WikiBio reference text instead of self-samples: BERTScore/QA perform comparably or better with self-samples; NLI/Prompt benefit from retrieval — but external databases can't cover every use case.</div></div>
+  </div>
+
+  <div class="card" style="border:1px solid rgba(239,68,68,0.25);background:rgba(239,68,68,0.03);">
+    <div class="card-label" style="color:var(--red);">What SelfCheckGPT Did NOT Solve</div>
+    <ul class="problem-list">
+      <li><strong>Cost:</strong> N samples multiply inference cost. Running the Prompt variant over 1,908 sentences × 20 samples cost ~$200 with GPT-3 (vs ~$20 with ChatGPT) — the reason some ablations used only 4 samples.</li>
+      <li><strong>Consistency ≠ truth:</strong> the method measures self-agreement. A model that is <em>consistently wrong</em> (mis-remembered training data) will pass its own check.</li>
+      <li><strong>One domain, one model:</strong> results come from GPT-3 biographies of real people; the paper itself notes there was no standard hallucination-detection benchmark at the time.</li>
+      <li><strong>A threshold to choose:</strong> AUC-PR shows the ranking is good; turning scores into decisions still needs an operating point per application.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Sampling</em> as a Lie Detector</h2>
+  <p class="section-desc">SelfCheckGPT showed that the cheapest possible probe — asking again — is a competitive hallucination detector. Its fingerprints are all over modern LLM-trust tooling.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">💬 Chat reliability</div><div class="notice-text">A practical pre-trust filter: sample, compare, and only surface answers that survive their own cross-examination.</div></div>
+    <div class="notice-card"><div class="notice-title">🌊 Sampling-based evaluation wave</div><div class="notice-text">From self-consistency to semantic uncertainty — sampling turned from a decoding trick into a measurement instrument for model knowledge.</div></div>
+    <div class="notice-card"><div class="notice-title">🔌 Black-box-friendly design</div><div class="notice-text">Released at the dawn of the ChatGPT era, its API-only assumption aged perfectly: every closed model since is a black box.</div></div>
+    <div class="notice-card"><div class="notice-title">📦 Open dataset + code</div><div class="notice-text">wiki_bio_gpt3_hallucination (238 annotated passages) and the selfcheckgpt toolkit became shared testbeds for hallucination research.</div></div>
+    <div class="notice-card"><div class="notice-title">➕ Complements retrieval</div><div class="notice-text">Retrieval-grounded checking covers what a database knows; self-checking covers everything else — the paper shows the two can combine.</div></div>
+    <div class="notice-card"><div class="notice-title">💸 The cost trade-off</div><div class="notice-text">Sampling is simple but never free — follow-up work keeps chasing the same accuracy with fewer samples and cheaper judges.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Consistency Is a <em>Truth</em> Signal</h2>
+  <p class="section-desc">SelfCheckGPT's insight fits in one line: a model that knows a fact re-derives it under every resampling; a model that's fabricating invents a different story each time. Sampling — the cheapest thing an LLM does — becomes a lie detector.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">⚫</div>
+      <div class="problem-title">What Black-Box Purity Buys</div>
+      <ul class="problem-list">
+        <li>No knowledge base, no logits, no white-box access, no extra annotators</li>
+        <li>Works through any API: sample N times, compare, score</li>
+        <li>Five interchangeable scorers — BERTScore, QA, n-gram, NLI, LLM-prompt — best: Prompt 93.42 and NLI 92.50 AUC-PR</li>
+        <li>Sentence-level scores 𝒮(i) ∈ [0,1] rank <em>where</em> the passage lies, not just that it lies</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">💸</div>
+      <div class="problem-title">The Bill, and the Blind Spot</div>
+      <ul class="problem-list">
+        <li>Detection costs N extra generations per passage (N=20 in the paper) — accuracy bought with compute</li>
+        <li>Consistency is not truth: a model can repeat a popular myth with high agreement — the TruthfulQA trap</li>
+        <li>Divergence needs the fact to be borderline-known; obscure truths sampled badly look like lies</li>
+        <li>Returns diminish smoothly with N — there is no cheap setting that also works</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Sampling Spectroscope</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a claim, then resample the model. Each card is one sampled continuation voting on the claim; the agreement meter computes the hallucination score the way SelfCheckGPT does: 1 minus average support. One run is a detector; the difference between runs is the whole method.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+        <button class="btn-primary" id="scKnown" type="button" style="font-size:12.5px;padding:8px 16px;">Known fact</button>
+        <button class="btn-outline" id="scFog" type="button" style="font-size:12.5px;padding:8px 16px;">Borderline fact</button>
+        <button class="btn-outline" id="scFab" type="button" style="font-size:12.5px;padding:8px 16px;">Fabricated fact</button>
+        <button class="btn-outline" id="scResample" type="button" style="font-size:12.5px;padding:8px 16px;">↻ Resample ×8</button>
+      </div>
+      <div id="scClaim" style="font-size:14px;font-weight:600;color:var(--text1);margin-bottom:12px;"></div>
+      <div id="scSamples" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px;"></div>
+      <div id="scMeter"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">On WikiBio, GPT-3 was at least partly non-factual in ~73% of annotated sentences</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">A black-box detector that runs on 73% of long-form content being partly fabricated is not a research toy — it's a production gate. The paper's later SelfCheck-RAG line uses exactly this gate to filter generations before they reach users. The caveat stands: agreement measures the model's knowledge boundary, not the world's truth — pair it with grounded checking (FActScore) when the stakes are real.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧠 The knowledge boundary</div><div class="notice-text">Samples converge on facts inside training distribution and scatter outside it. Divergence is a map of what the model doesn't actually know — which is why it doubles as an uncertainty estimate.</div></div>
+    <div class="notice-card"><div class="notice-title">🔀 Scorer interchangeability</div><div class="notice-text">The sampling mechanism is fixed; the comparison layer is swappable. NLI and LLM-prompt won AUC-PR (92.50 / 93.42), but a cheap n-gram scorer still works when compute is scarce.</div></div>
+    <div class="notice-card"><div class="notice-title">📈 The N-curve</div><div class="notice-text">Performance climbs smoothly from N=1 to N=20 with diminishing returns — a dial you turn per dollar. Benchmarks like <a href="./HaluEval_A_Large_Scale_Hallucination_Evaluation_Benchmark.html" style="color:var(--amber);font-weight:600;text-decoration:none;">HaluEval</a> exist precisely to price that dial.</div></div>
+    <div class="notice-card"><div class="notice-title">🪞 Consistent ≠ true</div><div class="notice-text">An imitative falsehood (the <a href="./TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html" style="color:var(--amber);font-weight:600;text-decoration:none;">TruthfulQA</a> story) samples with high agreement. Consistency detects fabrication, not deception — know which one you're guarding against.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the SelfCheckGPT paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Known concept → consistent samples; hallucinated fact → divergent, contradictory samples. That single asymmetry is the detector.</div>
+    <div class="card-sm">✅ Zero-resource &amp; black-box: only the model's own sampled text is used — no database, no logits, no extra annotators.</div>
+    <div class="card-sm">✅ Sentence-level scores 𝒮(i) ∈ [0,1]: high = inconsistent with the samples = likely hallucinated; averaging gives passage-level ranking.</div>
+    <div class="card-sm">✅ Five interchangeable scorers: BERTScore, QA, n-gram, NLI, LLM-prompt — NLI (92.50) and Prompt (93.42) AUC-PR led the table.</div>
+    <div class="card-sm">✅ On WikiBio, GPT-3 was at least partly non-factual in ~73% of annotated sentences; the dataset (238 passages, 1,908 sentences) is public.</div>
+    <div class="card-sm">✅ The price is sampling: performance climbs smoothly with N (20 in the paper) with diminishing returns — accuracy bought with compute.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2303.08896" target="_blank" rel="noopener noreferrer">"SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection for Generative Large Language Models"</a> (Manakul et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2303.08896" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./A_Survey_on_Hallucination_in_Large_Language_Models.html">Hallucination Survey Guide</a>
+    <a class="footer-link" href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html">FActScore Guide</a>
+    <a class="footer-link" href="./HaluEval_A_Large_Scale_Hallucination_Evaluation_Benchmark.html">HaluEval Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+<div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','method','variants','pipeline','results','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === DEMO 1: SAMPLE & SPOT THE DRIFT ===
+(function(){
+  const promptEl=document.getElementById('driftPrompt'),samplesEl=document.getElementById('driftSamples'),meterEl=document.getElementById('driftMeter'),meterLabelEl=document.getElementById('driftMeterLabel'),verdictEl=document.getElementById('driftVerdict');
+  const knownBtn=document.getElementById('driftKnownBtn'),hallBtn=document.getElementById('driftHallBtn'),sampleBtn=document.getElementById('driftSampleBtn');
+  if(!promptEl||!samplesEl||!meterEl||!meterLabelEl||!verdictEl||!knownBtn||!hallBtn||!sampleBtn)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const K='same facts: English \u00b7 mathematician \u00b7 Analytical Engine';
+  const DATA={
+    known:{concept:'Ada Lovelace',main:'Ada Lovelace was an English mathematician, best known for her work on Charles Babbage\u2019s proposed mechanical general-purpose computer, the Analytical Engine.',consistency:92,samples:[
+      {t:'Ada Lovelace was an English mathematician noted for her work on Charles Babbage\u2019s Analytical Engine.',m:K},
+      {t:'Augusta Ada King, Countess of Lovelace, was an English mathematician who worked on the Analytical Engine.',m:K},
+      {t:'Lovelace was an English mathematician famous for her writings on Babbage\u2019s Analytical Engine.',m:K},
+      {t:'Ada Lovelace, an English mathematician, is known for her association with Charles Babbage\u2019s Analytical Engine.',m:K},
+      {t:'An English mathematician, Ada Lovelace contributed to work on Charles Babbage\u2019s Analytical Engine.',m:K}]},
+    hall:{concept:'Edmund Hartwell',main:'Edmund Hartwell was a celebrated English lighthouse engineer who invented the revolving beacon in 1846 and received the Royal Astronomical Society\u2019s gold medal.',consistency:18,samples:[
+      {t:'Edmund Hartwell was a Scottish marine biologist known for cataloguing deep-sea sponges.',m:'new invention: profession = marine biologist'},
+      {t:'Edmund Hartwell was an English lighthouse engineer credited with early Fresnel lens work in Cornwall.',m:'new invention: Fresnel lens, no 1846 beacon'},
+      {t:'Hartwell was a Victorian painter remembered for his harbour scenes.',m:'new invention: profession = painter'},
+      {t:'Edmund Hartwell was a Cornish mining engineer and amateur astronomer.',m:'new invention: profession = mining engineer'},
+      {t:'Hartwell was a British naval architect who wrote on tidal patterns.',m:'new invention: profession = naval architect'}]}
+  };
+  let mode='known',timers=[];
+  function clearTimers(){timers.forEach(function(t){clearTimeout(t);});timers=[];}
+  function setBtn(w){const a=w==='known'?knownBtn:hallBtn,b=w==='known'?hallBtn:knownBtn;
+    a.style.border=w==='known'?'1px solid rgba(34,197,94,0.4)':'1px solid rgba(239,68,68,0.4)';a.style.background=w==='known'?'rgba(34,197,94,0.12)':'rgba(239,68,68,0.12)';a.style.color=w==='known'?'#4ade80':'#f87171';
+    b.style.border='1px solid rgba(148,163,184,0.25)';b.style.background='transparent';b.style.color='#94a3b8';}
+  function renderPrompt(){const d=DATA[mode];promptEl.innerHTML='<span style="color:#fbbf24;">&gt; PROMPT</span>  This is a Wikipedia passage about '+d.concept+':\n<span style="color:#fbbf24;">&gt; MAIN RESPONSE (T=0.0)</span>  '+d.main;}
+  function idle(){
+    samplesEl.innerHTML='<div style="background:#1e293b;border:1px dashed rgba(148,163,184,0.25);border-radius:10px;padding:14px;font-size:12px;color:#64748b;font-family:var(--sans);">No samples yet \u2014 draw five stochastic responses to cross-examine the main passage.</div>';
+    meterEl.style.width='0%';meterLabelEl.textContent='awaiting samples\u2026';
+    verdictEl.innerHTML='The consistency meter fills once the samples are in.';verdictEl.style.color='#94a3b8';}
+  function draw(){
+    const d=DATA[mode];clearTimers();samplesEl.innerHTML='';
+    const order=d.samples.map(function(s,i){return i;});
+    for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const tmp=order[i];order[i]=order[j];order[j]=tmp;}
+    const sups=['\u00b9','\u00b2','\u00b3','\u2074','\u2075'],cards=[];
+    order.forEach(function(idx,n){
+      const s=d.samples[idx],card=document.createElement('div');
+      card.style.cssText='background:#1e293b;border:1px solid rgba(148,163,184,0.15);border-radius:10px;padding:10px 12px;margin-bottom:8px;opacity:0;';
+      const tag=mode==='known'?'<span style="color:#4ade80;">\u2713 consistent</span>':'<span style="color:#f87171;">\u2717 divergent</span>';
+      card.innerHTML='<div style="display:flex;justify-content:space-between;font-size:10.5px;color:#64748b;margin-bottom:5px;"><span>SAMPLE S'+sups[n]+' \u00b7 T=1.0</span>'+tag+'</div><div style="font-size:12.5px;color:#e2e8f0;line-height:1.7;">'+s.t+'</div><div style="font-size:10.5px;color:'+(mode==='known'?'#4ade80':'#f87171')+';opacity:0.75;margin-top:5px;">'+s.m+'</div>';
+      samplesEl.appendChild(card);cards.push(card);});
+    cards.forEach(function(card,i){
+      if(reduced){card.style.opacity='1';}
+      else{timers.push(setTimeout(function(){card.style.opacity='1';card.classList.add('animate-in');},i*180));}});
+    timers.push(setTimeout(function(){
+      meterEl.style.width=d.consistency+'%';
+      if(mode==='known'){
+        meterEl.style.background='linear-gradient(90deg,#16a34a,#22c55e)';
+        meterLabelEl.innerHTML='<span style="color:#4ade80;">'+d.consistency+'% \u00b7 facts repeat</span>';
+        verdictEl.innerHTML='<span style="color:#4ade80;font-weight:600;">\u2713 CONSISTENT \u2192 likely factual.</span> Every sample repeats the same core facts \u2014 English \u00b7 mathematician \u00b7 Babbage \u00b7 Analytical Engine. The model almost certainly <em>knows</em> this concept.';verdictEl.style.color='#cbd5e1';
+      }else{
+        meterEl.style.background='repeating-linear-gradient(45deg,#ef4444 0 10px,rgba(239,68,68,0.35) 10px 20px)';
+        meterLabelEl.innerHTML='<span style="color:#f87171;">'+d.consistency+'% \u00b7 stories diverge</span>';
+        verdictEl.innerHTML='<span style="color:#f87171;font-weight:600;">\u2717 DIVERGENT \u2192 likely hallucination.</span> Five samples, five different Hartwells: biologist, engineer, painter, miner, architect. The main passage\u2019s confident biography was confabulated \u2014 nothing in the model\u2019s knowledge pins it down.';verdictEl.style.color='#cbd5e1';}
+    },reduced?0:d.samples.length*180+350));
+  }
+  knownBtn.addEventListener('click',function(){mode='known';setBtn('known');renderPrompt();clearTimers();idle();});
+  hallBtn.addEventListener('click',function(){mode='hall';setBtn('hall');renderPrompt();clearTimers();idle();});
+  sampleBtn.addEventListener('click',draw);
+  setBtn('known');renderPrompt();idle();
+})();
+
+// === DEMO 2: SENTENCE-LEVEL SCANNER ===
+(function(){
+  const areaEl=document.getElementById('scanArea'),runBtn=document.getElementById('scanRunBtn'),resetBtn=document.getElementById('scanResetBtn'),compEl=document.getElementById('scanComposite');
+  if(!areaEl||!runBtn||!resetBtn||!compEl)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const TH=0.5;
+  const SENTS=[
+    {t:'Grace Hopper was an American computer scientist and a rear admiral in the United States Navy.',s:0.07,note:'20/20 samples repeat the same role.'},
+    {t:'She was one of the first programmers of the Harvard Mark I computer.',s:0.15,note:'19/20 samples mention the Mark I.'},
+    {t:'She invented the COBOL programming language in 1972 while working at Bell Labs.',s:0.87,note:'Samples disagree: FLOW-MATIC heritage, a 1959 committee, no Bell Labs, no 1972.'},
+    {t:'She popularised the term \u201cdebugging\u201d after a moth was found in the Mark II computer.',s:0.24,note:'17/20 samples retell the moth story.'},
+    {t:'She received the Turing Award in 1984 for her work on FORTRAN.',s:0.93,note:'No sample mentions any Turing Award \u2014 and no FORTRAN.'}
+  ];
+  let timers=[];
+  function clearTimers(){timers.forEach(function(t){clearTimeout(t);});timers=[];}
+  function render(){
+    clearTimers();
+    areaEl.innerHTML=SENTS.map(function(x,i){
+      const flag=x.s>=TH;
+      return '<div style="background:var(--bg2);border:1px solid '+(flag?'rgba(239,68,68,0.3)':'var(--border)')+';border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;'+(flag?'box-shadow:0 0 0 1px rgba(239,68,68,0.12);':'')+'">'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">'+
+        '<span style="font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:6px;background:var(--bg3);color:'+(flag?'var(--red)':'var(--green)')+';font-weight:600;">r'+(i+1)+'</span>'+
+        '<span style="font-size:13.5px;color:var(--text);line-height:1.6;flex:1;min-width:200px;">'+x.t+'</span>'+
+        '<span class="pill pill-red" data-flag="'+i+'" style="display:none;">\u26a0 likely hallucination</span>'+
+        '</div>'+
+        '<div style="display:flex;align-items:center;gap:10px;">'+
+        '<div style="flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div id="scanBar'+i+'" style="height:100%;width:0%;border-radius:4px;transition:width .7s ease, background .3s;"></div></div>'+
+        '<span id="scanNum'+i+'" style="font-family:var(--mono);font-size:11.5px;color:var(--text3);width:36px;text-align:right;"></span>'+
+        '</div>'+
+        '<div id="scanNote'+i+'" style="font-size:11.5px;color:var(--text3);margin-top:6px;min-height:0;"></div>'+
+        '</div>';
+    }).join('');
+  }
+  function run(){
+    render();
+    SENTS.forEach(function(x,i){
+      const bar=document.getElementById('scanBar'+i),num=document.getElementById('scanNum'+i),note=document.getElementById('scanNote'+i);
+      const badges=document.querySelectorAll('[data-flag="'+i+'"]');
+      const color=x.s>=TH?'var(--red)':'var(--green)';
+      const step=function(){
+        if(bar){bar.style.width=(x.s*100)+'%';bar.style.background=color;}
+        if(num){num.textContent=x.s.toFixed(2);num.style.color=color;}
+        if(note)note.innerHTML='<span style="color:'+color+';">\u2022</span> '+x.note;
+        badges.forEach(function(b){if(x.s>=TH)b.style.display='inline-block';});
+      };
+      if(reduced){step();}else{timers.push(setTimeout(step,200+i*240));}
+    });
+    const avg=SENTS.reduce(function(a,x){return a+x.s;},0)/SENTS.length;
+    const flagged=SENTS.filter(function(x){return x.s>=TH;}).length;
+    const done=function(){
+      compEl.innerHTML='<span style="color:var(--amber);font-weight:600;">PASSAGE SCORE</span>  '+avg.toFixed(3)+'  <span style="color:var(--text3);">= avg of sentence scores</span>  \u00b7  <span style="color:'+(flagged>0?'var(--red)':'var(--green)')+';font-weight:600;">'+flagged+'/'+SENTS.length+' sentences flagged \u26a0</span>  <span style="color:var(--text3);">\u2192 mixed factuality \u2014 rewrite or check the flagged lines</span>';
+    };
+    if(reduced){done();}else{timers.push(setTimeout(done,200+SENTS.length*240+150));}
+  }
+  const IDLE='<span style="color:var(--text3);">Composite passage score appears here after the scan.</span>';
+  render();compEl.innerHTML=IDLE;
+  runBtn.addEventListener('click',run);
+  resetBtn.addEventListener('click',function(){render();compEl.innerHTML=IDLE;});
+})();
+
+// === DEMO 3: VARIANT SHOWDOWN ===
+(function(){
+  const tabsEl=document.getElementById('showdownTabs'),bodyEl=document.getElementById('showdownBody'),chartEl=document.getElementById('showdownChart');
+  if(!tabsEl||!bodyEl||!chartEl)return;
+  const R2='She was one of the first programmers of the Harvard Mark I computer.';
+  const R5='She received the Turing Award in 1984 for her work on FORTRAN.';
+  const box=function(title,inner,col){return '<div style="background:var(--bg3);border-radius:var(--radius);padding:0.9rem 1rem;margin-bottom:10px;border-left:3px solid '+col+';"><div style="font-family:var(--mono);font-size:10.5px;color:'+col+';margin-bottom:6px;font-weight:600;">'+title+'</div><div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;">'+inner+'</div></div>';};
+  const chip=function(w,c,hot){return '<span style="display:inline-block;padding:1px 8px;margin:2px 3px 2px 0;border-radius:6px;font-size:11.5px;font-family:var(--mono);border:1px solid '+(hot?'rgba(239,68,68,0.35)':'var(--border2)')+';background:'+(hot?'var(--red-dim)':'#fff')+';color:'+(hot?'var(--red)':'var(--text2)')+';">'+w+' <strong>\u00d7'+c+'</strong></span>';};
+  const readout=function(good,bad,labelG,labelB){
+    return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">'+
+      '<div><div style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:4px;">r\u2082 (FACTUAL) \u2192 \u0152 = '+good.toFixed(2)+'</div><div style="height:14px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div style="height:100%;width:'+(good*100)+'%;background:linear-gradient(90deg,#16a34a,#22c55e);border-radius:6px;animation:scaleIn .7s ease;transform-origin:left;"></div></div><div style="font-size:11px;color:var(--green);margin-top:4px;">'+labelG+'</div></div>'+
+      '<div><div style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:4px;">r\u2085 (HALLUCINATED) \u2192 \u0152 = '+bad.toFixed(2)+'</div><div style="height:14px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div style="height:100%;width:'+(bad*100)+'%;background:linear-gradient(90deg,#dc2626,#ef4444);border-radius:6px;animation:scaleIn .7s ease;transform-origin:left;"></div></div><div style="font-size:11px;color:var(--red);margin-top:4px;">'+labelB+'</div></div></div>';};
+  const G='<span style="color:var(--green);">',R='<span style="color:var(--red);">',B='<span style="color:var(--blue);">',T='<span style="color:var(--teal);">',P='<span style="color:var(--purple);">';
+  const VARIANTS=[
+    {key:'bertscore',label:'BERTScore',auc:81.96,color:'#3b82f6',
+     how:'Embed the sentence and every sample sentence with RoBERTa-Large. In each sample, keep the <strong>best-matching</strong> sentence; average those similarities; the score is 1 \u2212 that average.',
+     ex:box('BEST MATCH IN EACH SAMPLE \u2014 r\u2085: \u201c'+R5+'\u201d',
+       'S\u00b9 \u201cHer honours include the National Medal of Technology.\u201d \u2192 '+R+'0.41</span><br>'+
+       'S\u00b2 \u201cIn 1991 she received the Smithsonian Computer Pioneer Award.\u201d \u2192 '+R+'0.38</span><br>'+
+       'S\u00b3 \u201cThe Navy named a destroyer, USS Hopper, after her.\u201d \u2192 '+R+'0.33</span><br>'+
+       'avg best-match 0.37 \u2192 \u0152 = 1 \u2212 0.37 = '+R+'<strong>0.63</strong></span> \u2014 nothing in the samples resembles the claim','#3b82f6')+
+     box('r\u2082: \u201c'+R2+'\u201d',
+       'S\u00b9 \u201cHopper worked on the Harvard Mark I in 1944.\u201d \u2192 '+G+'0.89</span><br>'+
+       'S\u00b2 \u201cShe joined the Harvard Computation Lab programming the Mark I.\u201d \u2192 '+G+'0.87</span><br>'+
+       'S\u00b3 \u201cGrace Hopper was among the first Mark I programmers.\u201d \u2192 '+G+'0.92</span><br>'+
+       'avg best-match 0.89 \u2192 \u0152 = '+G+'<strong>0.11</strong></span>','#3b82f6')+
+     readout(0.11,0.63,'samples support the sentence','no sample supports the sentence'),
+     note:'Similarity values are illustrative; the mechanism (best match per sample, then average) is Equation (1) of the paper.'},
+    {key:'qa',label:'QA',auc:84.26,color:'#14b8a6',
+     how:'Generate multiple-choice questions <strong>about</strong> the sentence (MQAG), then answer each question using each sample. Mismatching answers \u2192 inconsistency.',
+     ex:box('QUESTION FROM r\u2085',
+       'Q: Which award did Grace Hopper receive in 1984?<br>&nbsp;&nbsp;&nbsp;(A) the Turing Award &nbsp; (B) the Nobel Prize &nbsp; (C) none of these<br>'+
+       'answers \u2014 S\u00b9: '+G+'C</span> \u00b7 S\u00b2: '+G+'C</span> \u00b7 S\u00b3: '+G+'C</span> \u00b7 response: '+R+'<strong>A</strong></span><br>'+
+       'every sampled answer disagrees with the response \u2192 \u0152 \u2248 '+R+'<strong>0.88</strong></span> (answerability-weighted)','#14b8a6')+
+     box('QUESTION FROM r\u2082',
+       'Q: Which computer was Hopper among the first to program?<br>&nbsp;&nbsp;&nbsp;(A) Harvard Mark I &nbsp; (B) ENIAC &nbsp; (C) UNIVAC<br>'+
+       'answers \u2014 S\u00b9: '+G+'A</span> \u00b7 S\u00b2: '+G+'A</span> \u00b7 S\u00b3: '+G+'A</span> \u00b7 response: '+G+'A</span><br>'+
+       'all answers match \u2192 \u0152 \u2248 '+G+'<strong>0.03</strong></span>','#14b8a6')+
+     readout(0.03,0.88,'every sample answers like the response','samples pick a different option'),
+     note:'QA catches semantic drift that string overlap misses \u2014 awards and dates become explicit questions.'},
+    {key:'ngram',label:'n-gram',auc:85.63,color:'#a855f7',
+     how:'Count how often each word of the sentence appears across all 20 samples. <strong>Unigram (max):</strong> the sentence\u2019s <strong>rarest</strong> word sets the score \u2014 a token that appears once or never is likely non-factual.',
+     ex:box('WORD COUNTS \u00d720 SAMPLES \u2014 r\u2085',
+       chip('Grace',18)+chip('received',11)+chip('the',64)+chip('Turing',0,true)+chip('Award',2,true)+chip('in',41)+chip('1984',0,true)+chip('for',23)+chip('her',29)+chip('work',9)+'<br>'+
+       'rarest tokens: \u201cTuring\u201d \u00d70, \u201c1984\u201d \u00d70 (+1 smoothing from the response) \u2192 \u0152 = '+R+'<strong>0.91</strong></span>','#a855f7')+
+     box('WORD COUNTS \u00d720 SAMPLES \u2014 r\u2082',
+       chip('She',57)+chip('was',62)+chip('one',22)+chip('of',61)+chip('the',64)+chip('first',19)+chip('programmers',9)+chip('Harvard',14)+chip('Mark',15)+chip('I',12)+chip('computer',21)+'<br>'+
+       'rarest token: \u201cprogrammers\u201d \u00d79 \u2192 \u0152 = '+G+'<strong>0.19</strong></span>','#a855f7')+
+     readout(0.19,0.91,'even the rarest word is common','half the words never appear in any sample'),
+     note:'Counts are illustrative. The real unigram (max) needs no extra model at all \u2014 and still scores 85.63 AUC-PR.'},
+    {key:'nli',label:'NLI',auc:92.50,color:'#22c55e',
+     how:'Each sample becomes a <strong>premise</strong>, the sentence a <strong>hypothesis</strong>. DeBERTa-v3-large (MNLI) estimates P(contradiction) from the entailment/contradiction logits; average over samples.',
+     ex:box('ENTAILMENT CHECK \u2014 r\u2085 vs EACH SAMPLE',
+       'S\u00b9 \u201chonours: National Medal of Technology, Defence Distinguished Service Medal\u201d '+R+'\u2192 CONTRADICTS \u00b7 0.91</span><br>'+
+       'S\u00b2 \u201cshe never received the ACM A.M. Turing Award\u201d '+R+'\u2192 CONTRADICTS \u00b7 0.87</span><br>'+
+       'S\u00b3 \u201ca destroyer, USS Hopper, was named for her\u201d '+R+'\u2192 CONTRADICTS \u00b7 0.74</span><br>'+
+       'avg P(contradict) \u2192 \u0152 = '+R+'<strong>0.84</strong></span>','#22c55e')+
+     box('ENTAILMENT CHECK \u2014 r\u2082 vs EACH SAMPLE',
+       'S\u00b9 \u201cHopper worked on the Harvard Mark I in 1944\u201d '+G+'\u2192 ENTAILS \u00b7 0.04</span><br>'+
+       'S\u00b2 \u201cshe programmed the Mark I at the Harvard Computation Lab\u201d '+G+'\u2192 ENTAILS \u00b7 0.03</span><br>'+
+       'S\u00b3 \u201cGrace Hopper was among the first Mark I programmers\u201d '+G+'\u2192 ENTAILS \u00b7 0.05</span><br>'+
+       'avg P(contradict) \u2192 \u0152 = '+G+'<strong>0.04</strong></span>','#22c55e')+
+     readout(0.04,0.84,'samples entail the sentence','samples contradict the sentence'),
+     note:'Sample premises are illustrative. NLI was the strongest non-LLM variant in the paper \u2014 contradiction is a sharp signal.'},
+    {key:'prompt',label:'Prompt',auc:93.42,color:'#f59e0b',
+     how:'Show an LLM judge the sample plus the sentence and ask the paper\u2019s question. Map {Yes: 0.0, No: 1.0, N/A: 0.5} and average over all N samples.',
+     ex:box('THE ACTUAL PROMPT \u2014 r\u2085 vs SAMPLE S\u00b9',
+       '<span style="color:var(--amber);">Context:</span> One of the first programmers of the Harvard Mark I<br>was Grace Hopper, who joined the project in 1944\u2026<br><br>'+
+       '<span style="color:var(--amber);">Sentence:</span> '+R5+'<br><br>'+
+       '<span style="color:var(--amber);">Is the sentence supported by the context above?</span><br>'+
+       '<span style="color:var(--amber);">Answer Yes or No:</span> &nbsp;'+R+'<strong>No</strong></span>','#f59e0b')+
+     box('JUDGE ANSWERS \u00d7 ALL SAMPLES',
+       'S\u00b9: '+R+'<strong>No</strong></span> \u2192 1.0 \u00b7 S\u00b2: '+R+'<strong>No</strong></span> \u2192 1.0 \u00b7 S\u00b3: '+R+'<strong>No</strong></span> \u2192 1.0 \u00b7 S\u2074: '+R+'<strong>No</strong></span> \u2192 1.0 \u00b7 S\u2075: '+R+'<strong>No</strong></span> \u2192 1.0<br>'+
+       'avg \u2192 \u0152 = '+R+'<strong>0.92</strong></span> &nbsp;\u00b7&nbsp; for r\u2082 the judge answers '+G+'<strong>Yes</strong></span> to every sample \u2192 \u0152 = '+G+'<strong>0.03</strong></span>','#f59e0b')+
+     readout(0.03,0.92,'every sample judged supportive','every sample judges \u201cnot supported\u201d'),
+     note:'GPT-3 answered Yes/No 98% of the time; weaker judges (text-curie-001, LLaMA) failed at the task \u2014 the judge must be capable.'}
+  ];
+  let current='bertscore';
+  function renderTabs(){
+    tabsEl.innerHTML=VARIANTS.map(function(v){
+      const on=v.key===current;
+      return '<button style="font-family:var(--mono);font-size:11.5px;padding:5px 12px;border-radius:6px;border:1px solid '+(on?v.color:'var(--border)')+';background:'+(on?'#fff':'var(--bg3)')+';color:'+(on?v.color:'var(--text2)')+';cursor:pointer;font-weight:'+(on?'600':'400')+';" onclick="window._selectVar(\''+v.key+'\')">'+v.label+'</button>';
+    }).join('');
+  }
+  function renderBody(){
+    const v=VARIANTS.filter(function(x){return x.key===current;})[0];
+    bodyEl.innerHTML='<div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px;">'+v.how+'</div>'+v.ex+
+    '<div style="font-size:11px;color:var(--text3);margin-top:8px;">'+v.note+' \u0152 values in the examples are illustrative; the leaderboard below uses the paper\u2019s real numbers.</div>';
+  }
+  function renderChart(){
+    const rows=VARIANTS.map(function(v){return {label:v.label,auc:v.auc,color:v.key===current?v.color:'#cbd5e1',ref:false};});
+    rows.push({label:'GPT-3 probs (grey-box)',auc:83.21,color:'#94a3b8',ref:true});
+    rows.push({label:'Random',auc:72.96,color:'#e2e8f0',ref:true});
+    chartEl.innerHTML=rows.map(function(r){
+      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'+
+        '<div style="font-family:var(--mono);font-size:11px;color:'+(r.ref?'var(--text3)':'var(--text2)')+';width:150px;text-align:right;">'+r.label+(r.ref?' \u00b7 ref':'')+'</div>'+
+        '<div style="flex:1;height:18px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:'+r.auc+'%;background:'+r.color+';border-radius:4px;'+(r.ref?'opacity:0.55;':'animation:scaleIn .8s ease;transform-origin:left;')+'"></div></div>'+
+        '<div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:44px;">'+r.auc+'</div></div>';
+    }).join('');
+  }
+  window._selectVar=function(k){current=k;renderTabs();renderBody();renderChart();};
+  renderTabs();renderBody();renderChart();
+})();
+
+// === QUIZ DATA ===
+// === SAMPLING SPECTROSCOPE (DEEP DIVE) ===
+(function(){
+  const claim=document.getElementById('scClaim'),samples=document.getElementById('scSamples'),meter=document.getElementById('scMeter');
+  const btns={known:document.getElementById('scKnown'),fog:document.getElementById('scFog'),fab:document.getElementById('scFab'),re:document.getElementById('scResample')};
+  if(!claim||!samples||!meter||!btns.known||!btns.fog||!btns.fab||!btns.re)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const S={
+    known:{t:'Claim: "Paris is the capital of France."',agree:[1,1,1,1,1,1,1,1],txt:'samples restate the same fact with small surface variation'},
+    fog:{t:'Claim: "The novel was published in 1948."',agree:[1,0,1,1,0,1,0,1],txt:'samples split — the model half-remembers; borderline knowledge'},
+    fab:{t:'Claim: "Marie Curie won the Nobel Prize in Economics."',agree:[0,0,0,0,0,0,0,0],txt:'samples contradict the claim or invent different awards'}
+  };
+  let cur='known';
+  const stexts={
+    1:['"Paris, France’s capital…"','"The capital city: Paris"','"…France, whose capital is Paris."','"Paris is the seat of government…"','"…in Paris, the capital."','"France — capital: Paris"','"The French capital, Paris…"','"Paris, capital of France…"'],
+    0:['"…she won the Chemistry prize…"','"the 1911 Nobel in Chemistry"','"…two Nobel Prizes, Physics…"','"no Economics prize…"','"…Nobel in Physics (1903)…"','"…she never won Economics…"','"the prizes went to Physics…"','"…Chemistry, 1911…"']
+  };
+  function card(agree,i,txts){
+    const ok=agree===1;
+    const anim=RM?'':'opacity:0;animation:fadeUp .4s ease '+(i*60)+'ms forwards;';
+    return '<div style="background:var(--bg2);border:1px solid '+(ok?'rgba(34,197,94,.35)':'rgba(239,68,68,.35)')+';border-radius:var(--radius);padding:8px 10px;font-family:var(--mono);font-size:10.5px;color:var(--text2);line-height:1.5;'+anim+'"><span style="color:'+(ok?'var(--green)':'var(--red)')+';font-weight:700;">'+(ok?'✓':'✗')+'</span> '+(ok?txts[i]:stexts[0][i])+'</div>';
+  }
+  function render(k,shuffle){
+    const s=S[k];cur=k;claim.textContent=s.t;
+    let ag=s.agree.slice();
+    if(shuffle&&k==='fog'){ag=ag.map(()=>Math.random()<0.6?1:0);}
+    if(RM){samples.innerHTML=ag.map((a,i)=>card(a,i,stexts[1])).join('');}
+    else{samples.innerHTML='';ag.forEach((a,i)=>setTimeout(()=>{samples.insertAdjacentHTML('beforeend',card(a,i,stexts[1]));},i*70));}
+    const score=Math.round(100*(1-ag.reduce((x,y)=>x+y,0)/ag.length));
+    setTimeout(()=>{
+      meter.innerHTML='<div style="display:flex;align-items:center;gap:10px;">'
+        +'<div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:150px;flex-shrink:0;">hallucination score</div>'
+        +'<div style="flex:1;height:14px;background:var(--bg4);border-radius:7px;overflow:hidden;"><div style="height:100%;width:'+score+'%;background:'+(score>60?'var(--red)':score>25?'var(--amber)':'var(--green)')+';border-radius:7px;transform-origin:left;'+(RM?'':'animation:scaleIn .7s ease;')+'"></div></div>'
+        +'<div style="font-family:var(--mono);font-size:12px;font-weight:600;width:40px;text-align:right;flex-shrink:0;color:'+(score>60?'var(--red)':score>25?'var(--amber)':'var(--green)')+';">'+score+'%</div></div>'
+        +'<div style="font-size:12px;color:var(--text3);line-height:1.6;margin:6px 0 0 160px;">'+s.txt+'</div>';
+    },RM?30:620);
+    Object.keys(btns).forEach(b=>{if(b!=='re')btns[b].className=(b===k)?'btn-primary':'btn-outline';});
+  }
+  btns.known.addEventListener('click',()=>render('known'));
+  btns.fog.addEventListener('click',()=>render('fog'));
+  btns.fab.addEventListener('click',()=>render('fab'));
+  btns.re.addEventListener('click',()=>render(cur,true));
+  if(RM||!('IntersectionObserver' in window)){render('known');}
+  else{const io=new IntersectionObserver(en=>{if(en.some(e=>e.isIntersecting)){render('known');io.disconnect();}},{threshold:0.3});io.observe(claim);}
+})();
+
+const QUIZ_DATA=[
+  {q:'What is the core assumption behind SelfCheckGPT?',opts:['Hallucinated sentences are always shorter than factual ones','If an LLM truly knows a concept, stochastic samples of the same prompt will agree; hallucinated facts make samples diverge','Sampling at temperature 1.0 removes hallucinations from the output','LLMs never repeat the same fact twice unless prompted to'],correct:1,explain:'Known concepts act like probability attractors: sampled responses repeat the same facts. Hallucinations come from flat, uncertain distributions — so samples contradict each other. That asymmetry is the whole detector.'},
+  {q:'In this paper, what do "zero-resource" and "black-box" mean?',opts:['Zero training data and no internet access','Zero-resource = no external database; black-box = only text responses are used, no token probabilities or internal states','Zero-resource = no GPU; black-box = the model weights are encrypted','The detector itself must be trained from scratch on labelled data'],correct:1,explain:'SelfCheckGPT needs nothing but the model\u2019s own sampled text: no retrieval corpus (zero-resource) and no logits/hidden states (black-box) — which is exactly what chat APIs expose.'},
+  {q:'Which set lists the paper\u2019s SelfCheckGPT scoring variants?',opts:['BERTScore, question-answering, n-gram, NLI, LLM-prompt','BERTScore, retrieval, clustering, NLI','n-gram, perplexity, database lookup, fine-tuning','QA, summarization, NLI, beam search'],correct:0,explain:'Five consistency measures: BERTScore (similarity), QA (question generation + answer matching), n-gram (word counts), NLI (entailment/contradiction), and LLM prompting (ask a judge Yes/No).'},
+  {q:'What does the SelfCheckGPT score \u0152(i) actually measure?',opts:['The probability that the model was prompted incorrectly','How similar the passage is to Wikipedia formatting','How inconsistent sentence i of the response is with the N sampled responses — in [0,1], higher = more likely hallucinated','The number of grammar errors in sentence i'],correct:2,explain:'\u0152(i) is a sentence-level inconsistency score: 0.0 means every sample supports the sentence, 1.0 means none do. Thresholding it flags likely hallucinations; averaging it ranks whole passages.'},
+  {q:'Why must the samples be generated with temperature 1.0 rather than 0.0?',opts:['Temperature 1.0 makes the model more accurate','Deterministic decoding would make every sample identical, so there would be no consistency signal to measure','Low temperature deletes rare tokens from the vocabulary','Temperature 1.0 is required by the OpenAI API for long passages'],correct:1,explain:'The probe relies on stochastic variation. With temperature 0.0 every \u201csample\u201d would be a copy of the main response — perfectly consistent, hallucinations included. Random sampling is what exposes what the model does and doesn\u2019t know.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

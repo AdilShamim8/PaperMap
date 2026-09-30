@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Survey on Hallucination in Large Language Models — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the hallucination survey (Ji et al., ACM CSUR 2023), with interactive demos for the intrinsic vs extrinsic taxonomy, hallucination snowballing, and stage-matched mitigation.">
+<meta name="keywords" content="hallucination, large language models, NLG, intrinsic hallucination, extrinsic hallucination, taxonomy, exposure bias, hallucination snowballing, RAG, RLHF, contrastive decoding, ACM Computing Surveys, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/A_Survey_on_Hallucination_in_Large_Language_Models.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="A Survey on Hallucination in Large Language Models — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the hallucination survey: taxonomy, causes, detection, mitigation — with demos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/A_Survey_on_Hallucination_in_Large_Language_Models.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hallucination in LLMs — Interactive Guide">
+<meta name="twitter:description" content="Learn the taxonomy, causes, detection, and mitigation of LLM hallucination, with interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#taxonomy">Taxonomy</a>
+    <a class="nav-link" href="#causes">Causes</a>
+    <a class="nav-link" href="#detection">Detection</a>
+    <a class="nav-link" href="#mitigation">Mitigation</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">ACM CSUR 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#taxonomy">Taxonomy</a>
+  <a href="#causes">Causes</a>
+  <a href="#detection">Detection</a>
+  <a href="#mitigation">Mitigation</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    The <em>Anatomy</em> of Hallucination<br>A Field Guide for NLG + LLMs
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the survey that gave the field a shared vocabulary —
+    what hallucination is, its two types, where it enters the data → training → inference
+    pipeline, and how to detect and mitigate it.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2202.03629" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Hallucination Types</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Pipeline Stages</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">10</div>
+      <div class="stat-label">Authors</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">6+</div>
+      <div class="stat-label">NLG Tasks Mapped</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">How Hallucination Became <em>Everyone's</em> Problem</h2>
+  <p class="section-desc">Fluent generation is old news — fluently <span class="highlight">wrong</span> generation is the modern disease. Five years of scattered alarms led to one survey that finally drew the map.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2017</div><div class="tl-title">Fluent nonsense appears</div><div class="tl-desc">Seq2seq and early Transformer models make MT and abstractive summarization fluent — and researchers notice they sometimes generate fluent text with no connection to the source.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2019</div><div class="tl-title">Dialogue joins in</div><div class="tl-desc">Task-oriented dialogue studies show systems confidently inventing slots, entities, and API results that never existed in the knowledge base.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2020</div><div class="tl-title">LLMs + RAG</div><div class="tl-desc">The few-shot LLM era (<a href="./Language_Models_are_Few_Shot_Learners.html" style="color:var(--amber);">GPT-3 Guide ↗</a>) scales hallucination along with fluency; RAG (<a href="./RAG_Retrieval_Augmented_Generation.html" style="color:var(--amber);">RAG Guide ↗</a>) proposes grounding generation in retrieved documents.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2021</div><div class="tl-title">TruthfulQA</div><div class="tl-desc">Lin, Hilton &amp; Evans show that imitating human text means imitating human falsehoods — models fail questions humans also fail (<a href="./TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html" style="color:var(--amber);">TruthfulQA Guide ↗</a>).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · Feb</div><div class="tl-title">🚀 The unifying survey</div><div class="tl-desc">Ji et al. publish "Survey of Hallucination in Natural Language Generation" (arXiv 2202.03629) — one definition, one taxonomy, and a cause → detection → mitigation map for the whole field.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2023</div><div class="tl-title">Detection gets operational</div><div class="tl-desc">The survey lands in ACM Computing Surveys; SelfCheckGPT and FActScore turn hallucination detection into measurable, deployable pipelines (<a href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" style="color:var(--amber);">FActScore Guide ↗</a>).</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Hallucination is not random noise. It is the <span class="highlight">by-product of training objectives</span> that reward plausible text: a model trained to continue likely sequences will happily continue with likely-but-false content. Fixing it means intervening at specific pipeline stages — not wishing it away.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE TWO FAILING MODES IN THE DEFINITION</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          <span style="color:var(--red);">nonsensical</span> — output is broken on its own<br>
+          <span style="color:var(--blue);">unfaithful</span> — output drifts from the source
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">Both count as hallucination. The unfaithful mode is the one that scales with LLMs — and the one this survey is famous for mapping.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">One Symptom, <em>Six</em> Research Silos</h2>
+  <p class="section-desc">By 2022, every NLG subfield had met hallucination — and each was describing a different animal. The survey's first job was to prove they were all studying the same disease.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🌀</div>
+      <div class="problem-title">The Fragmented Field</div>
+      <ul class="problem-list">
+        <li>Summaries invent facts; chatbots invent API results; MT invents content; VQA describes objects that are not there</li>
+        <li>Each task community uses its own definition and its own tests</li>
+        <li>A fix that works for translation is never tried on chatbots</li>
+        <li>"Hallucination" itself means different things in different papers</li>
+        <li>Insights stay stranded — the field keeps rediscovering the same failure modes</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🗺️</div>
+      <div class="problem-title">The Survey's Answer</div>
+      <ul class="problem-list">
+        <li>One definition: nonsensical or unfaithful to the provided source</li>
+        <li>One taxonomy — intrinsic vs extrinsic — that works for every task</li>
+        <li>Causes traced to three stages: data → training → inference</li>
+        <li>Detection and mitigation organized by what they actually do</li>
+        <li>Classic NLG tasks and the new LLMs in a single frame</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Blind Researchers and the Elephant</div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;">Each subfield touched one part of the animal: the summarization group felt the trunk, the dialogue group the ears, the MT group the legs — and each wrote a paper about a different creature. The survey walks all the way around the elephant and hands everyone the same map: <span class="highlight">the animal is one animal</span>.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:0.9rem 1rem;margin-top:1rem;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:2.2;">
+      <span style="color:var(--text3);">one failure mode, many local names →</span>
+      <span class="pill pill-red">fabrication</span>
+      <span class="pill pill-amber">unfaithfulness</span>
+      <span class="pill pill-blue">confabulation</span>
+      <span class="pill pill-purple">nonsense</span>
+      <span class="pill pill-green">off-target output</span>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAXONOMY -->
+<section id="taxonomy">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Core Idea — <em>Intrinsic vs Extrinsic</em></h2>
+  <p class="section-desc">The survey's central gift to the field: a two-word taxonomy that works for any NLG task. The question is always the same — what does the output do to the source?</p>
+
+  <div class="formula-card">
+    <div class="formula-main">Hallucination = output that is <span style="color:var(--red);">nonsensical</span> or <span style="color:var(--blue);">unfaithful</span> to the provided source</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">Nonsensical</div><div class="fp-name">broken on its own</div><div class="fp-desc">The output contradicts itself or degenerates — you can flag it without any source at all.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Unfaithful</div><div class="fp-name">drifts from the source</div><div class="fp-desc">The output does not stay true to the input it was supposed to be grounded in.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Intrinsic</div><div class="fp-name">contradicts the source</div><div class="fp-desc">Provable from the source alone: "revenue fell" in, "revenue rose" out.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Extrinsic</div><div class="fp-name">unverifiable from source</div><div class="fp-desc">Brings in outside information the source neither confirms nor denies — truth unknown.</div></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card" style="border-top:3px solid var(--red);">
+      <div class="card-label" style="color:var(--red);">Intrinsic Hallucination</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:0.8rem;">The output <strong>contradicts</strong> the source. The evidence to convict it is already in front of you.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.8rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SOURCE — EARNINGS REPORT</div>
+        "Q3 revenue <span style="color:var(--green);font-weight:600;">fell 12%</span>, the third straight quarterly decline."<br><br>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">GENERATED SUMMARY</div>
+        "Q3 revenue <span style="color:var(--red);font-weight:600;">rose 12%</span>, the third straight quarterly increase."
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-top:8px;">Fell → rose, decline → increase. Checkable against the source, provably wrong.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <div class="card-label" style="color:var(--blue);">Extrinsic Hallucination</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:0.8rem;">The output adds content that <strong>cannot be verified</strong> from the source. The source can't settle whether it is true — it might even be true.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.8rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SOURCE — EARNINGS REPORT</div>
+        "Q3 revenue fell 12%, the third straight quarterly decline."<br><br>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">GENERATED SUMMARY</div>
+        "The decline is expected to reverse once the <span style="color:var(--blue);font-weight:600;">rumored acquisition of Vertex Labs</span> closes."
+      </div>
+      <p style="font-size:12px;color:var(--text3);margin-top:8px;">The acquisition rumor appears nowhere in the report — invented, or imported from outside. Unverifiable from the source.</p>
+    </div>
+  </div>
+
+  <!-- DEMO 1: INTRINSIC OR EXTRINSIC -->
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Intrinsic or Extrinsic?</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A source, a generated claim — you are the classifier. Four rounds across four different NLG settings: summarization, dialogue, machine translation, and retrieval-augmented generation.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
+      <span class="pill pill-amber" id="clsRound">Round 1 / 4</span>
+      <span class="pill pill-blue" id="clsTask">Summarization</span>
+      <span id="clsScore" style="margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--text3);">Score 0/0</span>
+    </div>
+    <div id="clsSource" style="background:var(--bg3);border:1px dashed var(--border2);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.8;margin-bottom:10px;min-height:74px;"></div>
+    <div id="clsClaim" style="background:#0f172a;border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:12.5px;color:#e2e8f0;line-height:1.8;margin-bottom:1rem;min-height:74px;"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn-primary" id="clsIntrinsicBtn" type="button" style="font-size:13px;padding:8px 18px;">Intrinsic — contradicts source</button>
+      <button class="btn-outline" id="clsExtrinsicBtn" type="button" style="font-size:13px;padding:8px 18px;">Extrinsic — unverifiable from source</button>
+      <button class="btn-outline" id="clsNextBtn" type="button" style="font-size:13px;padding:8px 18px;display:none;">Next round →</button>
+    </div>
+    <div id="clsVerdict" style="margin-top:1rem;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CAUSES -->
+<section id="causes">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Where It Comes From — <em>Three Stages</em> to Poison</h2>
+  <p class="section-desc">The survey refuses the lazy answer ("models just make things up"). It traces hallucination to three distinct stages of the pipeline — and each stage has its own signature failure.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:1.5rem;">
+    <div class="card-sm" style="border-top:3px solid var(--blue);">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--blue);margin-bottom:4px;">STAGE 1 · DATA</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px;">The corpus teaches inventing</div>
+      <ul style="list-style:none;font-size:12px;color:var(--text2);line-height:1.7;">
+        <li style="padding:2px 0;">▸ <strong>Source–counterfactual misalignment:</strong> training pairs whose target text is not actually supported by the input. The model literally learns that unsupported details are fine.</li>
+        <li style="padding:2px 0;">▸ <strong>Social bias + duplicates:</strong> duplicated, biased passages get memorized — and later regurgitated with full confidence.</li>
+      </ul>
+    </div>
+    <div class="card-sm" style="border-top:3px solid var(--teal);">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--teal);margin-bottom:4px;">STAGE 2 · TRAINING</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px;">The objective rewards fluency, not truth</div>
+      <ul style="list-style:none;font-size:12px;color:var(--text2);line-height:1.7;">
+        <li style="padding:2px 0;">▸ <strong>Exposure bias:</strong> teacher forcing feeds only gold prefixes, so the model never sees its own errors — and never learns to recover from them.</li>
+        <li style="padding:2px 0;">▸ <strong>Representation gaps:</strong> imperfectly encoded knowledge is still emitted with the same confidence as solid knowledge.</li>
+        <li style="padding:2px 0;">▸ <strong>Hallucination snowballing:</strong> an early wrong detail becomes context — and every later sentence builds on it (demo below).</li>
+      </ul>
+    </div>
+    <div class="card-sm" style="border-top:3px solid var(--purple);">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--purple);margin-bottom:4px;">STAGE 3 · INFERENCE</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px;">The decoding roll can leave the rails</div>
+      <ul style="list-style:none;font-size:12px;color:var(--text2);line-height:1.7;">
+        <li style="padding:2px 0;">▸ <strong>Random sampling:</strong> the higher the decoding randomness (temperature), the more often low-probability — and off-source — tokens get picked.</li>
+        <li style="padding:2px 0;">▸ <strong>Confident decoding:</strong> nothing in the sampler knows which continuations are supported; unlikely does not mean flagged.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:2rem;">
+    <div class="card-label">The Mechanism — Hallucination Snowballing</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Autoregressive models condition each new token on everything already generated. Once a wrong detail is emitted, it becomes <em>context</em> — the model has no built-in eraser, so it elaborates the error coherently instead of correcting it. The result reads as detailed and confident, and <span class="highlight">every detail inherits the first mistake</span>.</p>
+  </div>
+
+  <!-- DEMO 2: SNOWBALL -->
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Hallucination Snowball</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Watch a fluent answer build itself on top of <strong>one invented number</strong>. Sentence 1 contains a single wrong detail (red); every later sentence (amber) conditions on it. Press start and watch the error compound.</p>
+    <div style="background:#0f172a;border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1rem;">
+      <div style="display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.08);">
+        <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
+        <span style="font-family:var(--mono);font-size:11px;color:#64748b;margin-left:8px;">generation log · one question, one answer</span>
+      </div>
+      <div id="snowLog" style="padding:1rem 1.2rem;font-family:var(--mono);font-size:12.5px;line-height:2.1;min-height:230px;color:#e2e8f0;"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn-primary" id="snowStartBtn" type="button" style="font-size:13px;padding:8px 18px;">Start generation</button>
+      <button class="btn-outline" id="snowResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="snowVerdict" style="margin-top:1rem;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DETECTION -->
+<section id="detection">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Catching It — <em>Four Families</em> of Detection</h2>
+  <p class="section-desc">Before you fix hallucination, you have to find it. The survey organizes detection into four families — sorted by what they inspect, and how much access to the model they need.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:1.5rem;">
+    <div class="card-sm">
+      <div style="font-size:1.4rem;margin-bottom:6px;">🔎</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px;">Retrieval-augmented checking</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;">Retrieve external evidence at check time, then test each generated claim against it. Strong on extrinsic hallucinations — as long as the retriever and the corpus are trustworthy.</div>
+    </div>
+    <div class="card-sm">
+      <div style="font-size:1.4rem;margin-bottom:6px;">🎲</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px;">Uncertainty-based</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;">Sample the model repeatedly: if answers disagree (self-consistency) or semantic entropy runs high, the claim is probably unsupported. Works even on black-box APIs — at the cost of a sampling budget.</div>
+    </div>
+    <div class="card-sm">
+      <div style="font-size:1.4rem;margin-bottom:6px;">🧠</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px;">Internal-state probing</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;">Look inside: hidden states and logits often look different just before a hallucinated token is emitted. Needs white-box access — but it can catch hallucinations before they leave the model.</div>
+    </div>
+    <div class="card-sm">
+      <div style="font-size:1.4rem;margin-bottom:6px;">🛠️</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:6px;">Post-hoc verification</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;">Verify-then-edit: a second pass (another model, or an NLI-style entailment checker) scores claims and rewrites the flagged spans. Powerful, but the verifier has its own error rate.</div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow-x:auto;">
+    <div class="card-label">Detection Families — What Each One Needs</div>
+    <table class="comp-table">
+      <thead><tr><th>Family</th><th>Looks at</th><th>Catches best</th><th>Needs</th></tr></thead>
+      <tbody>
+        <tr><td>Retrieval-based</td><td>External evidence vs. the output</td><td class="comp-best">Extrinsic hallucinations</td><td>Retriever + trusted corpus</td></tr>
+        <tr><td>Uncertainty-based</td><td>Variance across sampled answers</td><td>Unsupported, low-consensus claims</td><td>Sampling budget — black-box OK</td></tr>
+        <tr><td>Internal-state</td><td>Hidden states / logits</td><td>Errors before they are emitted</td><td>White-box model access</td></tr>
+        <tr><td>Post-hoc verification</td><td>Claim-level entailment checks</td><td>Both types, with editing</td><td>Verifier model or annotators</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">No single family wins everywhere — the survey's message is that the right detector depends on access, budget, and which hallucination type you fear.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MITIGATION -->
+<section id="mitigation">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Fixing It — <em>Every Stage</em> Gets a Lever</h2>
+  <p class="section-desc">Because causes live at three stages, so do fixes. The survey's mitigation map runs from the corpus all the way to the decode step — and the strongest systems pull levers from more than one stage at once.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:2rem;">
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <div class="card-label" style="color:var(--blue);">Data-Level Mitigation</div>
+      <ul style="list-style:none;font-size:12.5px;color:var(--text2);line-height:1.8;">
+        <li style="padding:2px 0;">▸ <strong>Cleaning:</strong> remove misaligned pairs, duplicates, and biased content from the corpus</li>
+        <li style="padding:2px 0;">▸ <strong>Grounding:</strong> build training pairs whose targets are provable from their inputs</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text3);margin-top:8px;">Fixes the stage-1 cause: stop teaching the model that inventing is normal.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--teal);">
+      <div class="card-label" style="color:var(--teal);">Training-Level Mitigation</div>
+      <ul style="list-style:none;font-size:12.5px;color:var(--text2);line-height:1.8;">
+        <li style="padding:2px 0;">▸ <strong>RLHF:</strong> human preferences reward faithful outputs and penalize unsupported claims</li>
+        <li style="padding:2px 0;">▸ <strong>Grounded objectives:</strong> optimize faithfulness to the source, not just fluency</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text3);margin-top:8px;">Fixes the stage-2 cause: make training reward the right thing (<a href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html" style="color:var(--amber);">InstructGPT Guide ↗</a>).</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--purple);">
+      <div class="card-label" style="color:var(--purple);">Generation &amp; Post-Hoc Mitigation</div>
+      <ul style="list-style:none;font-size:12.5px;color:var(--text2);line-height:1.8;">
+        <li style="padding:2px 0;">▸ <strong>RAG:</strong> anchor decoding in freshly retrieved evidence</li>
+        <li style="padding:2px 0;">▸ <strong>Contrastive decoding:</strong> steer away from the hallucination-prone distribution</li>
+        <li style="padding:2px 0;">▸ <strong>Self-refinement / verification:</strong> draft → check claims → edit or regenerate</li>
+      </ul>
+      <p style="font-size:12px;color:var(--text3);margin-top:8px;">Fixes the stage-3 cause: act at inference time — no retraining required.</p>
+    </div>
+  </div>
+
+  <!-- DEMO 3: FIX THE PIPELINE -->
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Fix the Pipeline</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">The survey's core diagnosis: hallucination has different causes at different stages, so the right fix depends on <em>where</em> you intervene. Click a mitigation below to see which stage it targets and why.</p>
+    <div id="fixChips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.2rem;"></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:1rem;">
+      <div class="card-sm" id="fixStageData">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--blue);margin-bottom:4px;">STAGE 1 · DATA</div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px;">Poisoned corpus</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6;">Misaligned source–counterfactual pairs; biased and duplicated passages.</div>
+        <div id="fixHitData" style="font-family:var(--mono);font-size:10px;color:var(--green);margin-top:6px;min-height:14px;"></div>
+      </div>
+      <div class="card-sm" id="fixStageTraining">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--teal);margin-bottom:4px;">STAGE 2 · TRAINING</div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px;">Fluency-only objective</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6;">Exposure bias, representation gaps, and snowballing errors.</div>
+        <div id="fixHitTraining" style="font-family:var(--mono);font-size:10px;color:var(--green);margin-top:6px;min-height:14px;"></div>
+      </div>
+      <div class="card-sm" id="fixStageInference">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--purple);margin-bottom:4px;">STAGE 3 · INFERENCE</div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:4px;">Ungrounded decoding</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6;">Random sampling picks unsupported, low-probability paths.</div>
+        <div id="fixHitInference" style="font-family:var(--mono);font-size:10px;color:var(--green);margin-top:6px;min-height:14px;"></div>
+      </div>
+    </div>
+    <div id="fixVerdict"></div>
+    <div id="fixProgress" style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:1rem;">0 / 5 fixes placed</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>Shared Map</em></h2>
+  <p class="section-desc">A survey rarely changes what people build. This one did: its vocabulary and cause → fix map became the field's common infrastructure.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">📖 Standard vocabulary</div><div class="notice-text">"Intrinsic / extrinsic" became the default way papers, benchmarks, and error analyses describe hallucination — the survey's taxonomy is now common language.</div></div>
+    <div class="notice-card"><div class="notice-title">📊 Benchmark wave</div><div class="notice-text">The detection framing inspired a wave of measurable evaluation — HaluEval, <a href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" style="color:var(--amber);">FActScore</a>, and long-form factuality benchmarks.</div></div>
+    <div class="notice-card"><div class="notice-title">🔗 RAG as the default</div><div class="notice-text">Grounding generation in retrieval moved from a 2020 research idea to the standard production mitigation — exactly the inference-stage lever the survey mapped.</div></div>
+    <div class="notice-card"><div class="notice-title">🔄 Self-correction research</div><div class="notice-text">Self-refinement and verification loops grew into a whole research line — from self-consistency to <a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber);">SelfCheckGPT</a>-style checkers.</div></div>
+    <div class="notice-card"><div class="notice-title">🎯 RLHF as grounding</div><div class="notice-text">Human-preference training became the default hallucination lever in LLM pipelines — rewarding truthfulness, not just plausibility.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ Still open</div><div class="notice-text">The survey's open questions are still open: better benchmarks, interpretability, and evaluation of long-form factuality. Hallucination is reduced — not solved.</div></div>
+  </div>
+  <div class="card" style="margin-top:2rem;border-left:3px solid var(--red);">
+    <div class="card-label" style="color:var(--red);">What It Did NOT Solve</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">A survey maps; it does not experiment. No new model, no benchmark run, no guaranteed fix ships with this paper. Every mitigation it catalogues reduces hallucination in some setting — <strong>none eliminates it</strong>. Detecting extrinsic claims still needs an external source of truth, which does not always exist. And the field it unified is now scaling faster than the map can be redrawn.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The Field Map: One <em>Vocabulary</em> for a Field-Wide Problem</h2>
+  <p class="section-desc">Before this survey, every NLG sub-community had its own word for the same failure. Ji et al. merged them into one operational map: a definition anchored to the source, causes pinned to pipeline stages, and detection and mitigation slotted against each stage — the reference frame the whole LLM era still uses.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">📐</div>
+      <div class="problem-title">The Definition — Faithful to What?</div>
+      <ul class="problem-list">
+        <li><span class="highlight">Intrinsic</span> hallucination: the output contradicts the provided source</li>
+        <li><span class="highlight">Extrinsic</span> hallucination: output can't be verified from the source — it imports outside claims</li>
+        <li>Crucially source-relative: an extrinsic claim may be true in the world — the system still can't justify it</li>
+        <li>This is why RAG systems can hallucinate <em>with</em> a correct document in hand</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">🧩</div>
+      <div class="problem-title">Why One Fix Can't Exist</div>
+      <ul class="problem-list">
+        <li>Causes live at three different stages: data (misaligned/biased pairs), training (exposure bias, snowballing), inference (sampling)</li>
+        <li>Detection families assume different access: retrieval needs a corpus, probing needs weights, uncertainty needs samples</li>
+        <li>Summarization, dialogue, MT, QA, data-to-text each break grounding differently</li>
+        <li>So mitigation is a stage-by-stage program, not a switch — the survey's real thesis</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Walk the Pipeline</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Select a pipeline stage to see what breaks there, which detection families can see it, and which mitigation levers exist. This is the survey's mental model, live.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+        <button class="btn-primary" id="stgData" type="button" style="font-size:13px;padding:8px 18px;">① Data</button>
+        <button class="btn-outline" id="stgTrain" type="button" style="font-size:13px;padding:8px 18px;">② Training</button>
+        <button class="btn-outline" id="stgInfer" type="button" style="font-size:13px;padding:8px 18px;">③ Inference</button>
+      </div>
+      <div id="stgBody"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">A taxonomy is infrastructure</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The survey's lasting value isn't any single finding — it's that later work could say "extrinsic hallucination in the RAG setting" and be understood instantly. PaperMap's hallucination track is organized exactly along this map: detection without access (<a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber);font-weight:600;text-decoration:none;">SelfCheckGPT</a>), post-hoc verification (<a href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" style="color:var(--amber);font-weight:600;text-decoration:none;">FActScore</a>), and grounded generation (<a href="./RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html" style="color:var(--amber);font-weight:600;text-decoration:none;">RAGTruth</a>).</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">❄️ Snowballing</div><div class="notice-text">One early hallucination raises the probability of the next — errors self-reinforce within a single generation. It's why long-form factual precision decays with length, a fact FActScore later quantified.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 Exposure bias</div><div class="notice-text">Models train on gold prefixes but consume their own outputs at test time — distribution drift compounds over tokens, and drift is where fabrication lives.</div></div>
+    <div class="notice-card"><div class="notice-title">🔍 Four detection families</div><div class="notice-text">Retrieval-based, uncertainty-based, internal-state probing, post-hoc verification — each buys a different trust guarantee at a different access level to the model.</div></div>
+    <div class="notice-card"><div class="notice-title">🏗️ Mitigation ladder</div><div class="notice-text">Data cleaning + grounded construction; RLHF + grounded objectives; RAG, contrastive decoding, self-verification at inference. Stack them — no single rung reaches trustworthy.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the hallucination survey.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this survey.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Definition: hallucination is generated content that is nonsensical or unfaithful to the provided source.</div>
+    <div class="card-sm">✅ Taxonomy: intrinsic hallucinations contradict the source; extrinsic ones cannot be verified from it — they bring in outside information.</div>
+    <div class="card-sm">✅ Causes map to three stages: data (misaligned + biased pairs), training (exposure bias, representation gaps, snowballing), inference (random sampling).</div>
+    <div class="card-sm">✅ Detection comes in four families: retrieval-based, uncertainty-based, internal-state probing, and post-hoc verification.</div>
+    <div class="card-sm">✅ Mitigation has a lever at every stage: data cleaning + grounding, RLHF + grounded objectives, RAG + contrastive decoding + self-verification.</div>
+    <div class="card-sm">✅ The survey spans the NLG landscape — summarization, dialogue, MT, generative QA, data-to-text, visual-language — and the LLM era, with one vocabulary.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2202.03629" target="_blank" rel="noopener noreferrer">"A Survey on Hallucination in Large Language Models: Principles, Taxonomy, Challenges, and Open Questions"</a> (Ji et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2202.03629" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html">TruthfulQA Guide</a>
+    <a class="footer-link" href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html">SelfCheckGPT Guide</a>
+    <a class="footer-link" href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html">FActScore Guide</a>
+  </div>
+    <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','taxonomy','causes','detection','mitigation','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+
+// === DEMO 1: INTRINSIC OR EXTRINSIC CLASSIFIER ===
+(function(){
+  const srcEl=document.getElementById('clsSource');
+  const claimEl=document.getElementById('clsClaim');
+  const verdictEl=document.getElementById('clsVerdict');
+  const roundEl=document.getElementById('clsRound');
+  const taskEl=document.getElementById('clsTask');
+  const scoreEl=document.getElementById('clsScore');
+  const bI=document.getElementById('clsIntrinsicBtn');
+  const bE=document.getElementById('clsExtrinsicBtn');
+  const nextBtn=document.getElementById('clsNextBtn');
+  if(!srcEl||!claimEl||!verdictEl||!bI||!bE||!nextBtn||!roundEl||!taskEl||!scoreEl)return;
+  const rounds=[
+    {task:'Summarization',srcLabel:'SOURCE · SUMMARIZATION INPUT',source:'"Global chip sales fell 12% in Q3 — the third consecutive quarterly decline, led by a 20% drop in memory shipments."',claim:'"Global chip sales rose 12% in Q3 — the third consecutive quarterly increase."',type:'intrinsic',why:'Fell → rose, decline → increase. The claim directly contradicts the input, so you can prove it wrong using the source alone — an intrinsic hallucination.'},
+    {task:'Dialogue',srcLabel:'SOURCE · DIALOGUE KNOWLEDGE CARD',source:'"Returns: accepted within 30 days with receipt. Support hours: 9am–6pm, Mon–Sat."',claim:'"You can return items within 30 days with a receipt — or skip the line at our 24-hour self-service return kiosk on Elm Street."',type:'extrinsic',why:'The 30-day/receipt part matches the card. But the kiosk appears nowhere in it: the source neither confirms nor denies it, so it cannot be verified from the source — an extrinsic hallucination.'},
+    {task:'Machine Translation',srcLabel:'SOURCE · GERMAN INPUT',source:'"Der Zug nach Basel fährt um 8:15 Uhr ab."',claim:'"The train to Basel departs at 8:50."',type:'intrinsic',why:'The source says 8:15 (um 8:15 Uhr); the translation says 8:50. A wrong number, provable from the source alone — intrinsic. (Classic MT hallucination can also add or drop whole content — still judged against the source.)'},
+    {task:'RAG',srcLabel:'SOURCE · RETRIEVED PASSAGE',source:'"The Aurora EV has a certified range of 402 km, supports 150 kW fast charging, and launched in three markets this year."',claim:'"The Aurora EV has a 402 km range — and a company memo confirms a 900 km version will ship next spring."',type:'extrinsic',why:'The range matches the passage, but the memo and the 900 km version appear nowhere in it. The passage cannot settle whether that memo exists — unverifiable from the source, so extrinsic.'}
+  ];
+  let idx=0,score=0,answered=0;
+  function render(){
+    const r=rounds[idx];
+    roundEl.textContent='Round '+(idx+1)+' / '+rounds.length;
+    taskEl.textContent=r.task;
+    srcEl.innerHTML='<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">'+r.srcLabel+'</div>'+r.source;
+    claimEl.innerHTML='<div style="font-size:10px;color:#64748b;margin-bottom:4px;">GENERATED OUTPUT</div>'+r.claim;
+    verdictEl.innerHTML='';
+    bI.disabled=false;bE.disabled=false;
+    nextBtn.style.display='none';
+  }
+  function pick(kind){
+    const r=rounds[idx];
+    const ok=(kind===r.type);
+    if(ok)score++;
+    answered++;
+    scoreEl.textContent='Score '+score+'/'+answered;
+    bI.disabled=true;bE.disabled=true;
+    const isIntr=(r.type==='intrinsic');
+    verdictEl.innerHTML='<div class="card-sm" style="border-color:'+(ok?'rgba(34,197,94,0.35)':'rgba(239,68,68,0.35)')+';background:'+(ok?'var(--green-dim)':'var(--red-dim)')+';animation:fadeUp .4s ease;">'
+      +'<div style="font-weight:600;font-size:13px;color:'+(ok?'var(--green)':'var(--red)')+';">'+(ok?'✓':'✗')+' '+(isIntr?'Intrinsic — the output contradicts the source.':'Extrinsic — the output cannot be verified from the source.')+'</div>'
+      +'<div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:4px;">'+r.why+'</div></div>';
+    nextBtn.textContent=(idx<rounds.length-1)?'Next round →':'See final score →';
+    nextBtn.style.display='inline-block';
+  }
+  nextBtn.addEventListener('click',()=>{
+    if(idx<rounds.length-1){idx++;render();}
+    else{finish();}
+  });
+  function finish(){
+    roundEl.textContent='Finished';
+    taskEl.textContent='All 4 rounds';
+    srcEl.innerHTML='<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SUMMARY</div><span style="color:var(--red);">Intrinsic</span> = contradicts the source &nbsp;·&nbsp; <span style="color:var(--blue);">Extrinsic</span> = unverifiable from the source';
+    claimEl.innerHTML='<div style="font-size:10px;color:#64748b;margin-bottom:4px;">YOUR RESULT</div>You classified <span style="color:var(--amber);font-weight:600;">'+score+' of '+rounds.length+'</span> correctly. '+(score===rounds.length?'Flawless — the taxonomy is yours.':'Re-check the two cards above and try the verdicts again.');
+    bI.style.display='none';bE.style.display='none';nextBtn.style.display='none';
+    verdictEl.innerHTML='<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;"><button class="btn-primary" type="button" style="font-size:13px;padding:8px 18px;" onclick="window._restartCls()">Play again ↺</button><span style="font-size:12px;color:var(--text3);">Four tasks, one taxonomy — that is the survey\'s point.</span></div>';
+  }
+  window._restartCls=function(){idx=0;score=0;answered=0;scoreEl.textContent='Score 0/0';bI.style.display='inline-block';bE.style.display='inline-block';render();};
+  bI.addEventListener('click',()=>pick('intrinsic'));
+  bE.addEventListener('click',()=>pick('extrinsic'));
+  render();
+})();
+
+// === DEMO 2: HALLUCINATION SNOWBALL ===
+(function(){
+  const logEl=document.getElementById('snowLog');
+  const startBtn=document.getElementById('snowStartBtn');
+  const resetBtn=document.getElementById('snowResetBtn');
+  const verdictEl=document.getElementById('snowVerdict');
+  if(!logEl||!startBtn||!resetBtn||!verdictEl)return;
+  const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const red='color:#f87171;font-weight:600;';
+  const amb='color:#fbbf24;';
+  const conf='color:#22c55e;font-size:10px;';
+  const seedTag='<span style="font-size:10px;color:#f87171;border:1px solid rgba(248,113,113,0.35);border-radius:4px;padding:0 4px;margin-left:6px;">SEED ERROR</span>';
+  const lines=[
+    {t:'<span style="color:#94a3b8;">USER · Tell me about the Meridian clock tower.</span>'},
+    {t:'MODEL · The Meridian clock tower was built in 1879 and stands <span style="'+red+'">62 meters</span> tall. <span style="'+conf+'">p=0.98</span>'+seedTag},
+    {t:'MODEL · Its <span style="'+amb+'">62-meter</span> height made it the tallest structure in the county for over forty years. <span style="'+conf+'">p=0.97</span>'},
+    {t:'MODEL · County records from 1882 already praised the tower\'s "unprecedented silhouette" — a phrase coined for its <span style="'+amb+'">62-meter</span> profile. <span style="'+conf+'">p=0.95</span>'},
+    {t:'MODEL · A 1921 renovation reinforced the frame so the <span style="'+amb+'">62-meter</span> tower could safely keep its county record. <span style="'+conf+'">p=0.93</span>'}
+  ];
+  let timers=[];
+  function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+  function clearPlaceholder(){
+    const ph=logEl.querySelector('div[data-ph="1"]');
+    if(ph)ph.remove();
+  }
+  function appendLine(l){
+    clearPlaceholder();
+    const d=document.createElement('div');
+    d.className='animate-in';
+    d.style.marginBottom='6px';
+    d.innerHTML=l.t;
+    logEl.appendChild(d);
+  }
+  function showVerdict(){
+    verdictEl.innerHTML='<div class="card-sm" style="border-color:rgba(239,68,68,0.3);background:var(--red-dim);animation:fadeUp .4s ease;">'
+      +'<div style="font-weight:600;font-size:13px;color:var(--red);">❄️ Verdict — one wrong premise, many confident details</div>'
+      +'<div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:4px;">The red <span style="font-family:var(--mono);color:var(--red);">62 meters</span> was invented in sentence 1 — nothing in the conversation sourced it. From then on it was <em>context</em>: every amber phrase is fluent, plausible, and conditioned on the invention. The model never goes back to doubt its own first sentence. That is <strong>hallucination snowballing</strong>: errors compound coherently — which is why hallucinated text so often reads <em>more</em> detailed and <em>more</em> confident, not less. (Simulated example; the survey catalogs the mechanism.)</div></div>';
+  }
+  function reset(){
+    clearTimers();
+    logEl.innerHTML='<div data-ph="1" style="color:#475569;">› press "Start generation" to run the model…</div>';
+    verdictEl.innerHTML='';
+    startBtn.disabled=false;
+    startBtn.textContent='Start generation';
+  }
+  function run(){
+    reset();
+    startBtn.disabled=true;
+    startBtn.textContent='Generating…';
+    if(reduce){
+      lines.forEach(l=>appendLine(l));
+      showVerdict();
+      startBtn.disabled=false;
+      startBtn.textContent='Start generation';
+      return;
+    }
+    lines.forEach((l,i)=>timers.push(setTimeout(()=>appendLine(l),400+i*1400)));
+    timers.push(setTimeout(()=>{showVerdict();startBtn.disabled=false;startBtn.textContent='Start generation';},400+lines.length*1400+300));
+  }
+  startBtn.addEventListener('click',run);
+  resetBtn.addEventListener('click',reset);
+  reset();
+})();
+
+// === DEMO 3: FIX THE PIPELINE MATCHER ===
+(function(){
+  const chipsEl=document.getElementById('fixChips');
+  const verdictEl=document.getElementById('fixVerdict');
+  const progEl=document.getElementById('fixProgress');
+  const sData=document.getElementById('fixStageData');
+  const sTrain=document.getElementById('fixStageTraining');
+  const sInf=document.getElementById('fixStageInference');
+  if(!chipsEl||!verdictEl||!progEl||!sData||!sTrain||!sInf)return;
+  const stageMeta={
+    data:{el:sData,hit:document.getElementById('fixHitData'),name:'DATA',color:'var(--blue)',icon:'📚'},
+    training:{el:sTrain,hit:document.getElementById('fixHitTraining'),name:'TRAINING',color:'var(--teal)',icon:'🏋️'},
+    inference:{el:sInf,hit:document.getElementById('fixHitInference'),name:'INFERENCE',color:'var(--purple)',icon:'⚙️'}
+  };
+  const fixes=[
+    {label:'Clean + ground the corpus',stage:'data',why:'Targets the DATA stage. Training pairs whose target text is not supported by the input (source–counterfactual misalignment) teach the model that inventing details is normal. Cleaning, re-aligning, and grounding pairs removes that lesson at the source.'},
+    {label:'Debias + deduplicate',stage:'data',why:'Targets the DATA stage. Duplicated and socially biased passages get memorized — then regurgitated with full confidence. Removing duplicates and balancing sources shrinks the set of wrong "facts" the model can faithfully replay.'},
+    {label:'RLHF / grounded objective',stage:'training',why:'Targets the TRAINING stage. Plain likelihood training rewards fluent continuations, not faithful ones. RLHF and grounded objectives add a reward signal that prefers outputs supported by the source (or by human judgment) and penalizes unsupported claims.'},
+    {label:'RAG + contrastive decoding',stage:'inference',why:'Targets the INFERENCE stage. Retrieval-Augmented Generation anchors decoding in freshly retrieved evidence, and contrastive decoding steers away from the hallucination-prone output distribution. Both act at generation time — no retraining needed.'},
+    {label:'Self-verification pass',stage:'inference',why:'Targets the INFERENCE stage, post-hoc. After a draft exists, a verification pass checks each claim against the source, retrieved evidence, or the model\'s own sampled alternatives — then edits or regenerates the flagged spans (self-refinement, verify-then-edit).'}
+  ];
+  let placed=0;
+  chipsEl.innerHTML=fixes.map((f,i)=>'<button id="fixChip'+i+'" type="button" style="font-family:var(--mono);font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .2s;" onclick="window._pickFix('+i+')">'+f.label+'</button>').join('');
+  function clearHighlights(){
+    Object.keys(stageMeta).forEach(k=>{
+      const m=stageMeta[k];
+      m.el.style.borderColor='';
+      m.el.style.background='';
+      m.hit.textContent='';
+    });
+  }
+  window._pickFix=function(i){
+    const f=fixes[i];
+    const m=stageMeta[f.stage];
+    const chip=document.getElementById('fixChip'+i);
+    if(chip&&chip.getAttribute('data-placed')!=='1'){
+      chip.setAttribute('data-placed','1');
+      chip.innerHTML='✓ '+f.label;
+      chip.style.borderColor='rgba(245,158,11,0.45)';
+      chip.style.background='var(--amber-dim)';
+      chip.style.color='var(--amber)';
+      chip.style.cursor='default';
+      placed++;
+      progEl.textContent=placed+' / '+fixes.length+' fixes placed'+(placed===fixes.length?' — pipeline fully patched 🎉':'');
+    }
+    clearHighlights();
+    m.el.style.borderColor='rgba(245,158,11,0.5)';
+    m.el.style.background='var(--amber-dim)';
+    m.hit.textContent='✓ targeted by "'+f.label+'"';
+    verdictEl.innerHTML='<div class="card-sm" style="border-left:3px solid '+m.color+';animation:fadeUp .4s ease;">'
+      +'<div style="font-weight:600;font-size:13px;color:'+m.color+';">'+m.icon+' Targets the '+m.name+' stage</div>'
+      +'<div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:4px;">'+f.why+'</div>'
+      +(placed===fixes.length?'<div style="font-size:12px;color:var(--text3);margin-top:6px;">Honesty check: each of these levers <strong>reduces</strong> hallucination — none eliminates it. The survey\'s closing message: combine levers, and keep measuring.</div>':'')
+      +'</div>';
+  };
+})();
+
+// === QUIZ DATA ===
+// === PIPELINE WALK (DEEP DIVE) ===
+(function(){
+  const body=document.getElementById('stgBody');if(!body)return;
+  const btns={data:document.getElementById('stgData'),train:document.getElementById('stgTrain'),infer:document.getElementById('stgInfer')};
+  if(!body||!btns.data||!btns.train||!btns.infer)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const S={
+    data:{title:'DATA — the corpus decides what "plausible" means',color:'var(--blue)',
+      causes:['Misaligned pairs: source and reference disagree (translation, data-to-text)','Biased sampling: frequent falsehoods outweigh rare corrections','No source at all: open-ended pretraining text has nothing to be faithful to'],
+      detect:['Retrieval-based — compare claims against a trusted corpus','Post-hoc verification — decompose and check each atomic claim'],
+      mit:['Data cleaning + de-noising of source-reference pairs','Grounded data construction — pair claims with evidence','Curriculum that upweights verifiable statements']},
+    train:{title:'TRAINING — the objective optimizes fluency, not faithfulness',color:'var(--amber)',
+      causes:['Exposure bias: gold-prefix training, self-generated test prefixes','Representation gaps: rare facts get thin, low-confidence embeddings','Snowballing: the objective never penalizes error-on-top-of-error'],
+      detect:['Internal-state probing — read uncertainty from hidden states','Uncertainty methods — sample and measure disagreement (SelfCheckGPT)'],
+      mit:['RLHF and preference data that rewards being right, not just fluent','Grounded objectives (citation-aware, contrastive)','Factuality-targeted fine-tuning on verified pairs']},
+    infer:{title:'INFERENCE — decoding samples from a flawed distribution',color:'var(--red)',
+      causes:['Random sampling: high temperature explores low-truth regions','Likelihood-first decoding favors high-prior (myth) continuations','No grounding at run time: the model answers from parametric memory alone'],
+      detect:['Post-hoc verification at generation time','Uncertainty from repeated sampling'],
+      mit:['RAG — condition on retrieved evidence (the Track II paper)','Contrastive / factuality-promoting decoding','Self-verification before showing the answer']}
+  };
+  function chip(t,color){return '<div style="display:inline-block;font-size:11.5px;font-family:var(--mono);color:'+color+';background:var(--bg4);border:1px solid var(--border);border-radius:14px;padding:4px 10px;margin:3px 4px 3px 0;">'+t+'</div>';}
+  function render(k){
+    const s=S[k];
+    body.innerHTML='<div style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;color:'+s.color+';margin-bottom:10px;">'+s.title+'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;">'
+      +'<div class="card-sm" style="border-left:3px solid var(--red);opacity:0;animation:'+(RM?'none':'fadeUp .5s ease .05s forwards')+';"><div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:6px;">WHAT BREAKS</div><div style="font-size:12px;color:var(--text2);line-height:1.8;">'+s.causes.map(c=>'• '+c).join('<br>')+'</div></div>'
+      +'<div class="card-sm" style="border-left:3px solid var(--blue);opacity:0;animation:'+(RM?'none':'fadeUp .5s ease .18s forwards')+';"><div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:6px;">WHO CAN SEE IT</div><div style="font-size:12px;color:var(--text2);line-height:1.8;">'+s.detect.map(c=>'• '+c).join('<br>')+'</div></div>'
+      +'<div class="card-sm" style="border-left:3px solid var(--green);opacity:0;animation:'+(RM?'none':'fadeUp .5s ease .31s forwards')+';"><div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:6px;">WHAT FIXES IT</div><div style="font-size:12px;color:var(--text2);line-height:1.8;">'+s.mit.map(c=>'• '+c).join('<br>')+'</div></div>'
+      +'</div>';
+  }
+  function pick(k){Object.keys(btns).forEach(b=>btns[b].className=(b===k)?'btn-primary':'btn-outline');render(k);}
+  btns.data.addEventListener('click',()=>pick('data'));
+  btns.train.addEventListener('click',()=>pick('train'));
+  btns.infer.addEventListener('click',()=>pick('infer'));
+  if(RM||!('IntersectionObserver' in window)){render('data');}
+  else{const io=new IntersectionObserver(en=>{if(en.some(e=>e.isIntersecting)){render('data');io.disconnect();}},{threshold:0.3});io.observe(body);}
+})();
+
+const QUIZ_DATA=[
+  {q:'In the survey\'s taxonomy, what makes a hallucination INTRINSIC?',opts:['The output cannot be verified from the provided source','The output is grammatically broken nonsense','The output directly contradicts the provided source','The output copies the source word-for-word'],correct:2,explain:'Intrinsic hallucinations contradict the source (fell → rose). Extrinsic ones cannot be verified from it — they bring in outside information whose truth the source cannot settle.'},
+  {q:'What does "hallucination snowballing" describe?',opts:['Errors accumulating randomly across many unrelated facts','Hallucination rates growing as models get larger','Retrieval systems returning increasingly wrong documents','A model commits to an early wrong detail, then coherently generates more details that build on it'],correct:3,explain:'Once a wrong detail is generated, it becomes context. Later tokens condition on it, so the model builds a confident, coherent story on a false premise — errors compound instead of self-correcting.'},
+  {q:'"Exposure bias" — the model never sees its own errors during teacher-forced training — belongs to which stage of the survey\'s cause map?',opts:['Data stage','Inference stage','Training stage','Deployment stage'],correct:2,explain:'Exposure bias is a training-stage cause: teacher forcing feeds only gold prefixes, so the model never learns to recover from its own mistakes. Random sampling at decoding is the inference-stage counterpart.'},
+  {q:'Which of these mitigations is retrieval-based?',opts:['RLHF with human preferences','Retrieval-Augmented Generation (RAG)','Contrastive decoding','Beam search with length penalty'],correct:1,explain:'RAG grounds generation in documents retrieved at inference time, anchoring the output to external evidence. RLHF is a training-stage fix, contrastive decoding changes the decode objective, and beam search is plain search.'},
+  {q:'Why did this survey matter to the field?',opts:['It proved hallucination had been fully solved by RLHF','It was the first paper ever to observe hallucination in neural MT','It covered only large language models, not classic NLG tasks','It unified a fragmented, task-by-task literature under one definition, taxonomy, and cause→fix map'],correct:3,explain:'Before 2022, each NLG subfield studied hallucination with its own vocabulary. Ji et al. gave the field one shared frame — definition, intrinsic/extrinsic taxonomy, data/training/inference causes, and stage-matched mitigations — spanning NLG tasks and LLMs.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

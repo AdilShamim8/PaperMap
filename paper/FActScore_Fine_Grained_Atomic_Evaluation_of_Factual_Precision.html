@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FActScore: Fine-grained Atomic Evaluation — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the FActScore paper (EMNLP 2023): decompose long-form generations into atomic facts, verify each against Wikipedia, and compute factual precision — with a live atomic-fact splitter, frequency explorer, and coarse-vs-atomic demo.">
+<meta name="keywords" content="FActScore, atomic facts, factual precision, hallucination, long-form text generation, evaluation, Wikipedia, retrieval, ChatGPT, InstructGPT, EMNLP 2023, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="FActScore: Fine-grained Atomic Evaluation — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the FActScore paper with practical intuition and demos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="FActScore — Interactive Guide">
+<meta name="twitter:description" content="Learn how atomic-fact decomposition made long-form factuality measurable, with animations and interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#method">Method</a>
+    <a class="nav-link" href="#pipeline">Pipeline</a>
+    <a class="nav-link" href="#frequency">Frequency</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">EMNLP 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#method">Method</a>
+  <a href="#pipeline">Pipeline</a>
+  <a href="#frequency">Frequency</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Grading <em>Every Fact</em>,<br>One by One
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to FActScore — the EMNLP 2023 metric that breaks a
+    long-form generation into atomic facts, checks each one against a knowledge source
+    like Wikipedia, and turns "is this model factual?" into a number you can audit.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2305.14251" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">183</div>
+      <div class="stat-label">Entities, Human-Evaluated</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">26–41</div>
+      <div class="stat-label">Atomic Facts per Bio</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">58%</div>
+      <div class="stat-label">ChatGPT's FActScore</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">&lt;2%</div>
+      <div class="stat-label">Auto-Estimator Error Rate</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Rigid Metrics to <em>Atomic Facts</em></h2>
+  <p class="section-desc">FActScore is the meeting point of two old ideas — fine-grained content units from summarization, and claim verification from fact-checking — applied to a new problem: long-form generations from LLMs.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2004</div><div class="tl-title">Summarization Content Units (Nenkova &amp; Passonneau)</div><div class="tl-desc">Evaluating summaries by splitting them into small content units — the intellectual ancestor of the atomic fact.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2018</div><div class="tl-title">FEVER (Thorne et al.)</div><div class="tl-desc">Fact verification at scale: check short human-written claims against Wikipedia evidence.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2020</div><div class="tl-title">QA/NLI metrics for summaries</div><div class="tl-desc">FactCC, QAGS, FEQA: automatic consistency metrics that compare a summary to its source via questions or entailment.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2021–22</div><div class="tl-title">Attribution &amp; entity checks</div><div class="tl-desc">Entity-level precision and citation checking (Rashkin et al. 2021; Lee et al. 2022; Gao et al. 2022) — but only for short texts or citations.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · May</div><div class="tl-title">🚀 FActScore (Min et al.)</div><div class="tl-desc">Atomic facts + a chosen knowledge source. Fine-grained factual precision for long-form generation — published at EMNLP 2023.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2023 →</div><div class="tl-title">The factuality-eval wave</div><div class="tl-desc">Long-form factuality becomes a standard eval: follow-ups like SAFE and FELM automate atomic-fact checking further; factuality sections spread through model cards and leaderboards.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">One number per generation hides a <span class="highlight">distribution of errors</span>. A typical 150-word bio contains 26–41 atomic facts. Two bios can both "look good" while one supports 66.7% of its facts and the other only 10.0%. FActScore makes that gap visible — and every individual failure findable.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">ONE PROMPT, TWO SCORES (FIGURE 1 OF THE PAPER)</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          "Tell me a bio of Bridget Moynahan."<br>
+          <span style="color:var(--blue);">ChatGPT:</span> 9 facts → <span style="color:var(--green);">6 ✓</span> <span style="color:var(--red);">3 ✗</span> → <span style="background:var(--amber-dim);color:var(--amber);padding:2px 8px;border-radius:6px;font-weight:600;">66.7%</span><br>
+          <span style="color:var(--red);">StableLM:</span> 10 facts → <span style="color:var(--green);">1 ✓</span> <span style="color:var(--red);">9 ✗</span> → <span style="background:var(--red-dim);color:var(--red);padding:2px 8px;border-radius:6px;font-weight:600;">10.0%</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">A human preference vote would just say "ChatGPT's bio is better."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem with <em>Coarse</em> Verdicts</h2>
+  <p class="section-desc">Long-form generations mix supported facts, fabrications, and filler in one fluent paragraph. Judging the whole paragraph with one verdict — by human or by model — throws away exactly the information you need.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">⚖️</div>
+      <div class="problem-title">The Old Way: One Verdict</div>
+      <ul class="problem-list">
+        <li>Human A/B preference: "which bio is better?" — slow, subjective, ~$4 per generation</li>
+        <li>One score for ~150 words: no idea <em>where</em> the errors are</li>
+        <li>Fluent, confident prose masks fabrications — and humans are biased toward fluency</li>
+        <li>Binary judgments can't rank models that are close, or diagnose the gap</li>
+        <li>Strict sentence-level rules collapse everything: one error can sink a whole "unsupported" rating</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔬</div>
+      <div class="problem-title">FActScore: Grade Every Fact</div>
+      <ul class="problem-list">
+        <li>Decompose the generation into short, single-claim atomic facts</li>
+        <li>Verify each atomic fact against a knowledge source you trust (English Wikipedia here)</li>
+        <li>Score = the percentage of atomic facts that are supported</li>
+        <li>An automated estimator reproduces human labels within a &lt;2% error rate</li>
+        <li>Every error is visible — an itemized to-do list for fixing the model</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Coarse vs Atomic</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A real example from Figure 1 of the paper: the same prompt, "Tell me a bio of Bridget Moynahan.", answered by ChatGPT and by StableLM. Toggle between how a coarse eval sees the answers and what atomic decomposition reveals.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="cvaCoarseBtn" type="button" style="font-size:13px;padding:8px 18px;">Coarse view</button>
+      <button class="btn-outline" id="cvaAtomicBtn" type="button" style="font-size:13px;padding:8px 18px;">Atomic view</button>
+    </div>
+    <div id="cvaDisplay"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Why Fine-Grained Wins</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Imagine grading a 30-question exam by skimming it once and writing "B+". That is preference-based eval. Now imagine marking every answer, counting the correct ones, and handing back the list of misses. That is FActScore — and because the grader can be an LM with retrieval, it costs a fraction of human annotation while staying within ~2 points of human scores.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- METHOD / CORE IDEA -->
+<section id="method">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Core Idea — <em>Atomic Facts</em> + a Trusted Source</h2>
+  <p class="section-desc">Two moves define the metric: make the unit of evaluation small enough to verify (the atomic fact), and make truth relative to a knowledge source you choose — not to a global oracle.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">FActScore = (1 / |A|) · Σ 1[aᵢ is supported by C]</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">A</div><div class="fp-name">Atomic facts</div><div class="fp-desc">The generation is split into short sentences, each conveying one piece of information.</div></div>
+      <div class="formula-piece"><div class="fp-sym">1[·]</div><div class="fp-name">Verifier</div><div class="fp-desc">1 if the atomic fact is supported by the knowledge source C, else 0.</div></div>
+      <div class="formula-piece"><div class="fp-sym">|A|</div><div class="fp-name">All facts count</div><div class="fp-desc">Every atomic fact — supported or not — sits in the denominator. No free rides.</div></div>
+      <div class="formula-piece"><div class="fp-sym">E[·]</div><div class="fp-name">Averaged</div><div class="fp-desc">The score is the expectation over prompts, counting only generations where the model responds.</div></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Key Idea 1 — The Atomic Fact</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">An atomic fact is <strong>a short sentence conveying one piece of information</strong>. It is more fundamental than a sentence: one sentence can bundle several verifiable claims, and partial support is common. Decomposition makes each claim separately checkable — the direct descendant of summarization content units (2004).</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.9;">
+        <div style="color:var(--text3);font-size:11px;margin-bottom:4px;">ONE SENTENCE → FIVE ATOMIC FACTS</div>
+        "Marie Curie was a Polish-French physicist and chemist who won the Nobel Prize in Physics in 1903."<br>
+        <span style="color:var(--amber);">→</span> Marie Curie was Polish. <span style="color:var(--amber);">→</span> Marie Curie was French. <span style="color:var(--amber);">→</span> She was a physicist. <span style="color:var(--amber);">→</span> She was a chemist. <span style="color:var(--amber);">→</span> She won the 1903 Nobel Prize in Physics.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Key Idea 2 — Truth Relative to a Source</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Instead of asking whether an atomic fact is globally true, FActScore asks whether it is <strong>supported by a given knowledge source C</strong> — the one end users consider reliable. The paper uses English Wikipedia for people biographies: objective, specific, reasonably self-consistent, with good coverage. Change the source, and the same generation can score differently — that is a feature, not a bug: factuality is audited against a citable reference.</p>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:1.5rem;">
+    <div class="card-sm" style="border-top:3px solid var(--green);"><div style="font-weight:600;font-size:14px;color:var(--green);">✓ Supported</div><div style="font-size:12px;color:var(--text2);margin-top:4px;">The knowledge source contains evidence for the atomic fact — possibly after a bit of inference.</div></div>
+    <div class="card-sm" style="border-top:3px solid var(--red);"><div style="font-weight:600;font-size:14px;color:var(--red);">✗ Not-supported</div><div style="font-size:12px;color:var(--text2);margin-top:4px;">No evidence in the source — the fabrication the metric exists to catch.</div></div>
+    <div class="card-sm" style="border-top:3px solid var(--purple);"><div style="font-weight:600;font-size:14px;color:var(--purple);">✱ Irrelevant</div><div style="font-size:12px;color:var(--text2);margin-top:4px;">Not related to the prompt — e.g., the model wrote about a different person entirely.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">The Third Label in Action (Table 7 of the paper)</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Asked for a bio of <span class="code-inline">John Estes</span>, one model produced text about <span class="code-inline">William Estes</span>, an actor on the CBS drama Blue Bloods. Every atomic fact in that answer — "William Estes is an American", "William Estes is an actor" — was labeled <span style="color:var(--purple);font-weight:600;">Irrelevant</span>: individually checkable, but about the wrong person, so they should be removed rather than counted as factual wins or losses.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PIPELINE -->
+<section id="pipeline">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The Pipeline — <em>Decompose, Retrieve, Verify</em></h2>
+  <p class="section-desc">From "Tell me a bio of X" to a single, auditable percentage. Five steps, each simple enough to inspect on its own.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Pipeline Overview</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:8px;">
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">✍️</div><div style="font-weight:600;font-size:14px;">1 · Generate</div><div style="font-size:12px;color:var(--text2);">Prompt "Tell me a bio of &lt;entity&gt;" — the model writes ~110–155 words, taken as-is.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">✂️</div><div style="font-weight:600;font-size:14px;">2 · Decompose</div><div style="font-size:12px;color:var(--text2);">Split into sentences; InstructGPT breaks each into atomic facts (humans revise, for gold labels).</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">📚</div><div style="font-weight:600;font-size:14px;">3 · Retrieve</div><div style="font-size:12px;color:var(--text2);">For each fact, a GTR retriever (T5-based) pulls the most relevant Wikipedia passages.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">🧑‍⚖️</div><div style="font-weight:600;font-size:14px;">4 · Verify</div><div style="font-size:12px;color:var(--text2);">Passages + fact + "True or False?" go to an LM evaluator; it compares the probabilities of True/False.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">🧮</div><div style="font-weight:600;font-size:14px;">5 · Score</div><div style="font-size:12px;color:var(--text2);">% of atomic facts supported = FActScore, averaged over prompts where the model responds.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Atomic Fact Splitter</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A real example from the paper (Table 7): one sentence of a model-generated bio. First decompose it into atomic facts — then verify each against Wikipedia and watch the FActScore build up, fact by fact.</p>
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:13px;color:var(--text2);line-height:2;margin-bottom:1rem;">
+      <span style="color:var(--text3);font-size:11px;">PROMPT ▸ </span>Tell me a bio of Ylona Garcia.<br>
+      <span style="color:var(--text3);font-size:11px;">GENERATION ▸ </span>Ylona Garcia has since appeared in various TV shows such as ASAP (All-Star Sunday Afternoon Party), Wansapanataym Presents: Annika PINTAsera and Maalaala Mo Kaya.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="afsDecomposeBtn" type="button" style="font-size:13px;padding:8px 18px;">Decompose →</button>
+      <button class="btn-outline" id="afsVerifyBtn" type="button" style="font-size:13px;padding:8px 18px;">Verify against Wikipedia →</button>
+      <button class="btn-outline" id="afsResetBtn" type="button" style="font-size:13px;padding:8px 18px;">↺ Reset</button>
+    </div>
+    <div id="afsStage" style="font-family:var(--mono);font-size:12px;color:var(--text3);min-height:18px;margin-bottom:10px;">Step 1: decompose the generation into atomic facts.</div>
+    <div id="afsChips" style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;"></div>
+    <div style="margin-top:1rem;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--text3);">FActScore</span>
+        <span id="afsScoreLabel" style="font-family:var(--mono);font-size:13px;color:var(--text2);font-weight:600;">— / —</span>
+      </div>
+      <div style="height:10px;background:var(--bg4);border-radius:5px;overflow:hidden;"><div id="afsScoreFill" style="height:100%;width:0%;background:var(--amber);border-radius:5px;transition:width .4s ease;"></div></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Four Verifier Variants (Table 3)</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>No-context LM:</strong> just "&lt;atomic-fact&gt; True or False?" — closed-book. Often overestimates, sometimes flips the model ranking.</li>
+        <li><strong>Retrieve → LM:</strong> retrieved passages + fact + "True or False?" — retrieval consistently improves error rate and ranking.</li>
+        <li><strong>NP (nonparametric probability):</strong> mask each token of the fact, score it with a masked LM over Wikipedia, threshold the average.</li>
+        <li><strong>Retrieve → LM + NP:</strong> ensemble — Supported only if both agree. With Inst-LLaMA 7B this reaches error rates as low as 0.4–1.4%.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Why Retrieval Helps the Verifier</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The evaluator LM has not memorized every fact — asking it closed-book mostly measures what it already believes. Showing it retrieved Wikipedia passages grounds the judgment in evidence, the same way a human checker reads the article first. With ChatGPT as the evaluator, Retrieve → LM keeps the error rate to ~5% and preserves the true ranking between evaluated models; the paper also tried question-generation prompting (as in QAGS/FEQA) and found True/False prompting more reliable, because generated questions are hard to control.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FREQUENCY -->
+<section id="frequency">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Rare Entities, <em>More Hallucination</em></h2>
+  <p class="section-desc">FActScore made a long-suspected pattern measurable: factual precision tracks how often the model saw the entity during pretraining. The rarer the person, the more fabrication.</p>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Frequency Effect Explorer</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick an entity-frequency tier. The paper buckets people by a <span class="code-inline">freqValue</span> — the max of Wikipedia occurrence count and pageview count — into five tiers, and finds FActScore falls monotonically as rarity increases. <em>Bar values below are illustrative approximations of Figure 2's trend.</em></p>
+    <div id="freqTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+    <div id="freqChart"></div>
+    <div id="freqInfo" style="margin-top:1rem;"></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Why Rarity Hurts</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">An LM's parametric memory is a compression of its pretraining data. A globally famous person appears thousands of times — the model stores dense, reliable facts. A niche figure appears a handful of times, so the model reconstructs the bio from patterns: plausible professions, plausible cities, plausible spouses. Those reconstructions are exactly the Not-supported atomic facts FActScore catches. The effect agrees with earlier frequency studies (Kandpal et al.), and is consistent across every model evaluated.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Position in the Generation Matters Too</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Figure 2 (bottom) shows the <em>later</em> part of a generation has significantly worse precision. Early facts — nationality, profession — are the most repeated in pretraining data; as the bio reaches for specific dates, relationships, and career steps, the model is on thinner ice. Two risk factors, one lesson: <strong>test the long tail, and don't trust the tail end of long outputs.</strong></p>
+      <div style="margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:6px;">ILLUSTRATIVE OF FIGURE 2 (BOTTOM): PRECISION ACROSS A GENERATION</div>
+        <div style="display:flex;gap:6px;">
+          <div style="flex:1;text-align:center;"><div style="height:34px;background:var(--teal);border-radius:4px 4px 0 0;opacity:1;"></div><div style="font-family:var(--mono);font-size:10px;color:var(--text3);">early</div></div>
+          <div style="flex:1;text-align:center;"><div style="height:29px;background:var(--teal);opacity:.85;border-radius:4px 4px 0 0;"></div><div style="font-family:var(--mono);font-size:10px;color:var(--text3);">·</div></div>
+          <div style="flex:1;text-align:center;"><div style="height:24px;background:var(--amber);opacity:.8;border-radius:4px 4px 0 0;"></div><div style="font-family:var(--mono);font-size:10px;color:var(--text3);">·</div></div>
+          <div style="flex:1;text-align:center;"><div style="height:19px;background:var(--amber);opacity:.9;border-radius:4px 4px 0 0;"></div><div style="font-family:var(--mono);font-size:10px;color:var(--text3);">·</div></div>
+          <div style="flex:1;text-align:center;"><div style="height:14px;background:var(--red);border-radius:4px 4px 0 0;"></div><div style="font-family:var(--mono);font-size:10px;color:var(--text3);">late</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-label">Even Search Isn't Immune</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">A striking secondary finding: retrieval-augmented <strong>PerplexityAI</strong> also drops as entities get rarer — a relative drop of about 50% at the atomic level from the most frequent to the most rare tier. Retrieval at generation time helps a lot, but it does not fully solve the long tail: retrieval itself is harder when the entity is obscure, and the model still paraphrases (or over-summarizes) what it finds.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">The <em>Scoreboard</em></h2>
+  <p class="section-desc">First a human evaluation of three commercial systems; then the automated estimator unleashed on 13 subjects — 12 LMs plus human-written Wikipedia bios — across 500 entities each.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Human Evaluation (Table 1 — 183 entities, expert labels)</div>
+    <table class="comp-table">
+      <thead><tr><th>System</th><th>FActScore</th><th>Atomic facts / bio</th><th>Responds</th></tr></thead>
+      <tbody>
+        <tr><td>InstructGPT (text-davinci-003)</td><td>42.5</td><td>26.3</td><td>99.5%</td></tr>
+        <tr><td>ChatGPT</td><td>58.3</td><td>34.7</td><td>85.8%</td></tr>
+        <tr><td class="comp-best">PerplexityAI (search-augmented)</td><td class="comp-best">71.5</td><td class="comp-best">40.8</td><td>90.7%</td></tr>
+        <tr><td>Human-written bio (Wikipedia, estimated)</td><td>~87</td><td>29.0</td><td>88.8%</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">The punchline: even PerplexityAI — with a commercial search engine and the right Wikipedia page within reach — fails to support ~28% of its atomic facts (11% explicitly not-supported, 15% irrelevant). Note that ChatGPT and PerplexityAI abstain from answering 14% and 9% of prompts, which quietly boosts their precision; InstructGPT almost never abstains. The human row comes from the 500-entity estimated study (Table 5 + Figure 3).</p>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">At Scale: 13 Subjects, 500 Entities Each (Figure 3, ChatGPT-with-retrieval estimator)</div>
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="result-model">HUMAN (WIKIPEDIA BIOS)</div>
+        <div class="result-score" style="color:var(--teal);">~87%</div>
+        <div class="result-label">FActScore</div>
+        <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:87%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+        <div class="result-label" style="margin-top:8px;">The bar every model misses by a wide margin</div>
+      </div>
+      <div class="result-card">
+        <div class="result-model">GPT-4</div>
+        <div class="result-score" style="color:var(--amber);">~72%</div>
+        <div class="result-label">FActScore</div>
+        <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:72%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+        <div class="result-label" style="margin-top:8px;">Comparable to ChatGPT — but abstains less, says far more</div>
+      </div>
+      <div class="result-card">
+        <div class="result-model">CHATGPT</div>
+        <div class="result-score" style="color:var(--blue);">~71%</div>
+        <div class="result-label">FActScore</div>
+        <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:71%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+        <div class="result-label" style="margin-top:8px;">58.3% on the 183-entity human-eval set</div>
+      </div>
+      <div class="result-card">
+        <div class="result-model">ALPACA 65B</div>
+        <div class="result-score" style="color:var(--purple);">~55%</div>
+        <div class="result-label">FActScore</div>
+        <div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:55%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+        <div class="result-label" style="margin-top:8px;">Best of the public models</div>
+      </div>
+      <div class="result-card">
+        <div class="result-model">VICUNA / ALPACA 7B–13B</div>
+        <div class="result-score" style="color:var(--text3);">~40%</div>
+        <div class="result-label">FActScore</div>
+        <div class="result-bar-wrap"><div class="result-bar" style="background:var(--text3);width:40%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+        <div class="result-label" style="margin-top:8px;">Also: Alpaca 13B ~49% · Vicuna 13B ~48% · MPT-Chat ~30% · Dolly ~21%</div>
+      </div>
+      <div class="result-card">
+        <div class="result-model">STABLELM 7B</div>
+        <div class="result-score" style="color:var(--red);">~17%</div>
+        <div class="result-label">FActScore</div>
+        <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:17%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+        <div class="result-label" style="margin-top:8px;">~83% of its atomic facts unsupported, vs ~13% for human-written bios</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">Estimated scores from the paper's Figure 3 (approximate figure reads, marked ~). The two best estimator variants agree on the ranking with a Pearson correlation of 0.99.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Head-to-Head Findings</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>All LMs are substantially less factual than humans</strong> — against claims that LMs were approaching human performance, even on an easy task like writing a bio.</li>
+        <li><strong>GPT-4 ≈ ChatGPT in precision,</strong> but GPT-4 abstains less (12% vs 16%) and packs in far more facts (61 vs 37 per bio).</li>
+        <li><strong>Within a family, size tracks precision:</strong> Alpaca 65B &gt; 13B &gt; 7B, and Vicuna 13B &gt; 7B.</li>
+        <li><strong>Same size, different recipe, different score:</strong> at 7B, Alpaca/Vicuna (~40%) beat MPT-Chat (~30%) and StableLM (~17%).</li>
+        <li><strong>Vicuna says ~3× more than Alpaca</strong> (51 vs 17 facts per bio) at similar precision — one reason Alpaca never abstains while Vicuna sometimes does.</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--red);">
+      <div class="card-label">What FActScore Did NOT Solve</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Precision, not recall:</strong> a bio that says almost nothing can score ~100%. The paper's own Mary I example is highly precise yet skips how she returned to the line of succession — so it's a poor bio.</li>
+        <li><strong>One source, one language:</strong> English Wikipedia; your trusted source may differ, and coverage gaps become false "not-supported" labels.</li>
+        <li><strong>Equal weights:</strong> a wrong birth year costs exactly as much as a wrong middle initial.</li>
+        <li><strong>Verification costs compute:</strong> each atomic fact needs retrieval + LM calls — cheap versus $26K of human labor, but not free.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Factuality</em> Becomes Measurable</h2>
+  <p class="section-desc">FActScore gave the field a shared unit for long-form hallucination: the unsupported atomic fact. Everything that followed — better verifiers, factuality leaderboards, targeted decoding fixes — builds on that move.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">📦 pip install factscore</div><div class="notice-text">The metric shipped as an open-source package, released together with the paper's human annotations — atomic-fact checking became a drop-in evaluation for anyone.</div></div>
+    <div class="notice-card"><div class="notice-title">📊 Long-form factuality, quantified</div><div class="notice-text">"ChatGPT achieves 58%" turned a vague worry into a measurable gap. Fine-grained factuality sections spread through model cards and eval suites after this paper.</div></div>
+    <div class="notice-card"><div class="notice-title">🔎 Retrieval, twice vindicated</div><div class="notice-text">Search-augmented PerplexityAI topped the human evaluation (71.5%), and retrieval also powered the best automated verifier — evidence that grounded generation and grounded checking both beat closed-book.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Risk factors mapped</div><div class="notice-text">Entity frequency and position-in-generation effects told eval designers where hallucinations live: the long tail of entities and the tail end of outputs.</div></div>
+    <div class="notice-card"><div class="notice-title">💸 Evaluation economics</div><div class="notice-text">6,500 generations from 13 subjects, estimated automatically with &lt;2% error — annotation that would have cost $26K at the paper's $4-per-generation human rate.</div></div>
+    <div class="notice-card"><div class="notice-title">🧬 The lineage</div><div class="notice-text">Follow-ups automated and extended the recipe further — search-based verifiers (e.g., SAFE), factuality benchmarks (e.g., FELM), and multilingual/long-form variants — with FActScore as the reference point.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Decompose, Verify, <em>Count</em></h2>
+  <p class="section-desc">FActScore changed the unit of measurement. Instead of asking "is this bio true?", it splits generations into atomic facts and asks "what fraction can be individually verified?" — turning factual precision from a judgment into a ratio with a long tail.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">🔬</div>
+      <div class="problem-title">The Atomic Advantage</div>
+      <ul class="problem-list">
+        <li>Granularity locates the lie: a 90% FActScore bio tells you which 10% is fabricated</li>
+        <li>Decomposition + retrieval + a True/False judge matches human labels within a &lt;2% error rate</li>
+        <li>One number comparable across systems: InstructGPT 42.5% · ChatGPT 58.3% · search-augmented PerplexityAI 71.5%</li>
+        <li>Human-written bios set the ceiling: ~87% — even people don't fully verify</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">⚠️</div>
+      <div class="problem-title">Precision Is Not the Whole Story</div>
+      <ul class="problem-list">
+        <li>A vague-but-true bio scores ~100% — the metric doesn't reward informativeness (no recall term)</li>
+        <li>Risk rises for rare entities: Wikipedia thins out, the verifier starves</li>
+        <li>Facts late in a generation are more likely fabricated — position is a risk factor</li>
+        <li>The estimator itself costs retrievals + LLM verdicts per atom — precision is bought per fact</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Atom Verifier</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A one-sentence biography decomposes into atoms exactly as the paper does. Each atom is checked against retrieved Wikipedia evidence — green supported, red unsupported. The counter is FActScore being computed in front of you. Then see where real models land on the same yardstick.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="font-size:13.5px;color:var(--text1);line-height:1.8;border-left:3px solid var(--amber);padding-left:12px;margin-bottom:14px;">"Marie Curie was a Polish-born physicist who conducted pioneering research on radioactivity, won two Nobel Prizes, discovered the elements polonium and radium, and won the Nobel Prize in Economics in 1911."</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button class="btn-primary" id="fsRun" type="button" style="font-size:13px;padding:8px 18px;">▶ Decompose &amp; verify</button>
+        <span id="fsScore" style="font-family:var(--mono);font-size:11.5px;color:var(--text3);">FActScore = supported atoms / total atoms</span>
+      </div>
+      <div id="fsAtoms" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:8px;margin-bottom:16px;"></div>
+      <div id="fsLadder"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Fluency masks fabrication — granularity unmasks it</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The 42.5% InstructGPT bios read flawlessly; that's what made the number shocking. By counting at the atom level, FActScore showed that fluent long-form generation is a <em>precision</em> problem that worsens with length and rarity — and that retrieval (RAG, Track II) and sampling checks (<a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber);font-weight:600;text-decoration:none;">SelfCheckGPT</a>) are attacking the same failure from two sides. Where this story continues: <a href="./HaluEval_A_Large_Scale_Hallucination_Evaluation_Benchmark.html" style="color:var(--amber);font-weight:600;text-decoration:none;">HaluEval</a> tests whether models can <em>recognize</em> the fabrication; <a href="./RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html" style="color:var(--amber);font-weight:600;text-decoration:none;">RAGTruth</a> moves the whole question into the RAG pipeline.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧩 What counts as an atom</div><div class="notice-text">One verifiable claim, stripped of hedging: "Curie was born in Poland", "she discovered radium". Decomposition quality bounds the whole metric — bad splits make unanswerable atoms.</div></div>
+    <div class="notice-card"><div class="notice-title">📉 The long tail</div><div class="notice-text">At 500 entities × 13 subjects, best public models sat at 40–55%, GPT-4 ~72%, StableLM ~17%. The distribution — not the median — is the finding: everyone fails somewhere.</div></div>
+    <div class="notice-card"><div class="notice-title">⏳ Position risk</div><div class="notice-text">Atoms late in a generation verify worse — consistent with snowballing from the hallucination survey. Length is not free even for top models.</div></div>
+    <div class="notice-card"><div class="notice-title">🛠️ It shipped as tooling</div><div class="notice-text"><span style="font-family:var(--mono);font-size:11px;">pip install factscore</span> — the methodology became an eval harness teams run before release, which is the highest compliment a metric can receive.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the FActScore paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ FActScore = the percentage of a generation's atomic facts supported by a knowledge source you choose (Wikipedia in the paper).</div>
+    <div class="card-sm">✅ Human evaluation (183 bios): InstructGPT 42.5% · ChatGPT 58.3% · search-augmented PerplexityAI 71.5% — fluent does not mean factual.</div>
+    <div class="card-sm">✅ Estimated at scale (500 entities × 13 subjects): human bios ~87%, GPT-4 ~72%, best public models ~40–55%, StableLM ~17%.</div>
+    <div class="card-sm">✅ The automated estimator — GTR retrieval + True/False prompting of a strong LM — matches human labels within a &lt;2% error rate.</div>
+    <div class="card-sm">✅ Hallucination risk rises for rare entities and for facts late in a generation; retrieval helps but doesn't erase the long tail.</div>
+    <div class="card-sm">✅ It measures precision, not recall — a vague-but-true bio can score ~100%. Code + human annotations: pip install factscore.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2305.14251" target="_blank" rel="noopener noreferrer">"FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation"</a> (Min et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2305.14251" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html">SelfCheckGPT Guide</a>
+    <a class="footer-link" href="./RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html">RAGTruth Guide</a>
+    <a class="footer-link" href="./LLM_as_a_Judge.html">LLM as a Judge Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','method','pipeline','frequency','results','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === DEMO 1: ATOMIC FACT SPLITTER ===
+(function(){
+  const chipsEl=document.getElementById('afsChips');
+  const decompBtn=document.getElementById('afsDecomposeBtn');
+  const verifyBtn=document.getElementById('afsVerifyBtn');
+  const resetBtn=document.getElementById('afsResetBtn');
+  const stageEl=document.getElementById('afsStage');
+  const fillEl=document.getElementById('afsScoreFill');
+  const labelEl=document.getElementById('afsScoreLabel');
+  if(!chipsEl||!decompBtn||!verifyBtn||!stageEl||!fillEl||!labelEl) return;
+  const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const FACTS=[
+    {t:'Ylona Garcia has appeared in various TV shows.',v:'S',why:'Her Wikipedia filmography lists many TV appearances.'},
+    {t:'She has appeared in ASAP.',v:'S',why:'ASAP appears in her filmography.'},
+    {t:'ASAP stands for All-Star Sunday Afternoon Party.',v:'S',why:'Stated in the Wikipedia article.'},
+    {t:'ASAP is a TV show.',v:'S',why:'Described as a Philippine variety show.'},
+    {t:'She has appeared in Wansapanataym Presents: Annika PINTAsera.',v:'N',why:'Not found in her Wikipedia filmography.'},
+    {t:'Wansapanataym Presents: Annika PINTAsera is a TV show.',v:'I',why:'About the show — not about the person asked for.'},
+    {t:'She has appeared in Maalaala Mo Kaya.',v:'N',why:'Not found in her Wikipedia filmography.'}
+  ];
+  const META={S:{icon:'✓',tag:'SUPPORTED',color:'var(--green)',bg:'var(--green-dim)'},N:{icon:'✗',tag:'NOT-SUPPORTED',color:'var(--red)',bg:'var(--red-dim)'},I:{icon:'✱',tag:'IRRELEVANT',color:'var(--purple)',bg:'var(--purple-dim)'}};
+  let stage=0,timers=[];
+  function clearTimers(){timers.forEach(t=>clearTimeout(t));timers=[];}
+  function decompose(){
+    if(stage!==0) return;
+    stage=1;
+    decompBtn.disabled=true;decompBtn.style.opacity=.5;
+    stageEl.textContent='Decomposing… splitting 1 sentence into atomic facts (via InstructGPT, as in the paper).';
+    chipsEl.innerHTML=FACTS.map((f,i)=>`<div id="afsChip-${i}" style="display:flex;gap:10px;align-items:flex-start;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.6;"><span id="afsIcon-${i}" style="flex:0 0 22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;background:var(--bg4);color:var(--text3);font-size:12px;font-weight:600;">${i+1}</span><span style="flex:1;">${f.t}<span id="afsWhy-${i}" style="display:block;font-size:11px;margin-top:4px;color:var(--text3);"></span></span></div>`).join('');
+    if(reduce){
+      stageEl.textContent='7 atomic facts ready — 1 sentence, 7 checkable claims.';
+      verifyBtn.disabled=false;verifyBtn.style.opacity=1;
+      return;
+    }
+    FACTS.forEach((f,i)=>{
+      const el=document.getElementById('afsChip-'+i);
+      if(!el) return;
+      el.style.opacity='0';
+      timers.push(setTimeout(()=>{el.style.animation='fadeUp .4s ease forwards';},120+i*260));
+    });
+    timers.push(setTimeout(()=>{
+      stageEl.textContent='7 atomic facts ready — 1 sentence, 7 checkable claims.';
+      verifyBtn.disabled=false;verifyBtn.style.opacity=1;
+    },120+FACTS.length*260+150));
+  }
+  function verify(){
+    if(stage!==1) return;
+    stage=2;
+    verifyBtn.disabled=true;verifyBtn.style.opacity=.5;
+    let resolved=0,supported=0;
+    const step=(i)=>{
+      const f=FACTS[i],m=META[f.v];
+      const icon=document.getElementById('afsIcon-'+i);
+      const why=document.getElementById('afsWhy-'+i);
+      if(icon){icon.textContent=m.icon;icon.style.background=m.bg;icon.style.color=m.color;icon.style.fontWeight='600';}
+      if(why){why.innerHTML=`<span style="color:${m.color};font-weight:600;">${m.tag}</span> — ${f.why}`;}
+      resolved++;
+      if(f.v==='S') supported++;
+      fillEl.style.width=(supported/FACTS.length*100)+'%';
+      labelEl.textContent=`${supported}/${resolved} supported so far`;
+      stageEl.textContent=`Verifying… atomic fact ${resolved}/${FACTS.length} against Wikipedia`;
+      if(resolved===FACTS.length){
+        labelEl.innerHTML=`<span style="color:var(--amber);">${supported}/${FACTS.length} = ${(supported/FACTS.length*100).toFixed(1)}%</span>`;
+        stageEl.textContent='Done: 4 supported · 2 not-supported · 1 irrelevant → FActScore 57.1%.';
+      }
+    };
+    if(reduce){FACTS.forEach((f,i)=>step(i));}
+    else{FACTS.forEach((f,i)=>{timers.push(setTimeout(()=>step(i),300+i*420));});}
+  }
+  function reset(){
+    clearTimers();stage=0;
+    chipsEl.innerHTML='';
+    fillEl.style.width='0%';labelEl.textContent='— / —';
+    stageEl.textContent='Step 1: decompose the generation into atomic facts.';
+    decompBtn.disabled=false;decompBtn.style.opacity=1;
+    verifyBtn.disabled=true;verifyBtn.style.opacity=.5;
+  }
+  decompBtn.addEventListener('click',decompose);
+  verifyBtn.addEventListener('click',verify);
+  if(resetBtn) resetBtn.addEventListener('click',reset);
+  reset();
+})();
+
+// === DEMO 2: FREQUENCY EFFECT EXPLORER ===
+(function(){
+  const tabsEl=document.getElementById('freqTabs');
+  const chartEl=document.getElementById('freqChart');
+  const infoEl=document.getElementById('freqInfo');
+  if(!tabsEl||!chartEl||!infoEl) return;
+  const TIERS=[
+    {k:'vf',label:'Very frequent',range:'freqValue ∈ [10⁵, ∞)',vals:[70,82,88],desc:'Household-name entities, mentioned constantly in pretraining data. Parametric memory is dense — every model is at its factual best here.'},
+    {k:'fq',label:'Frequent',range:'freqValue ∈ [10⁴, 10⁵)',vals:[65,75,86],desc:'Well-known people. Scores are still strong, but the curve has started its downward bend.'},
+    {k:'md',label:'Medium',range:'freqValue ∈ [10³, 10⁴)',vals:[43,56,68],desc:'Recognizable names with thinner coverage. Errors climb across every model.'},
+    {k:'rr',label:'Rare',range:'freqValue ∈ [10², 10³)',vals:[26,29,60],desc:'Niche figures — a Wikipedia page exists, but the LM saw few mentions. Fabrications multiply.'},
+    {k:'vr',label:'Very rare',range:'freqValue ∈ [0, 10²)',vals:[12,17,44],desc:'The long tail. Even search-augmented PerplexityAI drops — roughly half its very-frequent-tier score in relative terms.'}
+  ];
+  const MODELS=[{n:'InstructGPT',c:'#94a3b8'},{n:'ChatGPT',c:'#f59e0b'},{n:'PerplexityAI',c:'#14b8a6'}];
+  let cur='vf';
+  function render(){
+    tabsEl.innerHTML=TIERS.map(t=>`<button type="button" style="font-family:var(--mono);font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid ${t.k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${t.k===cur?'var(--amber-dim)':'var(--bg3)'};color:${t.k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._selFreq('${t.k}')">${t.label}</button>`).join('');
+    const tier=TIERS.find(t=>t.k===cur);
+    chartEl.innerHTML='<div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">FActScore AT THIS TIER (ILLUSTRATIVE OF FIGURE 2)</div>'+
+      MODELS.map((m,i)=>{
+        const v=tier.vals[i];
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:96px;text-align:right;">${m.n}</div><div style="flex:1;height:24px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${v}%;background:${m.c};border-radius:4px;animation:scaleIn .7s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:40px;">~${v}%</div></div>`;
+      }).join('')+
+      '<div style="display:flex;align-items:center;gap:6px;margin-top:12px;font-family:var(--mono);font-size:10px;color:var(--text3);"><span style="width:66px;text-align:right;">THE TREND</span><div style="flex:1;display:flex;gap:5px;">'+TIERS.map(t=>{
+        const h=Math.max(4,Math.round(t.vals[1]/4));
+        const w=Math.max(14,Math.round(t.vals[1]/2.6));
+        return `<div style="text-align:center;flex:0 0 ${w}px;"><div style="height:${h}px;background:${t.k===cur?'var(--amber)':'var(--bg4)'};border-radius:3px 3px 0 0;"></div><div style="margin-top:2px;color:${t.k===cur?'var(--amber)':'var(--text3)'};">~${t.vals[1]}</div></div>`;
+      }).join('')+'</div></div>';
+    infoEl.innerHTML=`<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;font-size:12.5px;color:var(--text2);line-height:1.7;"><span style="font-family:var(--mono);font-size:11px;color:var(--amber);">${tier.label} — ${tier.range}</span><br>${tier.desc}<br><span style="font-size:11px;color:var(--text3);">Bar values are illustrative approximations of the paper's Figure 2 (ChatGPT row of the trend strip); the verified finding is the monotonic decrease.</span></div>`;
+  }
+  window._selFreq=function(k){cur=k;render();};
+  render();
+})();
+
+// === DEMO 3: COARSE VS ATOMIC ===
+(function(){
+  const disp=document.getElementById('cvaDisplay');
+  const coarseBtn=document.getElementById('cvaCoarseBtn');
+  const atomicBtn=document.getElementById('cvaAtomicBtn');
+  if(!disp||!coarseBtn||!atomicBtn) return;
+  const BIOS=[
+    {model:'ChatGPT',color:'var(--blue)',text:"Bridget Moynahan is an American actress, model and producer. She is best known for her roles in Grey's Anatomy, I, Robot and Blue Bloods. She studied acting at the American Academy of Dramatic Arts, and …",
+     facts:[['Bridget Moynahan is American.',1],['Bridget Moynahan is an actress.',1],['Bridget Moynahan is a model.',1],['Bridget Moynahan is a producer.',0],["She is best known for her roles in Grey's Anatomy.",0],['She is best known for her roles in I, Robot.',1],['She is best known for her roles in Blue Bloods.',1],['She studied acting.',1],['She studied at the American Academy of Dramatic Arts.',0]],
+     score:'66.7%',ok:6,total:9},
+    {model:'StableLM',color:'var(--red)',text:'Bridget Moynahan is an American filmmaker and writer. She is best known for her work on the soap opera General Hospital, which she co-created with husband Charles Kelly. Moynahan was raised in a middle-class family in Los Angeles, and …',
+     facts:[['Bridget Moynahan is American.',1],['Bridget Moynahan is a filmmaker.',0],['Bridget Moynahan is a writer.',0],['She is best known for her work on General Hospital.',0],['General Hospital is the soap opera.',0],['She co-created General Hospital.',0],['She co-created General Hospital with her husband.',0],['Her husband is Charles Kelly.',0],['Moynahan was raised in a middle-class family.',0],['Moynahan was raised in Los Angeles.',0]],
+     score:'10.0%',ok:1,total:10}
+  ];
+  function chip(t,ok){
+    return `<span style="display:inline-flex;align-items:center;gap:5px;margin:3px 4px 3px 0;padding:4px 9px;border-radius:8px;font-family:var(--mono);font-size:11px;background:${ok?'var(--green-dim)':'var(--red-dim)'};color:${ok?'var(--green)':'var(--red)'};border:1px solid ${ok?'rgba(34,197,94,0.3)':'rgba(239,68,68,0.3)'};">${ok?'✓':'✗'} ${t}</span>`;
+  }
+  function bioCard(b,atomic){
+    return `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;flex-wrap:wrap;">
+        <span style="font-family:var(--mono);font-size:11px;font-weight:600;color:${b.color};">${b.model.toUpperCase()}</span>
+        ${atomic?`<span style="font-family:var(--mono);font-size:12px;font-weight:600;color:${b.ok/b.total>0.5?'var(--amber)':'var(--red)'};">FActScore ${b.score} · ${b.ok}/${b.total} facts</span>`:''}
+      </div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:${atomic?'10px':'0'};">${b.text}</div>
+      ${atomic?`<div>${b.facts.map(f=>chip(f[0],f[1])).join('')}</div>`:''}
+    </div>`;
+  }
+  function setMode(mode){
+    const atomic=mode==='atomic';
+    coarseBtn.setAttribute('class',atomic?'btn-outline':'btn-primary');
+    atomicBtn.setAttribute('class',atomic?'btn-primary':'btn-outline');
+    if(atomic){
+      disp.innerHTML=BIOS.map(b=>bioCard(b,true)).join('')+
+        `<div style="background:var(--amber-dim);border:1px solid rgba(245,158,11,0.35);border-radius:var(--radius);padding:12px 14px;font-size:12.5px;color:var(--text2);line-height:1.7;"><strong style="color:var(--amber);">🔬 Atomic view —</strong> ChatGPT supports 6/9 atomic facts (66.7%); StableLM supports 1/10 (10.0%). You can see exactly which claims fail — "producer", "Grey's Anatomy" vs. "filmmaker", "General Hospital", "husband Charles Kelly" — and how far apart the two models really are.</div>`;
+    }else{
+      disp.innerHTML=BIOS.map(b=>bioCard(b,false)).join('')+
+        `<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;font-size:12.5px;color:var(--text2);line-height:1.7;"><strong style="color:var(--text);">⚖️ Coarse verdict —</strong> "ChatGPT's bio is better ✨". One judgment: no magnitude, no error locations, no way to audit it — and a human comparison like this costs ~$4 per generation.</div>`;
+    }
+  }
+  coarseBtn.addEventListener('click',()=>setMode('coarse'));
+  atomicBtn.addEventListener('click',()=>setMode('atomic'));
+  setMode('coarse');
+})();
+
+// === ATOM VERIFIER (DEEP DIVE) ===
+(function(){
+  const atoms=document.getElementById('fsAtoms'),run=document.getElementById('fsRun'),score=document.getElementById('fsScore'),ladder=document.getElementById('fsLadder');
+  if(!atoms||!run||!score||!ladder)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const A=[
+    {t:'Curie was born in Poland',ok:true,ev:'"born in Warsaw, Poland"'},
+    {t:'She was a physicist',ok:true,ev:'"physicist and chemist"'},
+    {t:'Pioneering radioactivity research',ok:true,ev:'"pioneer of radioactivity research"'},
+    {t:'She won two Nobel Prizes',ok:true,ev:'"Nobel Prize in Physics (1903) and Chemistry (1911)"'},
+    {t:'She discovered polonium',ok:true,ev:'"discovered polonium with Pierre Curie"'},
+    {t:'She discovered radium',ok:true,ev:'"discovered radium, Ra, 1898"'},
+    {t:'Nobel Prize in Economics, 1911',ok:false,ev:'1911 prize was in Chemistry; no Economics prize existed until 1969'},
+    {t:'The Economics claim is the fabrication',ok:false,ev:'unsupported — contradicted by the retrieved evidence'}
+  ];
+  function chip(a,i){
+    const anim=RM?'':'opacity:0;animation:fadeUp .4s ease '+(i*80)+'ms forwards;';
+    return '<div style="background:var(--bg2);border:1px solid '+(a.ok?'rgba(34,197,94,.4)':'rgba(239,68,68,.4)')+';border-radius:var(--radius);padding:8px 10px;'+anim+'">'
+      +'<div style="font-size:11.5px;color:var(--text1);line-height:1.5;"><span style="color:'+(a.ok?'var(--green)':'var(--red)')+';font-weight:700;">'+(a.ok?'✓':'✗')+'</span> '+a.t+'</div>'
+      +'<div style="font-size:10px;color:var(--text3);line-height:1.4;margin-top:3px;font-family:var(--mono);">'+a.ev+'</div></div>';
+  }
+  function bars(){
+    const rows=[
+      {label:'InstructGPT',pct:42.5,color:'var(--red)'},
+      {label:'ChatGPT',pct:58.3,color:'var(--amber)'},
+      {label:'PerplexityAI (search)',pct:71.5,color:'var(--blue)'},
+      {label:'GPT-4',pct:72,color:'var(--blue)'},
+      {label:'Human bios',pct:87,color:'var(--green)'}
+    ];
+    ladder.innerHTML='<div style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;color:var(--amber);margin-bottom:10px;">THE SAME YARDSTICK ACROSS SYSTEMS (HUMAN EVAL, 183 BIOS)</div>'
+      +rows.map((r,i)=>'<div style="display:flex;align-items:center;gap:10px;margin-bottom:7px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:150px;flex-shrink:0;">'+r.label+'</div><div style="flex:1;height:12px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div style="height:100%;width:'+r.pct+'%;background:'+r.color+';border-radius:6px;transform-origin:left;'+(RM?'':'animation:scaleIn .7s ease '+(i*120)+'ms backwards;')+'"></div></div><div style="font-family:var(--mono);font-size:11.5px;font-weight:600;color:'+r.color+';width:44px;text-align:right;flex-shrink:0;">'+r.pct+'%</div></div>').join('');
+  }
+  let ran=false;
+  run.addEventListener('click',()=>{
+    if(ran&&!RM){atoms.innerHTML='';}
+    ran=true;
+    if(RM){atoms.innerHTML=A.map((a,i)=>chip(a,i)).join('');bars();score.innerHTML='FActScore = 6/8 = <span style="color:var(--amber);font-weight:700;">75.0%</span>';return;}
+    atoms.innerHTML='';score.textContent='decomposing…';
+    A.forEach((a,i)=>setTimeout(()=>{atoms.insertAdjacentHTML('beforeend',chip(a,i));},i*120));
+    setTimeout(()=>{score.innerHTML='FActScore = 6/8 = <span style="color:var(--amber);font-weight:700;">75.0%</span>';bars();},A.length*120+100);
+  });
+  if(RM||!('IntersectionObserver' in window)){score.textContent='FActScore = supported atoms / total atoms';}
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'What exactly does FActScore measure?',opts:['A binary "good or bad" judgment of a whole generation','The overlap between the generation and Wikipedia text','The percentage of atomic facts in a generation supported by a knowledge source','How quickly the model generates the biography'],correct:2,explain:'FActScore decomposes a long-form generation into atomic facts and computes the fraction of them supported by a chosen knowledge source (English Wikipedia in the paper) — a fine-grained, auditable factual precision.'},
+  {q:'In the paper, an "atomic fact" is best described as…',opts:['A short sentence conveying one piece of information','A full paragraph-level claim about the person','Any named entity that appears in the text','The overall topic of the generation'],correct:0,explain:'Atomic facts are short, single-claim sentences — e.g., "Mary was the daughter of Henry VIII" — smaller than a sentence and individually checkable, in the tradition of summarization content units.'},
+  {q:'In the human evaluation (183 entities), which system achieved the highest FActScore?',opts:['InstructGPT (text-davinci-003), at 42.5%','ChatGPT, at 58.3%','GPT-4, at ~90%','Search-augmented PerplexityAI, at 71.5%'],correct:3,explain:'PerplexityAI topped the human eval at 71.5% — yet even with a commercial search engine, ~28% of its atomic facts were not supported. ChatGPT scored 58.3% and InstructGPT 42.5%; GPT-4 was evaluated only in the later automated study (~72%, estimated).'},
+  {q:'What did the paper find about rarer (less frequent) entities?',opts:['FActScore increases — models become more careful','FActScore drops monotonically as entity rarity increases','There is no consistent effect of entity frequency','Only human-written bios are affected by rarity'],correct:1,explain:'Figure 2: factual precision falls consistently as entities get rarer, for every model — and even retrieval-augmented PerplexityAI drops by about half in relative terms at the atomic level. Rare entities leave thinner traces in pretraining data.'},
+  {q:'The automated FActScore estimator works by…',opts:['Paying human annotators $4 per generation','Training a dedicated factuality classifier from scratch','Retrieving Wikipedia passages and prompting a strong LM — matching humans within a <2% error rate','Requiring access to the weights of the evaluated model'],correct:2,explain:'The estimator retrieves passages (GTR) and asks an evaluator LM (ChatGPT or Inst-LLaMA 7B) "True or False?" per atomic fact. It approximates human FActScores within <2% error — replacing what would have been $26K of annotation for 6,500 generations.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
