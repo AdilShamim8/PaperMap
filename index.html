@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PaperMap — Interactive Research Paper Library</title>
-<meta name="description" content="PaperMap turns landmark AI research papers into interactive learning products. Explore visual explainers for Transformers, GPT-3, InstructGPT & RLHF.">
-<meta name="keywords" content="PaperMap, interactive papers, Transformer, GPT-3, InstructGPT, RLHF, deep learning, machine learning, AI education">
+<meta name="description" content="PaperMap turns landmark AI research papers into interactive learning products. Explore 20 visual explainers across 7 tracks: Transformers, BERT, GPT-3, scaling laws, RAG, LoRA, alignment, reasoning, agents, and more.">
+<meta name="keywords" content="PaperMap, interactive papers, Transformer, BERT, GPT-2, GPT-3, T5, scaling laws, Chinchilla, RAG, LoRA, ColBERT, DPO, RLHF, chain-of-thought, self-consistency, induction heads, ReAct, Toolformer, LLaMA, DeepSeek-R1, deep learning, AI education">
 <meta name="author" content="Adil Shamim">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#f59e0b">
@@ -508,9 +508,38 @@ footer {
 @keyframes pulse { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
 @keyframes driftGlow { 0%,100% { transform: translate(-50%,-50%) scale(1); } 50% { transform: translate(-49%,-52%) scale(1.05); } }
 
+/* CURRICULUM TRACKS */
+.track-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 2rem; }
+.track-chip {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--text2); text-decoration: none;
+  padding: 6px 12px; border-radius: 20px;
+  border: 1px solid var(--border2); background: #fff;
+  transition: all .2s; display: inline-flex; align-items: center; gap: 6px;
+}
+.track-chip:hover { border-color: rgba(245,158,11,0.4); color: var(--amber); background: var(--amber-dim); transform: translateY(-1px); }
+.track-chip .num { color: var(--amber); font-weight: 600; }
+.track-section { margin-top: 3.25rem; }
+.track-head { display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.track-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--amber); background: var(--amber-dim);
+  border: 1px solid rgba(245,158,11,0.2); padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+}
+.track-title { font-family: var(--serif); font-size: 1.55rem; line-height: 1.25; }
+.track-desc { color: var(--text2); font-size: 13.5px; max-width: 660px; margin: 0.35rem 0 1.25rem; }
+.study-pair {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 11px; color: var(--amber);
+  background: var(--amber-dim); border: 1px dashed rgba(245,158,11,0.35);
+  padding: 5px 12px; border-radius: 20px; margin-top: 1.25rem;
+}
+
 /* RESPONSIVENESS */
 @media (max-width: 768px) {
   nav { height: 50px; padding: 0 12px; }
+  .track-title { font-size: 1.3rem; }
+  .track-section { margin-top: 2.5rem; }
   .mobile-menu { top: 50px; }
   .mobile-menu.open { grid-template-columns: 1fr; }
   .page-section { padding: 3rem 1rem; }
@@ -558,7 +587,7 @@ footer {
     <a class="nav-link" href="#roadmap">Roadmap</a>
   </div>
   <div class="nav-actions">
-    <div class="nav-badge">5 Papers Live</div>
+    <div class="nav-badge">20 Papers Live</div>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
   </div>
 </nav>
@@ -567,11 +596,13 @@ footer {
   <a href="#library">Library</a>
   <a href="#about">About</a>
   <a href="#roadmap">Roadmap</a>
-  <a href="./paper/Attention_Is_All_You_Need.html">Transformer</a>
-  <a href="./paper/Language_Models_are_Few_Shot_Learners.html">GPT-3</a>
-  <a href="./paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT</a>
-  <a href="./paper/Retrieval-Augmented%20Generation%20for%20Knowledge-Intensive%20NLP%20Tasks.html">RAG</a>
-  <a href="./paper/LoRA%20Low-Rank%20Adaptation%20of%20Large%20Language%20Models.html">LoRA</a>
+  <a href="#track-1">Track I · Transformers</a>
+  <a href="#track-2">Track II · Scaling</a>
+  <a href="#track-3">Track III · Retrieval</a>
+  <a href="#track-4">Track IV · Alignment</a>
+  <a href="#track-5">Track V · Reasoning</a>
+  <a href="#track-6">Track VI · Agents</a>
+  <a href="#track-7">Track VII · Open Models</a>
 </div>
 
 <!-- HERO -->
@@ -584,7 +615,8 @@ footer {
   </h1>
   <p class="hero-subtitle">
     PaperMap turns landmark AI research papers into visual, interactive learning experiences.
-    Explore the Transformer, GPT-3, InstructGPT, RAG, and LoRA — rebuilt as production-grade explainers.
+    Follow the full curriculum — 20 explainers across 7 tracks, from the original Transformer
+    all the way to DeepSeek-R1 — rebuilt as production-grade interactive guides.
   </p>
   <div class="hero-actions">
     <a class="btn-primary" href="#library">Explore Paper Library →</a>
@@ -592,16 +624,16 @@ footer {
   </div>
   <div class="hero-stats">
     <div class="stat">
-      <div class="stat-num">5</div>
+      <div class="stat-num">20</div>
       <div class="stat-label">Papers Live</div>
     </div>
     <div class="stat">
-      <div class="stat-num">10+</div>
-      <div class="stat-label">Interactive Demos</div>
+      <div class="stat-num">7</div>
+      <div class="stat-label">Learning Tracks</div>
     </div>
     <div class="stat">
-      <div class="stat-num">0</div>
-      <div class="stat-label">Build Steps</div>
+      <div class="stat-num">40+</div>
+      <div class="stat-label">Interactive Demos</div>
     </div>
     <div class="stat">
       <div class="stat-num">100%</div>
@@ -615,12 +647,58 @@ footer {
 <!-- PAPER LIBRARY -->
 <div class="page-section" id="library">
   <div class="section-tag">Paper Library</div>
-  <h2 class="section-title">Published <em>Explainers</em></h2>
-  <p class="section-desc">Each paper is a self-contained interactive guide with visual demos, architecture breakdowns, quizzes, and research-accurate detail from the original publications.</p>
+  <h2 class="section-title">The <em>Curriculum</em></h2>
+  <p class="section-desc">Twenty landmark papers organized into seven tracks — a guided path from the original Transformer to modern reasoning models. Each paper is a self-contained interactive guide with visual demos, architecture breakdowns, quizzes, and research-accurate detail from the original publications.</p>
 
+  <div class="track-chips">
+    <a class="track-chip" href="#track-1"><span class="num">I</span> Transformers → LLMs</a>
+    <a class="track-chip" href="#track-2"><span class="num">II</span> Scaling + Training</a>
+    <a class="track-chip" href="#track-3"><span class="num">III</span> Knowledge + Adaptation</a>
+    <a class="track-chip" href="#track-4"><span class="num">IV</span> Instruction + Alignment</a>
+    <a class="track-chip" href="#track-5"><span class="num">V</span> ICL + Reasoning</a>
+    <a class="track-chip" href="#track-6"><span class="num">VI</span> Agents + Tools</a>
+    <a class="track-chip" href="#track-7"><span class="num">VII</span> Open Models + Eval</a>
+  </div>
+
+  <div class="roadmap-grid" id="curriculum-map">
+    <div class="roadmap-item done">
+      <h4>✓ Track I — Transformers → LLMs</h4>
+      <p>5 papers · AIAYN, BERT, GPT-2, GPT-3, T5</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track II — Scaling + Training</h4>
+      <p>2 papers · Scaling Laws, Chinchilla</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track III — Knowledge + Adaptation</h4>
+      <p>3 papers · RAG, LoRA, ColBERTv2</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track IV — Instruction + Alignment</h4>
+      <p>2 papers · InstructGPT, DPO</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track V — ICL + Reasoning</h4>
+      <p>3 papers · CoT, Self-Consistency, Induction Heads</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track VI — Agents + Tools</h4>
+      <p>2 papers · ReAct, Toolformer</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track VII — Open Models + Evaluation</h4>
+      <p>3 papers · LLaMA, LLM-as-a-Judge, DeepSeek-R1</p>
+    </div>
+  </div>
+
+<div class="track-section" id="track-1">
+  <div class="track-head">
+    <span class="track-label">Track I</span>
+    <h3 class="track-title">Transformer → Modern Language Models</h3>
+  </div>
+  <p class="track-desc">The architecture and the models that established the modern LLM: from the 2017 Transformer encoder-decoder through BERT's bidirectional encoders, GPT-2's zero-shot transfer, GPT-3's few-shot scaling, and T5's unified text-to-text framing. <strong>5 papers.</strong></p>
   <div class="paper-grid">
 
-    <!-- Paper 1: Attention Is All You Need -->
     <article class="paper-card amber">
       <span class="paper-tag live">Live</span>
       <div class="paper-year">Vaswani et al. · 2017</div>
@@ -635,7 +713,34 @@ footer {
       <a class="paper-link" href="./paper/Attention_Is_All_You_Need.html">Open Explainer →</a>
     </article>
 
-    <!-- Paper 2: GPT-3 -->
+    <article class="paper-card teal">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Devlin et al. · 2018</div>
+      <h3>BERT: Pre-training of Deep Bidirectional Transformers</h3>
+      <p>Bidirectional pre-training with masked language modeling. Interactive demos for MLM, the 80/10/10 rule, architecture specs, and how one model conquered 11 NLP tasks with a single output layer.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">BERT</span>
+        <span class="paper-meta-tag">MLM</span>
+        <span class="paper-meta-tag">Bidirectional</span>
+        <span class="paper-meta-tag">Pre-training</span>
+      </div>
+      <a class="paper-link" href="./paper/BERT.html">Open Explainer →</a>
+    </article>
+
+    <article class="paper-card purple">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Radford et al. · 2019</div>
+      <h3>Language Models are Unsupervised Multitask Learners</h3>
+      <p>GPT-2 and the zero-shot bet: a 1.5B decoder-only model trained on WebText learns tasks without supervision. Zero-shot prompt demos, byte-level BPE, and the staged release that started the AI safety debate.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">GPT-2</span>
+        <span class="paper-meta-tag">Zero-Shot</span>
+        <span class="paper-meta-tag">WebText</span>
+        <span class="paper-meta-tag">1.5B</span>
+      </div>
+      <a class="paper-link" href="./paper/GPT_2.html">Open Explainer →</a>
+    </article>
+
     <article class="paper-card blue">
       <span class="paper-tag live">Live</span>
       <div class="paper-year">Brown et al. · 2020</div>
@@ -650,26 +755,75 @@ footer {
       <a class="paper-link" href="./paper/Language_Models_are_Few_Shot_Learners.html">Open Explainer →</a>
     </article>
 
-    <!-- Paper 3: InstructGPT -->
-    <article class="paper-card teal">
+    <article class="paper-card green">
       <span class="paper-tag live">Live</span>
-      <div class="paper-year">Ouyang et al. · 2022</div>
-      <h3>Training Language Models to Follow Instructions with Human Feedback</h3>
-      <p>The RLHF paper that paved the way for ChatGPT. Interactive 3-step pipeline (SFT → Reward Model → PPO), human evaluation results, bias analysis, and qualitative examples.</p>
+      <div class="paper-year">Raffel et al. · 2019</div>
+      <h3>Exploring the Limits of Transfer Learning (T5)</h3>
+      <p>Every NLP task as plain text in, plain text out. Interactive task-prefix demos, the C4 corpus pipeline, systematic architecture ablations, and T5-11B's SuperGLUE 88.9 benchmark record.</p>
       <div class="paper-meta">
-        <span class="paper-meta-tag">InstructGPT</span>
-        <span class="paper-meta-tag">RLHF</span>
-        <span class="paper-meta-tag">PPO</span>
-        <span class="paper-meta-tag">Alignment</span>
+        <span class="paper-meta-tag">T5</span>
+        <span class="paper-meta-tag">Text-to-Text</span>
+        <span class="paper-meta-tag">C4</span>
+        <span class="paper-meta-tag">Transfer</span>
       </div>
-      <a class="paper-link" href="./paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">Open Explainer →</a>
+      <a class="paper-link" href="./paper/T5.html">Open Explainer →</a>
     </article>
 
-    <!-- Paper 4: RAG -->
+  </div>
+</div>
+
+<div class="track-section" id="track-2">
+  <div class="track-head">
+    <span class="track-label">Track II</span>
+    <h3 class="track-title">Scaling + Training</h3>
+  </div>
+  <p class="track-desc">How big should a model be, and how much data does it need? Two papers that turned scale into a quantitative science — from Kaplan's power laws to DeepMind's compute-optimal correction. <strong>2 papers.</strong></p>
+    <div class="study-pair">⭐ study together: Scaling Laws → Chinchilla</div>
+  <div class="paper-grid">
+
+    <article class="paper-card amber">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Kaplan et al. · 2020</div>
+      <h3>Scaling Laws for Neural Language Models</h3>
+      <p>Performance depends strongly on scale and weakly on shape. Interactive power-law loss explorer, compute-budget allocator, and the training-curve laws that turned model scale into a science.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Scaling Laws</span>
+        <span class="paper-meta-tag">Power Laws</span>
+        <span class="paper-meta-tag">Compute</span>
+        <span class="paper-meta-tag">Prediction</span>
+      </div>
+      <a class="paper-link" href="./paper/Scaling_Laws.html">Open Explainer →</a>
+    </article>
+
+    <article class="paper-card blue">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Hoffmann et al. · 2022</div>
+      <h3>Training Compute-Optimal LLMs (Chinchilla)</h3>
+      <p>The scaling correction: 70B parameters trained on 1.4T tokens beats Gopher at the same compute. Interactive budget allocator, tokens-per-param checker, and the ~20 tokens/param rule of thumb.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Chinchilla</span>
+        <span class="paper-meta-tag">70B</span>
+        <span class="paper-meta-tag">1.4T Tokens</span>
+        <span class="paper-meta-tag">Compute-Optimal</span>
+      </div>
+      <a class="paper-link" href="./paper/Chinchilla.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+
+<div class="track-section" id="track-3">
+  <div class="track-head">
+    <span class="track-label">Track III</span>
+    <h3 class="track-title">Knowledge + Adaptation</h3>
+  </div>
+  <p class="track-desc">Bolting knowledge and cheap specialization onto LLMs: retrieval-augmented generation over Wikipedia, low-rank fine-tuning updates, and the compressed late-interaction internals of modern retrieval. <strong>3 papers.</strong></p>
+  <div class="paper-grid">
+
     <article class="paper-card purple">
       <span class="paper-tag live">Live</span>
       <div class="paper-year">Lewis et al. · 2020</div>
-      <h3>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</h3>
+      <h3>Retrieval-Augmented Generation for Knowledge-Intensive NLP</h3>
       <p>An interactive deep dive into the original RAG paper: dense retrieval with DPR, BART generation, non-parametric memory with Wikipedia, and benchmark gains on knowledge-intensive QA.</p>
       <div class="paper-meta">
         <span class="paper-meta-tag">RAG</span>
@@ -677,10 +831,9 @@ footer {
         <span class="paper-meta-tag">BART</span>
         <span class="paper-meta-tag">Knowledge QA</span>
       </div>
-      <a class="paper-link" href="./paper/Retrieval-Augmented%20Generation%20for%20Knowledge-Intensive%20NLP%20Tasks.html">Open Explainer →</a>
+      <a class="paper-link" href="./paper/RAG_Retrieval_Augmented_Generation.html">Open Explainer →</a>
     </article>
 
-    <!-- Paper 5: LoRA -->
     <article class="paper-card green">
       <span class="paper-tag live">Live</span>
       <div class="paper-year">Hu et al. · 2021</div>
@@ -692,10 +845,209 @@ footer {
         <span class="paper-meta-tag">Low-Rank</span>
         <span class="paper-meta-tag">LLM Fine-Tuning</span>
       </div>
-      <a class="paper-link" href="./paper/LoRA%20Low-Rank%20Adaptation%20of%20Large%20Language%20Models.html">Open Explainer →</a>
+      <a class="paper-link" href="./paper/LoRA_Low_Rank_Adaptation.html">Open Explainer →</a>
+    </article>
+
+    <article class="paper-card teal">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Santhanam et al. · 2022</div>
+      <h3>ColBERTv2: Effective and Efficient Retrieval</h3>
+      <p>Late-interaction retrieval with 2-bit residual compression. A MaxSim playground, paradigm trade-off explorer, and 6-16× smaller indexes at near cross-encoder quality on MSMARCO and BEIR.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">ColBERTv2</span>
+        <span class="paper-meta-tag">Retrieval</span>
+        <span class="paper-meta-tag">MaxSim</span>
+        <span class="paper-meta-tag">2-bit</span>
+      </div>
+      <a class="paper-link" href="./paper/ColBERTv2.html">Open Explainer →</a>
     </article>
 
   </div>
+</div>
+
+<div class="track-section" id="track-4">
+  <div class="track-head">
+    <span class="track-label">Track IV</span>
+    <h3 class="track-title">Instruction + Alignment</h3>
+  </div>
+  <p class="track-desc">Making models helpful and steerable: from RLHF's three-stage pipeline that became ChatGPT, to DPO's closed-form preference loss that replaced the RL loop for the open-model world. <strong>2 papers.</strong></p>
+  <div class="paper-grid">
+
+    <article class="paper-card teal">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Ouyang et al. · 2022</div>
+      <h3>Training Language Models to Follow Instructions</h3>
+      <p>The RLHF paper that paved the way for ChatGPT. Interactive 3-step pipeline (SFT → Reward Model → PPO), human evaluation results, bias analysis, and qualitative examples.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">InstructGPT</span>
+        <span class="paper-meta-tag">RLHF</span>
+        <span class="paper-meta-tag">PPO</span>
+        <span class="paper-meta-tag">Alignment</span>
+      </div>
+      <a class="paper-link" href="./paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">Open Explainer →</a>
+    </article>
+
+    <article class="paper-card amber">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Rafailov et al. · 2023</div>
+      <h3>Direct Preference Optimization (DPO)</h3>
+      <p>RLHF without RL: a closed-form preference loss derived from Bradley-Terry theory. Interactive derivation, pairwise training demo, and why the open-model world adopted it over PPO.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">DPO</span>
+        <span class="paper-meta-tag">Alignment</span>
+        <span class="paper-meta-tag">Preference</span>
+        <span class="paper-meta-tag">No-RL</span>
+      </div>
+      <a class="paper-link" href="./paper/DPO.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+
+<div class="track-section" id="track-5">
+  <div class="track-head">
+    <span class="track-label">Track V</span>
+    <h3 class="track-title">In-Context Learning + Reasoning</h3>
+  </div>
+  <p class="track-desc">How prompts became programs: chain-of-thought reasoning that emerges with scale, sampling consensus over many paths, and the attention circuit that makes in-context learning physically possible. <strong>3 papers.</strong></p>
+  <div class="paper-grid">
+
+    <article class="paper-card blue">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Wei et al. · 2022</div>
+      <h3>Chain-of-Thought Prompting</h3>
+      <p>Reasoning steps in few-shot prompts unlock multi-step problems — but only at ~100B scale. A standard-vs-CoT race, emergence charts, and the ablations that proved the words matter.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">CoT</span>
+        <span class="paper-meta-tag">Reasoning</span>
+        <span class="paper-meta-tag">Prompting</span>
+        <span class="paper-meta-tag">Emergence</span>
+      </div>
+      <a class="paper-link" href="./paper/Chain_Of_Thought_Prompting.html">Open Explainer →</a>
+    </article>
+
+    <article class="paper-card purple">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Wang et al. · 2022</div>
+      <h3>Self-Consistency Improves CoT Reasoning</h3>
+      <p>Sample 40 reasoning paths, take the vote. Interactive sampling-and-voting demos, convergence histograms, and +17.9 points on GSM8K with zero additional training.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Self-Consistency</span>
+        <span class="paper-meta-tag">Voting</span>
+        <span class="paper-meta-tag">Decoding</span>
+        <span class="paper-meta-tag">GSM8K</span>
+      </div>
+      <a class="paper-link" href="./paper/Self_Consistency.html">Open Explainer →</a>
+    </article>
+
+    <article class="paper-card green">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Olsson et al. · 2022</div>
+      <h3>In-context Learning and Induction Heads</h3>
+      <p>The two-head attention circuit behind in-context learning. Sequence-completion demos, K-composition steppers, and the training phase change that switched ICL on — mechanistic interpretability's landmark.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Induction Heads</span>
+        <span class="paper-meta-tag">Circuits</span>
+        <span class="paper-meta-tag">ICL</span>
+        <span class="paper-meta-tag">Interpretability</span>
+      </div>
+      <a class="paper-link" href="./paper/Induction_Heads.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+
+<div class="track-section" id="track-6">
+  <div class="track-head">
+    <span class="track-label">Track VI</span>
+    <h3 class="track-title">Agents + Tools</h3>
+  </div>
+  <p class="track-desc">Models that act, not just answer: interleaving reasoning with environment actions, then teaching models to call tools on their own — the recipe behind every modern AI agent. <strong>2 papers.</strong></p>
+  <div class="paper-grid">
+
+    <article class="paper-card amber">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Yao et al. · 2022</div>
+      <h3>ReAct: Synergizing Reasoning and Acting</h3>
+      <p>Thought, action, observation — one loop. A live agent-trace player, the hallucination showdown vs CoT, and the template behind every modern AI agent.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">ReAct</span>
+        <span class="paper-meta-tag">Agents</span>
+        <span class="paper-meta-tag">Tools</span>
+        <span class="paper-meta-tag">Reasoning</span>
+      </div>
+      <a class="paper-link" href="./paper/ReAct.html">Open Explainer →</a>
+    </article>
+
+    <article class="paper-card teal">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Schick et al. · 2023</div>
+      <h3>Toolformer: Models Teach Themselves Tools</h3>
+      <p>A 6.7B model that inserts its own API calls, filters them by perplexity, and reads the results. Interactive perplexity-filter demos, five tools, and beating GPT-3 175B on LAMA.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Toolformer</span>
+        <span class="paper-meta-tag">Tools</span>
+        <span class="paper-meta-tag">APIs</span>
+        <span class="paper-meta-tag">Self-Taught</span>
+      </div>
+      <a class="paper-link" href="./paper/Toolformer.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+
+<div class="track-section" id="track-7">
+  <div class="track-head">
+    <span class="track-label">Track VII</span>
+    <h3 class="track-title">Open Models + Evaluation</h3>
+  </div>
+  <p class="track-desc">The open-weights era and the science of measuring it: LLaMA's efficient open foundation models, LLM judges and crowdsourced arenas, and DeepSeek-R1's RL-trained open reasoning. <strong>3 papers.</strong></p>
+  <div class="paper-grid">
+
+    <article class="paper-card green">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Touvron et al. · 2023</div>
+      <h3>LLaMA: Open and Efficient Foundation Models</h3>
+      <p>Open weights, 1.4T public tokens, 7B–65B models. Interactive data-mix explorer, tokens-per-param slider, and the paper that detonated the open-model ecosystem.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">LLaMA</span>
+        <span class="paper-meta-tag">Open Weights</span>
+        <span class="paper-meta-tag">1.4T</span>
+        <span class="paper-meta-tag">Efficiency</span>
+      </div>
+      <a class="paper-link" href="./paper/LLaMA.html">Open Explainer →</a>
+    </article>
+
+    <article class="paper-card blue">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Zheng et al. · 2023</div>
+      <h3>Judging LLM-as-a-Judge (MT-Bench & Arena)</h3>
+      <p>Can models grade other models? MT-Bench category explorer, Chatbot Arena voting, judge-bias simulators for position and verbosity, and 85% agreement with human raters.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Evaluation</span>
+        <span class="paper-meta-tag">MT-Bench</span>
+        <span class="paper-meta-tag">Arena</span>
+        <span class="paper-meta-tag">Biases</span>
+      </div>
+      <a class="paper-link" href="./paper/LLM_as_a_Judge.html">Open Explainer →</a>
+    </article>
+
+    <article class="paper-card purple">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">DeepSeek-AI · 2025</div>
+      <h3>DeepSeek-R1: Reasoning via RL</h3>
+      <p>Reasoning capability from pure reinforcement learning. GRPO visualizer, the emergent "aha moment" trace player, the 4-stage training pipeline, and distilled open models matching o1.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">DeepSeek-R1</span>
+        <span class="paper-meta-tag">RL</span>
+        <span class="paper-meta-tag">GRPO</span>
+        <span class="paper-meta-tag">Reasoning</span>
+      </div>
+      <a class="paper-link" href="./paper/DeepSeek_R1.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
 </div>
 
 <div class="divider"></div>
@@ -746,32 +1098,40 @@ footer {
 <div class="page-section" id="roadmap">
   <div class="section-tag">Roadmap</div>
   <h2 class="section-title">Building the <em>Library</em></h2>
-  <p class="section-desc">PaperMap grows one paper at a time. Each explainer is handcrafted with the same production-quality standards.</p>
+  <p class="section-desc">The core curriculum — 20 papers across 7 tracks — is complete. PaperMap keeps growing one handcrafted explainer at a time.</p>
 
   <div class="roadmap-grid">
     <div class="roadmap-item done">
-      <h4>✓ Attention Is All You Need</h4>
-      <p>Transformer architecture, tokenization, embeddings, self-attention, multi-head attention, positional encoding, training.</p>
+      <h4>✓ Track I — Transformers → LLMs</h4>
+      <p>Attention Is All You Need, BERT, GPT-2, GPT-3, and T5 — the foundation of modern language models.</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ GPT-3: Few-Shot Learners</h4>
-      <p>In-context learning, scaling laws, 175B architecture, benchmark results, data contamination, societal impact.</p>
+      <h4>✓ Track II — Scaling + Training</h4>
+      <p>Scaling Laws and Chinchilla — the science of how big and how much data.</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ InstructGPT & RLHF</h4>
-      <p>3-step RLHF pipeline, reward modeling, PPO, human evaluations, alignment tax, bias analysis.</p>
+      <h4>✓ Track III — Knowledge + Adaptation</h4>
+      <p>RAG, LoRA, and ColBERTv2 — retrieval, efficient fine-tuning, and search internals.</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ RAG: Retrieval-Augmented Generation</h4>
-      <p>Dense retrieval with DPR, BART generation, non-parametric memory, and SOTA gains on knowledge-intensive QA.</p>
+      <h4>✓ Track IV — Instruction + Alignment</h4>
+      <p>InstructGPT (RLHF) and DPO — making language models helpful and steerable.</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ LoRA: Low-Rank Adaptation</h4>
-      <p>Low-rank updates for efficient LLM fine-tuning with massive parameter savings and zero extra inference latency.</p>
+      <h4>✓ Track V — ICL + Reasoning</h4>
+      <p>Chain-of-Thought, Self-Consistency, and Induction Heads — prompts become programs.</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track VI — Agents + Tools</h4>
+      <p>ReAct and Toolformer — models that act and use tools on their own.</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track VII — Open Models + Evaluation</h4>
+      <p>LLaMA, LLM-as-a-Judge, and DeepSeek-R1 — open weights and the science of measuring them.</p>
     </div>
     <div class="roadmap-item next">
-      <h4>→ Next: More Papers</h4>
-      <p>BERT, diffusion models, multimodal systems, and more landmark papers coming soon.</p>
+      <h4>→ Next: Extending the Map</h4>
+      <p>Diffusion models, multimodal systems, safety research, and more landmark papers — contributions welcome via PROMPT.md.</p>
     </div>
   </div>
 </div>
@@ -785,10 +1145,25 @@ footer {
   </div>
   <div class="footer-links">
     <a class="footer-link" href="./paper/Attention_Is_All_You_Need.html">Transformer</a>
+    <a class="footer-link" href="./paper/BERT.html">BERT</a>
+    <a class="footer-link" href="./paper/GPT_2.html">GPT-2</a>
     <a class="footer-link" href="./paper/Language_Models_are_Few_Shot_Learners.html">GPT-3</a>
+    <a class="footer-link" href="./paper/T5.html">T5</a>
+    <a class="footer-link" href="./paper/Scaling_Laws.html">Scaling Laws</a>
+    <a class="footer-link" href="./paper/Chinchilla.html">Chinchilla</a>
+    <a class="footer-link" href="./paper/RAG_Retrieval_Augmented_Generation.html">RAG</a>
+    <a class="footer-link" href="./paper/LoRA_Low_Rank_Adaptation.html">LoRA</a>
+    <a class="footer-link" href="./paper/ColBERTv2.html">ColBERTv2</a>
     <a class="footer-link" href="./paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT</a>
-    <a class="footer-link" href="./paper/Retrieval-Augmented%20Generation%20for%20Knowledge-Intensive%20NLP%20Tasks.html">RAG</a>
-    <a class="footer-link" href="./paper/LoRA%20Low-Rank%20Adaptation%20of%20Large%20Language%20Models.html">LoRA</a>
+    <a class="footer-link" href="./paper/DPO.html">DPO</a>
+    <a class="footer-link" href="./paper/Chain_Of_Thought_Prompting.html">CoT</a>
+    <a class="footer-link" href="./paper/Self_Consistency.html">Self-Consistency</a>
+    <a class="footer-link" href="./paper/Induction_Heads.html">Induction Heads</a>
+    <a class="footer-link" href="./paper/ReAct.html">ReAct</a>
+    <a class="footer-link" href="./paper/Toolformer.html">Toolformer</a>
+    <a class="footer-link" href="./paper/LLaMA.html">LLaMA</a>
+    <a class="footer-link" href="./paper/LLM_as_a_Judge.html">LLM-as-a-Judge</a>
+    <a class="footer-link" href="./paper/DeepSeek_R1.html">DeepSeek-R1</a>
     <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">GitHub</a>
   </div>
   <div class="footer-contact">
