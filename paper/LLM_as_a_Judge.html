@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM-as-a-Judge: MT-Bench and Chatbot Arena — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the LLM-as-a-Judge paper, with an interactive MT-Bench category explorer, a position-bias judge console, and a mini Chatbot Arena voting game.">
+<meta name="keywords" content="LLM-as-a-Judge, MT-Bench, Chatbot Arena, pairwise comparison, position bias, verbosity bias, self-enhancement bias, Bradley-Terry, Elo, LLM evaluation, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/LLM_as_a_Judge.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="LLM-as-a-Judge: MT-Bench and Chatbot Arena — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of judging LLMs with LLMs — MT-Bench, Chatbot Arena, and the biases in between.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/LLM_as_a_Judge.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LLM-as-a-Judge — Interactive Guide">
+<meta name="twitter:description" content="Can a model grade other models? Explore MT-Bench, judge biases, and Chatbot Arena with interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#mtbench">MT-Bench</a>
+    <a class="nav-link" href="#judging">Judging</a>
+    <a class="nav-link" href="#biases">Biases</a>
+    <a class="nav-link" href="#arena">Arena</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">NeurIPS 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#mtbench">MT-Bench</a>
+  <a href="#judging">Judging</a>
+  <a href="#biases">Biases</a>
+  <a href="#arena">Arena</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Can a <em>Judge</em> Be a Model?<br>LLM-as-a-Judge
+  </h1>
+  <p class="hero-subtitle">
+    When chat answers have no single ground truth, how do you score them? This paper built
+    MT-Bench and Chatbot Arena, showed that strong LLM judges match human preferences —
+    and then exposed their systematic biases.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2306.05685" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">80</div>
+      <div class="stat-label">MT-Bench Questions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">8</div>
+      <div class="stat-label">Task Categories</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">85%</div>
+      <div class="stat-label">GPT-4–Human Agreement</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Answer Keys to <em>Judges</em></h2>
+  <p class="section-desc">LLM-as-a-Judge landed after a decade of borrowed evaluation habits. Here is how chat evaluation finally found tools of its own.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2020–2022</div><div class="tl-title">The reference-metrics era</div><div class="tl-desc">BLEU, ROUGE, and exact match rule NLP evaluation. They compare a candidate against one gold reference — fine for translation and QA, meaningless for open-ended chat.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022</div><div class="tl-title">Human evaluation — gold, but slow</div><div class="tl-desc">Annotator panels rate answers and remain the gold standard. But they are slow, expensive, and hopeless at the scale of millions of model pairs.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2022–2023</div><div class="tl-title">Ad-hoc GPT-4 grading</div><div class="tl-desc">Practitioners quietly start asking GPT-4 to grade model outputs. Convenient and nearly free — but nobody has rigorously checked whether it agrees with humans.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Jun</div><div class="tl-title">🚀 MT-Bench + Chatbot Arena (Zheng et al.)</div><div class="tl-desc">The first systematic validation of LLM judges: a multi-turn benchmark, a live crowdsourced arena, agreement measured against humans — and a bias autopsy.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023 →</div><div class="tl-title">Arena-style leaderboards everywhere</div><div class="tl-desc">Chatbot Arena's anonymous-battle format becomes the reference leaderboard of the field; clones and variants multiply across labs.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2023+</div><div class="tl-title">Judging becomes infrastructure</div><div class="tl-desc">Judge-based evals are standard practice now — deployed with known biases, so "judge robustness" becomes a research area of its own.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Chat changed the shape of evaluation. Classification and QA ask <span class="highlight">"is this answer right?"</span> — a question with an answer key. Chat asks <span class="highlight">"which of these two answers would a person prefer?"</span> — a question with no key at all. The paper's move: pick a judge, <em>measure it against humans first</em>, neutralize its known biases, then let it scale.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">TWO DIFFERENT QUESTIONS</div>
+        <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:var(--text2);">
+          <span style="color:var(--text3);">QA&nbsp;&nbsp;&nbsp;:</span> question → <span style="color:var(--blue);">one gold answer</span> → exact match <span style="color:var(--green);">✓ / ✗</span><br>
+          <span style="color:var(--text3);">CHAT:</span> question → <span style="color:var(--amber);">answer A vs answer B</span> → which is better? ⚖
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">The second line has no answer key — it needs a judge.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Grading <em>Without an Answer Key</em></h2>
+  <p class="section-desc">Chat models produce open-ended answers — often several correct ones for the same question. Nearly every evaluation tool ever built assumes there is one right answer to compare against.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">📉</div>
+      <div class="problem-title">The Evaluation Dead End</div>
+      <ul class="problem-list">
+        <li>Open-ended answers have no reference text to compare against</li>
+        <li>BLEU / ROUGE overlap barely correlates with chat quality</li>
+        <li>Human panels are accurate but slow, expensive, unscalable</li>
+        <li>Millions of possible model pairs — nobody can annotate them all</li>
+        <li>Ad-hoc GPT-4 grading was cheap — but completely unvalidated</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">⚖️</div>
+      <div class="problem-title">The Judge Protocol</div>
+      <ul class="problem-list">
+        <li>Ask a strong LLM to compare two answers, directly</li>
+        <li>Validate the judge against human preference <em>first</em></li>
+        <li>Thousands of comparisons in minutes, not months</li>
+        <li>Neutralize known biases — swap orders, watch lengths</li>
+        <li>Aggregate crowd votes into stable Elo-style rankings</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — Math Test vs. Essay Contest</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">A math test ships with an answer key: grade by exact match, done. An essay contest has no key — every finalist is a "correct" essay — so you hire judges. But you do not hand out medals before checking the judges themselves: do they reward length? play favorites? grade differently in the afternoon? That is precisely what this paper does with LLM judges — <span class="highlight">validate the judge before trusting the leaderboard</span>.</p>
+    <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:var(--text2);background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+      MATH TEST&nbsp;&nbsp;:&nbsp; answer key exists → <span style="color:var(--green);">exact match ✓</span><br>
+      ESSAY CONTEST&nbsp;:&nbsp; no key → <span style="color:var(--amber);">pairwise preference ⚖</span> → <span style="color:var(--blue);">validate the judge</span> → then trust it
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MT-BENCH -->
+<section id="mtbench">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">MT-Bench — <em>80 Questions, 8 Arenas</em></h2>
+  <p class="section-desc">A compact, deliberately open-ended benchmark: 80 multi-turn questions across 8 categories, built to do one thing — separate strong chat models from weak ones.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">MT-Bench at a Glance</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:8px;">
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber);">80</div><div style="font-weight:600;font-size:13px;">Questions</div><div style="font-size:11.5px;color:var(--text2);">expert-written, open-ended</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--blue);">8</div><div style="font-weight:600;font-size:13px;">Categories</div><div style="font-size:11.5px;color:var(--text2);">writing → humanities</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--teal);">2</div><div style="font-weight:600;font-size:13px;">Turns Each</div><div style="font-size:11.5px;color:var(--text2);">question + follow-up</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.6rem;">🎯</div><div style="font-weight:600;font-size:13px;">Discriminative</div><div style="font-size:11.5px;color:var(--text2);">strong models visibly win</div></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">Design Rule 1 — Open-Ended</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Every question admits many good answers — by design. If a gold answer existed, you would use exact match and skip the judge entirely. Writing tasks, debates, explanations: quality is a matter of degree, not of correctness, and the benchmark must stay that way to resemble real chat.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Design Rule 2 — Discriminative + Multi-Turn</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Questions must separate models: weak answers fail visibly while strong ones shine. The follow-up turn does double duty — it probes whether the model kept track of the conversation across turns, not just whether it can answer a one-shot prompt.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — MT-Bench Category Explorer</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">All 8 categories, one click each. Every MT-Bench question is two turns — an opening task plus a follow-up that tests memory and consistency. (Samples below are written in the paper's style.)</p>
+    <div id="catTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+    <div id="catCard" style="font-family:var(--mono);font-size:13px;color:var(--text2);line-height:1.9;background:var(--bg3);padding:1.1rem 1.25rem;border-radius:var(--radius);"></div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- JUDGING METHODS -->
+<section id="judging">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Three Ways to <em>Ask a Judge</em></h2>
+  <p class="section-desc">The paper formalizes LLM judging into three protocols, then asks the only question that matters: does the judge agree with humans?</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Protocol A — Single-Answer Grading</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Show the judge one answer plus a rubric; ask for a 1–10 score with a justification. Cheap and simple — but absolute scores drift: the same answer can be a 6 today and an 8 tomorrow.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--amber);">
+      <div class="card-label">Protocol B — Pairwise Comparison <span class="pill pill-amber" style="margin-left:4px;">workhorse</span></div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Show two answers to the same question and ask which is better: A, B, or tie. Comparing is cognitively easier than absolute scoring — verdicts are more reliable and match how humans themselves prefer to evaluate.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Protocol C — Reference-Guided</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Include a reference answer as an anchor for the verdict. Helps when a good gold answer exists — which, for open-ended chat, is exactly what does not exist.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow:hidden;">
+    <div class="card-label">What the Judge Actually Sees (Protocol B)</div>
+    <div style="background:#0f172a;border-radius:var(--radius-lg);padding:1.1rem 1.25rem;font-family:var(--mono);font-size:12.5px;line-height:1.9;color:#cbd5e1;">
+      <div style="color:#94a3b8;">[SYSTEM]</div>
+      <div style="margin-bottom:6px;">"You are an impartial judge. Evaluate which assistant answer is better and justify your choice…"</div>
+      <div style="color:#94a3b8;">[QUESTION]</div>
+      <div style="margin-bottom:6px;">"…one of the 80 MT-Bench questions…"</div>
+      <div><span style="color:#22c55e;">[ASSISTANT A]</span> &lt;first answer&gt; &nbsp;·&nbsp; <span style="color:#f59e0b;">[ASSISTANT B]</span> &lt;second answer&gt;</div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.15);"><span style="color:#38bdf8;">[JUDGE OUTPUT]</span> { "verdict": "A", "reason": "…" }</div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">One prompt, two answers, one structured verdict — plus the reasoning the judge writes for itself. That "reason" field is exactly where the biases of the next chapter hide.</p>
+  </div>
+
+  <div class="results-grid" style="margin-bottom:1.5rem;">
+    <div class="result-card">
+      <div class="result-model">GPT-4 · PAIRWISE JUDGE</div>
+      <div class="result-score" style="color:var(--amber);">85%</div>
+      <div class="result-label">agreement with human raters</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:85%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">the headline number of the paper</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">HUMAN ↔ HUMAN</div>
+      <div class="result-score" style="color:var(--blue);">81%</div>
+      <div class="result-label">inter-human agreement</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:81%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">the bar any judge must clear</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">GPT-3.5 · PAIRWISE JUDGE</div>
+      <div class="result-score" style="color:var(--red);">≈66%</div>
+      <div class="result-label">agreement with humans (no reference)</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:66%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">≈66–81% depending on protocol — notably less reliable</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">So… Fire the Annotators?</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Not yet. 85% is the <em>average</em>, and it hides two catches: agreement is task-dependent (judges track humans closely on writing and roleplay, but slip exactly where correctness matters most — math and coding), and an average can hide <span class="highlight">systematic</span> errors. A judge can be right 85% of the time and still flip many verdicts whenever you swap answer order — errors that wash out in the agreement score but corrupt any leaderboard built on them. Averages do not catch biases; controlled experiments do. That is the next chapter.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BIASES -->
+<section id="biases">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">The Biases — <em>Judge, Know Thyself</em></h2>
+  <p class="section-desc">Validating the judge was half the paper. The other half was a controlled autopsy of the ways LLM judges systematically misjudge.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-bottom:1.5rem;">
+    <div class="card" style="border-top:3px solid var(--red);">
+      <div class="card-label">Bias 1 — Position Bias 🔁</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Present the same two answers in both orders — the verdict flips. LLM judges lean toward whichever answer occupies the favored slot (often the one listed second). Detect it by swapping: if the verdict changes, that was bias, not judgment.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--amber);">
+      <div class="card-label">Bias 2 — Verbosity Bias 📜</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Longer answers get rated as more helpful even when the extra text adds nothing — or buries an error. Judges read effort as quality: "it engages more thoroughly" is often just "it is longer."</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--purple);">
+      <div class="card-label">Bias 3 — Self-Enhancement 🪞</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Judges prefer answers from their own model family. Judging GPT-4 vs. GPT-3.5 battles, GPT-4's preference for GPT-4 answers is measurably stronger than an independent judge's — though the authors note genuine quality gaps are hard to fully separate out.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">The Fixes — Position-Balanced Judging</div>
+    <ul class="problem-list" style="margin-top:6px;">
+      <li><strong>Swap and aggregate:</strong> judge every pair in both orders; average the scores, or require a consistent winner before the battle counts</li>
+      <li><strong>Length-aware prompts:</strong> instruct the judge to reward concision, and to check correctness before style</li>
+      <li><strong>Suspect self-grading:</strong> when a judge grades its own model family, cross-check against humans</li>
+      <li><strong>Validate first:</strong> measure judge–human agreement on every new domain before trusting verdicts</li>
+    </ul>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Position-Bias Simulator</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">One question, two fixed answers: <strong>Response A</strong> (short and correct) and <strong>Response B</strong> (long and vague). Run the judge in each order, then the balanced way. Verdicts, scores, and "reasoning" are precomputed to illustrate the paper's findings — the position effect here is a <span class="code-inline">+2</span> score bonus for whichever answer is listed second.</p>
+    <div style="background:#0f172a;border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:1rem;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
+        <span style="font-family:var(--mono);font-size:11px;color:#94a3b8;margin-left:8px;">judge-console · same question · same answers · only the order changes</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:11px;color:#94a3b8;margin-bottom:4px;">USER QUESTION</div>
+      <div style="font-family:var(--mono);font-size:13px;color:#f1f5f9;line-height:1.7;margin-bottom:1rem;">"Why does water boil at a lower temperature at high altitude?"</div>
+      <div id="biasAnswers" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-bottom:1rem;"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+        <button id="biasAFirst" type="button" style="font-family:var(--mono);font-size:11.5px;padding:8px 14px;border-radius:8px;border:1px solid rgba(245,158,11,0.4);background:var(--amber-dim);color:var(--amber);cursor:pointer;font-weight:600;">⚖ RUN 1 · JUDGE, A FIRST</button>
+        <button id="biasBFirst" type="button" style="font-family:var(--mono);font-size:11.5px;padding:8px 14px;border-radius:8px;border:1px solid rgba(59,130,246,0.4);background:var(--blue-dim);color:var(--blue);cursor:pointer;font-weight:600;">⚖ RUN 2 · JUDGE, B FIRST</button>
+        <button id="biasBalanced" type="button" style="font-family:var(--mono);font-size:11.5px;padding:8px 14px;border-radius:8px;border:1px solid rgba(34,197,94,0.4);background:var(--green-dim);color:var(--green);cursor:pointer;font-weight:600;">🛡 BALANCED · SWAP + AVERAGE</button>
+      </div>
+      <div id="biasVerdict"></div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:12px;line-height:1.7;">Run 1 and Run 2 gave the same pair two different winners — that flip is the tell. The paper's stricter variant marks such battles "inconsistent" rather than counting a win; averaging the two runs is the gentler fix shown here.</p>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- ARENA -->
+<section id="arena">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Chatbot <em>Arena</em> — Judgment by Crowd</h2>
+  <p class="section-desc">MT-Bench is a fixed exam. Chatbot Arena is the wild: real users, real prompts, anonymous battles, and a leaderboard computed from millions of votes.</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">1 · 🥊 Anonymous battle</div><div class="notice-text">A real user types any prompt. Two randomly chosen models answer side by side — names hidden until after the vote.</div></div>
+    <div class="notice-card"><div class="notice-title">2 · 🗳️ The vote</div><div class="notice-text">The user picks A, B, or tie. No rubric, no scores — pure preference, exactly what reference metrics cannot measure.</div></div>
+    <div class="notice-card"><div class="notice-title">3 · 📊 The ranking</div><div class="notice-text">Millions of battles feed a Bradley-Terry / Elo-style fit: each model earns a strength score from who-beats-whom, not raw win counts.</div></div>
+    <div class="notice-card"><div class="notice-title">4 · ✅ Sanity check</div><div class="notice-text">The crowd ranking correlates with expert preference — aggregated, the crowd judges like the experts, but never sleeps and never runs out of ballots.</div></div>
+  </div>
+
+  <div class="formula-card">
+    <div class="formula-main">P(model i beats model j) = 1 / (1 + e<sup>−(θᵢ − θⱼ)</sup>)</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">θᵢ</div><div class="fp-name">Model strength</div><div class="fp-desc">One latent score per model, fit from every battle it fought — not a simple win count.</div></div>
+      <div class="formula-piece"><div class="fp-sym">θᵢ − θⱼ</div><div class="fp-name">Strength gap</div><div class="fp-desc">The score difference converts directly into a win probability for any pairing of models.</div></div>
+      <div class="formula-piece"><div class="fp-sym">1/(1+e⁻ˣ)</div><div class="fp-name">Sigmoid</div><div class="fp-desc">Squashes any gap into a 0–100% probability — the Bradley-Terry / Elo-style workhorse.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Rank by θ</div><div class="fp-name">Leaderboard</div><div class="fp-desc">Votes → pairwise outcomes → strengths. More votes tighten the estimates; battle order does not matter.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow-x:auto;margin-bottom:1.5rem;">
+    <div class="card-label">Two Complementary Machines</div>
+    <table class="comp-table">
+      <thead><tr><th></th><th>MT-Bench</th><th>Chatbot Arena</th></tr></thead>
+      <tbody>
+        <tr><td>Prompts</td><td>80 fixed, expert-written</td><td>Live user prompts, unbounded</td></tr>
+        <tr><td>Turns</td><td>Always 2 (question + follow-up)</td><td>Whatever the user does next</td></tr>
+        <tr><td>Judge</td><td>LLM (validated vs. humans first)</td><td class="comp-best">The crowd — real humans</td></tr>
+        <tr><td>Scale</td><td>Minutes per model pair</td><td>Millions of battles, continuously</td></tr>
+        <tr><td>Output</td><td>Pairwise win-rates / scores</td><td>Elo-style leaderboard</td></tr>
+        <tr><td>Weak spot</td><td>Judge biases (Ch. 04)</td><td>Needs enormous vote volume</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Mini Arena: You Are the Annotator</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Three live battles between two anonymous models — Model ◆ and Model ◇. Read the prompt, compare the answers, cast your vote; the reveal comes at the end. (Answers prewritten and illustrative.)</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+        <span id="arenaRound" style="font-family:var(--mono);font-size:11px;color:var(--amber);font-weight:600;">BATTLE 1 / 3</span>
+        <button id="arenaReset" type="button" style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:#fff;color:var(--text2);cursor:pointer;">↺ restart</button>
+      </div>
+      <div id="arenaPrompt" style="font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.8;background:#fff;border:1px solid var(--border);border-radius:10px;padding:0.9rem 1rem;margin-bottom:1rem;"></div>
+      <div id="arenaAnswers" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-bottom:1rem;"></div>
+      <div id="arenaVoteRow" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+      <div id="arenaResult"></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Everything Is a Leaderboard Now</em></h2>
+  <p class="section-desc">Two artifacts — a benchmark and a leaderboard — quietly became the field's evaluation infrastructure, and "judge robustness" became a research topic.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🏆 The leaderboard</div><div class="notice-text">Chatbot Arena became THE leaderboard of the field — the page teams refresh on release day, and the crowd every new model must face.</div></div>
+    <div class="notice-card"><div class="notice-title">📝 MT-Bench as a standard</div><div class="notice-text">80 questions became a routine quick eval — "MT-Bench score" is now a standard line in papers and model cards.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Judge-based evals everywhere</div><div class="notice-text">AlpacaEval, Arena-Hard, and a whole lineage of LLM-judge benchmarks descend directly from this paper's protocols.</div></div>
+    <div class="notice-card"><div class="notice-title">🕵️ Judge robustness research</div><div class="notice-text">The three named biases made "can we trust the judge?" its own research area — bias taxonomies, judge meta-evals, judge ensembles.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Judges need judges</div><div class="notice-text">The meta-lesson of the paper: every judge now requires its own validation against humans before its verdicts count.</div></div>
+    <div class="notice-card"><div class="notice-title">🌍 Continuous evaluation</div><div class="notice-text">Pairwise preference + crowd votes proved you can measure quality continuously on real traffic — not once a quarter in a lab.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the LLM-as-a-Judge paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about judging LLMs with LLMs.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Open-ended chat breaks reference metrics — evaluation becomes a preference question, not a matching question.</div>
+    <div class="card-sm">✅ MT-Bench: 80 multi-turn questions, 8 categories, engineered to discriminate strong models from weak ones.</div>
+    <div class="card-sm">✅ Three protocols: single-answer grading, pairwise comparison (the reliable one), and reference-guided judging.</div>
+    <div class="card-sm">✅ GPT-4 judges agree with humans 85% — on par with human–human agreement (~81%). GPT-3.5 is notably less reliable.</div>
+    <div class="card-sm">✅ Know the big three biases — position, verbosity, self-enhancement — and swap answer orders to neutralize position bias.</div>
+    <div class="card-sm">✅ Chatbot Arena: anonymous crowd battles → millions of votes → a Bradley-Terry leaderboard that tracks expert preference.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2306.05685" target="_blank" rel="noopener noreferrer">"Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena"</a> (Zheng et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2306.05685" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./LLaMA.html">LLaMA Guide</a>
+    <a class="footer-link" href="./DeepSeek_R1.html">DeepSeek-R1 Guide</a>
+    <a class="footer-link" href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT Guide</a>
+  </div>
+<div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','mtbench','judging','biases','arena','impact','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === MT-BENCH CATEGORY EXPLORER ===
+(function(){
+  const tabsEl=document.getElementById('catTabs');const cardEl=document.getElementById('catCard');
+  if(!tabsEl||!cardEl)return;
+  const cats={
+    writing:{label:'✍️ Writing',t1:'Write a punchy 150-word blog intro arguing that cities should build more protected bike lanes.',t2:'Rewrite your intro in the voice of a skeptical taxi driver who just read it.',tests:'instruction-following under a length constraint — then style transfer without losing the argument'},
+    roleplay:{label:'🎭 Roleplay',t1:'You are Sherlock Holmes. My cat has gone missing. Interview me about the case, one question at a time.',t2:'I just told you the cat hates the neighbor\'s dog and loves the fish market. State your deduction, Holmes.',tests:'holding a persona across turns — and using facts the user reveals mid-conversation'},
+    reasoning:{label:'🧠 Reasoning',t1:'Mary\'s father has five daughters: Nana, Nene, Nini, Nono, and… what is the fifth daughter\'s name?',t2:'Now explain the trick that makes this riddle work, then invent a new riddle with the same structure.',tests:'resisting the pattern-matching bait (the answer is Mary) — then explaining and reusing the trap'},
+    math:{label:'🔢 Math',t1:'A jacket costs $120 after a 25% discount. What was its original price?',t2:'Would two successive 25% discounts be cheaper than one 50% discount? Show why.',tests:'multi-step arithmetic ($160) — then a conceptual follow-up (0.75 × 0.75 = 0.5625 < 0.50)'},
+    coding:{label:'💻 Coding',t1:'Write a Python function that returns the longest palindromic substring of a string.',t2:'What is your solution\'s time complexity? Can you do better on large inputs?',tests:'correct, runnable code — then honest self-analysis and algorithmic improvement'},
+    extraction:{label:'📋 Extraction',t1:'From this review, list every complaint as a bullet: "The headphones sound amazing, but the earpads itch after an hour, pairing fails on my laptop, and the case cracked in week two."',t2:'Now output the same complaints as a JSON array of {"part", "issue"} objects.',tests:'precise extraction from noisy text — then format-following on demand'},
+    stem:{label:'🔬 STEM',t1:'Why does the sky look blue at noon but red at sunset? Explain using Rayleigh scattering.',t2:'If scattering explains both, why are clouds white instead of blue or red?',tests:'science accuracy at conversational depth — with a follow-up that punishes memorized scripts'},
+    humanities:{label:'📚 Humanities',t1:'How would Plato and Aristotle each evaluate an endless-scroll social media feed?',t2:'Whose framework better explains influencer culture? Defend your pick.',tests:'synthesizing two philosophical lenses — then committed argumentation, not both-sidesism'}
+  };
+  let current='writing';
+  function render(){
+    tabsEl.innerHTML=Object.keys(cats).map(k=>`<button type="button" style="font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid ${k===current?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===current?'var(--amber-dim)':'var(--bg3)'};color:${k===current?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._selectCat('${k}')">${cats[k].label}</button>`).join('');
+    const c=cats[current];
+    cardEl.innerHTML=`<div style="margin-bottom:10px;"><span class="pill pill-amber">${c.label.toUpperCase()}</span></div><div><span style="color:var(--amber);font-weight:600;">TURN 1</span>&nbsp;&nbsp;"${c.t1}"</div><div><span style="color:var(--teal);font-weight:600;">TURN 2</span>&nbsp;&nbsp;"${c.t2}"</div><div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text3);">→ what this tests: ${c.tests}.</div>`;
+  }
+  window._selectCat=function(k){current=k;render();};
+  render();
+})();
+
+// === POSITION-BIAS SIMULATOR ===
+(function(){
+  const answersEl=document.getElementById('biasAnswers');const verdictEl=document.getElementById('biasVerdict');
+  if(!answersEl||!verdictEl)return;
+  const A={title:'RESPONSE A · short, correct',color:'#22c55e',text:'Boiling starts when water\'s vapor pressure equals the air pressure pressing on it. At altitude the air is thinner, so that pressure is lower — vapor pressure reaches it sooner and the water boils cooler. In Denver (~1,600 m), water boils near 95 °C, not 100 °C.'};
+  const B={title:'RESPONSE B · long, vague',color:'#f59e0b',text:'What a fascinating question! Water boiling is one of nature\'s most interesting phenomena, touching thermodynamics, cooking, and even mountain weather. At sea level, water famously boils at 100 °C (212 °F), a fact that has shaped kitchens for centuries. In the mountains, things change: the air is “thinner” there, which affects the process in complex ways involving pressure, altitude, and climate. Many cooks report needing longer cooking times, which is exactly why the pressure cooker was invented! Some sources say water boils around 90 °C in the mountains, though exact figures vary widely with local conditions, weather, and season…'};
+  const runs={
+    afirst:{order:[A,B],scores:{A:8.0,B:8.5},verdict:'Response B is better',vc:'#ef4444',label:'RUN 1 · THE JUDGE SAW: A FIRST',reason:'“Response B engages more thoroughly with the topic, covers more considerations, and demonstrates greater effort.”',flag:'⚠ position + verbosity bias — B is listed second and much longer; the judge mistook length for quality',fc:'#f87171'},
+    bfirst:{order:[B,A],scores:{A:10.0,B:6.5},verdict:'Response A is better',vc:'#f59e0b',label:'RUN 2 · THE JUDGE SAW: B FIRST',reason:'“Response A is more precise, more accurate, and reaches the actual mechanism directly.”',flag:'⚠ verdict flipped — only the order changed. Position bias, caught in the act',fc:'#f87171'},
+    balanced:{order:[A,B],scores:{A:9.0,B:7.5},verdict:'Response A wins ✓',vc:'#22c55e',label:'BALANCED · BOTH ORDERS, SCORES AVERAGED',reason:'“Both orders judged, scores averaged: the +2 position bonus lands on each answer exactly once and cancels. What survives is the genuine quality gap.”',flag:'✓ position-balanced verdict — bias neutralized',fc:'#4ade80'}
+  };
+  function bar(label,score,color){
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:#94a3b8;width:14px;">${label}</div><div style="flex:1;height:10px;background:rgba(255,255,255,0.08);border-radius:5px;overflow:hidden;"><div style="height:100%;width:${score*10}%;background:${color};border-radius:5px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:#e2e8f0;width:32px;">${score.toFixed(1)}</div></div>`;
+  }
+  function render(runKey){
+    const r=runs[runKey];
+    answersEl.innerHTML=r.order.map((a,i)=>`<div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:0.9rem 1rem;"><div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;"><span style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:${a.color};">${a.title}</span><span style="font-family:var(--mono);font-size:10px;color:#64748b;white-space:nowrap;">position ${i+1}</span></div><div style="font-family:var(--mono);font-size:11.5px;line-height:1.7;color:#cbd5e1;">${a.text}</div></div>`).join('');
+    verdictEl.innerHTML=`<div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-left:3px solid ${r.vc};border-radius:10px;padding:0.9rem 1rem;"><div style="font-family:var(--mono);font-size:10px;color:#94a3b8;margin-bottom:6px;">JUDGE VERDICT · ${r.label}</div><div style="font-family:var(--mono);font-size:15px;font-weight:600;color:${r.vc};margin-bottom:8px;">${r.verdict}</div><div style="margin-bottom:10px;">${bar('A',r.scores.A,'#22c55e')}${bar('B',r.scores.B,'#f59e0b')}</div><div style="font-size:12px;color:#cbd5e1;line-height:1.7;font-style:italic;margin-bottom:8px;">${r.reason}</div><div style="font-family:var(--mono);font-size:11px;color:${r.fc};line-height:1.7;">${r.flag}</div></div>`;
+  }
+  document.getElementById('biasAFirst').addEventListener('click',()=>render('afirst'));
+  document.getElementById('biasBFirst').addEventListener('click',()=>render('bfirst'));
+  document.getElementById('biasBalanced').addEventListener('click',()=>render('balanced'));
+  render('afirst');
+})();
+
+// === MINI ARENA ===
+(function(){
+  const roundEl=document.getElementById('arenaRound');const promptEl=document.getElementById('arenaPrompt');const answersEl=document.getElementById('arenaAnswers');const voteEl=document.getElementById('arenaVoteRow');const resultEl=document.getElementById('arenaResult');const resetBtn=document.getElementById('arenaReset');
+  if(!roundEl||!promptEl||!answersEl||!voteEl||!resultEl||!resetBtn)return;
+  const battles=[
+    {prompt:'Write a two-sentence horror story about a smart speaker.',a:'“Every night at 3 a.m., the smart speaker whispers my name in a voice that isn\'t mine. Last night, it started using my daughter\'s.”',b:'A smart speaker is a device that can sometimes be scary. It listens to what you say in your home, and one day it might do something bad, which would be very frightening for a family. Technology can be dangerous when it goes wrong, so people should be careful with devices.'},
+    {prompt:'A bat and a ball cost $1.10 together. The bat costs $1.00 more than the ball. How much is the ball?',a:'The ball is $0.05. Check: ball $0.05 + bat $1.05 = $1.10, and the bat is exactly $1.00 more. ✓',b:'The ball costs $0.10. Since the bat costs $1.00 more than the ball, the bat is $1.00, and $0.10 + $1.00 = $1.10 as the problem states. So the ball is 10 cents.'},
+    {prompt:'Reply with exactly one word: what is the capital of Australia?',a:'Canberra.',b:'The capital of Australia is Canberra! It\'s a planned city in the Australian Capital Territory, chosen as a compromise between Sydney and Melbourne, which both wanted to be the capital. Many people think the capital is Sydney because it is the largest city — but it\'s Canberra.'}
+  ];
+  let round=0;const votes=[];
+  function answerCard(sym,text,color){
+    return `<div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:0.9rem 1rem;"><div style="font-family:var(--mono);font-size:11px;font-weight:600;color:${color};margin-bottom:6px;">MODEL ${sym} · ANONYMOUS</div><div style="font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--text2);">${text}</div></div>`;
+  }
+  function renderBattle(){
+    const b=battles[round];
+    roundEl.textContent='BATTLE '+(round+1)+' / '+battles.length;
+    promptEl.innerHTML=`<span style="color:var(--text3);">PROMPT&nbsp;·&nbsp;</span>${b.prompt}`;
+    answersEl.innerHTML=answerCard('◆',b.a,'var(--amber)')+answerCard('◇',b.b,'var(--blue)');
+    voteEl.innerHTML=[['a','◆ Model ◆ wins'],['tie','🤝 Tie'],['b','◇ Model ◇ wins']].map(x=>`<button type="button" data-v="${x[0]}" style="font-family:var(--mono);font-size:12px;padding:8px 16px;border-radius:8px;border:1px solid rgba(245,158,11,0.35);background:var(--amber-dim);color:var(--amber);cursor:pointer;font-weight:600;">${x[1]}</button>`).join('');
+    Array.from(voteEl.querySelectorAll('button')).forEach(btn=>btn.addEventListener('click',()=>vote(btn.dataset.v)));
+  }
+  function vote(v){
+    if(round>=battles.length)return;
+    votes.push(v);
+    Array.from(voteEl.querySelectorAll('button')).forEach(btn=>{btn.disabled=true;btn.style.opacity='0.45';btn.style.cursor='default';});
+    round++;
+    setTimeout(()=>{if(round<battles.length){renderBattle();}else{voteEl.innerHTML='';renderResults();}},400);
+  }
+  function renderResults(){
+    roundEl.textContent='ALL BATTLES DONE';
+    const counts={a:0,b:0,tie:0};votes.forEach(v=>counts[v]++);
+    const rows=[{label:'Model ◆',n:counts.a,color:'var(--amber)'},{label:'Model ◇',n:counts.b,color:'var(--blue)'},{label:'Tie',n:counts.tie,color:'var(--text3)'}];
+    resultEl.innerHTML=`<div style="border-top:1px dashed var(--border);padding-top:1rem;margin-top:0.25rem;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--amber);font-weight:600;margin-bottom:10px;">YOUR PREFERENCES · ${battles.length} BATTLES</div>
+      ${rows.map(r=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:70px;text-align:right;">${r.label}</div><div style="flex:1;height:18px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${(r.n/battles.length)*100}%;background:${r.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:64px;">${r.n} vote${r.n===1?'':'s'}</div></div>`).join('')}
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:10px;"><strong>Reveal:</strong> Model ◆ was a strong frontier-class model; Model ◇ was a smaller, weaker one. (Illustrative — answers prewritten to mirror typical quality gaps.)</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:6px;">Your 3 votes are a toy poll. The real Chatbot Arena aggregates <span class="highlight">millions</span> of battles like these into one Bradley-Terry strength score per model — no single vote decides anything; the crowd does.</div>
+    </div>`;
+  }
+  resetBtn.addEventListener('click',()=>{round=0;votes.length=0;resultEl.innerHTML='';renderBattle();});
+  renderBattle();
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'Why do classic reference-based metrics like BLEU and ROUGE fail for evaluating open-ended chat?',opts:['They only work for non-English text','Chat answers have no single gold reference — many answers can be equally good','They are far too slow to run','They can only measure grammar, never content'],correct:1,explain:'BLEU and ROUGE compare a candidate answer against one gold reference. Open-ended chat has no single ground truth — many different answers can be equally good — so n-gram overlap stops tracking quality.'},
+  {q:'How well did GPT-4 as a pairwise judge agree with human raters — and how does that compare to humans agreeing with each other?',opts:['50% — well below human level','100% — perfect agreement','85% — on par with human–human agreement (~81%)','30% — unusable in practice'],correct:2,explain:'GPT-4 reached 85% agreement with human raters on pairwise comparison — right at the level of human–human agreement (~81%). A strong LLM judge is, statistically, about as reliable as a human rater.'},
+  {q:'Which of these is NOT one of the three systematic judge biases documented in the paper?',opts:['Position bias','Verbosity bias','Self-enhancement bias','Temperature bias'],correct:3,explain:'The documented big three are position bias (verdicts flip when answer order swaps), verbosity bias (length mistaken for quality), and self-enhancement bias (favoring your own model family). "Temperature bias" is a decoy.'},
+  {q:'What is the main fix the paper proposes for position bias?',opts:['Use a bigger, stronger judge model','Ask twice with the answer order swapped, then aggregate — position-balanced judging','Only compare answers of exactly equal length','Score each answer 1–10 instead of comparing pairs'],correct:1,explain:'Position-balanced judging runs the comparison in both orders, then averages the scores (or requires a consistent winner before the battle counts). The position bonus lands on each answer once — and cancels.'},
+  {q:'What is Chatbot Arena?',opts:['A fixed set of 80 questions scored by a GPT-4 judge','A tournament where model authors argue for their models','Crowdsourced anonymous pairwise battles on real user prompts, ranked with Bradley-Terry / Elo-style scores','A pipeline for fine-tuning judges with human feedback'],correct:2,explain:'Real users prompt two anonymous models and vote for the better answer; millions of votes are aggregated into per-model strength scores (Bradley-Terry / Elo-style) — a leaderboard built from preference, not reference.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+</body>
+</html>

@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepSeek-R1: Reasoning via Reinforcement Learning — Interactive Guide</title>
+<meta name="description" content="An interactive explainer of DeepSeek-R1 — the paper that trained reasoning with pure reinforcement learning — with live demos for GRPO, the emergent aha moment, and the four-stage training pipeline.">
+<meta name="keywords" content="DeepSeek-R1, R1-Zero, GRPO, reinforcement learning, reasoning, aha moment, distillation, MoE, chain-of-thought, LLM, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/DeepSeek_R1.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="DeepSeek-R1: Reasoning via Reinforcement Learning — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the DeepSeek-R1 paper: pure RL, emergent aha moments, GRPO, and open weights that matched o1.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/DeepSeek_R1.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DeepSeek-R1 — Interactive Guide">
+<meta name="twitter:description" content="Learn how pure reinforcement learning taught a model to reason — with animations and interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#base">Base</a>
+    <a class="nav-link" href="#r1-zero">R1-Zero</a>
+    <a class="nav-link" href="#r1-pipeline">Pipeline</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2025</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#base">Base</a>
+  <a href="#r1-zero">R1-Zero</a>
+  <a href="#r1-pipeline">Pipeline</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    <em>Reasoning</em> via Reinforcement<br>DeepSeek-R1
+  </h1>
+  <p class="hero-subtitle">
+    Can a model learn to reason without a single human-written reasoning example?
+    DeepSeek-R1 said yes — pure reinforcement learning produced emergent
+    "aha moments", and the open weights went on to match OpenAI's o1.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2501.12948" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">671B</div>
+      <div class="stat-label">Total Params (37B Active)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">79.8%</div>
+      <div class="stat-label">AIME 2024 pass@1</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">6</div>
+      <div class="stat-label">Distilled Models (1.5B→70B)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2025</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Prompted Thinking to <em>Trained Thinking</em></h2>
+  <p class="section-desc">Reasoning spent three years as a prompting trick, then a closed product. With R1 it became an open recipe anyone can run.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">Chain-of-Thought prompting (Wei et al.)</div><div class="tl-desc">A few worked examples in the prompt make models reason step by step. Reasoning by imitation — of human-written traces. <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber);">Guide →</a></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023</div><div class="tl-title">Self-consistency & the reasoning-eval era</div><div class="tl-desc">Sample many chains and vote (self-consistency); GSM8K and MATH become the yardsticks. Reasoning is still something you prompt, not train.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024</div><div class="tl-title">o1 (OpenAI)</div><div class="tl-desc">Test-time reasoning arrives: think longer at inference, score dramatically higher on math and code. Proprietary recipe, closed weights.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2025 · Jan</div><div class="tl-title">🚀 DeepSeek-R1 (DeepSeek-AI)</div><div class="tl-desc">RL alone elicits reasoning — the famous "aha moment" emerges untrained — and the MIT-licensed weights go on to match o1 on math benchmarks.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2025 →</div><div class="tl-title">The open reasoning wave</div><div class="tl-desc">R1's distilled models (1.5B–70B) and a wave of open reasoning models carry test-time reasoning to every scale.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Reasoning doesn't need to be <span class="highlight">demonstrated</span> — only <span class="highlight">rewarded</span>. If a task's answers can be checked, reinforcement learning can find the thinking on its own. That was DeepSeek's bet against "you must fine-tune on human reasoning data first" — and R1-Zero's emergent "aha moments" proved it.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">R1-ZERO'S ENTIRE SUPERVISION</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          answer correct? → <span style="color:var(--green);font-weight:600;">reward ✓</span><br>
+          reasoning inside &lt;think&gt;…&lt;/think&gt;? → <span style="color:var(--green);font-weight:600;">reward ✓</span><br>
+          human-written reasoning → <span style="color:var(--red);font-weight:600;">none. zero.</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">Two rule-based rewards. That is the whole supervision.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem — Reasoning Behind <em>Locked Doors</em></h2>
+  <p class="section-desc">By late 2024, reasoning models existed. All of them were closed — and the field's default recipe assumed a step nobody had questioned: imitate human reasoning first.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🔒</div>
+      <div class="problem-title">The Closed Era</div>
+      <ul class="problem-list">
+        <li>OpenAI's o1 proved test-time reasoning works — but the training recipe stayed secret and the weights closed</li>
+        <li>The default alternative — SFT on human-written reasoning traces — is expensive to collect at scale</li>
+        <li>Human traces cap exploration: the model can only imitate reasoning it has seen</li>
+        <li>Imitation ≠ reasoning — copying a grandmaster's moves is not playing chess</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔓</div>
+      <div class="problem-title">DeepSeek's Bet</div>
+      <ul class="problem-list">
+        <li>Question the assumption: skip human reasoning data — start RL straight from the base model</li>
+        <li>Reward only what's checkable: is the answer right, and is the reasoning wrapped in &lt;think&gt; tags?</li>
+        <li>Let the model discover its own reasoning strategies — including ones no human would write</li>
+        <li>Ship the weights, MIT-licensed, for everyone</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">The Chess-Coach Analogy</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">You can train a chess student two ways. Hand them 10,000 annotated grandmaster games to memorize (<span class="code-inline">SFT on human CoT</span>) — they learn the openings, but their ceiling is the games they copied. Or let them play thousands of matches and tell them just one bit of information each time: <em>won or lost</em> (<span class="code-inline">RL with a verifiable reward</span>). DeepSeek bet on the second — and the student started inventing habits nobody taught, like double-checking a move before committing. That habit is the <span class="highlight">aha moment</span>.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- BASE + GRPO -->
+<section id="base">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Ingredients — <em>V3 + GRPO</em></h2>
+  <p class="section-desc">One strong open base model, and one RL algorithm that deleted the most expensive part of PPO.</p>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">The Foundation — DeepSeek-V3</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">A <span class="highlight">Mixture-of-Experts</span> LLM: 671B total parameters, but only ~37B active per token — each token routes to a small subset of experts. Already strong on math, code, and general knowledge, it was a good enough starting point to attempt RL directly, with no reasoning fine-tune in between.</p>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);background:var(--bg3);border-radius:var(--radius);padding:0.75rem 1rem;margin-top:0.75rem;">
+        671B total · 37B active · <span style="color:var(--amber);font-weight:600;">≈5.5% of weights fire per token</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">The Algorithm — GRPO</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">PPO — the workhorse of RLHF — estimates advantages with a <em>critic</em> (value) network typically as large as the policy itself: double the memory, double the compute, more things to go wrong. <span class="highlight">GRPO</span> (Group Relative Policy Optimization, introduced with DeepSeekMath) deletes the critic: for each prompt, sample a <em>group</em> of G responses, and let the group's own average play the baseline.</p>
+      <div style="margin-top:0.75rem;"><span class="pill pill-green">no critic / value network</span> <span class="pill pill-blue">cheaper than PPO</span></div>
+    </div>
+  </div>
+
+  <div class="formula-card">
+    <div class="formula-main">A<sub>i</sub> = ( r<sub>i</sub> − mean(r) ) / std(r)</div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:6px;">r₁ … r_G = rewards of the G responses sampled for one prompt</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">A<sub>i</sub></div><div class="fp-name">Relative Advantage</div><div class="fp-desc">How much better response i is than its group. Positive → reinforce; negative → suppress.</div></div>
+      <div class="formula-piece"><div class="fp-sym">r<sub>i</sub></div><div class="fp-name">Verifiable Reward</div><div class="fp-desc">Rule-based: answer correctness + format adherence. No learned reward model to game.</div></div>
+      <div class="formula-piece"><div class="fp-sym">mean(r)</div><div class="fp-name">The Group Baseline</div><div class="fp-desc">The average of the sampled rewards replaces the critic network — the group IS the value estimate.</div></div>
+      <div class="formula-piece"><div class="fp-sym">std(r)</div><div class="fp-name">Normalization</div><div class="fp-desc">Dividing by the group's spread keeps gradient scale stable across easy and hard prompts.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — GRPO: The Group Is the Critic</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">One prompt, G = 5 sampled responses. Rewards are compared to the group's own mean — that dashed line is the baseline PPO would need an entire network to learn. Press <strong>Re-roll group</strong> to sample a new batch.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:0.75rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:1rem;line-height:1.8;">
+      <span style="color:var(--amber);font-weight:600;">PROMPT · </span>A jacket costs $40 after a 20% discount. What was the original price?
+    </div>
+    <div id="grpoChart"></div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin:8px 0 1rem;">bar = reward (1 correct / 0 wrong) · <span style="color:var(--amber);">- - - dashed line = group mean</span> · A = group-relative advantage</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:0.75rem;">
+      <button class="btn-primary" id="grpoRollBtn" type="button" style="font-size:13px;padding:8px 18px;">Re-roll group 🎲</button>
+      <div id="grpoStats" style="font-family:var(--mono);font-size:12px;color:var(--text2);"></div>
+    </div>
+    <div id="grpoVerdict" style="font-size:12.5px;color:var(--text2);background:var(--bg3);border-radius:var(--radius);padding:0.75rem 1rem;line-height:1.7;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- R1-ZERO -->
+<section id="r1-zero">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">R1-Zero — Reasoning From <em>Nothing</em></h2>
+  <p class="section-desc">The pure experiment: take V3, run GRPO with two rule-based rewards, and add zero — zero! — supervised reasoning data. What appeared was never prompted, never taught.</p>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">Reward 1 — Accuracy 🎯</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Is the final answer correct? On math, answers can be checked exactly with rules — no learned reward model, nothing to reward-hack. Just: right or wrong.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Reward 2 — Format 📋</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Put the reasoning inside <span class="code-inline">&lt;think&gt; … &lt;/think&gt;</span> tags, with the answer after. That is the only structural demand — <em>how</em> to think is completely free.</p>
+    </div>
+  </div>
+
+  <div class="notice-grid" style="margin-bottom:2rem;">
+    <div class="notice-card"><div class="notice-title">🔍 Self-Verification</div><div class="notice-text">The model starts writing "Wait, let me check that…" and re-checks its own arithmetic — unprompted.</div></div>
+    <div class="notice-card"><div class="notice-title">🪞 Reflection</div><div class="notice-text">Mid-solution, it reconsiders its assumptions: "Hmm, let me reconsider whether this setup is right."</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Alternative Paths</div><div class="notice-text">When one approach stalls, it backtracks and tries another strategy — behavior nobody demonstrated to it.</div></div>
+    <div class="notice-card"><div class="notice-title">💡 The "Aha Moment"</div><div class="notice-text">The paper's highlight: mid-derivation, the model realizes it was wrong and visibly course-corrects (see the demo below).</div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:2rem;">
+    <div class="card-label">Interactive Demo — The Aha-Moment Player</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A stylized R1-Zero-style trace (shortened — real traces run for thousands of tokens). Press <strong>Next step</strong> and watch the model think… then catch itself. None of what follows was prompted or rewarded.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:0.75rem 1rem;font-family:var(--mono);font-size:12.5px;color:var(--text2);margin-bottom:1rem;line-height:1.8;">
+      <span style="color:var(--amber);font-weight:600;">PROMPT · </span>A train covers 240 km. The first 120 km at 60 km/h, the second 120 km at 40 km/h. What is the average speed for the whole trip?
+    </div>
+    <div id="ahaTrace" style="display:flex;flex-direction:column;gap:8px;min-height:56px;margin-bottom:1rem;"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:0.5rem;">
+      <button class="btn-primary" id="ahaNextBtn" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="ahaResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+      <div id="ahaCounter" style="font-family:var(--mono);font-size:12px;color:var(--text3);"></div>
+    </div>
+    <div id="ahaStatus" style="font-family:var(--mono);font-size:12px;color:var(--amber);min-height:20px;"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">The Catch — Why R1-Zero Didn't Ship</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Emergent reasoning came with emergent mess: <span class="highlight">readability problems</span> (rambling, repetitive reasoning) and <span class="highlight">language mixing</span> (English and Chinese interleaved mid-thought). The reasoning was there; the packaging wasn't. Fixing that without losing the magic is Chapter 04's job.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- R1 PIPELINE -->
+<section id="r1-pipeline">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">DeepSeek-R1 — The <em>Full Recipe</em></h2>
+  <p class="section-desc">R1-Zero proved reasoning can emerge. R1 makes it shippable: readable, language-consistent, and aligned — without forgetting how to reason.</p>
+
+  <div class="card" style="margin-bottom:2rem;">
+    <div class="card-label">Why not just ship R1-Zero?</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Because pure-RL reasoning is a mess to read and mixes languages mid-thought. The full recipe interleaves small amounts of supervised data with rounds of RL — each stage fixing what the previous one broke, keeping the emergent reasoning while restoring usability. Four stages:</p>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Four-Stage Pipeline</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Press <strong>Play stage</strong> to walk the pipeline. Each stage lights up with its two-line job description; progress resets with <strong>Reset</strong>.</p>
+    <div id="pipeProgress" style="display:flex;gap:6px;margin-bottom:1rem;"></div>
+    <div id="pipeStages" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:10px;margin-bottom:1rem;"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <button class="btn-primary" id="pipePlayBtn" type="button" style="font-size:13px;padding:8px 18px;">Play stage 1 ▶</button>
+      <button class="btn-outline" id="pipeResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="pipeStatus" style="font-family:var(--mono);font-size:12px;color:var(--amber);margin-top:0.75rem;min-height:20px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Results — Matching <em>o1</em>, Openly</h2>
+  <p class="section-desc">On the benchmarks that defined the reasoning era, R1 lands at o1-1217's level — with weights anyone can download.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">DeepSeek-R1 vs OpenAI-o1-1217 (pass@1 / percentile)</div>
+    <table class="comp-table">
+      <thead><tr><th>Benchmark</th><th>DeepSeek-R1</th><th>OpenAI-o1-1217</th></tr></thead>
+      <tbody>
+        <tr><td>AIME 2024 (pass@1)</td><td class="comp-best">79.8</td><td>79.2</td></tr>
+        <tr><td>MATH-500</td><td class="comp-best">97.3</td><td>96.4</td></tr>
+        <tr><td>MMLU</td><td>90.8</td><td>~91.8</td></tr>
+        <tr><td>Codeforces (percentile)</td><td class="comp-best">96.3</td><td>— (not directly comparable)</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">AIME and MATH-500 are the paper's exact numbers; o1's MMLU is approximate (~), and its Codeforces rating isn't directly comparable. Beyond benchmarks, R1 stays strong on non-reasoning tasks too — writing, factual QA, summarization.</p>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">AIME 2024 · PASS@1</div><div class="result-score" style="color:var(--amber);">79.8</div><div class="result-label">vs 79.2 for OpenAI-o1-1217</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:79.8%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">MODEL SIZE (MoE)</div><div class="result-score" style="color:var(--blue);">671B</div><div class="result-label">total params · only 37B active per token</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:5.5%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:6px;">≈5.5% of weights fire per token</div></div>
+    <div class="result-card"><div class="result-model">DISTILLATION DATA</div><div class="result-score" style="color:var(--teal);">800k</div><div class="result-label">R1 samples used to train 6 open models</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">LICENSE</div><div class="result-score" style="color:var(--green);">MIT</div><div class="result-label">weights open for research & commerce</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Distillation — Reasoning for Everyone</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The team fine-tuned six open small models — Qwen and Llama checkpoints from 1.5B to 70B — on <span class="highlight">~800k R1 samples</span>. No RL for the small models: just imitation of R1's verified reasoning traces.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:0.75rem;">
+        <div class="card-sm" style="font-family:var(--mono);font-size:11px;color:var(--text2);text-align:center;padding:0.5rem;">R1-Distill-Qwen-1.5B</div>
+        <div class="card-sm" style="font-family:var(--mono);font-size:11px;color:var(--text2);text-align:center;padding:0.5rem;">R1-Distill-Qwen-7B</div>
+        <div class="card-sm" style="font-family:var(--mono);font-size:11px;color:var(--text2);text-align:center;padding:0.5rem;">R1-Distill-Qwen-14B</div>
+        <div class="card-sm" style="font-family:var(--mono);font-size:11px;color:var(--text2);text-align:center;padding:0.5rem;">R1-Distill-Qwen-32B</div>
+        <div class="card-sm" style="font-family:var(--mono);font-size:11px;color:var(--text2);text-align:center;padding:0.5rem;">R1-Distill-Llama-8B</div>
+        <div class="card-sm" style="font-family:var(--mono);font-size:11px;color:var(--text2);text-align:center;padding:0.5rem;">R1-Distill-Llama-70B</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">The Surprise — Distillation Beats Re-Learning</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The team also trained the same small models with RL directly. Result: the <span class="highlight">distilled models beat their RL-trained counterparts</span> across benchmarks. For small models, reasoning transfers better by <em>distilling it from a big RL model</em> than by re-learning it from scratch — the big model's expensive exploration gets exported for free.</p>
+      <div style="margin-top:0.75rem;"><span class="pill pill-green">distill &gt; re-learn (at small scale)</span> <span class="pill pill-amber">6 models · 1.5B → 70B</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>Open Reasoning</em> Wave</h2>
+  <p class="section-desc">One January release reframed what frontier AI costs to build — and who gets to build it.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧱 The Moat Broke</div><div class="notice-text">Frontier-level reasoning with MIT-licensed weights: the closed-reasoning moat around o1-style training evaporated in a week.</div></div>
+    <div class="notice-card"><div class="notice-title">📉 Market Shock</div><div class="notice-text">R1's release rippled far beyond AI — its arrival in January 2025 fed a tech-stock selloff narrative as investors repriced the cost of frontier models.</div></div>
+    <div class="notice-card"><div class="notice-title">🧬 Distilled Everywhere</div><div class="notice-text">Six distilled models (down to 1.5B) put test-time reasoning on a laptop — reasoning stopped being a frontier-only luxury.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Paradigm Validated</div><div class="notice-text">RL on verifiable rewards — no human CoT — became a legitimate training paradigm, with R1-Zero's aha moment as exhibit A.</div></div>
+    <div class="notice-card"><div class="notice-title">🌊 Everyone Followed</div><div class="notice-text">An open reasoning wave followed: R1-style training recipes and open test-time thinkers from lab after lab.</div></div>
+    <div class="notice-card"><div class="notice-title">🎓 Textbook Emergence</div><div class="notice-text">The aha moment is now the go-to example of emergent behavior — self-correction that was never prompted, rewarded, or taught.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Five questions on the paper that taught models to think for themselves.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about DeepSeek-R1.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ R1-Zero: pure RL on verifiable rewards (accuracy + format) elicits reasoning — no human CoT data at all.</div>
+    <div class="card-sm">✅ GRPO: advantages come from a group of sampled responses vs. their own mean — no critic/value network.</div>
+    <div class="card-sm">✅ Emergent behaviors — self-verification, reflection, backtracking, the "aha moment" — were never prompted or rewarded.</div>
+    <div class="card-sm">✅ Full R1 recipe: cold-start SFT → reasoning RL → rejection sampling + SFT (~600k + ~200k) → RL for all scenarios.</div>
+    <div class="card-sm">✅ Results: AIME 2024 79.8 and MATH-500 97.3 (pass@1), from a 671B-total / 37B-active MoE.</div>
+    <div class="card-sm">✅ MIT-licensed weights + 6 distilled models (1.5B→70B) kicked off the open reasoning wave.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2501.12948" target="_blank" rel="noopener noreferrer">"DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning"</a> (DeepSeek-AI, 2025)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2501.12948" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Chain_Of_Thought_Prompting.html">Chain-of-Thought Guide</a>
+    <a class="footer-link" href="./DPO.html">DPO Guide</a>
+    <a class="footer-link" href="./LLaMA.html">LLaMA Guide</a>
+  </div>
+    <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','base','r1-zero','r1-pipeline','results','impact','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === GRPO GROUP VISUALIZER ===
+(function(){
+  const chartEl=document.getElementById('grpoChart');
+  const rollBtn=document.getElementById('grpoRollBtn');
+  const statsEl=document.getElementById('grpoStats');
+  const verdictEl=document.getElementById('grpoVerdict');
+  if(!chartEl||!rollBtn)return;
+  const POOL=[
+    {txt:'$40 ÷ 0.8 = $50 ✓',r:1},
+    {txt:'$40 + $8 = $48 ✗',r:0},
+    {txt:'0.8x = 40 → x = $50 ✓',r:1},
+    {txt:'$40 − $8 = $32 ✗',r:0},
+    {txt:'x = 40/0.8 = $50 ✓',r:1},
+    {txt:'$40 × 1.2 = $48 ✗',r:0},
+    {txt:'$50 · check: 50×0.8 = $40 ✓',r:1},
+    {txt:'$45 · just a guess ✗',r:0}
+  ];
+  let group=[POOL[0],POOL[1],POOL[2],POOL[4],POOL[5]];
+  function render(){
+    const rs=group.map(g=>g.r);
+    const mean=rs.reduce((a,b)=>a+b,0)/rs.length;
+    const std=Math.sqrt(rs.reduce((a,b)=>a+(b-mean)*(b-mean),0)/rs.length);
+    chartEl.innerHTML=group.map((g,i)=>{
+      const adv=std>1e-9?(g.r-mean)/std:0;
+      const up=adv>1e-9,down=adv<-1e-9;
+      const col=up?'var(--green)':(down?'var(--red)':'var(--text3)');
+      return '<div style="display:grid;grid-template-columns:minmax(110px,210px) 1fr 118px;gap:8px;align-items:center;margin-bottom:6px;">'
+        +'<div style="font-family:var(--mono);font-size:11px;color:var(--text2);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">G'+(i+1)+' · '+g.txt+'</div>'
+        +'<div style="position:relative;height:22px;background:var(--bg4);border-radius:4px;">'
+        +'<div style="height:100%;width:'+(g.r*100)+'%;background:'+(g.r?'var(--green)':'var(--red)')+';opacity:0.45;border-radius:4px;animation:scaleIn .7s ease;transform-origin:left;"></div>'
+        +'<div style="position:absolute;top:-3px;bottom:-3px;left:'+(mean*100).toFixed(1)+'%;width:0;border-left:2px dashed var(--amber);"></div>'
+        +'</div>'
+        +'<div style="font-family:var(--mono);font-size:11px;color:'+col+';white-space:nowrap;">r='+g.r+' · A='+(adv>=0?'+':'')+adv.toFixed(2)+' '+(up?'↑':(down?'↓':'·'))+'</div>'
+        +'</div>';
+    }).join('');
+    statsEl.textContent='G=5 · mean(r) = '+mean.toFixed(2)+' · std(r) = '+std.toFixed(2);
+    const above=rs.filter(r=>r>mean).length;
+    if(std<1e-9){
+      verdictEl.innerHTML='<span style="color:var(--amber);font-weight:600;">⚠ Every response in this group earned the same reward</span> — advantages are all 0, so GRPO gets no learning signal from this prompt. Nothing to reinforce, nothing to suppress.';
+    }else{
+      verdictEl.innerHTML='<strong style="color:var(--green);">'+above+' above the mean → reinforced ↑</strong> &nbsp;·&nbsp; <strong style="color:var(--red);">'+(rs.length-above)+' below the mean → suppressed ↓</strong><br>PPO would need a critic (value) network to estimate this baseline. GRPO reads it straight off the group — <span style="color:var(--amber);font-weight:600;">no critic needed.</span>';
+    }
+  }
+  rollBtn.addEventListener('click',()=>{
+    const p=POOL.slice();
+    for(let i=p.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=p[i];p[i]=p[j];p[j]=t;}
+    group=p.slice(0,5);
+    render();
+  });
+  render();
+})();
+
+// === AHA-MOMENT PLAYER ===
+(function(){
+  const traceEl=document.getElementById('ahaTrace');
+  const nextBtn=document.getElementById('ahaNextBtn');
+  const resetBtn=document.getElementById('ahaResetBtn');
+  const counterEl=document.getElementById('ahaCounter');
+  const statusEl=document.getElementById('ahaStatus');
+  if(!traceEl||!nextBtn||!resetBtn)return;
+  const STEPS=[
+    {text:'Average speed = total distance ÷ total time. Let me set that up.',tag:'framing'},
+    {text:'First leg: 120 km at 60 km/h → time = 120 ÷ 60 = 2 hours.',tag:'deriving'},
+    {text:'Second leg: 120 km at 40 km/h → time = 120 ÷ 40 = 4 hours.',tag:'deriving',err:true},
+    {text:'Total time = 2 + 4 = 6 hours. Average speed = 240 ÷ 6 = 40 km/h. The answer is 40 km/h.',tag:'concluding',err:true},
+    {text:'Wait — I made an error in step 3. 120 ÷ 40 is 3, not 4. Let me redo this.',tag:'✨ aha moment',aha:true},
+    {text:'Second leg: 120 ÷ 40 = 3 hours. Total time = 2 + 3 = 5 hours.',tag:'backtracking',fixed:true},
+    {text:'Average speed = 240 ÷ 5 = 48 km/h. The answer is 48 km/h.',tag:'verified ✓',final:true}
+  ];
+  let idx=0;
+  function placeholder(){
+    traceEl.innerHTML='<div style="font-family:var(--mono);font-size:12.5px;color:var(--text3);opacity:0.85;border:1px dashed var(--border2);border-radius:var(--radius);padding:12px 14px;">&lt;think&gt; … the trace will appear here — press "Next step".</div>';
+  }
+  function addStep(){
+    if(idx===0)traceEl.innerHTML='';
+    const s=STEPS[idx];
+    const card=document.createElement('div');
+    card.className='animate-in';
+    let css='background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.7;border-left:3px solid ';
+    if(s.aha){css+='var(--amber);background:var(--amber-dim);';}
+    else if(s.err){css+='var(--text3);';}
+    else if(s.final){css+='var(--green);background:var(--green-dim);';}
+    else if(s.fixed){css+='var(--green);';}
+    else{css+='var(--blue);';}
+    card.style.cssText=css;
+    let tagHtml='';
+    if(s.aha){tagHtml='<span class="pill pill-amber" style="margin-left:8px;">✨ aha moment</span>';}
+    card.innerHTML='<span style="font-size:10px;color:var(--text3);margin-right:8px;">STEP '+(idx+1)+'</span>'+s.text+tagHtml;
+    traceEl.appendChild(card);
+    idx++;
+    if(s.aha){
+      Array.from(traceEl.children).forEach((el,i)=>{
+        if(STEPS[i]&&STEPS[i].err){
+          el.style.borderColor='rgba(239,68,68,0.5)';
+          el.style.borderLeftColor='var(--red)';
+          el.style.opacity='0.75';
+          const chip=document.createElement('span');
+          chip.className='pill pill-red';
+          chip.style.marginLeft='8px';
+          chip.textContent='✗ error';
+          el.appendChild(chip);
+        }
+      });
+    }
+    counterEl.textContent='step '+idx+' / '+STEPS.length;
+    if(idx>=STEPS.length){
+      nextBtn.disabled=true;
+      nextBtn.style.opacity='0.6';
+      nextBtn.textContent='Trace complete ✓';
+      statusEl.innerHTML='<span style="color:var(--green);">✓ Emergent, not trained:</span> verify → catch → backtrack → fix. No reward ever mentioned "wait" or "check your work".';
+    }else{
+      statusEl.innerHTML='thinking… <span style="color:var(--text3);">('+s.tag+')</span> <span style="animation:pulse 1.2s ease infinite;">▍</span>';
+    }
+  }
+  nextBtn.addEventListener('click',()=>{if(idx<STEPS.length)addStep();});
+  resetBtn.addEventListener('click',()=>{
+    idx=0;traceEl.innerHTML='';placeholder();
+    nextBtn.disabled=false;nextBtn.style.opacity='1';nextBtn.textContent='Next step →';
+    counterEl.textContent='step 0 / '+STEPS.length;statusEl.innerHTML='';
+  });
+  placeholder();
+  counterEl.textContent='step 0 / '+STEPS.length;
+})();
+
+// === PIPELINE STEPPER ===
+(function(){
+  const stagesEl=document.getElementById('pipeStages');
+  const progEl=document.getElementById('pipeProgress');
+  const playBtn=document.getElementById('pipePlayBtn');
+  const resetBtn=document.getElementById('pipeResetBtn');
+  const statusEl=document.getElementById('pipeStatus');
+  if(!stagesEl||!playBtn||!resetBtn)return;
+  const STAGES=[
+    {icon:'🧊',t:'Cold-Start SFT',d1:'Fine-tune V3 on a small set of long, well-formatted CoT examples.',d2:'→ readable reasoning + a consistent language, ready for RL.'},
+    {icon:'🏋️',t:'Reasoning RL',d1:'GRPO on verifiable math / code / logic tasks, plus a language-consistency reward.',d2:'→ reasoning power grows, and the language-mixing fades.'},
+    {icon:'🎲',t:'Rejection Sampling + SFT',d1:'Keep only the best sampled traces, then SFT on ~600k reasoning + ~200k non-reasoning examples.',d2:'→ one checkpoint that reasons and handles everyday tasks.'},
+    {icon:'🌍',t:'RL for All Scenarios',d1:'A final RL round optimizing reasoning together with helpfulness and harmlessness.',d2:'→ an aligned, general-purpose reasoning model: DeepSeek-R1.'}
+  ];
+  let cur=0;
+  function render(){
+    progEl.innerHTML=STAGES.map((s,i)=>'<div style="flex:1;height:6px;border-radius:3px;background:'+(i<cur?'var(--amber)':'var(--bg4)')+';transition:background .3s;"></div>').join('');
+    stagesEl.innerHTML=STAGES.map((s,i)=>{
+      const active=i<cur,lit=i===cur-1;
+      return '<div class="card-sm" style="opacity:'+(active?'1':'0.55')+';border-color:'+(lit?'rgba(245,158,11,0.45)':'var(--border)')+';background:'+(lit?'var(--amber-dim)':'var(--bg3)')+';transition:all .3s;">'
+        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'
+        +'<span style="font-size:1.2rem;">'+s.icon+'</span>'
+        +'<div><div style="font-family:var(--mono);font-size:10px;color:'+(lit?'var(--amber)':'var(--text3)')+';text-transform:uppercase;letter-spacing:0.08em;">Stage '+(i+1)+'</div>'
+        +'<div style="font-weight:600;font-size:13px;">'+s.t+'</div></div></div>'
+        +'<div style="display:'+(active?'block':'none')+';font-size:12px;color:var(--text2);line-height:1.6;'+'">'+(lit?'<div class="animate-in">'+s.d1+'<br>'+s.d2+'</div>':s.d1+'<br>'+s.d2)+'</div>'
+        +'</div>';
+    }).join('');
+    const done=cur>=STAGES.length;
+    playBtn.textContent=done?'Pipeline complete ✓':'Play stage '+(cur+1)+' ▶';
+    playBtn.disabled=done;
+    playBtn.style.opacity=done?'0.6':'1';
+    if(cur===0){statusEl.textContent='4 stages idle — press Play.';statusEl.style.color='var(--text3)';}
+    else if(done){statusEl.innerHTML='✓ DeepSeek-R1 — reasoning + readability + alignment, in one open checkpoint.';statusEl.style.color='var(--green)';}
+    else{statusEl.textContent='Stage '+cur+'/4 active — '+STAGES[cur-1].t+'.';statusEl.style.color='var(--amber)';}
+  }
+  playBtn.addEventListener('click',()=>{if(cur<STAGES.length){cur++;render();}});
+  resetBtn.addEventListener('click',()=>{cur=0;render();});
+  render();
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'What is special about DeepSeek-R1-Zero?',opts:['It was fine-tuned on millions of human-written chain-of-thought traces','It is a smaller distilled copy of OpenAI o1','It was trained with pure RL on verifiable rewards — no SFT data at all — and reasoning behaviors still emerged','It was trained exclusively on code and math textbooks'],correct:2,explain:'R1-Zero skipped supervised fine-tuning entirely: GRPO with rule-based accuracy + format rewards was enough for self-verification, reflection, and "aha moments" to emerge on their own.'},
+  {q:'What does GRPO replace, compared to PPO?',opts:['The policy network itself','The critic (value) network — advantages are computed relative to a group of sampled responses','The reward signal, using human preference labels instead','The training prompts, which are generated on the fly'],correct:1,explain:'PPO needs a value network (often as large as the policy) to estimate advantages. GRPO samples a group of G responses per prompt and uses the group mean as the baseline — no critic needed.'},
+  {q:'What is the "aha moment" reported in the paper?',opts:['A bonus reward given whenever the model writes "wait"','A phase where humans corrected the model mid-derivation','A prompt template that forces the model to double-check itself','An emergent behavior where the model catches its own mistake mid-derivation and backtracks to fix it'],correct:3,explain:'During pure RL, R1-Zero spontaneously learned to stop mid-solution, realize an earlier step was wrong, and redo it — a behavior never prompted, rewarded, or deliberately trained.'},
+  {q:'What was the distillation finding?',opts:['Small models fine-tuned on ~800k R1 samples beat the same models trained with RL directly — reasoning distills better than it re-learns','Distilled models always lost to RL-trained ones at every model size','Distillation only worked for the 70B model','Distillation required pairing R1 samples with human-written CoT data'],correct:0,explain:'The team fine-tuned Qwen (1.5B–32B) and Llama (8B/70B) checkpoints on ~800k R1 samples; these distilled models outperformed running RL directly on the same small models — the big model\'s exploration gets exported for free.'},
+  {q:'What was R1\'s headline result?',opts:['It scored 79.8 on MATH-500, beating o1 by 30 points','It was the first model ever trained with reinforcement learning','It scored 79.8 AIME 2024 pass@1 vs o1-1217\'s 79.2 — with open MIT-licensed weights','It matched o1-1217 but kept its weights closed'],correct:2,explain:'R1 hit 79.8 pass@1 on AIME 2024 (o1-1217: 79.2) and 97.3 on MATH-500 — frontier-level reasoning, shipped under an MIT license.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
