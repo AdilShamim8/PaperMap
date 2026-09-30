@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chain-of-Thought Prompting Elicits Reasoning in LLMs — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the Chain-of-Thought prompting paper, with interactive demos for standard vs CoT prompting, the emergence scale gate on GSM8K, and the ablation study that shows why the words matter.">
+<meta name="keywords" content="chain-of-thought, CoT prompting, few-shot learning, LLM reasoning, GSM8K, PaLM, LaMDA, GPT-3, emergence, NeurIPS 2022, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Chain_Of_Thought_Prompting.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Chain-of-Thought Prompting Elicits Reasoning in LLMs — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the Chain-of-Thought prompting paper with a standard-vs-CoT race, an emergence scale chart, and an ablation demo.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Chain_Of_Thought_Prompting.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Chain-of-Thought Prompting — Interactive Guide">
+<meta name="twitter:description" content="See how eight worked examples with reasoning steps made large LLMs think — with interactive demos, charts, and a quiz.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#emergence">Emergence</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#ablations">Ablations</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">NeurIPS 2022</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#emergence">Emergence</a>
+  <a href="#results">Results</a>
+  <a href="#ablations">Ablations</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    <em>Thinking</em> Step by Step<br>Chain-of-Thought
+  </h1>
+  <p class="hero-subtitle">
+    A prompting technique so simple it sounds like a trick — show the model worked examples
+    whose answers include intermediate reasoning steps, and multi-step reasoning performance
+    jumps. But only once models get big enough. No training, no new architecture: just a
+    better prompt.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2201.11903" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">+39</div>
+      <div class="stat-label">GSM8K points · PaLM-540B (17.9 → 56.9)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">540B</div>
+      <div class="stat-label">Backbone model · PaLM</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Reasoning domains · math, commonsense, symbolic</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2022</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Prompting to <em>Thinking</em></h2>
+  <p class="section-desc">Chain-of-thought didn't appear out of nowhere — it is the missing piece of a five-year story about how much you can get a language model to do purely through its prompt.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2017 – 2019</div><div class="tl-title">Prompting, but fine-tuned</div><div class="tl-desc">The BERT/GPT era adapts models to each task by fine-tuning. Prompts exist, but only inside an expensive, task-specific training pipeline.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2020</div><div class="tl-title">GPT-3: the prompt is the context</div><div class="tl-desc">Few-shot learning with no gradient updates — a handful of Q → A examples in the context window is enough. But the exemplars show only final answers.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2021</div><div class="tl-title">Scratchpads (Nye et al.)</div><div class="tl-desc">Letting models write out intermediate computation steps during training-time tasks dramatically helps — early evidence that intermediate steps matter.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">🚀 Chain-of-thought prompting (Wei et al.)</div><div class="tl-desc">Keep the few-shot format; add reasoning steps to the exemplars' answers. Gains emerge at scale — PaLM-540B solves 56.9% of GSM8K from prompting alone, beating fine-tuned GPT-3 with a verifier.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2022 · May</div><div class="tl-title">Self-consistency & zero-shot CoT</div><div class="tl-desc">Wang et al. sample many chains and majority-vote the answers; Kojima et al. show a single sentence — "Let's think step by step" — works with no exemplars at all.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2024 →</div><div class="tl-title">o1, DeepSeek-R1: reasoning as the product</div><div class="tl-desc">Models trained with reinforcement learning to generate long chains of thought before answering — thinking, scaled into a product.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">A language model generates one token at a time — so <span class="highlight">tokens are working memory</span>. Standard prompting spends no tokens on thinking before the answer. Chain-of-thought spends them on the intermediate results a multi-step problem needs, and a model that gets every step right arrives at the right answer.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">SAME PROBLEM, TWO TOKEN BUDGETS</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          <span style="color:var(--red);">A: 59</span> <span style="color:var(--text3);">← one guess, no room to compute</span><br>
+          <span style="color:var(--green);">A: 23 − 20 = 3</span><br>
+          <span style="color:var(--green);">&nbsp;&nbsp;&nbsp;3 + 6 = 9</span> <span style="color:var(--text3);">← steps as working memory</span><br>
+          <span style="color:var(--green);">&nbsp;&nbsp;&nbsp;So the answer is 9.</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">The cafeteria problem: 23 apples, 20 used, 6 bought → 9.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem with <em>Instant Answers</em></h2>
+  <p class="section-desc">Standard prompting asks the model to answer immediately — question in, answer out. Multi-step problems need intermediate results that a single forward pass can't produce, and fine-tuning on task data is expensive.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🗣️</div>
+      <div class="problem-title">Answer First, Think Never</div>
+      <ul class="problem-list">
+        <li>Standard few-shot exemplars jump straight from Q to the final answer</li>
+        <li>No working space — the answer must arrive in one forward pass</li>
+        <li>Errors compound silently: a wrong intermediate value is never surfaced</li>
+        <li>Fine-tuning on task data is expensive and must be redone per task</li>
+        <li>Small models fail multi-step problems either way</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">📝</div>
+      <div class="problem-title">CoT's Solution: Room to Reason</div>
+      <ul class="problem-list">
+        <li>Intermediate steps act as working memory before the answer</li>
+        <li>Few-shot only — eight exemplars, zero training, zero gradient updates</li>
+        <li>Errors become visible and debuggable inside the chain</li>
+        <li>Unlocks at scale: same prompt, more parameters, more reasoning</li>
+        <li>One technique covers arithmetic, commonsense, and symbolic tasks</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — Show Your Work</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Try multiplying 47 × 83 entirely in your head, committing to the first number that <em>feels</em> right. That is standard prompting: fluent, confident, and often wrong. Now do it on paper, one line at a time — 47 × 3 = 141, 47 × 8 = 376, carry, add — each step is easy, and a mistake would be visible on the page. A math teacher demands working for exactly the reasons CoT works: the scratch space <span class="highlight">is</span> the thinking. The paper's move is simply that the "paper" is more tokens in the model's own output — and you lend it the paper by putting reasoning inside the few-shot exemplars.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Core Idea — <em>Reasoning in the Exemplars</em></h2>
+  <p class="section-desc">Keep GPT-3's few-shot format. Change exactly one thing: the exemplars' answers now contain the reasoning chain before the final answer. The model mimics the format — and the reasoning comes along with it.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">Exemplar: Q: {problem}<br>A: {step · step · step · …} → "So the answer is X"</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">Q:</div><div class="fp-name">The question</div><div class="fp-desc">Kept verbatim — nothing about the input changes.</div></div>
+      <div class="formula-piece"><div class="fp-sym">A: + steps</div><div class="fp-name">Reasoning chain</div><div class="fp-desc">Natural-language sentences with the arithmetic inline, line by line, before any answer.</div></div>
+      <div class="formula-piece"><div class="fp-sym">"The answer is"</div><div class="fp-name">Fixed closer</div><div class="fp-desc">A consistent final-line format the model learns to emit — easy to parse, easy to score.</div></div>
+      <div class="formula-piece"><div class="fp-sym">8</div><div class="fp-name">Exemplars</div><div class="fp-desc">One set of eight hand-written Q-and-reasoned-A pairs reused across benchmarks (four for AQuA).</div></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">Standard Exemplar</div>
+      <div style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.9;background:var(--bg3);padding:1rem;border-radius:var(--radius);white-space:pre-line;">Q: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?
+
+A: 8.</div>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">The exemplar teaches the output format — and nothing about how to get there.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Chain-of-Thought Exemplar (from the paper's prompt)</div>
+      <div style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.9;background:var(--bg3);padding:1rem;border-radius:var(--radius);white-space:pre-line;border:1px solid rgba(245,158,11,0.25);">Q: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?
+
+A: Olivia had 23 dollars. 5 bagels for 3 dollars each will be 5 x 3 = 15 dollars. So she has 23 - 15 dollars left. 23 - 15 is 8. The answer is 8.</div>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">The exemplar teaches the output format <em>and</em> the shape of the reasoning.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Standard vs CoT: Watch the Answer Change</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A GSM8K-style problem and two prompts. Press a button to see what each produces. (Outputs are precomputed in the spirit of the paper's examples — the point is <em>how</em> the answer changes, not a live model.)</p>
+    <div style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:1rem;">
+      <span style="color:var(--amber);font-weight:600;">Q:</span> The cafeteria had 23 apples. If they used 20 to make lunch and bought 6 more, how many apples do they have?
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="raceStdBtn" type="button" style="font-size:13px;padding:8px 18px;">⚡ Standard prompt</button>
+      <button class="btn-primary" id="raceCoTBtn" type="button" style="font-size:13px;padding:8px 18px;">🧠 Chain-of-thought prompt</button>
+    </div>
+    <div id="raceOutput" style="font-family:var(--mono);font-size:13px;line-height:2;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;min-height:96px;color:var(--text2);"></div>
+    <div id="raceStatus" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:8px;min-height:18px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EMERGENCE -->
+<section id="emergence">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Emergence — the <em>Scale Gate</em></h2>
+  <p class="section-desc">CoT is not a free lunch for every model. Gains only appear at roughly ~100B parameters — and below ~10B, chain-of-thought often makes performance <em>worse</em>: small models produce fluent but illogical chains of thought.</p>
+
+  <div class="results-grid" style="margin-bottom:1.5rem;">
+    <div class="result-card">
+      <div class="result-model">BELOW ~10B</div>
+      <div class="result-score" style="color:var(--red);">worse</div>
+      <div class="result-label">fluent but wrong chains — CoT hurts</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:22%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">~100B · GPT-3 175B, LaMDA 137B</div>
+      <div class="result-score" style="color:var(--blue);">modest</div>
+      <div class="result-label">gains appear — CoT starts to help</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:55%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">540B · PaLM</div>
+      <div class="result-score" style="color:var(--amber);">+39</div>
+      <div class="result-label">GSM8K points over standard prompting</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Scale Gate on GSM8K</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Toggle the prompting mode and watch the bars. All four values are the paper's reported GSM8K solve rates (Table 2 / appendix — GPT-3 = text-davinci-002). Note how the smallest model's bar <em>shrinks</em> with CoT.</p>
+    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;">
+      <button class="btn-primary" id="emStdBtn" type="button" style="font-size:13px;padding:8px 18px;">Standard prompting</button>
+      <button class="btn-outline" id="emCoTBtn" type="button" style="font-size:13px;padding:8px 18px;">Chain-of-thought prompting</button>
+    </div>
+    <div id="emChart"></div>
+    <div style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">GSM8K solve rate (%), bars scaled to 60%. <span class="highlight">17.9 → 56.9</span> for PaLM-540B; <span class="highlight">6.5 → 14.3</span> for LaMDA-137B (modest); <span class="highlight">15.6 → 46.9</span> for GPT-3-175B; <span class="highlight">3.2 → 1.6</span> for LaMDA-8B — CoT actively hurts below ~10B parameters.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Results — <em>Three Reasoning Domains</em></h2>
+  <p class="section-desc">Arithmetic, commonsense, symbolic. Chain-of-thought prompting with PaLM-540B beats standard prompting across the board — with one honest caveat: the gains live in the largest models.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Arithmetic · PaLM-540B, Standard vs Chain-of-Thought (solve rate %)</div>
+    <table class="comp-table">
+      <thead><tr><th>Benchmark</th><th>Standard</th><th>With CoT</th><th>What it is</th></tr></thead>
+      <tbody>
+        <tr><td>GSM8K</td><td>17.9</td><td class="comp-best">56.9 (+39.0)</td><td>multi-step math word problems</td></tr>
+        <tr><td>SVAMP</td><td>69.4</td><td class="comp-best">79.0 (+9.6)</td><td>simpler word problems, varying structure</td></tr>
+        <tr><td>AQuA</td><td>25.2</td><td class="comp-best">35.8 (+10.6)</td><td>multiple-choice algebra</td></tr>
+        <tr><td>MAWPS</td><td>79.2</td><td class="comp-best">93.3 (+14.2)</td><td>word problems, varied templates</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">All values from the paper's Table 2. PaLM-540B + CoT on GSM8K reached state-of-the-art territory, surpassing even fine-tuned GPT-3 with a verifier (~55% prior best) — from prompting alone. The jump is biggest exactly where problems are hardest: multi-step GSM8K.</p>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Commonsense Reasoning</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">On commonsense benchmarks (CSQA, StrategyQA, and BIG-bench evaluation sets like sports understanding), CoT helps most at the largest scale. PaLM-540B with CoT hit <span class="highlight">75.6%</span> on StrategyQA — outperforming the prior fine-tuned state of the art (69.4%) — and beat an unaided sports enthusiast on sports understanding (95.4% vs 84%). Being honest: the gain on CSQA was <em>minimal</em>, and for GPT-3 some commonsense tasks did not improve at all.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Symbolic Reasoning</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">On toy symbolic tasks — <span class="code-inline">coin flips</span> (state tracking) and <span class="code-inline">last-letter concatenation</span> — PaLM-540B with CoT reaches <span class="highlight">near-100% solve rates</span>, including on out-of-distribution lengths longer than any exemplar. Standard prompting fails outright on last-letter concatenation (near 0%). One honest wrinkle: list reversal defeated two of the paper's co-authors' prompts — only a carefully engineered chain from a third solved it. Prompts are not all equal.</p>
+    </div>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">GSM8K · PaLM-540B + CoT</div><div class="result-score" style="color:var(--amber);">56.9%</div><div class="result-label">solve rate — vs 17.9 standard, ~55 prior fine-tuned best</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">SVAMP · PaLM-540B + CoT</div><div class="result-score" style="color:var(--teal);">79.0%</div><div class="result-label">solve rate — easier task, smaller CoT jump</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:79%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">DOMAINS</div><div class="result-score" style="color:var(--blue);">3</div><div class="result-label">arithmetic · commonsense · symbolic</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:60%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">TRAINING RUNS NEEDED</div><div class="result-score" style="color:var(--purple);">0</div><div class="result-label">off-the-shelf models, prompting only</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:6%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-label">The Honest Caveat</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Every big number above belongs to a 540B-parameter model. The same chain-of-thought prompt applied to an 8B model does <em>nothing</em> or actively hurts — the paper found CoT "actually hurts performance for most models smaller than 10B parameters". The ability to follow and produce a correct reasoning chain <span class="highlight">emerges with scale</span>. If your model is small, CoT is not your lever (Chapter 03); if it is huge, it is nearly free performance.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABLATIONS -->
+<section id="ablations">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Ablations — Why the <em>Words</em> Matter</h2>
+  <p class="section-desc">Maybe the gains come merely from "having computation in the prompt"? The paper strips the chain down to bare equations, pure computation, and reasoning-after-the-fact — every stripped-down version fails. Natural-language reasoning itself is the active ingredient.</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🧮 Equation only</div><div class="notice-text">Prompt the model to emit just a mathematical equation, then the answer. On LaMDA-137B GSM8K this scores 5.4 vs 14.3 for full CoT — the semantics of GSM8K questions are too hard to translate into the right equation without natural-language steps. A real failure from the paper: the model wrote "(4 + 20 × 0.25) = 6" for a ping-pong points problem — right shape, wrong reasoning, wrong answer.</div></div>
+    <div class="notice-card"><div class="notice-title">⠿ Variable compute only</div><div class="notice-text">Give the model extra intermediate tokens with no content at all — a sequence of dots (…) as long as the equation would be. It performs about the same as standard prompting (6.4 vs 14.3 CoT). Variable computation alone is not the secret: the words carry the gain.</div></div>
+    <div class="notice-card"><div class="notice-title">↩️ Reasoning after answer</div><div class="notice-text">Keep the full chain but put the answer <em>before</em> it. Score: 6.1 vs 14.3. The reasoning has to precede the answer to be useful — explaining after committing changes nothing.</div></div>
+    <div class="notice-card"><div class="notice-title">🔀 Prompt order matters</div><div class="notice-text">Like all few-shot methods, CoT is sensitive to its prompt. Variance across exemplar orders was small in most cases, but large for coin flips; performance also varied by annotator (99.6% vs 71.4%). Prompt engineering still matters.</div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Strip the Chain, Lose the Gain</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Click a prompting variant to see the exemplar format the model would copy, and the resulting PaLM-540B GSM8K solve rate. The 56.9 is exact; ~ values are illustrative of the direction reported in the paper's ablation study (Figure 5 / Tables 6–7, where ablations land at or below standard prompting).</p>
+    <div id="abTabs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:1rem;"></div>
+    <div id="abExample" style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.9;background:var(--bg3);padding:1rem;border-radius:var(--radius);white-space:pre-line;min-height:100px;"></div>
+    <div id="abBar" style="margin-top:1rem;"></div>
+    <div id="abVerdict" style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-top:8px;min-height:18px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Reasoning Becomes an Axis</em></h2>
+  <p class="section-desc">The paper that made "reasoning" an LLM benchmark axis. Everything that followed — sampling chains, distilling them, training on them with RL — builds on this one change to the prompt.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🗳️ Self-consistency (2022)</div><div class="notice-text">Generate many chains, majority-vote the final answers — stacks a second large gain on top of CoT. <a href="./Self_Consistency.html" style="color:var(--amber);">Self-Consistency Guide →</a> — the natural next paper.</div></div>
+    <div class="notice-card"><div class="notice-title">✨ Zero-shot CoT (2022)</div><div class="notice-text">Kojima et al.: one magic sentence — "Let's think step by step" — unlocks reasoning with no exemplars at all.</div></div>
+    <div class="notice-card"><div class="notice-title">🎓 CoT distillation</div><div class="notice-text">Fine-tune smaller models on model-generated chains of thought to distill the ability down below the emergence scale.</div></div>
+    <div class="notice-card"><div class="notice-title">🤖 Reasoning models: o1, DeepSeek-R1</div><div class="notice-text">Modern systems trained with reinforcement learning to produce long chains of thought before answering — thinking as the product. <a href="./DeepSeek_R1.html" style="color:var(--amber);">DeepSeek-R1 Guide →</a></div></div>
+    <div class="notice-card"><div class="notice-title">📊 The benchmark axis</div><div class="notice-text">Post-CoT, "can it reason?" became a headline question for every frontier model — GSM8K and friends became standard reporting.</div></div>
+    <div class="notice-card"><div class="notice-title">🔬 Emergence research</div><div class="notice-text">CoT became the canonical example of an ability that appears suddenly with scale — fueling the whole emergence debate.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the Chain-of-Thought prompting paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ CoT = few-shot exemplars whose answers include intermediate reasoning steps, ending in "The answer is X."</div>
+    <div class="card-sm">✅ No training, no new architecture — the same frozen model, prompted differently with ~8 exemplars.</div>
+    <div class="card-sm">✅ Emergence: gains appear around ~100B parameters; below ~10B, CoT often hurts (fluent but wrong chains).</div>
+    <div class="card-sm">✅ PaLM-540B on GSM8K: 17.9 → 56.9 solve rate (+39 points) — beating fine-tuned GPT-3 with a verifier, from prompting alone.</div>
+    <div class="card-sm">✅ The words matter: equation-only, variable-compute-only, and reasoning-after-answer ablations all fail — natural-language reasoning is the active ingredient.</div>
+    <div class="card-sm">✅ Legacy: self-consistency, zero-shot CoT, distillation, and RL-trained reasoning models (o1, DeepSeek-R1) all build on this paper.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2201.11903" target="_blank" rel="noopener noreferrer">"Chain-of-Thought Prompting Elicits Reasoning in Large Language Models"</a> (Wei et al., 2022)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2201.11903" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Self_Consistency.html">Self-Consistency Guide</a>
+    <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
+    <a class="footer-link" href="./DeepSeek_R1.html">DeepSeek-R1 Guide</a>
+  </div>
+<div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','core-idea','emergence','results','ablations','impact','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === STANDARD VS COT RACE DEMO ===
+(function(){
+  const outEl=document.getElementById('raceOutput');
+  const statEl=document.getElementById('raceStatus');
+  const sBtn=document.getElementById('raceStdBtn');
+  const cBtn=document.getElementById('raceCoTBtn');
+  if(!outEl||!statEl||!sBtn||!cBtn)return;
+  let timers=[];
+  const clearTimers=()=>{timers.forEach(t=>clearTimeout(t));timers=[];};
+  const line=html=>`<div style="animation:fadeUp .4s ease;">${html}</div>`;
+  sBtn.addEventListener('click',()=>{
+    clearTimers();
+    outEl.innerHTML=line(`<span style="color:var(--text3);">A:</span> The answer is <span style="color:var(--red);font-weight:600;">59</span>.`);
+    statEl.innerHTML=`<span class="pill pill-red">✗ wrong</span>&nbsp; <span style="color:var(--text3);">answered instantly — it added 23 + 20 + 6, never planning which operations to apply</span>`;
+  });
+  cBtn.addEventListener('click',()=>{
+    clearTimers();
+    outEl.innerHTML='';
+    statEl.innerHTML=`<span class="pill pill-amber">thinking…</span> <span style="color:var(--text3);">steps appear one line at a time</span>`;
+    const steps=[
+      `<span style="color:var(--text3);">A:</span> The cafeteria started with 23 apples.`,
+      `They used 20 to make lunch: <span style="color:var(--amber);font-weight:600;">23 − 20 = 3</span> apples left.`,
+      `They bought 6 more: <span style="color:var(--amber);font-weight:600;">3 + 6 = 9</span> apples.`,
+      `<span style="color:var(--text3);">So the answer is</span> <span style="color:var(--green);font-weight:600;">9</span>.`
+    ];
+    steps.forEach((s,i)=>{timers.push(setTimeout(()=>{outEl.innerHTML+=line(s);},350*(i+1)));});
+    timers.push(setTimeout(()=>{
+      statEl.innerHTML=`<span class="pill pill-green">✓ correct</span>&nbsp; <span style="color:var(--text3);">each intermediate result was computed before the answer was committed</span>`;
+    },350*(steps.length+1)));
+  });
+})();
+
+// === EMERGENCE SCALE CHART DEMO ===
+(function(){
+  const el=document.getElementById('emChart');
+  const stdBtn=document.getElementById('emStdBtn');
+  const cotBtn=document.getElementById('emCoTBtn');
+  if(!el||!stdBtn||!cotBtn)return;
+  const data=[
+    {label:'LaMDA-8B',std:3.2,cot:1.6},
+    {label:'LaMDA-137B',std:6.5,cot:14.3},
+    {label:'GPT-3-175B',std:15.6,cot:46.9},
+    {label:'PaLM-540B',std:17.9,cot:56.9}
+  ];
+  el.innerHTML=data.map((d,i)=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:104px;text-align:right;flex-shrink:0;">${d.label}</div>
+    <div style="flex:1;height:24px;background:var(--bg4);border-radius:4px;overflow:hidden;">
+      <div id="emBar${i}" style="height:100%;width:0%;background:#94a3b8;border-radius:4px;transition:width .7s ease, background-color .7s ease;transform-origin:left;"></div>
+    </div>
+    <div id="emVal${i}" style="font-family:var(--mono);font-size:11px;color:var(--text2);width:46px;flex-shrink:0;"></div>
+    <div id="emDelta${i}" style="width:64px;flex-shrink:0;font-family:var(--mono);font-size:10px;"></div>
+  </div>`).join('');
+  const setMode=mode=>{
+    const isCoT=mode==='cot';
+    data.forEach((d,i)=>{
+      const bar=document.getElementById('emBar'+i);
+      const val=document.getElementById('emVal'+i);
+      const del=document.getElementById('emDelta'+i);
+      if(!bar||!val||!del)return;
+      const v=isCoT?d.cot:d.std;
+      bar.style.width=(v/60*100)+'%';
+      bar.style.background=isCoT?'#f59e0b':'#94a3b8';
+      val.textContent=v.toFixed(1);
+      if(isCoT){
+        const diff=d.cot-d.std;
+        const cls=diff>=5?'pill-green':(diff<=-1?'pill-red':'pill-amber');
+        del.innerHTML=`<span class="pill ${cls}">${diff>0?'+':''}${diff.toFixed(1)}</span>`;
+      }else{
+        del.innerHTML='';
+      }
+    });
+    cotBtn.className=isCoT?'btn-primary':'btn-outline';
+    stdBtn.className=isCoT?'btn-outline':'btn-primary';
+  };
+  stdBtn.addEventListener('click',()=>setMode('std'));
+  cotBtn.addEventListener('click',()=>setMode('cot'));
+  setMode('std');
+  setTimeout(()=>setMode('std'),60);
+})();
+
+// === ABLATION COMPARISON DEMO ===
+(function(){
+  const tabsEl=document.getElementById('abTabs');
+  const exEl=document.getElementById('abExample');
+  const barEl=document.getElementById('abBar');
+  const vEl=document.getElementById('abVerdict');
+  if(!tabsEl||!exEl||!barEl||!vEl)return;
+  const Q='Q: The cafeteria had 23 apples. If they used 20 to make lunch\n    and bought 6 more, how many apples do they have?\n\n';
+  const ab=[
+    {key:'cot',label:'Full CoT',score:56.9,exact:true,color:'#22c55e',
+     example:Q+'A: They started with 23 apples. They used 20 to make lunch,\n   so 23 − 20 = 3 apples left. They bought 6 more, so 3 + 6 = 9.\n   The answer is 9.',
+     verdict:'✓ natural-language reasoning, line by line — the full +39 gain'},
+    {key:'eq',label:'Equation only',score:20,exact:false,color:'#f59e0b',
+     example:Q+'A: 23 − 20 + 6 = ?\n   The answer is 9.\n\n(the model must jump straight from words to the right equation —\n on GSM8K it often picks the wrong operations)',
+     verdict:'~ words stripped — loses the plan that says which operation applies when'},
+    {key:'dots',label:'Variable compute only',score:18,exact:false,color:'#3b82f6',
+     example:Q+'A: … … … … … … … … …\n   The answer is 9.\n\n(extra tokens of pure computation, no reasoning content at all)',
+     verdict:'~ computation tokens only — "performs about the same as the baseline" (the paper)'},
+    {key:'after',label:'Reasoning after answer',score:18,exact:false,color:'#94a3b8',
+     example:Q+'A: The answer is 9.\n   Explanation: started with 23, used 20 (3 left), bought 6 more.\n\n(the chain appears only after the answer is already committed)',
+     verdict:'~ reasoning after the answer — useful thinking has to come before committing'}
+  ];
+  let cur='cot';
+  const byKey=k=>ab.find(a=>a.key===k)||ab[0];
+  function render(){
+    tabsEl.innerHTML=ab.map(a=>{
+      const sel=a.key===cur;
+      return `<button type="button" style="font-family:var(--mono);font-size:11px;padding:8px 10px;border-radius:8px;border:1px solid ${sel?'rgba(245,158,11,0.4)':'var(--border)'};background:${sel?'var(--amber-dim)':'var(--bg3)'};color:${sel?'var(--amber)':'var(--text2)'};cursor:pointer;font-weight:${sel?'600':'400'};" onclick="window._abSelect('${a.key}')">${a.label}</button>`;
+    }).join('');
+    const a=byKey(cur);
+    exEl.textContent=a.example;
+    barEl.innerHTML=`<div style="display:flex;align-items:center;gap:8px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:130px;text-align:right;flex-shrink:0;">PaLM-540B GSM8K</div>
+      <div style="flex:1;height:24px;background:var(--bg4);border-radius:4px;overflow:hidden;">
+        <div id="abBarFill" style="height:100%;width:0%;background:${a.color};border-radius:4px;transition:width .6s ease;transform-origin:left;"></div>
+      </div>
+      <div style="font-family:var(--mono);font-size:12px;color:${a.color};width:56px;font-weight:600;flex-shrink:0;">${a.exact?a.score:'~'+a.score}</div>
+    </div>`;
+    setTimeout(()=>{const b=document.getElementById('abBarFill');if(b)b.style.width=a.score+'%';},40);
+    vEl.textContent=a.verdict;
+  }
+  window._abSelect=k=>{cur=k;render();};
+  render();
+})();
+
+// === QUIZ DATA ===
+const QUIZ_DATA=[
+  {q:'What does chain-of-thought prompting change compared to standard few-shot prompting?',opts:['It fine-tunes the model on reasoning data','The answers in the exemplars include intermediate reasoning steps before the final answer','It increases the number of exemplars to hundreds','It swaps in a larger backbone model'],correct:1,explain:'CoT keeps the few-shot format and the same frozen model — the only change is that the exemplar answers contain the reasoning chain, ending with a line like "The answer is X."'},
+  {q:'Roughly at what model scale do chain-of-thought gains emerge?',opts:['~1B parameters','~10B parameters','~100B parameters','~1T parameters'],correct:2,explain:'Gains appear at about 100B parameters (LaMDA 137B and GPT-3 175B see modest-to-clear gains; PaLM 540B sees large ones). Below ~10B, CoT often hurts — small models write fluent but illogical chains.'},
+  {q:'What was the PaLM-540B result on GSM8K with chain-of-thought vs standard prompting?',opts:['17.9 → 56.9 solve rate','56.9 → 17.9 (it got worse)','17.9 → 20.1 (basically flat)','It was not evaluated on GSM8K'],correct:0,explain:'Solve rate jumped from 17.9% to 56.9% (+39 points) — state-of-the-art territory at the time, surpassing even fine-tuned GPT-3 with a verifier, using prompting alone.'},
+  {q:'The ablation study (equation only, variable compute only, reasoning after answer) showed what?',opts:['Equation-only prompting matches full CoT','Any kind of computation in the prompt reproduces the gains','Only full natural-language reasoning reproduces the gains — the stripped variants fail','Reasoning placed after the answer works just as well'],correct:2,explain:'Every stripped-down variant fails: equation-only, dots-only computation, and reasoning-after-answer all land near standard prompting. Natural-language reasoning itself — not mere computation scaffolding — drives the improvement.'},
+  {q:'What does chain-of-thought prompting require to work?',opts:['Fine-tuning on thousands of task examples','A new architecture with a reasoning module','A handful of exemplars in the prompt — no training at all','Reinforcement learning on reasoning traces'],correct:2,explain:'CoT is few-shot prompting only: eight hand-written exemplars with reasoning, zero gradient updates, off-the-shelf models. (RL on reasoning traces came later, in o1 and DeepSeek-R1.)'}
+];
+
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+</body>
+</html>
