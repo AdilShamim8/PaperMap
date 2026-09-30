@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentBench: Evaluating LLMs as Agents — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the AgentBench paper, with an environment atlas, a step-by-step 'be the agent' terminal simulator, and an animated API-vs-open-model score race.">
+<meta name="keywords" content="AgentBench, LLM agents, agent evaluation, interactive environments, benchmark, success rate, GPT-4, llama-2, ICLR 2024, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/AgentBench_Evaluating_LLMs_as_Agents.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="AgentBench: Evaluating LLMs as Agents — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the first systematic multi-environment benchmark for LLMs as agents.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/AgentBench_Evaluating_LLMs_as_Agents.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AgentBench — Interactive Guide">
+<meta name="twitter:description" content="Learn how the first rigorous benchmark for LLM agents works, with an interactive environment atlas and a terminal simulator.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#environments">Environments</a>
+    <a class="nav-link" href="#protocol">Protocol</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#failure">Failure</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">ICLR 2024</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#environments">Environments</a>
+  <a href="#protocol">Protocol</a>
+  <a href="#results">Results</a>
+  <a href="#failure">Failure</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    From <em>Answers</em> to Actions<br>AgentBench
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that built the first systematic multi-environment
+    benchmark for LLMs <em>as agents</em> — 8 live environments where a model must run commands,
+    query databases, browse the web, and win games, with every action checked against reality.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2308.03688" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">8</div>
+      <div class="stat-label">Interactive Environments</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">29</div>
+      <div class="stat-label">LLMs Evaluated</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">78%</div>
+      <div class="stat-label">GPT-4's Best Success Rate</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Year Released</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Answering</em> to Acting</h2>
+  <p class="section-desc">LLMs became "agents" in the popular imagination almost overnight. AgentBench arrived in August 2023 to find out — measurably — what that actually meant.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2020 · May</div><div class="tl-title">GPT-3 (Brown et al.)</div><div class="tl-desc">175B parameters, few-shot question answering. Astonishing at <em>answering</em> — but never asked to <em>act</em>, observe feedback, or recover from a mistake.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022 · Oct</div><div class="tl-title">ReAct (Yao et al.)</div><div class="tl-desc">Interleaves reasoning traces with actions in one loop — the "Think then Act" template AgentBench later adopts inside every environment.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2023 · Feb</div><div class="tl-title">Toolformer (Schick et al.)</div><div class="tl-desc">LLMs teach themselves to call APIs mid-sentence. Tools enter the picture — and tool-using agents need tool-based exams.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023 · Mar</div><div class="tl-title">The AutoGPT wave</div><div class="tl-desc">AutoGPT, BabyAGI and AgentGPT go viral: autonomous agents promise everything — and loop, stall, and hallucinate in public. Hype outruns measurement.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Aug</div><div class="tl-title">🚀 AgentBench (Liu et al.)</div><div class="tl-desc">8 live environments, 29 LLMs, verifiable success criteria — the first systematic benchmark for LLMs <em>as agents</em> (arXiv 2308.03688).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2024 →</div><div class="tl-title">Agent evaluation becomes a field</div><div class="tl-desc">Published at ICLR 2024. GAIA, SWE-bench, OSWorld, AgentDojo and successors turn "measure the agent" into a research area of its own.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Answering a question and <span class="highlight">acting in an environment</span> are different skills. A chat benchmark grades a single response; an environment grades the whole loop — plan, act, read feedback, adapt, and know when to commit. In mid-2023, no benchmark graded that loop.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">TWO DIFFERENT EXAMS</div>
+        <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);">
+          <span style="color:var(--text3);">static QA&nbsp;&nbsp;:</span> question ──► answer ✔/✘<br>
+          <span style="color:var(--amber);">AgentBench:</span> goal ──► act ──► feedback ──► act ──► … ──► success?
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">The agent only passes if the environment's checking script agrees.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem — Grading <em>Answers</em>, Not Actions</h2>
+  <p class="section-desc">By 2023, models aced static QA benchmarks while agent apps built on the very same models looped, misformatted, and lost the plot. The exams were measuring the wrong skill.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">📝</div>
+      <div class="problem-title">Static QA Benchmarks</div>
+      <ul class="problem-list">
+        <li>One question in, one answer out — zero interaction rounds</li>
+        <li>No environment feedback to read, parse, or recover from</li>
+        <li>No consequence: nothing checks whether the plan actually executed</li>
+        <li>Long-horizon planning and memory are never exercised</li>
+        <li>Fluent text can hide a completely broken agent</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🕹️</div>
+      <div class="problem-title">AgentBench's Solution</div>
+      <ul class="problem-list">
+        <li>8 live environments that respond to every action</li>
+        <li>Multi-round interaction: 5–50 rounds to solve one problem</li>
+        <li>Verifiable success — checking scripts, exact answers, hashed DB states</li>
+        <li>Spans the terminal, SQL, knowledge graphs, games, and the web</li>
+        <li>Per-environment success metrics + one weighted overall score</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">The Analogy — Written Test vs Road Test</div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">A static benchmark is the <span class="highlight">written driving test</span>: you can ace it and still stall at the first intersection. AgentBench is the <span class="highlight">road test</span> — the Ubuntu container actually runs your commands, MySQL actually rejects your malformed SQL, the simulated shop actually ships the wrong product. In 2023 the industry was handing out licenses based on the written exam alone.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;">
+      <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);">
+        <span style="color:var(--text3);">written test:</span> "What does this sign mean?" ──► pick A/B/C/D<br>
+        <span style="color:var(--amber);">road test&nbsp;&nbsp;:</span> "Park here." ──► signal ──► mirror ──► steer ──► curb check ──► pass/fail
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ENVIRONMENTS -->
+<section id="environments">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Eight <em>Worlds</em> to Act In</h2>
+  <p class="section-desc">AgentBench groups its environments into three families — code-grounded, game-grounded, and web-grounded. Each has its own action space, its own feedback, and its own way of deciding "success".</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:1.5rem;">
+    <div class="card-sm" style="text-align:center;"><div style="font-size:1.6rem;">🖥️</div><div style="font-weight:600;font-size:13px;">Operating System</div><div style="font-size:11px;color:var(--text2);">Ubuntu Docker · real bash</div><div style="margin-top:6px;"><span class="pill pill-blue">Code · SR</span></div></div>
+    <div class="card-sm" style="text-align:center;"><div style="font-size:1.6rem;">🗄️</div><div style="font-weight:600;font-size:13px;">Database</div><div style="font-size:11px;color:var(--text2);">MySQL · SELECT / INSERT / UPDATE</div><div style="margin-top:6px;"><span class="pill pill-blue">Code · SR</span></div></div>
+    <div class="card-sm" style="text-align:center;"><div style="font-size:1.6rem;">🧠</div><div style="font-weight:600;font-size:13px;">Knowledge Graph</div><div style="font-size:11px;color:var(--text2);">Freebase · 5 query tools</div><div style="margin-top:6px;"><span class="pill pill-blue">Code · F1</span></div></div>
+    <div class="card-sm" style="text-align:center;"><div style="font-size:1.6rem;">🐟</div><div style="font-weight:600;font-size:13px;">Digital Card Game</div><div style="font-size:11px;color:var(--text2);">Aquawar · turn-based fish battle</div><div style="margin-top:6px;"><span class="pill pill-purple">Game · Reward</span></div></div>
+    <div class="card-sm" style="text-align:center;"><div style="font-size:1.6rem;">🐢</div><div style="font-weight:600;font-size:13px;">Lateral Thinking Puzzles</div><div style="font-size:11px;color:var(--text2);">riddles via yes/no questions</div><div style="margin-top:6px;"><span class="pill pill-purple">Game · Progress</span></div></div>
+    <div class="card-sm" style="text-align:center;"><div style="font-size:1.6rem;">🏠</div><div style="font-weight:600;font-size:13px;">House Holding</div><div style="font-size:11px;color:var(--text2);">ALFWorld · text household tasks</div><div style="margin-top:6px;"><span class="pill pill-purple">Game · SR</span></div></div>
+    <div class="card-sm" style="text-align:center;"><div style="font-size:1.6rem;">🛒</div><div style="font-weight:600;font-size:13px;">Web Shopping</div><div style="font-size:11px;color:var(--text2);">WebShop · ~1M real products</div><div style="margin-top:6px;"><span class="pill pill-teal pill-green">Web · Reward</span></div></div>
+    <div class="card-sm" style="text-align:center;"><div style="font-size:1.6rem;">🌐</div><div style="font-weight:600;font-size:13px;">Web Browsing</div><div style="font-size:11px;color:var(--text2);">Mind2Web · click / type / select</div><div style="margin-top:6px;"><span class="pill pill-green">Web · Step SR</span></div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Environment Atlas</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick an environment to see what it tests, a sample of what an interaction actually looks like, and how the strongest API model compares with a famous open one. All scores are the paper's real test-set results (Table 3, standard setting).</p>
+    <div id="envAtlasTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;" role="tablist"></div>
+    <div id="envAtlasInfo"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROTOCOL -->
+<section id="protocol">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The Protocol — One Loop, <em>Strict Rules</em></h2>
+  <p class="section-desc">Every environment runs the same contract: the model is an agent inside a partially observable world, acting one round at a time until it succeeds, breaks the format, or runs out of rounds.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">AgentBench task = ( 𝒮, 𝒜, 𝒯, ℛ, 𝒰, 𝒪 )</div>
+    <p style="font-size:12px;color:var(--text2);margin-top:6px;">Formally, interactive LLM-as-Agent evaluation is a partially observable Markov decision process (POMDP):</p>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">𝒮</div><div class="fp-name">State space</div><div class="fp-desc">Everything the environment can be — files, tables, pages, game boards.</div></div>
+      <div class="formula-piece"><div class="fp-sym">𝒜</div><div class="fp-name">Action space</div><div class="fp-desc">What the agent may emit: bash, SQL, tool calls, clicks, game moves.</div></div>
+      <div class="formula-piece"><div class="fp-sym">𝒯</div><div class="fp-name">Transition</div><div class="fp-desc">How actions change state — the environment executes and moves on.</div></div>
+      <div class="formula-piece"><div class="fp-sym">ℛ</div><div class="fp-name">Reward</div><div class="fp-desc">The checking script: success rate, F1, win rate, or shopping reward.</div></div>
+      <div class="formula-piece"><div class="fp-sym">𝒰</div><div class="fp-name">Instruction space</div><div class="fp-desc">The natural-language goal: "count the files in /etc", "buy blue shoes".</div></div>
+      <div class="formula-piece"><div class="fp-sym">𝒪</div><div class="fp-name">Observation space</div><div class="fp-desc">What the agent gets back — often partial, truncated, or noisy.</div></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">The Interaction Loop</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:2.1;background:var(--bg3);padding:1rem;border-radius:var(--radius);">
+        <span style="color:var(--blue);">&lt;USER&gt;</span>&nbsp; instruction + last environment feedback<br>
+        <span style="color:var(--teal);">&lt;AGENT&gt;</span> Think: plan &nbsp;·&nbsp; Act: one action<br>
+        <span style="color:var(--text3);">&nbsp;&nbsp;&nbsp;↓</span> environment executes the action<br>
+        <span style="color:var(--text3);">&nbsp;&nbsp;&nbsp;↓</span> observation returns → next round<br>
+        <span style="color:var(--amber);">loop until:</span> Complete ✔ · round limit · invalid output
+      </div>
+      <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:10px;">Prompts follow the ReAct-style "Thought + Action" pattern in a single round, with a 1-shot CoT example so models learn the format. Decoding is <span class="code-inline">temperature=0</span> (greedy) for reproducibility.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Formatting Is Part of the Exam</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:2.1;background:var(--bg3);padding:1rem;border-radius:var(--radius);">
+        Act: answer(<span style="color:var(--green);">220</span>)&nbsp;&nbsp;<span style="color:var(--green);">✔ valid</span><br>
+        "the answer is 220"&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--red);">✘ invalid format</span><br>
+        <span style="color:var(--text3);">"…you will be judged as FAIL immediately."</span>
+      </div>
+      <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:10px;">Each environment demands an exact output pattern — Think/Act blocks, one SQL per code block, actions only from the provided list. The Database prompt literally warns: <em>"If your response cannot match any pattern I mentioned earlier, you will be judged as FAIL immediately."</em> Long histories are trimmed to ~3,500 tokens ("[NOTICE] 2r messages are omitted.").</p>
+    </div>
+  </div>
+
+  <div class="results-grid" style="margin-bottom:1.5rem;">
+    <div class="result-card"><div class="result-model">AVG ROUNDS / PROBLEM</div><div class="result-score" style="color:var(--blue);">5–35</div><div class="result-label">Web Shopping 5 · OS 8 · House Holding 35 (solving rounds 5–50)</div></div>
+    <div class="result-card"><div class="result-model">PROBLEMS</div><div class="result-score" style="color:var(--amber);">1,283</div><div class="result-label">269 dev + 1,014 test ≈ 11k inference calls — MMLU-scale</div></div>
+    <div class="result-card"><div class="result-model">DECODING</div><div class="result-score" style="color:var(--teal);">temp 0</div><div class="result-label">greedy decoding on all tasks, for reproducible runs</div></div>
+    <div class="result-card"><div class="result-model">CONTEXT BUDGET</div><div class="result-score" style="color:var(--purple);">~3,500</div><div class="result-label">tokens of trimmed interaction history per inference</div></div>
+    <div class="result-card"><div class="result-model">COMPLETED RUNS</div><div class="result-score" style="color:var(--green);">6.0</div><div class="result-label">median rounds in successful trajectories (median 1,850 tokens)</div></div>
+    <div class="result-card"><div class="result-model">OVERALL SCORE</div><div class="result-score" style="color:var(--red);">OA</div><div class="result-label">each environment's mean resized to 1, then weighted average</div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Be the Agent (Centerpiece)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">You are the LLM. This is a real Operating System task from the paper's appendix — with its real round limit of 8. Pick an action at each step; wrong picks burn a round and trigger classic AgentBench failure modes. Can you finish before the limit?</p>
+    <div id="agentSimGoal"></div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0.75rem 0;">
+      <span id="agentSimStatus" class="pill pill-amber">Round 1 / 8 · Step 1 of 3</span>
+      <span id="agentSimScore" style="font-family:var(--mono);font-size:12px;color:var(--text3);"></span>
+    </div>
+    <div id="agentSimTerm" style="background:#0f172a;color:#e2e8f0;font-family:var(--mono);font-size:12px;line-height:1.9;border-radius:var(--radius);padding:1rem;min-height:120px;max-height:260px;overflow-y:auto;white-space:pre-wrap;"></div>
+    <div id="agentSimChoices" style="display:grid;gap:8px;margin-top:1rem;"></div>
+    <div id="agentSimVerdict"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">The Results — A Clear <em>Pecking Order</em></h2>
+  <p class="section-desc">29 models ran the gauntlet. One topped the table — and a chasm opened between the API frontier and the open-source field of 2023.</p>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">OPERATING SYSTEM</div><div class="result-score" style="color:var(--amber);">42.4</div><div class="result-label">GPT-4 success rate (%)</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:42.4%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">GPT-3.5: 32.6 · best OSS: 2.8</div></div>
+    <div class="result-card"><div class="result-model">DATABASE</div><div class="result-score" style="color:var(--amber);">32.0</div><div class="result-label">GPT-4 success rate (%)</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:32%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">GPT-3.5: 36.7 · best OSS: 14.0</div></div>
+    <div class="result-card"><div class="result-model">KNOWLEDGE GRAPH</div><div class="result-score" style="color:var(--amber);">58.8</div><div class="result-label">GPT-4 answer F1</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:58.8%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">GPT-3.5: 25.9 · best OSS: 23.5</div></div>
+    <div class="result-card"><div class="result-model">DIGITAL CARD GAME</div><div class="result-score" style="color:var(--amber);">74.5</div><div class="result-label">GPT-4 reward score</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:74.5%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">GPT-3.5: 33.7 · best OSS: 8.4</div></div>
+    <div class="result-card"><div class="result-model">LATERAL THINKING</div><div class="result-score" style="color:var(--amber);">16.6</div><div class="result-label">GPT-4 game progress</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:16.6%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">GPT-3.5: 10.5 · best OSS: 0.7</div></div>
+    <div class="result-card"><div class="result-model">HOUSE HOLDING</div><div class="result-score" style="color:var(--amber);">78.0</div><div class="result-label">GPT-4 success rate (%)</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:78%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">GPT-3.5: 16.0 · best OSS: 4.0</div></div>
+    <div class="result-card"><div class="result-model">WEB SHOPPING</div><div class="result-score" style="color:var(--blue);">61.1</div><div class="result-label">GPT-4 shopping reward</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:61.1%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">GPT-3.5: 64.1 · best OSS: 52.1</div></div>
+    <div class="result-card"><div class="result-model">WEB BROWSING</div><div class="result-score" style="color:var(--amber);">29.0</div><div class="result-label">GPT-4 step success (%)</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:29%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">GPT-3.5: 20.0 · best OSS: 20.0</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">The API-vs-Open Gap (Table 3, test set — "OA" = weighted overall AgentBench score)</div>
+    <table class="comp-table">
+      <thead><tr><th>Model</th><th>Type</th><th>OA</th><th>Standout</th><th>Weakest</th></tr></thead>
+      <tbody>
+        <tr><td class="comp-best">gpt-4 (0613)</td><td class="comp-best">API</td><td class="comp-best">4.01</td><td class="comp-best">best on 6 of 8 envs · HH 78.0</td><td>LTP 16.6</td></tr>
+        <tr><td>claude-3-opus</td><td>API</td><td>3.11</td><td>DB 51.7 — best of all models</td><td>LTP 14.3</td></tr>
+        <tr><td>glm-4</td><td>API</td><td>2.89</td><td>KG 46.3, WS 61.6</td><td>LTP 14.2</td></tr>
+        <tr><td>claude-2</td><td>API</td><td>2.49</td><td>DCG 55.5, WS 61.4</td><td class="comp-worst">WB 0.0 (!)</td></tr>
+        <tr><td>gpt-3.5-turbo (0613)</td><td>API</td><td>2.32</td><td>WS 64.1 — beats GPT-4 here</td><td>HH 16.0</td></tr>
+        <tr><td>text-davinci-003</td><td>API</td><td>1.71</td><td>KG 34.9</td><td>DCG 3.0</td></tr>
+        <tr><td>codellama-34b (instruct)</td><td>OSS</td><td class="comp-worst">0.96</td><td>WS 52.1 — best OSS overall</td><td>LTP 0.7</td></tr>
+        <tr><td class="comp-worst">llama-2-70b-chat</td><td class="comp-worst">OSS</td><td class="comp-worst">0.78</td><td>DCG 21.3</td><td class="comp-worst">LTP 0.0</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Every API-based LLM scored above 1.00 overall; OSS models averaged 0.51 vs the API average of 2.32. The paper restricts OSS entries to models ≤ 70B. claude-2's 0.0 on Web Browsing is real — it never produced a valid choice on Mind2Web's adapted setup.</p>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Finding — Strong at the Top, Not Enough</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">GPT-4 was best on <span class="highlight">6 of 8 environments</span> and hit a 78% success rate on House Holding — "indicating its practical usability in this scenario," as the paper puts it. But it still failed more than half of Operating System and Database problems, and scored just 16.6 on Lateral Thinking Puzzles. The authors' blunt summary: even the strongest GPT-4 "is not qualified as a practically usable agent."</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Finding — Open Models Were Nowhere Close</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Open-source models (≤70B) averaged OA <span class="highlight">0.51 vs 2.32</span> for API models — and often scored near zero in the hardest environments (llama-2-70b-chat: LTP 0.0, HH 2.0, WS 5.6). The most capable OSS model, codellama-34b (0.96), still fell far short of gpt-3.5-turbo. Alignment mattered: vicuna-13b, tuned on high-quality ShareGPT conversations, beat llama-2-13b and rivaled a 3× larger codellama-34b. Code tuning was ambivalent — great for procedural Web Shopping, worse for strategic game play.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Gap</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick an environment (or the overall score), press Run, and watch the 2023 gap between API frontier models and open models animate into view. Real Table 3 numbers, standard test setting.</p>
+    <div id="gapEnvToggle" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="gapRunBtn" type="button" style="font-size:13px;padding:8px 18px;">Run the Race →</button>
+      <span id="gapNote" style="font-family:var(--mono);font-size:11px;color:var(--text3);"></span>
+    </div>
+    <div id="gapBars"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAILURE -->
+<section id="failure">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">How Agents <em>Fail</em></h2>
+  <p class="section-desc">AgentBench didn't just score models — it dissected every trajectory into five finish reasons: Complete, Invalid Format, Invalid Action, Task Limit Exceeded, and Context Limit Exceeded. Here is what actually breaks.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🔁 Repetition loops (TLE)</div><div class="notice-text">The #1 failure cause. Over <strong>90%</strong> of Task-Limit-Exceeded trajectories contain near-identical repeated responses (Rouge-L ≥ 0.8 in the last 10 rounds), averaging 25.5 rounds before being cut off.</div></div>
+    <div class="notice-card"><div class="notice-title">📋 Invalid Format</div><div class="notice-text">Breaking the strict output pattern: <strong>53.3%</strong> of Database outcomes, 38.5% of Digital Card Game, 17.2% of Web Shopping. Instant FAIL in strict environments.</div></div>
+    <div class="notice-card"><div class="notice-title">❌ Invalid Action</div><div class="notice-text">Well-formed but outside the allowed action space: <strong>64.1%</strong> of House Holding outcomes, 10.2% of DCG, 8.4% of Web Browsing — the "Nothing happened" trap.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Goal drift</div><div class="notice-text">The paper's case study: gpt-3.5-turbo decomposed House Holding tasks fine, but "gradually lost sight of the original plan" as failed attempts piled up.</div></div>
+    <div class="notice-card"><div class="notice-title">🩹 Feedback blindness</div><div class="notice-text">Models that can't read their own errors. In Database, models that self-correct their SQL after error messages "significantly outscore others" — claude-2 is the paper's showcase self-corrector.</div></div>
+    <div class="notice-card"><div class="notice-title">📜 Context Limit Exceeded</div><div class="notice-text">Interaction history overflows the context window (only the 2,048-token text-davinci-002/003 models). Rare — 0–3.5% of outcomes — but always fatal; AgentBench's history-trimming strategy exists to contain it.</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">A Real Loop, From the Paper (gpt-3.5-turbo, House Holding)</div>
+      <div style="font-family:var(--mono);font-size:11.5px;color:var(--text2);line-height:1.9;background:var(--bg3);padding:1rem;border-radius:var(--radius);">
+        <span style="color:var(--text3);">task: put a clean soapbar in countertop</span><br>
+        agent: THOUGHT: …examine cabinet 2 for a clean soapbar.<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ACTION: examine cabinet 2<br>
+        user:&nbsp; The cabinet 1 is closed.<br>
+        agent: THOUGHT: …try examining cabinet 1 again…<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ACTION: examine cabinet 1<br>
+        user:&nbsp; The cabinet 1 is closed.<br>
+        agent: THOUGHT: …try opening cabinet 1 again…<br>
+        <span style="color:var(--red);">↻ the same 4-state cycle repeats…</span>
+      </div>
+      <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:10px;">A real trajectory pattern from the paper's planning case study: the model cycles open → close → examine → open while the environment stops changing. AgentBench judges a task failed after the round limit — or after three identical outputs in a row.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">What AgentBench Did NOT Solve</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Primitive strategies only:</strong> plain CoT, no reflection, search, or retries — so scores are a floor, not a ceiling, for clever agent frameworks.</li>
+        <li><strong>Text surrogates:</strong> the OS is a Docker sandbox, the web is HTML-as-text; real desktops and live sites stayed out of reach (OSWorld's 2024 job).</li>
+        <li><strong>Single agent, single environment:</strong> no multi-agent cooperation, no cross-environment tool transfer.</li>
+        <li><strong>A 2023 snapshot:</strong> gpt-4-0613-era results; API models keep changing, and their training data is unknowable.</li>
+        <li><strong>Narrow open-model range:</strong> only OSS models ≤ 70B were tested — the biggest open weights never ran.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — Agent Evaluation Becomes a <em>Field</em></h2>
+  <p class="section-desc">"Put the model in an environment and measure verifiable success" went from one paper's design to an entire evaluation ecosystem.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧪 An evaluation field emerges</div><div class="notice-text">GAIA (2023), SWE-bench (2023), OSWorld (2024), AgentDojo (2024) and more followed the same recipe: live environments, real tasks, verifiable outcomes — agent testing became its own research area.</div></div>
+    <div class="notice-card"><div class="notice-title">🏛️ The multi-environment pattern</div><div class="notice-text">Eight diverse worlds — code, game, web — under one protocol and one weighted score became the design template for judging general-purpose agents instead of single-task specialists.</div></div>
+    <div class="notice-card"><div class="notice-title">📦 Reproducible infrastructure</div><div class="notice-text">Docker-encapsulated, environment-isolated tasks plus an API-centric toolkit, released open-source (THUDM/AgentBench) — anyone can stand up the exact same eight exams.</div></div>
+    <div class="notice-card"><div class="notice-title">📈 Training signal for open models</div><div class="notice-text">The 0.51-vs-2.32 gap and the diagnosis (instruction following, multi-round alignment data) gave open-model teams a concrete target; agentic ability became a fine-tuning objective, not an afterthought.</div></div>
+    <div class="notice-card"><div class="notice-title">🔍 Failure taxonomy that stuck</div><div class="notice-text">Invalid Format / Invalid Action / Task Limit / Context Limit gave the community a shared vocabulary for <em>how</em> agents break — repetition loops and format errors are still the first things practitioners check.</div></div>
+    <div class="notice-card"><div class="notice-title">💡 "Agents ≠ chatbots"</div><div class="notice-text">The core lesson of the numbers: fluent conversation does not imply competent action. Acting well needs instruction following, long-horizon planning, memory, and feedback parsing — a different skill profile than static QA.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The Chat-to-Agent <em>Cliff</em></h2>
+  <p class="section-desc">AgentBench's most important chart isn't the leaderboard — it's the gap between talking and doing. The same GPT-4 that explains database theory fails over half of the actual database tasks. The cliff has a measured shape: strict output formats, multi-step feedback, and environments that punish drifting attention.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">🏙️</div>
+      <div class="problem-title">Eight Worlds, One Protocol</div>
+      <ul class="problem-list">
+        <li>OS, Database, Knowledge Graph, Card Game, Lateral Puzzles, ALFWorld households, WebShop, Mind2Web browsing</li>
+        <li>Every task a POMDP loop: Think → Act → environment feedback, with round limits and verifiable success</li>
+        <li>GPT-4 topped the table — overall 4.01, best on 6 of 8 worlds, 78% on House Holding</li>
+        <li>API models averaged 2.32 vs 0.51 for open models: the capability gap was the story of 2023</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">🪨</div>
+      <div class="problem-title">Failure Modes With Names</div>
+      <ul class="problem-list">
+        <li><span class="highlight">Invalid Format</span> — 53.3% of DB failures: the SQL was right-shaped, the wrapper was wrong</li>
+        <li><span class="highlight">Invalid Action</span> — 64.1% of House Holding failures: legal-looking actions that the environment rejects</li>
+        <li><span class="highlight">Repetition loops</span> — over 90% of time-limit failures: the agent re-issues the same failing move</li>
+        <li>Goal drift and feedback blindness: instructions lose to momentum as turns accumulate</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Failure-Mode Autopsy</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A real-shaped Database task, replayed as the paper's failure taxonomy. Step through the loop and watch a strong LLM die by a thousand format errors — then replay with the same model under format-repair prompting and watch the failure class change, not vanish.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:10px;">TASK · DATABASE WORLD · "list the titles of all orders placed by customer 42, sorted by date"</div>
+      <div id="abLog" style="background:#0d1117;border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;font-family:var(--mono);font-size:11.5px;line-height:1.9;max-height:230px;overflow-y:auto;margin-bottom:12px;"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <button class="btn-primary" id="abPlay" type="button" style="font-size:12.5px;padding:8px 16px;">▶ Run baseline agent</button>
+        <button class="btn-outline" id="abRetry" type="button" style="font-size:12.5px;padding:8px 16px;">↻ Run with format repair</button>
+        <span id="abTally" style="font-family:var(--mono);font-size:10.5px;color:var(--text3);">failure class counters live at the end of each run</span>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Strongest ≠ usable agent</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">A model can be the best in the world at describing SQL and still fail the task because it wrapped the query in the wrong envelope — three times in a row. The paper's prescription became the field's to-do list: format-constrained decoding, loop detection, feedback-grounded retries. The systems that later passed these worlds — see <a href="./Magentic_One_A_Generalist_Multi_Agent_System.html" style="color:var(--amber);font-weight:600;text-decoration:none;">Magentic-One</a> — are exactly this list, engineered. Safety in the same worlds is a different axis again: <a href="./Agent_SafetyBench_Evaluating_the_Safety_of_LLM_Agents.html" style="color:var(--amber);font-weight:600;text-decoration:none;">Agent-SafetyBench</a> measures what agents do wrong on purpose.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">📮 Format is a skill</div><div class="notice-text">Over half of DB failures were envelope errors, not SQL errors. Instruction-following under strict schemas is a distinct capability from knowing the content — later solved by constrained decoding, not by smarter SQL.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 The repetition trap</div><div class="notice-text">When an action fails, the most likely next action is… the same action. Over 90% of time-limit failures were loops — evidence that agents need explicit loop breakers, a component every modern orchestrator now ships.</div></div>
+    <div class="notice-card"><div class="notice-title">🧩 POMDP discipline</div><div class="notice-text">Framing every environment as a partially-observable loop made results comparable across worlds and made failure modes countable — the benchmark's methodological gift.</div></div>
+    <div class="notice-card"><div class="notice-title">📉 2.32 vs 0.51</div><div class="notice-text">The API-vs-open gap on overall score was the raw material for a year of open-model agent work — closing it became the explicit target of the open-source agent stacks of 2024.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the AgentBench paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ AgentBench (ICLR 2024) is the first systematic multi-environment benchmark for LLMs <em>as agents</em>: 8 interactive environments, 29 LLMs.</div>
+    <div class="card-sm">✅ The 8 worlds: Operating System, Database, Knowledge Graph, Digital Card Game, Lateral Thinking Puzzles, House Holding (ALFWorld), Web Shopping (WebShop), Web Browsing (Mind2Web).</div>
+    <div class="card-sm">✅ Every task is a POMDP loop — Think + Act, environment feedback, strict formats, verifiable success (SR / F1 / reward), round limits.</div>
+    <div class="card-sm">✅ GPT-4 topped the table (OA 4.01, best on 6 of 8, 78% on House Holding) — yet still failed over half of OS/DB problems. Strongest ≠ usable agent.</div>
+    <div class="card-sm">✅ The gap: API models averaged OA 2.32 vs 0.51 for open models; best OSS (codellama-34b, 0.96) trailed gpt-3.5-turbo (2.32) — while some scored near zero on KG/DCG/HH.</div>
+    <div class="card-sm">✅ Failure modes have names: repetition loops (>90% of TLE), Invalid Format (53.3% of DB), Invalid Action (64.1% of House Holding), goal drift, feedback blindness.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2308.03688" target="_blank" rel="noopener noreferrer">"AgentBench: Evaluating LLMs as Agents"</a> (Liu et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2308.03688" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./ReAct.html">ReAct Guide</a>
+    <a class="footer-link" href="./HELM_Holistic_Evaluation_of_Language_Models.html">HELM Guide</a>
+    <a class="footer-link" href="./InjecAgent_Benchmarking_Indirect_Prompt_Injections.html">InjecAgent Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','environments','protocol','results','failure','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === DEMO 1: ENVIRONMENT ATLAS ===
+(function(){
+  const tabsEl=document.getElementById('envAtlasTabs');
+  const infoEl=document.getElementById('envAtlasInfo');
+  if(!tabsEl||!infoEl)return;
+  const ENV=[
+    {k:'os',icon:'🖥️',name:'Operating System',family:'Code-grounded',g4:42.4,oss:9.7,metric:'Success Rate · avg 8 rounds · 144 test problems',
+     tests:'Multi-step tool use in a real Ubuntu Docker container. The agent writes bash, reads (often truncated) output, and must know when to stop exploring and commit an answer.',
+     cmds:['Think: To count files in /etc, I need to print them.','Act: bash — ls /etc','OS: …[truncated because the output is too long]','Act: bash — ls -1 /etc | wc -l  →  220']},
+    {k:'db',icon:'🗄️',name:'Database',family:'Code-grounded',g4:32.0,oss:13.0,metric:'Success Rate · avg 5 rounds · 300 test problems',
+     tests:'Full SQL pipelines — not just writing queries, but operating a live MySQL database: SELECT to answer, or INSERT/UPDATE that produce a table whose hash must match exactly.',
+     cmds:['Action: Operation — SELECT Wins FROM table','      WHERE Club="Dunfermline Athletic";','MySQL: 1 row returned  →  Action: Answer','Final Answer: ["1"]']},
+    {k:'kg',icon:'🧠',name:'Knowledge Graph',family:'Code-grounded',g4:58.8,oss:8.0,metric:'Answer F1 · avg 15 rounds · 150 test problems',
+     tests:'Long-horizon planning over a partially observable Freebase (45M entities, 3B facts). Each question needs at least 5 chained tool calls — no SPARQL writing, but full workflow autonomy.',
+     cmds:['get_relations(Barack Obama)','get_neighbors(Barack Obama, people.person.profession)','intersection(#0, #1)  →  final answer variable']},
+    {k:'dcg',icon:'🐟',name:'Digital Card Game',family:'Game-grounded',g4:74.5,oss:21.3,metric:'Reward (0.7×win rate + 0.3×damage) · avg 30 rounds',
+     tests:'Strategy under rules: Aquawar, a turn-based battle where each side fields 4 of 10 fish types (400 HP, 200 ATK, active + passive skills). No procedural template — the model must actually think tactically.',
+     cmds:['Think: their Barracuda can dodge 30% — target the low-HP Whiteshark.','Act: Octopus uses its active skill on Whiteshark','Game: Whiteshark takes 75 damage (325/400)']},
+    {k:'ltp',icon:'🐢',name:'Lateral Thinking Puzzles',family:'Game-grounded',g4:16.6,oss:0.0,metric:'Game Progress · avg 25 rounds',
+     tests:'Strategic questioning. Given a mysterious story, the agent must crack the truth by asking yes/no/irrelevant questions — one per round, no "why" questions, no giving up. Nobody scored well here.',
+     cmds:['Story: A man is found dead in a field with an unopened package.','Question: Did he fall from a great height?','Host: yes  →  Question: Was the package a parachute?']},
+    {k:'hh',icon:'🏠',name:'House Holding',family:'Game-grounded',g4:78.0,oss:2.0,metric:'Success Rate · avg 35 rounds · 50 test problems',
+     tests:'Embodied commonsense in ALFWorld: "put a clean soapbar on the countertop" means find, clean, move — with actions restricted to a strict list. 64.1% of failures here were invalid actions.',
+     cmds:['THOUGHT: search cabinets for a spraybottle…','ACTION: go to cabinet 1','User: On the cabinet 1, you see a cloth 1.']},
+    {k:'ws',icon:'🛒',name:'Web Shopping',family:'Web-grounded',g4:61.1,oss:5.6,metric:'Reward (attribute match) · avg 5 rounds · 200 test problems',
+     tests:'Multi-step purchase decisions on WebShop: ~1M real scraped Amazon products, 12,087 human instructions. Search, compare attributes, click buy — reward = how well the bought item matches the goal.',
+     cmds:['search [blue running shoes, size 10, under $80]','page: 3 items match — click [item B]','click [buy now]  →  reward computed']},
+    {k:'wb',icon:'🌐',name:'Web Browsing',family:'Web-grounded',g4:29.0,oss:19.0,metric:'Step Success Rate · avg 10 rounds · 100 test problems',
+     tests:'Real navigation on Mind2Web: given raw HTML and a high-level goal, pick the next action from 5 candidates (click / type / select). Even top models only manage single-digit <em>task</em> success — step success is the honest metric.',
+     cmds:['Task: Check pickup restaurants in Boston, 5pm, one guest','choices: A. None of the above  B. &lt;button id=0 …&gt;','pick B  →  next page observation']}
+  ];
+  let current='os';
+  function render(){
+    tabsEl.innerHTML=ENV.map(e=>`<button type="button" role="tab" aria-selected="${e.k===current}" style="font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid ${e.k===current?'rgba(245,158,11,0.4)':'var(--border)'};background:${e.k===current?'var(--amber-dim)':'var(--bg3)'};color:${e.k===current?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._atlasSelect('${e.k}')">${e.icon} ${e.name}</button>`).join('');
+    const e=ENV.find(x=>x.k===current);
+    const max=Math.max(e.g4,e.oss,1);
+    infoEl.innerHTML=`
+      <div class="card-sm" style="margin-bottom:0.75rem;">
+        <div class="card-label">${e.icon} ${e.name} — ${e.family}</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;">${e.tests}</div>
+      </div>
+      <div style="background:#0f172a;color:#e2e8f0;font-family:var(--mono);font-size:11.5px;line-height:1.9;border-radius:var(--radius);padding:1rem;margin-bottom:0.75rem;white-space:pre-wrap;">${e.cmds.join('\n')}</div>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.9rem 1rem;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;">Success — GPT-4 vs llama-2-70b-chat (${e.metric})</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:150px;">gpt-4</div>
+          <div style="flex:1;height:18px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${(e.g4/max*100).toFixed(1)}%;background:#f59e0b;border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--amber);width:44px;font-weight:600;">${e.g4}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:150px;">llama-2-70b-chat</div>
+          <div style="flex:1;height:18px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${(e.oss/max*100).toFixed(1)}%;background:#94a3b8;border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:44px;">${e.oss}</div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;">Real Table 3 test-set values (standard setting). OSS = open-source, ≤70B.</div>
+      </div>`;
+  }
+  window._atlasSelect=function(k){current=k;render();};
+  render();
+})();
+
+// === DEMO 2: BE THE AGENT (CENTERPIECE) ===
+(function(){
+  const goalEl=document.getElementById('agentSimGoal');
+  const statusEl=document.getElementById('agentSimStatus');
+  const scoreEl=document.getElementById('agentSimScore');
+  const termEl=document.getElementById('agentSimTerm');
+  const choicesEl=document.getElementById('agentSimChoices');
+  const verdictEl=document.getElementById('agentSimVerdict');
+  if(!goalEl||!choicesEl||!termEl)return;
+  const REDUCED=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const LIMIT=8;
+  const STEPS=[
+    {hint:'Step 1 — make your first move:',opts:[
+      {t:'Think: list the files. Act: bash — ls /etc',ok:true,
+       out:['agent  Think: I need to see the files in /etc.','agent  Act: bash — ls /etc','os     cpi  cron.daily  fuse.conf  iproute2  lvm …','os     [truncated because the output is too long]'],
+       note:'✓ Right format, real action — and the environment answers back with a truncation you now have to handle. This is the feedback loop in action.'},
+      {t:'Reply directly: "There are 220 files."',ok:false,fail:'Invalid Format',
+       out:['agent  There are 220 files.','check  no "Think:" + "Act:" block found','check  → judged FAIL for this round'],
+       note:'✘ Invalid Format: the OS environment requires the Think/Act pattern (a "cannot match any pattern → FAIL" rule). In strict format environments this ends runs instantly — 53.3% of Database outcomes die this way.'},
+      {t:'Think: look around. Act: bash — cat /etc/passwd',ok:false,fail:'Goal drift',
+       out:['agent  Act: bash — cat /etc/passwd','os     root:x:0:0:root:/root:/bin/bash …','hint   …this reads user accounts. It has nothing to do with counting files.'],
+       note:'✘ Goal drift: a plausible-looking command that abandons the goal. The paper watched gpt-3.5 "gradually lose sight of the original plan" exactly like this.'}
+    ]},
+    {hint:'Step 2 — the output was truncated. Now what?',opts:[
+      {t:'Act: bash — ls -1 /etc | wc -l',ok:true,
+       out:['agent  Think: count them directly instead of eyeballing.','agent  Act: bash — ls -1 /etc | wc -l','os     220'],
+       note:'✓ Textbook agent behavior: adapt the action to the feedback. One command, one number — no guessing.'},
+      {t:'Act: bash — ls /etc  (try again)',ok:false,fail:'Repetition loop',
+       out:['agent  Act: bash — ls /etc','os     cpi  cron.daily  fuse.conf … [truncated again]','hint   same command, same truncated wall of text.'],
+       note:'✘ Repetition: re-running the same failing action. Over 90% of Task-Limit-Exceeded trajectories on AgentBench contain near-identical repeats like this — the #1 failure cause.'},
+      {t:'Act: bash — head -20 /etc  (count what you can see)',ok:false,fail:'Feedback blindness',
+       out:['agent  Act: bash — head -20 /etc','os     20 entries printed','hint   the truncation warning said the list is incomplete — 20 is not the answer.'],
+       note:'✘ Feedback blindness: ignoring what the environment told you. Models that read errors and adapt (claude-2 in the DB task) "significantly outscore others."'}
+    ]},
+    {hint:'Step 3 — you have the number: 220. Finish the task.',opts:[
+      {t:'Think: done. Act: answer(220)',ok:true,
+       out:['agent  Think: now I have the answer.','agent  Act: answer(220)','check  executing checking script…','check  exit code 0 → CORRECT'],
+       note:'✓ Committed in the exact required format. The checking script agrees — task Complete.'},
+      {t:'Act: finish',ok:false,fail:'Wrong terminal action',
+       out:['agent  Act: finish','check  this is a QA task — "answer" submits results, "finish" is for operations','check  no final answer submitted → judged incorrect'],
+       note:'✘ Instruction following: the prompt defines three actions — bash, finish, answer — and for a question you must use answer(...). Subtle format rules sink real runs.'},
+      {t:'Act: bash — ls /etc/services  (keep exploring)',ok:false,fail:'Task Limit looms',
+       out:['agent  Act: bash — ls /etc/services','os     services file listed','hint   the goal is long done. Every extra round brings the 8-round limit closer.'],
+       note:'✘ Never committing: TLE is the most common AgentBench failure (23.9% of OS outcomes, 82.5% in Lateral Thinking Puzzles).'}
+    ]}
+  ];
+  let step,round,over;
+  function reset(){step=0;round=0;over=false;termEl.textContent='';verdictEl.innerHTML='';goalEl.innerHTML=`<div class="card-sm" style="border-color:rgba(245,158,11,0.25);"><div class="card-label">Goal (from the paper's OS environment)</div><div style="font-family:var(--mono);font-size:13px;color:var(--text);">"Tell me how many files are in the directory '/etc'?"</div><div style="font-size:11px;color:var(--text3);margin-top:6px;">Ubuntu Docker · bash / answer / finish actions · round limit 8 · success = checking script exit 0</div></div>`;render();}
+  function render(){
+    statusEl.textContent=`Round ${Math.min(round+1,LIMIT)} / ${LIMIT} · Step ${step+1} of 3`;
+    scoreEl.textContent=over?'':'wrong picks cost one round each';
+    choicesEl.innerHTML=STEPS[step].opts.map((o,i)=>`<button type="button" style="text-align:left;font-family:var(--mono);font-size:12px;color:var(--text2);padding:10px 14px;border-radius:var(--radius);border:1px solid var(--border);background:var(--bg3);cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='rgba(245,158,11,0.35)'" onmouseout="this.style.borderColor='var(--border)'" onclick="window._agentPick(${i})">${o.t}</button>`).join('');
+  }
+  function typeLines(lines,done){
+    if(REDUCED){lines.forEach(l=>{const d=document.createElement('div');d.textContent=l;termEl.appendChild(d);});termEl.scrollTop=termEl.scrollHeight;done();return;}
+    let i=0;
+    const iv=setInterval(()=>{
+      const d=document.createElement('div');d.textContent=lines[i];d.className='animate-in';termEl.appendChild(d);termEl.scrollTop=termEl.scrollHeight;
+      i++;if(i>=lines.length){clearInterval(iv);setTimeout(done,240);}
+    },300);
+  }
+  window._agentPick=function(i){
+    if(over)return;
+    const o=STEPS[step].opts[i];
+    round++;
+    choicesEl.innerHTML='';
+    statusEl.textContent=`Round ${round} / ${LIMIT} · Step ${step+1} of 3`;
+    typeLines(o.out,()=>{
+      if(o.ok){
+        step++;
+        if(step>=STEPS.length){
+          over=true;
+          verdictEl.innerHTML=`<div class="card-sm" style="margin-top:0.75rem;background:var(--green-dim);border-color:rgba(34,197,94,0.3);"><div style="font-weight:600;color:var(--green);font-size:14px;">✓ SUCCESS — completed in ${round} of ${LIMIT} rounds</div><div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:4px;">Act → observe feedback → adapt → commit in the required format. That whole loop is what AgentBench measures. In this environment's 144-problem test set, GPT-4 solved 42.4% and llama-2-70b-chat just 9.7%.</div></div><button class="btn-outline" type="button" style="font-size:12px;padding:6px 14px;margin-top:10px;" onclick="window._agentRestart()">↺ Play again</button>`;
+          statusEl.textContent=`Complete ✔ · ${round}/${LIMIT} rounds`;
+          scoreEl.textContent='';
+          return;
+        }
+        verdictEl.innerHTML=`<div class="card-sm" style="margin-top:0.75rem;background:var(--green-dim);border-color:rgba(34,197,94,0.3);font-size:12px;color:var(--text2);"><span style="color:var(--green);font-weight:600;">✓ Round well spent.</span> ${o.note}</div>`;
+        render();
+      }else{
+        verdictEl.innerHTML=`<div class="card-sm" style="margin-top:0.75rem;background:var(--red-dim);border-color:rgba(239,68,68,0.3);font-size:12px;color:var(--text2);"><span style="color:var(--red);font-weight:600;">✘ ${o.fail}.</span> ${o.note}</div>`;
+        if(round>=LIMIT){
+          over=true;
+          verdictEl.innerHTML=`<div class="card-sm" style="margin-top:0.75rem;background:var(--red-dim);border-color:rgba(239,68,68,0.3);"><div style="font-weight:600;color:var(--red);font-size:14px;">✗ Task Limit Exceeded — ${LIMIT} rounds spent, goal unfinished</div><div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:4px;">This is AgentBench's #1 failure mode: models burn every round without completing the goal, usually while repeating themselves. This is exactly what the benchmark exists to catch.</div></div><button class="btn-outline" type="button" style="font-size:12px;padding:6px 14px;margin-top:10px;" onclick="window._agentRestart()">↺ Try again</button>`;
+          statusEl.textContent='Task Limit Exceeded ✗';
+          scoreEl.textContent='';
+          return;
+        }
+        render();
+      }
+    });
+  };
+  window._agentRestart=function(){reset();};
+  reset();
+})();
+
+// === DEMO 3: THE GAP ===
+(function(){
+  const toggleEl=document.getElementById('gapEnvToggle');
+  const runBtn=document.getElementById('gapRunBtn');
+  const barsEl=document.getElementById('gapBars');
+  const noteEl=document.getElementById('gapNote');
+  if(!toggleEl||!barsEl||!runBtn)return;
+  const REDUCED=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const MODELS=[{n:'gpt-4',c:'#f59e0b',v:'#b45309'},{n:'gpt-3.5-turbo',c:'#3b82f6'},{n:'codellama-34b · best OSS',c:'#14b8a6'},{n:'llama-2-70b-chat',c:'#94a3b8'}];
+  const DATA={
+    os:{label:'Operating System (SR %)',vals:[42.4,32.6,2.8,9.7]},
+    db:{label:'Database (SR %)',vals:[32.0,36.7,14.0,13.0]},
+    kg:{label:'Knowledge Graph (F1)',vals:[58.8,25.9,23.5,8.0]},
+    dcg:{label:'Digital Card Game (reward)',vals:[74.5,33.7,8.4,21.3]},
+    ltp:{label:'Lateral Thinking (progress)',vals:[16.6,10.5,0.7,0.0]},
+    hh:{label:'House Holding (SR %)',vals:[78.0,16.0,4.0,2.0]},
+    ws:{label:'Web Shopping (reward)',vals:[61.1,64.1,52.1,5.6]},
+    wb:{label:'Web Browsing (step SR %)',vals:[29.0,20.0,20.0,19.0]},
+    oa:{label:'Overall AgentBench score (OA)',vals:[4.01,2.32,0.96,0.78]}
+  };
+  let current='os';
+  function renderToggle(){
+    toggleEl.innerHTML=Object.keys(DATA).map(k=>`<button type="button" aria-pressed="${k===current}" style="font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid ${k===current?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===current?'var(--amber-dim)':'var(--bg3)'};color:${k===current?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._gapSelect('${k}')">${k.toUpperCase()}</button>`).join('');
+    noteEl.textContent=DATA[current].label+' · press Run';
+  }
+  function renderBars(instant){
+    const d=DATA[current];
+    const max=Math.max.apply(null,d.vals);
+    barsEl.innerHTML=MODELS.map((m,i)=>{
+      const val=d.vals[i];
+      const pct=(val/max*100);
+      const valTxt=(current==='oa')?val.toFixed(2):val.toFixed(1);
+      const color=(val<1&&current!=='oa')?'#ef4444':m.c;
+      return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:170px;text-align:right;flex-shrink:0;">${m.n}</div>
+        <div style="flex:1;height:24px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div id="gapbar-${i}" style="height:100%;width:${instant?pct:0}%;background:${color};border-radius:4px;transition:width 0.7s cubic-bezier(0.22,0.61,0.36,1);transform-origin:left;"></div></div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text);width:52px;font-weight:600;">${valTxt}</div>
+      </div>`;
+    }).join('');
+    if(!instant){
+      MODELS.forEach((m,i)=>{
+        const pct=(d.vals[i]/max*100);
+        setTimeout(()=>{const b=document.getElementById('gapbar-'+i);if(b)b.style.width=pct+'%';},i*280);
+      });
+    }
+  }
+  window._gapSelect=function(k){current=k;renderToggle();barsEl.innerHTML='';};
+  runBtn.addEventListener('click',()=>{renderBars(REDUCED);noteEl.textContent=DATA[current].label+' · Table 3, test set (standard)';});
+  renderToggle();
+})();
+
+// === FAILURE AUTOPSY (DEEP DIVE) ===
+(function(){
+  const log=document.getElementById('abLog'),play=document.getElementById('abPlay'),retry=document.getElementById('abRetry'),tally=document.getElementById('abTally');
+  if(!log||!play||!retry||!tally)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const RUNS={
+    base:[
+      {r:'THINK',t:'"I should query the orders table filtered by customer 42."',c:'var(--text2)'},
+      {r:'ACT',t:'SELECT title FROM orders WHERE cid=42 ORDER BY date;',c:'var(--amber)'},
+      {r:'ENV',t:'✗ Invalid format — action must be wrapped: db.run("…")',c:'var(--red)'},
+      {r:'THINK',t:'"The query is correct. Let me submit it again."',c:'var(--text2)'},
+      {r:'ACT',t:'SELECT title FROM orders WHERE cid=42 ORDER BY date;',c:'var(--amber)'},
+      {r:'ENV',t:'✗ Invalid format — same envelope error (2nd)',c:'var(--red)'},
+      {r:'THINK',t:'"Maybe reorder the clauses…"',c:'var(--text2)'},
+      {r:'ACT',t:'SELECT date, title FROM orders WHERE cid=42;',c:'var(--amber)'},
+      {r:'ENV',t:'✗ Invalid format (3rd) → round limit → TASK FAILED',c:'var(--red)'}
+    ],
+    fix:[
+      {r:'THINK',t:'"Query the orders table; wrap in db.run()."',c:'var(--text2)'},
+      {r:'ACT',t:'db.run("SELECT title FROM orders WHERE cid=42 ORDER BY date;")',c:'var(--amber)'},
+      {r:'ENV',t:'✓ 3 rows returned — titles listed correctly',c:'var(--green)'},
+      {r:'THINK',t:'"Results match the request. Compose the final answer."',c:'var(--text2)'},
+      {r:'ACT',t:'respond("1. Desk lamp · 2. Office chair · 3. Notebook")',c:'var(--amber)'},
+      {r:'ENV',t:'✓ TASK COMPLETE in 3 rounds',c:'var(--green)'}
+    ]
+  };
+  function line(l,i){
+    const anim=RM?'':'opacity:0;animation:fadeUp .35s ease forwards;';
+    return '<div style="'+anim+'" class="ab-line"><span style="color:'+l.c+';font-weight:700;">'+l.r+'</span> <span style="color:var(--text3);">'+l.t+'</span></div>';
+  }
+  function playRun(kind){
+    const seq=RUNS[kind];log.innerHTML='';
+    if(RM){log.innerHTML=seq.map((l,i)=>line(l,i)).join('');tally.textContent=kind==='base'?'baseline: Invalid Format ×3 → task failed (the 53.3% class)':'format repair: task complete — the failure class removed, capability unchanged';
+      return;}
+    let i=0;
+    const tmr=setInterval(()=>{
+      log.insertAdjacentHTML('beforeend',line(seq[i],i));
+      log.scrollTop=log.scrollHeight;
+      i++;
+      if(i>=seq.length){
+        clearInterval(tmr);
+        tally.textContent=kind==='base'?'baseline: Invalid Format ×3 → task failed (the 53.3% class)':'format repair: task complete — the failure class removed, capability unchanged';
+        const cnt=kind==='base'?'<div class="card-sm" style="margin-top:10px;border-left:3px solid var(--red);"><div style="font-size:11.5px;font-weight:600;color:var(--red);margin-bottom:3px;">AUTOPSY — what actually failed</div><div style="font-size:11.5px;color:var(--text2);line-height:1.7;">The SQL was right twice. Three identical envelope errors → round limit → failure with zero database misunderstanding. The paper counted exactly this: 53.3% of DB-environment failures were Invalid Format. Same model, plus a wrapper rule, equals a pass — the cliff is in the protocol layer.</div></div>':'<div class="card-sm" style="margin-top:10px;border-left:3px solid var(--green);"><div style="font-size:11.5px;font-weight:600;color:var(--green);margin-bottom:3px;">POST-MORTEM — what changed</div><div style="font-size:11.5px;color:var(--text2);line-height:1.7;">One line of format scaffolding (wrap queries in db.run) and a retry rule. No new knowledge, no new model. AgentBench’s lesson in miniature: agentic ability is competence × compliance, and compliance is engineering.</div></div>';
+        log.insertAdjacentHTML('beforeend',cnt);
+        log.scrollTop=log.scrollHeight;
+      }
+    },330);
+  }
+  play.addEventListener('click',()=>{play.className='btn-primary';retry.className='btn-outline';playRun('base');});
+  retry.addEventListener('click',()=>{retry.className='btn-primary';play.className='btn-outline';playRun('fix');});
+  if(RM||!('IntersectionObserver' in window)){log.innerHTML='<div style="color:var(--text3);">Press Run to replay the episode.</div>';}
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'What makes AgentBench fundamentally different from static QA benchmarks like MMLU?',opts:['It uses much harder multiple-choice questions','It evaluates models inside interactive, multi-round environments with verifiable success metrics','It measures how fast models generate tokens','It only tests coding ability'],correct:1,explain:'AgentBench places LLMs in 8 live environments (OS, DB, KG, games, web) where they must act, read environment feedback, and hit verifiable success criteria — success rate, F1, or reward — instead of answering one-shot questions.'},
+  {q:'How many distinct interactive environments does AgentBench evaluate?',opts:['4','12','8','25'],correct:2,explain:'Eight: Operating System, Database, Knowledge Graph, Digital Card Game, Lateral Thinking Puzzles, House Holding (ALFWorld), Web Shopping (WebShop), and Web Browsing (Mind2Web).'},
+  {q:'What was the headline finding across the 29 evaluated models?',opts:['GPT-4 was clearly strongest (best on 6 of 8 environments) yet far from perfect, and a huge gap separated API models from open models (avg OA 2.32 vs 0.51)','Open-source models beat GPT-4 on most environments','All models scored above 90% on every environment','GPT-3.5-turbo beat GPT-4 on the overall score'],correct:0,explain:'GPT-4 topped the table (OA 4.01, 78% success on House Holding) but still failed most OS and DB problems; OSS models ≤70B averaged just 0.51 vs 2.32 for API models.'},
+  {q:"In the paper's outcome analysis, 64.1% of House Holding outcomes belonged to which failure type?",opts:['Invalid Format','Context Limit Exceeded','Complete','Invalid Action'],correct:3,explain:'In ALFWorld, models frequently emitted well-formed actions outside the predefined action space — 64.1% of outcomes. Invalid Format dominated Database (53.3%) and Digital Card Game (38.5%).'},
+  {q:'What happened in the field after AgentBench?',opts:['Agent research was abandoned as a dead end','Agent evaluation became a field of its own — GAIA, SWE-bench, OSWorld, AgentDojo and more adopted live-environment, verifiable-success testing','Static QA was declared sufficient for agents','Interactive evaluation was banned from conferences'],correct:1,explain:"AgentBench's multi-environment, verifiable-success design became the template for the agent-evaluation wave; the paper itself was published at ICLR 2024."}
+];
+
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HELM: Holistic Evaluation of Language Models — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the HELM paper, with an interactive beyond-accuracy metric dashboard, a scenario × metric matrix explorer, and a leaderboard-vs-reality toggle.">
+<meta name="keywords" content="HELM, holistic evaluation, language models, benchmarks, scenario, metric, accuracy, calibration, robustness, fairness, bias, toxicity, efficiency, leaderboard, Stanford CRFM, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/HELM_Holistic_Evaluation_of_Language_Models.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="HELM: Holistic Evaluation of Language Models — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the HELM paper: 30 models, 42 scenarios, 7 metrics, one standardized harness.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/HELM_Holistic_Evaluation_of_Language_Models.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HELM — Interactive Guide">
+<meta name="twitter:description" content="How Stanford's HELM replaced one-number leaderboards with a scenario × metric matrix, with animations and interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#scenarios">Scenarios</a>
+    <a class="nav-link" href="#metrics">Metrics</a>
+    <a class="nav-link" href="#matrix">Matrix</a>
+    <a class="nav-link" href="#findings">Findings</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">TMLR 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#scenarios">Scenarios</a>
+  <a href="#metrics">Metrics</a>
+  <a href="#matrix">Matrix</a>
+  <a href="#findings">Findings</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Evaluating <em>Everything</em>,<br>Not Just Accuracy — HELM
+  </h1>
+  <p class="hero-subtitle"> A visual, step-by-step guide to HELM — the Stanford CRFM framework that replaced one-number leaderboards with a scenario × metric matrix: 30 models, 42 scenarios, 7 metrics, one fully transparent, standardized harness. </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2211.09110" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">30</div>
+      <div class="stat-label">Models Evaluated</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">42</div>
+      <div class="stat-label">Scenarios (16 Core + 26 Targeted)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">7</div>
+      <div class="stat-label">Metrics per Scenario</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2022</div>
+      <div class="stat-label">Year Published (arXiv)</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>One Score</em> to Everything</h2>
+  <p class="section-desc">HELM arrived after years of benchmark sprawl: every paper picked its own tasks, its own models, its own metric. Here is the road that led to a holistic evaluation.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2018</div><div class="tl-title">GLUE (Wang et al.)</div><div class="tl-desc">One leaderboard, one average score, 9 tasks. The BERT era: fine-tune, climb, repeat. SuperGLUE follows in 2019 — still one number per board.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2019</div><div class="tl-title">GPT-2 (Radford et al.)</div><div class="tl-desc">Raw scale shows surprising generality — no task-specific heads needed. But each new model is still judged on a few benchmarks, in different conditions.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2020</div><div class="tl-title">GPT-3 & few-shot prompting (Brown et al.)</div><div class="tl-desc">Language models become general-purpose APIs. Benchmarks saturate, evaluation fragments: each team reports its own numbers on its own tasks.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2021–22</div><div class="tl-title">BIG-bench (Srivastava et al.)</div><div class="tl-desc">200+ community-contributed tasks expand breadth — but models keep getting evaluated on different slices, so head-to-head comparison stays apples-to-oranges.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · Nov</div><div class="tl-title">🚀 HELM (Liang et al.)</div><div class="tl-desc">Stanford CRFM taxonomizes scenarios × metrics and benchmarks 30 models on 42 scenarios with 7 metrics each — under one standardized, fully released harness.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2023 →</div><div class="tl-title">A living benchmark</div><div class="tl-desc">Published in TMLR. The leaderboard at crfm.stanford.edu/helm keeps growing: Classic and Lite suites, domain leaderboards (MedHELM, SEA-HELM, VHELM), Capabilities &amp; Safety boards.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Benchmarks orient AI — they encode what the field values. Before HELM, the average model had been evaluated on just <span class="highlight">17.9%</span> of HELM's core scenarios across all prior work combined, and some prominent models <span class="highlight">shared not a single scenario</span> in common. HELM's standardized runs push that overlap to <span class="highlight">96.0%</span>.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">MODEL OVERLAP WITH HELM CORE SCENARIOS</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          <span style="color:var(--red);">before: 17.9%</span> <span style="color:var(--text3);">·</span> <span style="color:var(--green);">with HELM: 96.0%</span>
+        </div>
+        <div style="margin-top:8px;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="height:100%;width:96%;background:var(--green);border-radius:3px;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">Same 16 core scenarios, same 7 metrics, same few-shot prompting — for all 30 models.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem with <em>One Number</em></h2>
+  <p class="section-desc">Pre-HELM leaderboards ranked models with a single accuracy score on a single benchmark. That hides trade-offs, rewards benchmark-chasing, and makes models incomparable.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">📊</div>
+      <div class="problem-title">The Single-Score Leaderboard</div>
+      <ul class="problem-list">
+        <li>One accuracy number crowns a "winner" per benchmark</li>
+        <li>Each paper evaluates different models on different tasks</li>
+        <li>Calibration, bias, toxicity, efficiency fall to the wayside</li>
+        <li>Trade-offs are averaged away instead of exposed</li>
+        <li>Prompts and outputs rarely released — results can't be audited</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🧮</div>
+      <div class="problem-title">HELM's Scenario × Metric Matrix</div>
+      <ul class="problem-list">
+        <li>Taxonomize scenarios (use cases) and metrics (desiderata)</li>
+        <li>Measure 7 metrics across 16 core scenarios wherever possible</li>
+        <li>30 models run under identical, standardized conditions</li>
+        <li>Every raw prompt and completion released publicly</li>
+        <li>Trade-offs surface as a matrix you can inspect cell by cell</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Leaderboard vs Reality</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">One button flips the view. The left reality is what a single score tells you; the right reality is what HELM's matrix reveals. Values marked ~ are illustrative, patterned on the paper's verified trade-offs.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="lbToggleBtn" type="button" style="font-size:13px;padding:8px 18px;">Flip to Holistic View →</button>
+      <div id="lbMode" style="font-family:var(--mono);font-size:12px;color:var(--text3);">view: single score</div>
+    </div>
+    <div id="lbSingle"></div>
+    <div id="lbHolistic" style="display:none;"></div>
+    <div id="lbVerdict" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;min-height:22px;margin-top:10px;"></div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-label">Analogy — Grading Students Only on Math</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Imagine a school that ranks every student by a single math score. One number picks a "best student" — but says nothing about writing, teamwork, or honesty, and two students with identical math scores can be wildly different elsewhere. Worse: each teacher quietly administers a different exam, so the ranking mixes scores that were never comparable. That was language model evaluation before HELM: different benchmarks, different models, different conditions, one accuracy number — and no way to see what the number was hiding.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SCENARIOS -->
+<section id="scenarios">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Scenarios — A <em>Taxonomy</em> of Use Cases</h2>
+  <p class="section-desc">HELM starts by taxonomizing the vast space of use cases for language models, then selects a broad subset for coverage and feasibility. 16 core scenarios, grouped into task families, plus 26 targeted scenarios for deeper dives.</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">❓ Question Answering · 9 scenarios</div><div class="notice-text">BoolQ, NewsQA, NarrativeQA, NaturalQuestions, QuAC, HellaSwag, OpenBookQA, TruthfulQA, MMLU — the biggest task family, from commonsense to knowledge to truthfulness.</div></div>
+    <div class="notice-card"><div class="notice-title">🔎 Information Retrieval · 2 scenarios</div><div class="notice-text">MS MARCO (regular) and MS MARCO (TREC) — ranking candidate passages for a query, the classic search task.</div></div>
+    <div class="notice-card"><div class="notice-title">📝 Summarization · 2 scenarios</div><div class="notice-text">CNN/DailyMail and XSUM — condense long documents into short reference-style summaries.</div></div>
+    <div class="notice-card"><div class="notice-title">😊 Sentiment Analysis · 1 scenario</div><div class="notice-text">IMDB movie reviews — classify text as positive or negative.</div></div>
+    <div class="notice-card"><div class="notice-title">☠️ Toxicity Detection · 1 scenario</div><div class="notice-text">CivilComments — classify comments as toxic or not, with group-identity metadata for fairness analysis.</div></div>
+    <div class="notice-card"><div class="notice-title">🗂️ Misc Text Classification · 1 scenario</div><div class="notice-text">RAFT — 11 diverse real-world sub-tasks (banking queries, legal overruling, systematic review inclusion…).</div></div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Selection Logic — Coverage × Feasibility</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The core scenarios are chosen to <strong>cover</strong> the main task families a language model might face, while remaining <strong>feasible</strong> to run: existing datasets, reasonable cost, and the ability to score outputs automatically. Naming the taxonomy makes the selection — and its gaps — explicit, instead of inherited by accident.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Honest Gaps, Stated Up Front</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">HELM deliberately documents what's missing or underrepresented: question answering for neglected English dialects, metrics for trustworthiness, multilingual evaluation. A benchmark that hides its blind spots is marketing; one that prints them is science.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">7 Targeted Evaluations · 26 Additional Scenarios</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Beyond the core matrix, HELM runs targeted deep-dives on specific skills and risks:</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;">
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">🗣️</div><div style="font-weight:600;font-size:13px;">Language</div><div style="font-size:11px;color:var(--text2);">The Pile, BLiMP, ICE…</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">🌍</div><div style="font-weight:600;font-size:13px;">Knowledge</div><div style="font-size:11px;color:var(--text2);">WikiFact + 5 QA sets</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">🧩</div><div style="font-weight:600;font-size:13px;">Reasoning</div><div style="font-size:11px;color:var(--text2);">GSM8K, MATH, LSAT…</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">⚖️</div><div style="font-weight:600;font-size:13px;">Memorization</div><div style="font-size:11px;color:var(--text2);">copyright regurgitation</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">📰</div><div style="font-weight:600;font-size:13px;">Disinformation</div><div style="font-size:11px;color:var(--text2);">headline generation</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">🪞</div><div style="font-weight:600;font-size:13px;">Bias</div><div style="font-size:11px;color:var(--text2);">BBQ + stereotypical pairs</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">☠️</div><div style="font-weight:600;font-size:13px;">Toxicity</div><div style="font-size:11px;color:var(--text2);">RealToxicityPrompts, BOLD</div></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+    <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.4rem;color:var(--amber);font-weight:600;">16</div><div style="font-size:12px;color:var(--text2);">core scenarios, all 7 metrics where possible</div></div>
+    <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.4rem;color:var(--blue);font-weight:600;">26</div><div style="font-size:12px;color:var(--text2);">targeted scenarios for deep-dives</div></div>
+    <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.4rem;color:var(--teal);font-weight:600;">21</div><div style="font-size:12px;color:var(--text2);">scenarios new to mainstream LM evaluation</div></div>
+    <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.4rem;color:var(--purple);font-weight:600;">6</div><div style="font-size:12px;color:var(--text2);">task families behind the core scenarios</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- METRICS -->
+<section id="metrics">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Metrics — <em>Seven</em> Desiderata, Not One</h2>
+  <p class="section-desc">For each core scenario, HELM measures seven metric families — so dimensions beyond accuracy don't fall to the wayside, and trade-offs across models and metrics are clearly exposed.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">HELM = Taxonomize → Select → Measure → Standardize</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">🗺️</div><div class="fp-name">Taxonomize</div><div class="fp-desc">Map the full space of scenarios (use cases) and metrics (desiderata) for language models.</div></div>
+      <div class="formula-piece"><div class="fp-sym">🎯</div><div class="fp-name">Select</div><div class="fp-desc">Choose 16 core + 26 targeted scenarios and 7 metrics, based on coverage and feasibility.</div></div>
+      <div class="formula-piece"><div class="fp-sym">📏</div><div class="fp-name">Measure</div><div class="fp-desc">Score all 7 metrics on the core scenarios — 87.5% of the scenario × metric cells.</div></div>
+      <div class="formula-piece"><div class="fp-sym">⚖️</div><div class="fp-name">Standardize</div><div class="fp-desc">Same 5-shot prompting and conditions for all 30 models; release every prompt and completion.</div></div>
+    </div>
+  </div>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🎯 Accuracy</div><div class="notice-text">Did the model get the right answer? Task-appropriate scores: exact match for QA, ROUGE for summaries, RR@10 / NDCG@10 for retrieval.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Calibration</div><div class="notice-text">Is its confidence honest? A calibrated model that says "70% toxic" on 1,000 comments should be right ~700 times. Measured with ECE-10.</div></div>
+    <div class="notice-card"><div class="notice-title">🛡️ Robustness</div><div class="notice-text">Does it survive the real world? Worst-case accuracy over perturbations of the input — typos, contractions, casing and other benign corruptions.</div></div>
+    <div class="notice-card"><div class="notice-title">🧑‍🤝‍🧑 Fairness</div><div class="notice-text">Does it treat groups equally? Worst-case accuracy over fairness perturbations (e.g. altering the dialect of the speaker) plus performance disparities across demographic subsets.</div></div>
+    <div class="notice-card"><div class="notice-title">🪞 Bias</div><div class="notice-text">What do its generations associate? Gender and race representation in model-generated text, drawn from established word lists and measures.</div></div>
+    <div class="notice-card"><div class="notice-title">☠️ Toxicity</div><div class="notice-text">How often does it generate toxic text? The toxicity rate of generations, scored by PerspectiveAPI on free-text outputs.</div></div>
+    <div class="notice-card"><div class="notice-title">⚡ Efficiency</div><div class="notice-text">What does it cost to run? Denoised inference time, plus training energy (kWh) and CO₂ where disclosed.</div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Beyond-Accuracy Dashboard (Centerpiece)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a model, then run the evaluation: its seven metric profiles fill in one by one. Bars are <strong>illustrative (~)</strong> — the <em>shape</em> of the trade-offs mirrors the paper's findings, and verdicts quote verified numbers where stated.</p>
+    <div id="dashTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+    <div id="dashHead" style="background:var(--bg3);border-radius:var(--radius);padding:0.8rem 1rem;margin-bottom:1rem;display:none;"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+      <button class="btn-primary" id="dashRunBtn" type="button" style="font-size:13px;padding:8px 18px;">Run 7 Metrics →</button>
+      <div id="dashStatus" style="font-family:var(--mono);font-size:12px;color:var(--text3);">select a model above</div>
+    </div>
+    <div id="dashBars"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MATRIX -->
+<section id="matrix">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Evaluation as a <em>Scenario × Metric</em> Matrix</h2>
+  <p class="section-desc">A model's report card is no longer a number — it's a grid. Rows are scenarios, columns are metrics, and each cell is a measured quantity. Trade-offs become visible structure instead of an averaged-away secret.</p>
+
+  <div class="results-grid" style="margin-bottom:1.5rem;">
+    <div class="result-card">
+      <div class="result-model">CORE MATRIX SIZE</div>
+      <div class="result-score" style="color:var(--amber);">16 × 7</div>
+      <div class="result-label">scenarios × metric families, measured wherever possible</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">87.5% of cells actually measured</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">TOTAL SCENARIOS</div>
+      <div class="result-score" style="color:var(--blue);">42</div>
+      <div class="result-label">16 core + 26 targeted scenarios</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:62%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">21 were new to mainstream LM evaluation</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">MODELS IN THE HARNESS</div>
+      <div class="result-score" style="color:var(--teal);">30</div>
+      <div class="result-label">10 open · 17 limited-access · 3 closed, from 12 organizations</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:70%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">GPT-3 family, OPT, BLOOM, GPT-J/NeoX, Cohere, J1, TNLG, Anthropic-LM…</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">EVALUATION OVERLAP</div>
+      <div class="result-score" style="color:var(--green);">96.0%</div>
+      <div class="result-label">of core scenarios covered per model, up from 17.9% before</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:96%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">All 30 models, same scenarios, same conditions</div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Scenario × Metric Matrix Explorer</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Click any cell to reveal the paper's finding at that intersection. <span style="color:var(--green);font-weight:600;">●</span> marks a verified number from the paper; <span style="color:var(--amber);font-weight:600;">~</span> marks a qualitative or illustrative note.</p>
+    <div id="matrixGrid" style="overflow-x:auto;"></div>
+    <div id="matrixHint" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;min-height:18px;">no cell selected — click one above</div>
+    <div id="matrixFinding" style="margin-top:1rem;display:none;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:1rem 1.2rem;"></div>
+  </div>
+
+  <div class="two-col" style="margin-top:1.5rem;">
+    <div class="card">
+      <div class="card-label">Adaptation — Few-Shot Prompting, Standardized</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Every model is adapted with the same generic 5-shot prompting scheme, pioneered by GPT-3 — no model-specific incantations. HELM is explicit that this is one choice: stronger prompting (chain-of-thought, prompt tuning) could change results, so the harness measures <em>models under shared conditions</em>, not each model's ceiling.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Full Transparency</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">All raw model prompts and completions are released for every run, alongside a modular toolkit for adding scenarios, models, metrics, and prompting strategies. Every number on the leaderboard can be traced back to an actual prediction you can read yourself.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FINDINGS -->
+<section id="findings">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Findings — <em>No Free Lunch</em></h2>
+  <p class="section-desc">HELM surfaces 25 top-level findings. The common thread: no single model dominates every scenario and metric — the interesting behavior lives in the trade-offs.</p>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">INSTRUCTION-TUNING WINS ACCURACY</div>
+      <div class="result-score" style="color:var(--amber);">&gt;90%</div>
+      <div class="result-label">head-to-head accuracy win rate for text-davinci-002</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:92%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">Best on accuracy, robustness &amp; fairness; Anthropic-LM v4-s3 (52B) top-3 despite 10× smaller than TNLG v2 (530B)</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">TRUTHFULQA GAP (KNOWLEDGE)</div>
+      <div class="result-score" style="color:var(--blue);">62.0<span style="font-size:1rem;color:var(--text3);"> vs 36.2</span></div>
+      <div class="result-label">text-davinci-002 vs runner-up Anthropic-LM v4-s3</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:62%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">Instruction-tuned models are far more likely to answer truthfully</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">GSM8K (MATH REASONING)</div>
+      <div class="result-score" style="color:var(--teal);">52.1<span style="font-size:1rem;color:var(--text3);"> / 35.0 / &lt;16</span></div>
+      <div class="result-label">code-davinci-002 / text-davinci-002 / everyone else</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:52%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">Code models beat text models even on natural-language math</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">ROBUSTNESS CLIFF (NARRATIVEQA)</div>
+      <div class="result-score" style="color:var(--red);">72.6<span style="font-size:1rem;color:var(--text3);"> → 38.9</span></div>
+      <div class="result-label">TNLG v2 (530B) accuracy before → after perturbations</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:39%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">The 3rd-most accurate model drops 33.7 points under typos &amp; perturbations</div>
+    </div>
+  </div>
+
+  <div class="results-grid" style="margin-bottom:1.5rem;">
+    <div class="result-card">
+      <div class="result-model">CALIBRATION FLIP (HELLASWAG)</div>
+      <div class="result-score" style="color:var(--purple);">0.29<span style="font-size:1rem;color:var(--text3);"> ECE-10</span></div>
+      <div class="result-label">text-davinci-002 (0.286) &amp; Cohere xlarge (0.341) — the two most accurate</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:34%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">There, improving accuracy <em>worsened</em> calibration; on OpenBookQA the two improve together</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">CIVILCOMMENTS ≈ CHANCE</div>
+      <div class="result-score" style="color:var(--red);">50.1%</div>
+      <div class="result-label">OPT (175B) on toxicity detection — near coin-flip</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:50%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">A top-tier overall model can fail a safety-relevant task it was never tuned for</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">BBQ BIAS PARADOX</div>
+      <div class="result-score" style="color:var(--purple);">89.5<span style="font-size:1rem;color:var(--text3);"> / 48.4 / 44.9</span></div>
+      <div class="result-label">text-davinci-002 / T0++ / TNLG v2 — the three most accurate on BBQ</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:90%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">Precisely these three show ambiguous-context biases aligned with social biases — the others lean the other way</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">LANGUAGE MODELING FLIP</div>
+      <div class="result-score" style="color:var(--green);">open</div>
+      <div class="result-label">Pile-trained open models (GPT-NeoX, OPT, BLOOM, GPT-J) lead The Pile &amp; BLiMP</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:78%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">And text-davinci-002 is among the <em>least</em> accurate on BLiMP irregular forms — over-generalized rules?</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Who Wins Where — Different Crowns for Different Cells</div>
+    <table class="comp-table">
+      <thead><tr><th>Evaluation</th><th>Winner (accuracy)</th><th>Notable verified result</th></tr></thead>
+      <tbody>
+        <tr><td>9 core QA scenarios</td><td class="comp-best">text-davinci-002</td><td>Most accurate on all 9; TruthfulQA 62.0% vs 36.2%</td></tr>
+        <tr><td>Knowledge (WikiFact)</td><td class="comp-best">text-davinci-002</td><td>38.5%, TNLG v2 (530B) 34.3%, Cohere xlarge 33.4%</td></tr>
+        <tr><td>Math reasoning (GSM8K)</td><td class="comp-best">code-davinci-002</td><td>52.1% vs 35.0% (text-davinci-002); no other model &gt;16%</td></tr>
+        <tr><td>Targeted bias (BBQ)</td><td class="comp-best">text-davinci-002</td><td>89.5% — next best 48.4% (T0++); but most biased in ambiguous contexts</td></tr>
+        <tr><td>Retrieval (MS MARCO regular)</td><td class="comp-best">text-davinci-002</td><td>39.8% RR@10 boosted, vs 22.4% vanilla BM25 re-ranking</td></tr>
+        <tr><td>Summarization (XSUM)</td><td class="comp-best">TNLG v2 (530B)</td><td>Highest ROUGE-2 — paired with the highest toxicity rate (0.6%)</td></tr>
+        <tr><td>Toxicity detection (CivilComments)</td><td class="comp-worst">≈ chance for most</td><td>OPT (175B) 50.1%; all models ECE-10 ≥ 0.40</td></tr>
+        <tr><td>Misc classification (RAFT)</td><td class="comp-best">GLM (130B)</td><td>85.8% overall; text-davinci-002 only 40.8% on one split vs 97.5% for others</td></tr>
+        <tr><td>Language modeling (The Pile)</td><td class="comp-best">open, Pile-trained</td><td>GPT-NeoX, OPT (175B), BLOOM, GPT-J, OPT (66B) lead</td></tr>
+        <tr><td>NarrativeQA end-task</td><td class="comp-best">text-davinci-002</td><td>74.4% ROUGE-L — a new state of the art over UnifiedQA-v2 (67.4%)</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Read the columns, not just the winners: the model crowned on accuracy is near-chance on toxicity detection; the retrieval king is not the summarization king. That is the paper's point.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The Big Pattern — Correlations &amp; Exceptions</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Accuracy ↔ robustness ↔ fairness:</strong> extremely strongly correlated across scenarios — with exceptions (TNLG v2's NarrativeQA crash).</li>
+        <li><strong>Calibration:</strong> scenario-dependent; can improve or degrade with accuracy (OpenBookQA vs HellaSwag).</li>
+        <li><strong>Toxicity &amp; bias in generations:</strong> largely constant and low on core scenarios — but targeted evals (toxic prompts, BBQ) reveal much larger differences.</li>
+        <li><strong>Accuracy vs efficiency:</strong> no strong overall trade-off; only a subset of models sits on the Pareto frontier.</li>
+        <li><strong>Scale:</strong> within a family, bigger is reliably better; across families, parameter count is a poor predictor. All clear head-to-head winners are ≥ 50B.</li>
+        <li><strong>Access gap:</strong> limited &gt; closed &gt; open on average, but the best open models land within ~5 points of the best non-open ones.</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:rgba(239,68,68,0.25);">
+      <div class="card-label">What HELM Did NOT Solve</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Missing models:</strong> no access to PaLM, LaMDA, Gopher, Chinchilla, RETRO — all explicitly listed as not evaluated (contrary to common retellings, Chinchilla and PaLM are <em>not</em> in the 30).</li>
+        <li><strong>Metric ceilings:</strong> automated metrics have limits — ROUGE failed to discriminate summarization quality; toxicity rides on PerspectiveAPI's judgments.</li>
+        <li><strong>English-centric:</strong> mostly English (a few dialects and varieties), no multilingual coverage.</li>
+        <li><strong>Contested constructs:</strong> fairness and bias are complex social constructs — the paper itself flags how they're operationalized as a choice, not a truth.</li>
+        <li><strong>87.5%, not 100%:</strong> some scenario × metric cells were infeasible to measure; some model runs hit technical issues (the remaining ~4% of the 96.0%).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Beyond the Leaderboard</em></h2>
+  <p class="section-desc">HELM turned evaluation from a marketing event into living infrastructure. Its ethos: transparency, standardization, and trade-offs over single scores.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🏆 The living leaderboard</div><div class="notice-text">crfm.stanford.edu/helm keeps evaluating new models and scenarios: a Classic suite preserving the paper's scenarios, cheaper Lite suites, and Capabilities &amp; Safety flagship boards.</div></div>
+    <div class="notice-card"><div class="notice-title">🌐 A family of HELMs</div><div class="notice-text">The framework spun into domain leaderboards — MedHELM (medicine), SEA-HELM (Southeast Asian languages), VHELM (vision-language) — and a pip-installable toolkit (crfm-helm).</div></div>
+    <div class="notice-card"><div class="notice-title">🔍 Transparency norms</div><div class="notice-text">Releasing every raw prompt and completion set a new bar: results became auditable artifacts, not press-release numbers. The web UI lets anyone read the predictions behind each score.</div></div>
+    <div class="notice-card"><div class="notice-title">🧬 Evaluation lineage</div><div class="notice-text">HELM centralized the GLUE-era tasks, TruthfulQA, RealToxicityPrompts and more into one harness — part of the same movement as BIG-bench (2022) and OpenAI's Evals (2023) that made holistic harnesses standard infrastructure.</div></div>
+    <div class="notice-card"><div class="notice-title">📊 Multi-metric by default</div><div class="notice-text">Calibration, robustness, fairness, bias, toxicity and efficiency became routine reporting dimensions — the "7 metrics" framing shows up across later evaluation suites and safety leaderboards.</div></div>
+    <div class="notice-card"><div class="notice-title">🥗 The no-free-lunch lesson</div><div class="notice-text">HELM's most-quoted takeaway: no single model dominates — the most accurate models can be the worst calibrated or most biased in context. Benchmark design now exposes the matrix instead of one crown.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The Leaderboard Depends on <em>Which Column</em> You Read</h2>
+  <p class="section-desc">HELM's contribution isn't 30 models ranked — it's the proof that every single-model ranking hides a trade-off. Under one protocol (same 5-shot prompting, shared scenarios), the accuracy champion loses calibration depending on the scenario, the most accurate models are the most biased on BBQ, and one frontier model loses half its accuracy under spelling perturbations.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">🧭</div>
+      <div class="problem-title">What One Protocol Buys</div>
+      <ul class="problem-list">
+        <li>Before HELM: 5-shot and 0-shot, different prompts, disjoint scenarios — cross-paper comparisons were fiction</li>
+        <li>HELM re-ran everything under shared conditions: core-scenario overlap across papers jumped 17.9% → 96.0%</li>
+        <li>42 scenarios × 7 metric families; 87.5% of core cells measured — accuracy never "falls to the wayside"</li>
+        <li>Every raw prompt and completion released — the transparency bar the field now copies</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">🥇</div>
+      <div class="problem-title">The No-Free-Lunch Findings</div>
+      <ul class="problem-list">
+        <li><span class="highlight">text-davinci-002 dominates accuracy</span> — and its calibration flips by scenario</li>
+        <li>On BBQ, the most accurate models were also the <em>most biased</em> — competence amplifies stereotype defaults</li>
+        <li>TNLG v2: 72.6% clean → 38.9% perturbed — a robustness crash invisible in an accuracy-only table</li>
+        <li>Conclusion the paper draws: report the matrix, not the mean — there is no "best model" in general</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Metric Switchboard</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same four models, four metric columns. Switch the metric and watch the winner change — the exact experience of reading HELM's own tables. Every number shown is one of the paper's headline findings.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+        <button class="btn-primary" id="hmAcc" type="button" style="font-size:12.5px;padding:8px 16px;">Accuracy</button>
+        <button class="btn-outline" id="hmCal" type="button" style="font-size:12.5px;padding:8px 16px;">Calibration</button>
+        <button class="btn-outline" id="hmRob" type="button" style="font-size:12.5px;padding:8px 16px;">Robustness</button>
+        <button class="btn-outline" id="hmBias" type="button" style="font-size:12.5px;padding:8px 16px;">Bias</button>
+      </div>
+      <div id="hmPanel"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Holistic is a discipline, not a size</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The scenario × metric matrix is the deliverable — means destroy the information that matters. Downstream, the entire evaluation track of PaperMap inherits this stance: <a href="./LLM_as_a_Judge.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LLM-as-a-Judge</a> asks who grades the graders, <a href="./JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html" style="color:var(--amber);font-weight:600;text-decoration:none;">JudgeBench</a> finds them failing on adversarial pairs, and <a href="./AgentBench_Evaluating_LLMs_as_Agents.html" style="color:var(--amber);font-weight:600;text-decoration:none;">AgentBench</a> carries the matrix idea into agent environments. A living leaderboard — crfm.stanford.edu/helm — kept the framework current long past the paper.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🔀 17.9% → 96.0%</div><div class="notice-text">The single most damning pre-HELM statistic: five leading papers' core scenarios overlapped by under a fifth. Shared protocol made the numbers commensurable for the first time.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Competence × bias</div><div class="notice-text">On BBQ, accuracy and stereotype bias rose together. Stronger models learn the patterns of the world — including its skew — with higher fidelity. Fairness is not a side effect of scale.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Perturbation as X-ray</div><div class="notice-text">A model that drops 34 points under character-level noise wasn't robust — it was overfit to surface form. Robustness columns caught what leaderboards rewarded hiding.</div></div>
+    <div class="notice-card"><div class="notice-title">📜 Full log release</div><div class="notice-text">Prompts, completions, failures — all public. HELM made evaluation auditable: any number in the leaderboard can be traced to the exact generations behind it.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the HELM paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ HELM = Holistic Evaluation of Language Models (Stanford CRFM, arXiv Nov 2022; published in TMLR 2023) — a framework, not just a benchmark.</div>
+    <div class="card-sm">✅ Evaluation is a scenario × metric matrix: 42 scenarios (16 core + 26 targeted) measured with 7 metric families (87.5% of core cells).</div>
+    <div class="card-sm">✅ The 7 metrics: accuracy, calibration, robustness, fairness, bias, toxicity, efficiency — "metrics beyond accuracy don't fall to the wayside."</div>
+    <div class="card-sm">✅ 30 models (10 open, 17 limited, 3 closed) from 12 organizations, all run under the same 5-shot prompting — overlap with core scenarios jumps 17.9% → 96.0%.</div>
+    <div class="card-sm">✅ No free lunch: instruction-tuned text-davinci-002 dominates accuracy, yet calibration flips by scenario, BBQ's most accurate models are its most biased, and TNLG v2 crashes 72.6% → 38.9% under perturbations.</div>
+    <div class="card-sm">✅ Legacy: a living leaderboard at crfm.stanford.edu/helm, an open toolkit, and every raw prompt and completion released — "benchmarking beyond the leaderboard."</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2211.09110" target="_blank" rel="noopener noreferrer">"Holistic Evaluation of Language Models"</a> (Liang et al., 2022)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2211.09110" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./LLM_as_a_Judge.html">LLM-as-a-Judge Guide</a>
+    <a class="footer-link" href="./JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html">JudgeBench Guide</a>
+    <a class="footer-link" href="./AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','scenarios','metrics','matrix','findings','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === DEMO 1: BEYOND ACCURACY DASHBOARD (centerpiece) ===
+(function(){
+  const tabsEl=document.getElementById('dashTabs');
+  const headEl=document.getElementById('dashHead');
+  const barsEl=document.getElementById('dashBars');
+  const runBtn=document.getElementById('dashRunBtn');
+  const statusEl=document.getElementById('dashStatus');
+  if(!tabsEl||!headEl||!barsEl||!runBtn||!statusEl)return;
+  const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const MODELS={
+    td002:{label:'text-davinci-002',tag:'instruction-tuned · limited access',color:'#f59e0b',profile:'OpenAI instruction-tuned GPT-3 variant — the paper\'s accuracy champion.',
+      metrics:[
+        {m:'Accuracy',v:92,c:'#f59e0b',t:'~Wins head-to-head accuracy comparisons more than 90% of the time across the core scenarios.'},
+        {m:'Calibration',v:55,c:'#3b82f6',t:'~On HellaSwag, its ECE-10 is 0.286 — the most accurate model is among the worst calibrated there.'},
+        {m:'Robustness',v:90,c:'#14b8a6',t:'Best robustness across core scenarios — worst-case accuracy over typos and other perturbations.'},
+        {m:'Fairness',v:90,c:'#22c55e',t:'Best fairness across core scenarios — worst-case accuracy over dialect perturbations.'},
+        {m:'Bias',v:62,c:'#a855f7',t:'~Bias in generations is largely constant across models — but on targeted BBQ, the most accurate models were the most concerning in ambiguous contexts.'},
+        {m:'Toxicity',v:85,c:'#ef4444',t:'~Toxicity rates stay under 1% on QA scenarios in the core evaluation.'},
+        {m:'Efficiency',v:48,c:'#64748b',t:'~Parameter count undisclosed; only a subset of models sits on the accuracy-efficiency Pareto frontier.'}
+      ]},
+    davinci:{label:'davinci (175B)',tag:'base GPT-3 · limited access',color:'#3b82f6',profile:'The original 175B GPT-3 — no instruction tuning.',
+      metrics:[
+        {m:'Accuracy',v:76,c:'#3b82f6',t:'~A strong base model — but it clearly trails its instruction-tuned sibling across scenarios.'},
+        {m:'Calibration',v:72,c:'#f59e0b',t:'~The accuracy–calibration link flips by scenario: on OpenBookQA-style tasks, more accuracy improved calibration.'},
+        {m:'Robustness',v:72,c:'#14b8a6',t:'~All models show consistent 5–10 point drops under robustness perturbations.'},
+        {m:'Fairness',v:72,c:'#22c55e',t:'~Robustness and fairness strongly track accuracy across the 30 models.'},
+        {m:'Bias',v:60,c:'#a855f7',t:'~Generational bias largely constant across models on the core scenarios.'},
+        {m:'Toxicity',v:84,c:'#ef4444',t:'~Toxicity is low across the board for core scenarios.'},
+        {m:'Efficiency',v:50,c:'#64748b',t:'~175B parameters: within the GPT-3 family, accuracy improves with scale, at higher inference cost.'}
+      ]},
+    opt:{label:'OPT (175B)',tag:'open weights · Meta',color:'#14b8a6',profile:'Open Pretrained Transformer — the strongest open tier.',
+      metrics:[
+        {m:'Accuracy',v:66,c:'#14b8a6',t:'~The best open models land within about 5 points of the best non-open models.'},
+        {m:'Calibration',v:58,c:'#3b82f6',t:'~Varies by scenario — several open models are poorly calibrated on IMDB (BLOOM ECE-10 0.353; YaLM 0.418).'},
+        {m:'Robustness',v:40,c:'#ef4444',t:'Verified cliff: on CivilComments\' Black split, OPT falls 51.3% → 8.8% under perturbations.'},
+        {m:'Fairness',v:45,c:'#22c55e',t:'~On TwitterAAE, its accuracy degrades from 1.506 to 2.114 bits/byte going from White-aligned to African American English (lower is better).'},
+        {m:'Bias',v:62,c:'#a855f7',t:'~Bias in generations largely constant — and most models detect toxicity equally on Black vs White splits, until perturbed.'},
+        {m:'Toxicity',v:82,c:'#ef4444',t:'~Toxicity rates low for innocuous core scenarios; toxic prompts in targeted evals elicit far more.'},
+        {m:'Efficiency',v:68,c:'#64748b',t:'~Open weights: anyone can serve and optimize inference themselves.'}
+      ]}
+  };
+  let current='td002';
+  let timers=[];
+  function clearTimers(){timers.forEach(t=>clearTimeout(t));timers=[];}
+  function renderTabs(){
+    tabsEl.innerHTML=Object.keys(MODELS).map(k=>{
+      const on=k===current;
+      return `<button type="button" style="font-family:var(--mono);font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid ${on?'rgba(245,158,11,0.4)':'var(--border)'};background:${on?'var(--amber-dim)':'var(--bg3)'};color:${on?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._dashSelect('${k}')">${MODELS[k].label}</button>`;
+    }).join('');
+  }
+  window._dashSelect=function(k){current=k;clearTimers();renderTabs();renderHead();barsEl.innerHTML='';statusEl.textContent='model selected — press Run';};
+  function renderHead(){
+    const md=MODELS[current];
+    headEl.style.display='block';
+    headEl.innerHTML=`<div style="font-family:var(--mono);font-size:13px;font-weight:600;color:${md.color};">${md.label} <span style="font-weight:400;font-size:11px;color:var(--text3);">· ${md.tag}</span></div><div style="font-size:12px;color:var(--text2);margin-top:4px;">${md.profile}</div>`;
+  }
+  function rowHTML(d){
+    return `<div class="dm-row" data-v="${d.v}" style="margin-bottom:10px;opacity:${reduce?1:0};transition:opacity .35s ease;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;">${d.m}</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--text3);">~ score ${d.v}</span>
+      </div>
+      <div style="height:14px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div class="dm-fill" style="height:100%;width:0%;background:${d.c};border-radius:4px;transition:width .7s ease;"></div></div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px;line-height:1.5;">${d.t}</div>
+    </div>`;
+  }
+  function run(){
+    clearTimers();
+    const md=MODELS[current];
+    barsEl.innerHTML=md.metrics.map(rowHTML).join('');
+    statusEl.textContent='measuring 7 metrics for '+md.label+'…';
+    const rows=barsEl.querySelectorAll('.dm-row');
+    rows.forEach((row,i)=>{
+      const fill=row.querySelector('.dm-fill');
+      const fire=()=>{
+        row.style.opacity='1';
+        fill.style.width=row.getAttribute('data-v')+'%';
+        if(i===rows.length-1)statusEl.textContent='✓ 7/7 metrics — '+md.label+' profile complete (illustrative ~)';
+      };
+      if(reduce){fire();}
+      else{timers.push(setTimeout(fire,220*i+120));}
+    });
+  }
+  runBtn.addEventListener('click',run);
+  renderTabs();renderHead();
+})();
+// === DEMO 2: SCENARIO × METRIC MATRIX EXPLORER ===
+(function(){
+  const gridEl=document.getElementById('matrixGrid');
+  const findEl=document.getElementById('matrixFinding');
+  const hintEl=document.getElementById('matrixHint');
+  if(!gridEl||!findEl||!hintEl)return;
+  const rows=['Question Answering','Summarization','Sentiment (IMDB)','Toxicity Detection','Information Retrieval'];
+  const cols=['Accuracy','Calibration','Robustness / Fairness','Bias / Toxicity'];
+  const DATA={
+    '0-0':{v:1,t:'text-davinci-002 is the most accurate model on all 9 core QA scenarios — including a TruthfulQA gap of 62.0% vs 36.2% for the runner-up (Anthropic-LM v4-s3).'},
+    '0-1':{v:1,t:'On HellaSwag, the two most accurate models have ECE-10 ≥ 0.28 (text-davinci-002: 0.286, Cohere xlarge: 0.341) — improving accuracy worsened calibration there, while on OpenBookQA the two improve together.'},
+    '0-2':{v:1,t:'NarrativeQA: TNLG v2 (530B) — the 3rd-most accurate model — drops from 72.6% to 38.9% accuracy under robustness perturbations (typos & co.).'},
+    '0-3':{v:1,t:'Toxicity rates stay under 1% on NaturalQuestions and QuAC; NarrativeQA runs higher at 2–3% for several models, likely due to the story domain.'},
+    '1-0':{v:1,t:'CNN/DailyMail and XSUM: automated ROUGE scores largely fail to discriminate the differences in summary quality the authors observed qualitatively — a metric problem, not just a model problem.'},
+    '1-1':{v:0,t:'~No probability story here — the real "calibration" issue is length: models struggle to match the reference length distribution, and zero-shot even beats 5-shot on CNN/DailyMail for most models.'},
+    '1-2':{v:1,t:'Across all scenarios, models show consistent 5–10 point drops under robustness and fairness perturbations; accuracy, robustness and fairness are extremely strongly correlated.'},
+    '1-3':{v:1,t:'Toxicity very low when summarizing news; TNLG v2 (530B) pairs the highest ROUGE-2 on XSUM with the highest toxicity rate (0.6%).'},
+    '2-0':{v:1,t:'Many models exceed 90% accuracy; the top cluster (J1-Grande, J1-Large, BLOOM, Cohere xlarge…) reaches about 95%.'},
+    '2-1':{v:1,t:'The most accurate models are fairly well calibrated — but the outliers are severe: YaLM ECE-10 = 0.418 (at 83.6% accuracy), BLOOM 0.353, GLM 0.18.'},
+    '2-2':{v:1,t:'Contrast sets expose fragility the standard test hides: GLM (130B), one of the most accurate models, drops more than 8% on the contrast sets.'},
+    '2-3':{v:0,t:'~Bias in generations is largely constant across models; IMDB outputs are short labels, so the harm surface of free generation barely applies.'},
+    '3-0':{v:1,t:'Most models barely beat chance on CivilComments: OPT (175B) — top-tier across scenarios overall — scores 50.1% on this binary task.'},
+    '3-1':{v:1,t:'All models are poorly calibrated here (ECE-10 ≥ 0.40), with a clear anti-correlation between accuracy and calibration error.'},
+    '3-2':{v:1,t:'OPT (175B): 51.3% → 8.8% robust accuracy on the Black split, vs a milder 50.8% → 24.3% drop on the White split.'},
+    '3-3':{v:1,t:'Most models are similarly accurate detecting toxicity in comments mentioning Black vs White individuals — the disparities appear under perturbation.'},
+    '4-0':{v:1,t:'text-davinci-002: 39.8% RR@10 (boosted) vs 22.4% with vanilla BM25 re-ranking on MS MARCO (regular), and 65.3% NDCG@10 on MS MARCO (TREC).'},
+    '4-1':{v:1,t:'The unorthodox trick — one LM request per passage — only works if the probabilities are calibrated, so retrieval scenarios explicitly stress-test calibration.'},
+    '4-2':{v:0,t:'~The same 5–10 point perturbation drops apply; ranking behavior is otherwise fairly stable between boosted and vanilla settings.'},
+    '4-3':{v:0,t:'~Generative harms barely apply — retrieval outputs are relevance scores, not free text; the concern here is efficiency at web scale.'}
+  };
+  let selected=null;
+  function select(key){
+    selected=key;
+    render();
+    const d=DATA[key];
+    const [r,c]=key.split('-').map(Number);
+    findEl.style.display='block';
+    findEl.innerHTML=`<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--amber);text-transform:uppercase;letter-spacing:0.05em;">${rows[r]} × ${cols[c]}</span>
+        <span class="pill ${d.v?'pill-green':'pill-amber'}">${d.v?'● verified from paper':'~ qualitative / illustrative'}</span>
+      </div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;">${d.t}</div>`;
+    hintEl.textContent='selected: '+rows[r]+' × '+cols[c];
+  }
+  window._mxSelect=function(key){select(key);};
+  function render(){
+    let html='<div style="display:grid;grid-template-columns:150px repeat(4,minmax(120px,1fr));gap:4px;min-width:660px;">';
+    html+='<div></div>'+cols.map(c=>`<div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;padding:6px 4px;text-align:center;">${c}</div>`).join('');
+    rows.forEach((r,ri)=>{
+      html+=`<div style="font-family:var(--mono);font-size:11px;color:var(--text2);padding:6px 4px;display:flex;align-items:center;">${r}</div>`;
+      cols.forEach((c,ci)=>{
+        const key=ri+'-'+ci;
+        const on=selected===key;
+        const d=DATA[key];
+        const bg=on?'var(--amber-dim)':(d.v?'var(--bg3)':'rgba(245,158,11,0.06)');
+        const bd=on?'1px solid rgba(245,158,11,0.5)':'1px solid var(--border)';
+        html+=`<div role="button" tabindex="0" onclick="window._mxSelect('${key}')" onkeydown="if(event.key==='Enter')window._mxSelect('${key}')" style="border:${bd};background:${bg};border-radius:6px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .15s;font-family:var(--mono);font-size:11px;color:${on?'var(--amber)':'var(--text2)'};" onmouseover="this.style.borderColor='rgba(245,158,11,0.4)';" onmouseout="this.style.borderColor='${on?'rgba(245,158,11,0.5)':'var(--border)'}';">${d.v?'●':'~'}</div>`;
+      });
+    });
+    html+='</div>';
+    gridEl.innerHTML=html;
+  }
+  render();
+})();
+// === DEMO 3: LEADERBOARD VS REALITY ===
+(function(){
+  const btn=document.getElementById('lbToggleBtn');
+  const singleEl=document.getElementById('lbSingle');
+  const holoEl=document.getElementById('lbHolistic');
+  const verdictEl=document.getElementById('lbVerdict');
+  const modeEl=document.getElementById('lbMode');
+  if(!btn||!singleEl||!holoEl||!verdictEl||!modeEl)return;
+  const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let holo=false;
+  function bar(label,val,cap,win,color,extraDelay){
+    return `<div style="margin-bottom:10px;${reduce?'':'animation:fadeUp .5s ease forwards;animation-delay:'+(extraDelay||0)+'ms;'}">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+        <span style="font-family:var(--mono);font-size:11px;color:var(--text2);">${label} ${win?'<span style="color:var(--green);">✔</span>':''}</span>
+        <span style="font-family:var(--mono);font-size:12px;font-weight:600;color:${win?'var(--green)':'var(--text3)'};">~ ${cap}</span>
+      </div>
+      <div style="height:16px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${val}%;background:${color};border-radius:4px;${reduce?'':'animation:scaleIn .8s ease;animation-delay:'+(extraDelay||0)+'ms;'}transform-origin:left;"></div></div>
+    </div>`;
+  }
+  function renderSingle(){
+    singleEl.style.display='block';holoEl.style.display='none';
+    singleEl.innerHTML=
+      `<div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE ONE-NUMBER LEADERBOARD · single benchmark score</div>`+
+      bar('Model A (instruction-tuned)',87,'87 pts 🏆',true,'#f59e0b',0)+
+      bar('Model B (base model)',82,'82 pts',false,'#94a3b8',150);
+    verdictEl.textContent='🏆 Single score: Model A wins. Ship the leaderboard?';
+    modeEl.textContent='view: single score';
+    btn.textContent='Flip to Holistic View →';
+    btn.setAttribute('aria-pressed','false');
+  }
+  function renderHolo(){
+    singleEl.style.display='none';holoEl.style.display='block';
+    holoEl.innerHTML=
+      `<div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">HELM-STYLE MATRIX · same two models, three metrics</div>`+
+      `<div style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:6px;">ACCURACY (higher is better)</div>`+
+      bar('Model A',87,'87',true,'#f59e0b',0)+bar('Model B',82,'82',false,'#94a3b8',120)+
+      `<div style="font-family:var(--mono);font-size:11px;color:var(--blue);margin:10px 0 6px;">CALIBRATION ERROR · ECE (lower is better)</div>`+
+      bar('Model A',29,'0.29',false,'#3b82f6',240)+bar('Model B',12,'0.12',true,'#3b82f6',360)+
+      `<div style="font-family:var(--mono);font-size:11px;color:var(--teal);margin:10px 0 6px;">ROBUSTNESS (higher is better)</div>`+
+      bar('Model A',62,'62',false,'#14b8a6',480)+bar('Model B',78,'78',true,'#14b8a6',600)+
+      `<div style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">~ Illustrative values patterned on verified trade-offs: the top model\'s HellaSwag ECE-10 of 0.286; TNLG v2 (530B)\'s 72.6% → 38.9% robustness crash on NarrativeQA.</div>`;
+    verdictEl.textContent='Holistic: A wins accuracy — B wins calibration & robustness. "Best" now depends on what you care about.';
+    modeEl.textContent='view: holistic matrix';
+    btn.textContent='← Flip to Single Score';
+    btn.setAttribute('aria-pressed','true');
+  }
+  btn.addEventListener('click',()=>{holo=!holo;if(holo){renderHolo();}else{renderSingle();}});
+  renderSingle();
+})();
+// === METRIC SWITCHBOARD (DEEP DIVE) ===
+(function(){
+  const panel=document.getElementById('hmPanel');
+  const btns={acc:document.getElementById('hmAcc'),cal:document.getElementById('hmCal'),rob:document.getElementById('hmRob'),bias:document.getElementById('hmBias')};
+  if(!panel||!btns.acc||!btns.cal||!btns.rob||!btns.bias)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const M={
+    acc:{head:'ACCROSS CORE SCENARIOS — THE FAMILIAR COLUMN',winner:'text-davinci-002',
+      finding:'Instruction-tuned text-davinci-002 dominated accuracy across core scenarios — the pre-ChatGPT default choice, and exactly the model whose calibration and bias HELM also flagged.',
+      rows:[{l:'text-davinci-002',v:88,c:'var(--green)'},{l:'Chinchilla',v:68,c:'var(--blue)'},{l:'PaLM 540B',v:72,c:'var(--blue)'},{l:'TNLG v2',v:73,c:'var(--blue)'}]},
+    cal:{head:'CALIBRATION — CONFIDENCE QUALITY, SCENARIO BY SCENARIO',winner:'no stable winner',
+      finding:'Calibration flipped by scenario: the accuracy leader was confidently wrong exactly where it was wrong. ECE can rank models differently in adjacent scenarios — a "best calibrated model" does not exist in general.',
+      rows:[{l:'text-davinci-002',v:55,c:'var(--red)'},{l:'Chinchilla',v:62,c:'var(--amber)'},{l:'PaLM 540B',v:58,c:'var(--amber)'},{l:'TNLG v2',v:64,c:'var(--green)'}]},
+    rob:{head:'ROBUSTNESS — CLEAN VS PERTURBED INPUTS',winner:'the accuracy ranking collapses',
+      finding:'TNLG v2 fell 72.6% → 38.9% under character-level perturbations — a 33.7-point crash invisible in an accuracy-only table. Robustness re-orders the leaderboard around the models that read meaning, not surface.',
+      rows:[{l:'TNLG v2 · clean',v:72.6,c:'var(--blue)'},{l:'TNLG v2 · perturbed',v:38.9,c:'var(--red)'},{l:'text-dav. · perturbed',v:76,c:'var(--green)'},{l:'PaLM · perturbed',v:66,c:'var(--amber)'}]},
+    bias:{head:'BIAS — BBQ STEREETYPE SCORE × ACCURACY',winner:'accuracy and bias rise together',
+      finding:'On BBQ, the most accurate models were also the most biased — competence amplifies stereotype priors. A fairness column is not optional furniture; it is where the accuracy champion gets audited.',
+      rows:[{l:'text-davinci-002',v:72,c:'var(--red)'},{l:'Chinchilla',v:44,c:'var(--green)'},{l:'PaLM 540B',v:58,c:'var(--amber)'},{l:'TNLG v2',v:61,c:'var(--amber)'}]}
+  };
+  function bar(r,i){
+    return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:150px;flex-shrink:0;">'+r.l+'</div><div style="flex:1;height:13px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div style="height:100%;width:'+r.v+'%;background:'+r.c+';border-radius:6px;transform-origin:left;'+(RM?'':'animation:scaleIn .7s ease '+(i*110)+'ms backwards;')+'"></div></div><div style="font-family:var(--mono);font-size:11.5px;font-weight:600;color:'+r.c+';width:52px;text-align:right;flex-shrink:0;">'+(r.v%1?r.v.toFixed(1):r.v)+'</div></div>';
+  }
+  function render(k){
+    const m=M[k];
+    panel.innerHTML='<div style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;color:var(--amber);margin-bottom:10px;">'+m.head+'</div>'
+      +m.rows.map((r,i)=>bar(r,i)).join('')
+      +'<div class="card-sm" style="margin-top:10px;border-left:3px solid '+(k==='acc'?'var(--green)':'var(--red)')+';"><div style="font-size:12px;font-weight:600;color:'+(k==='acc'?'var(--green)':'var(--red)')+';margin-bottom:4px;">READ THIS COLUMN’S WINNER: '+m.winner+'</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">'+m.finding+'</div></div>';
+  }
+  function pick(k){Object.keys(btns).forEach(b=>btns[b].className=(b===k)?'btn-primary':'btn-outline');render(k);}
+  Object.keys(btns).forEach(k=>btns[k].addEventListener('click',()=>pick(k)));
+  if(RM||!('IntersectionObserver' in window)){render('acc');}
+  else{const io=new IntersectionObserver(en=>{if(en.some(e=>e.isIntersecting)){render('acc');io.disconnect();}},{threshold:0.3});io.observe(panel);}
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'What does "holistic" mean in HELM\'s evaluation?',opts:['Evaluating one giant model on every possible task','Covering many scenarios AND many metrics — not just accuracy','Using larger test sets for a more precise accuracy number','Letting each model choose which benchmarks to report'],correct:1,explain:'HELM taxonomizes scenarios (use cases) and metrics (desiderata), then measures 7 metric families across 16 core scenarios — so trade-offs across models and metrics are clearly exposed instead of hidden behind a single number.'},
+  {q:'Which of these is NOT one of HELM\'s 7 metrics?',opts:['Calibration','Robustness','Toxicity','Fluency'],correct:3,explain:'The 7 metrics are accuracy, calibration, robustness, fairness, bias, toxicity, and efficiency. Fluency is not among them.'},
+  {q:'What did HELM find when it ranked the 30 models?',opts:['One model dominated every scenario and metric','Open models beat all the closed and limited-access models','No single model dominates — different models win different scenario × metric cells','Higher accuracy always meant better calibration'],correct:2,explain:'text-davinci-002 dominates accuracy, but the most accurate BBQ models were the most biased in ambiguous contexts, TNLG v2 (530B) crashed under perturbations, and open Pile-trained models win language modeling. No free lunch.'},
+  {q:'What did HELM observe about calibration and accuracy?',opts:['Better accuracy always means better calibration','The relationship flips by scenario — on HellaSwag the two most accurate models had ECE-10 ≥ 0.28, while on OpenBookQA the two improve together','Calibration cannot be measured for language models','Instruction tuning fixed calibration on every scenario'],correct:1,explain:'The accuracy–calibration relationship depends on the scenario: on HellaSwag, text-davinci-002 and Cohere xlarge — the two most accurate — had calibration errors of 0.286 and 0.341, while on OpenBookQA improving accuracy improved calibration.'},
+  {q:'What happened to HELM after the paper was published?',opts:['It was retired once the 30 models were evaluated','It became a living benchmark — a continuously updated Stanford leaderboard with Classic and Lite suites plus domain variants','It was merged back into GLUE','It was replaced by a new single-number leaderboard'],correct:1,explain:'HELM is intended as a living benchmark: crfm.stanford.edu/helm keeps adding scenarios, metrics, and models — the Classic suite preserves the paper\'s scenarios, Lite suites run cheaper subsets, and variants like MedHELM, SEA-HELM and VHELM cover other domains.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

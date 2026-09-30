@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JudgeBench: A Benchmark for Evaluating LLM-based Judges — Interactive Guide</title>
+<meta name="description" content="An interactive guide to JudgeBench, the adversarial benchmark for LLM judges: play the judge on easy vs subtle-error pairs, explore animated accuracy scoreboards, and spot hidden math and code bugs.">
+<meta name="keywords" content="JudgeBench, LLM-as-a-judge, MT-Bench, evaluation benchmark, reward models, GPT-4o, o1, o3-mini, preference evaluation, objective correctness, meta-evaluation">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="JudgeBench: A Benchmark for Evaluating LLM-based Judges — Interactive Guide">
+<meta property="og:description" content="Play the judge on adversarial pairs and see why even GPT-4o barely beats random guessing.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="JudgeBench — Interactive Guide">
+<meta name="twitter:description" content="Why 85% agreement on easy questions says nothing about judging hard ones — with interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#construction">Build</a>
+    <a class="nav-link" href="#domains">Domains</a>
+    <a class="nav-link" href="#findings">Findings</a>
+    <a class="nav-link" href="#methods">Methods</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2024</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#construction">Build</a>
+  <a href="#domains">Domains</a>
+  <a href="#findings">Findings</a>
+  <a href="#methods">Methods</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Judging the <em>Judges</em><br>JudgeBench
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that stress-tests LLM judges — 350 adversarial
+    response pairs where one answer is subtly, objectively wrong, and where even GPT-4o
+    performs only slightly better than random guessing.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2410.12784" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">350</div>
+      <div class="stat-label">Response Pairs</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Domains: Knowledge · Reasoning · Math · Code</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">80.9%</div>
+      <div class="stat-label">Top Judge Accuracy (o3-mini, high)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">~85%</div>
+      <div class="stat-label">Judge–Human Agreement on Easy MT-Bench (for contrast)</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Graders to <em>Judges</em></h2>
+  <p class="section-desc">LLM judges were legitimized by one number — agreement with humans — and then quietly became infrastructure. JudgeBench is the stress test that arrived late.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2022</div><div class="tl-title">Automatic metrics hit their ceiling</div><div class="tl-desc">BLEU/ROUGE measure surface overlap, not correctness; human evaluation is slow and expensive. LLMs begin quietly grading text in ad-hoc internal experiments.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023 · Jun</div><div class="tl-title">🚀 MT-Bench &amp; "LLM-as-a-Judge" (Zheng et al.)</div><div class="tl-desc">GPT-4 judging pairwise battles agrees with humans ~85% of the time — about as often as humans agree with each other (~81%). LLM judging is legitimized overnight.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023</div><div class="tl-title">Chatbot Arena &amp; the bias autopsy</div><div class="tl-desc">Crowdsourced battles + Elo leaderboards go live. AlpacaEval, FairEval and the MT-Bench authors dissect judge biases: position, length, self-enhancement.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024</div><div class="tl-title">Judges become infrastructure</div><div class="tl-desc">Arena-Hard, AlpacaEval 2.0, fine-tuned judges (Prometheus 2, JudgeLM, AutoJ, Skywork) and reward models now rank models, filter data, and drive RLHF.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2024 · Oct</div><div class="tl-title">🎯 JudgeBench (Tan et al.)</div><div class="tl-desc">Flips the question: can a judge that "agrees with humans" actually verify hard, objective answers? 350 adversarial pairs say mostly no — GPT-4o barely beats random.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2025 →</div><div class="tl-title">The judge-quality research line</div><div class="tl-desc">Reasoning models (o1, o3-mini, DeepSeek-R1) lift judging to 73–81%; JudgeBench v2 tracks them. Judging quality is now a first-class research topic, not a footnote.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">A judge validated on <span class="highlight">easy questions is an unvalidated judge</span>. The paper's framework ranks what a judge must check, in strict order:</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE JUDGING HIERARCHY</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          <span style="color:var(--blue);">1 · follows the instruction?</span><br>
+          <span style="color:var(--amber);font-weight:600;">2 · factually &amp; logically correct? ← JudgeBench lives here</span><br>
+          <span style="color:var(--purple);">3 · style &amp; preference</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">Existing benchmarks mostly measured agreement about (3). JudgeBench isolates (2) — where correctness is checkable and errors are subtle.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem with <em>Easy</em> Questions</h2>
+  <p class="section-desc">LLM judges were validated by agreement with humans — on open-ended chat questions where correctness was never really tested. JudgeBench asks what happens when it is.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">📝</div>
+      <div class="problem-title">Judges Validated by Agreement</div>
+      <ul class="problem-list">
+        <li>MT-Bench, LLMEval and FairEval score a judge by matching human preference</li>
+        <li>Their questions are open-ended and easy — writing, roleplay, chat</li>
+        <li>Crowd annotators cannot reliably grade hard math, proofs, or code</li>
+        <li>So ~85% agreement mostly measures shared taste in style, not verification</li>
+        <li>As models improve, judges face answers harder than themselves — unmeasured</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🎯</div>
+      <div class="problem-title">JudgeBench's Answer</div>
+      <ul class="problem-list">
+        <li>Start from hard problems with ground truth and automatic verifiers</li>
+        <li>Both answers written by the same model — style and length neutralized</li>
+        <li>The wrong answer hides a subtle, deliberate, verified error</li>
+        <li>Labels are objective: correct vs incorrect, not "preferred"</li>
+        <li>Position bias controlled: every pair judged twice, order swapped</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — Grading Homework ≠ Grading Competition Problems</div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;">A teacher grading weekend worksheets can lean on neatness, length, and tone — correctness is rarely in doubt, and "agrees with the other teacher 85% of the time" sounds great. The same teacher grading olympiad entries faces write-ups that are fluent, well-structured, and wrong in step 4. Confidence built on easy grading <span class="highlight">evaporates exactly when correctness becomes the whole job</span>. An agreement score on easy questions says almost nothing about the second job — that is the gap JudgeBench measures.</p>
+  </div>
+
+  <div class="card" style="margin-top:2rem;overflow:hidden;">
+    <div class="card-label">Interactive Demo — Play the Judge: Easy vs Adversarial (JudgeBench-style)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Four rounds. Round 1 is the easy chat regime where judge agreement numbers are earned. Rounds 2–4 are JudgeBench-style: one answer is subtly, objectively wrong. Pick the better response — then see the ground truth.</p>
+    <div id="judgeSim">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+        <div id="jsTag" style="font-family:var(--mono);font-size:11px;color:var(--amber);padding:3px 10px;border-radius:20px;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.25);"></div>
+        <div id="jsScore" style="font-family:var(--mono);font-size:12px;color:var(--text3);"></div>
+      </div>
+      <div id="jsQ" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.8;margin-bottom:1rem;white-space:pre-wrap;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem;" id="jsPair">
+        <button id="jsA" type="button" style="text-align:left;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;font-family:var(--sans);font-size:13px;color:var(--text2);line-height:1.8;cursor:pointer;transition:all .2s;white-space:pre-wrap;"></button>
+        <button id="jsB" type="button" style="text-align:left;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;font-family:var(--sans);font-size:13px;color:var(--text2);line-height:1.8;cursor:pointer;transition:all .2s;white-space:pre-wrap;"></button>
+      </div>
+      <div id="jsFeedback"></div>
+      <div style="display:flex;gap:10px;margin-top:1rem;">
+        <button class="btn-primary" id="jsNext" type="button" style="font-size:13px;padding:8px 18px;display:none;">Next Round →</button>
+        <button class="btn-outline" id="jsRestart" type="button" style="font-size:13px;padding:8px 18px;display:none;">↺ Play Again</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONSTRUCTION -->
+<section id="construction">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Building an <em>Adversarial</em> Benchmark</h2>
+  <p class="section-desc">JudgeBench's pipeline converts any dataset with ground-truth labels and a verification algorithm into judge-evaluation pairs. The whole recipe fits in one line.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">Verified dataset → sample k answers (GPT-4o) → keep mixed outcomes → pair (1 ✓ + 1 subtle ✗)</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">Q + V</div><div class="fp-name">Hard question + verifier</div><div class="fp-desc">MMLU-Pro, LiveBench, LiveCodeBench — every question ships with a ground-truth answer and a checking algorithm (string match, exact answer, unit tests).</div></div>
+      <div class="formula-piece"><div class="fp-sym">k</div><div class="fp-name">Same-model samples</div><div class="fp-desc">GPT-4o answers each question k times. One generator for both candidates: no style tells, no length gaps, no self-enhancement confound.</div></div>
+      <div class="formula-piece"><div class="fp-sym">≥1 ✓ ∧ ≥1 ✗</div><div class="fp-name">Keep mixed questions</div><div class="fp-desc">If every sample is right (or every one wrong), the question is dropped. What remains is hard for the generator itself — so the pair is hard to judge.</div></div>
+      <div class="formula-piece"><div class="fp-sym">(✓, ✗)</div><div class="fp-name">The final pair</div><div class="fp-desc">One correct + one subtly incorrect response, labeled by the verifier — not by humans. Same voice, same length: 562 vs 561 tokens on average.</div></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">Why Both Answers from the Same Model?</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The obvious design — different models write A and B — gives judges shortcuts: style fingerprints, length gaps, and self-enhancement bias (judges favor their own outputs). Sampling both candidates from a single generator leaves <span class="highlight">correctness as the only reliable signal</span>. A second LLM (GPT-4o-mini) double-checks "incorrect" verdicts that were really just formatting mismatches, and those are filtered out too.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">The Verdict Rule</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Each pair is judged <span class="highlight">twice</span>, with the response order swapped. A tie, or a verdict that flips between the two trials, counts as <span class="highlight">incorrect</span> — a judge that is guessing or order-sensitive gets no credit. Only consistently correct verdicts score.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:1rem;">
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--green);font-weight:600;">✓ ✓</div><div style="font-size:11px;color:var(--text3);">both trials correct → point</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--text3);font-weight:600;">✓ ✗</div><div style="font-size:11px;color:var(--text3);">flip-flop → wrong</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--text3);font-weight:600;">= =</div><div style="font-size:11px;color:var(--text3);">tie twice → wrong</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Where the Questions Come From</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:8px;">
+      <div class="card-sm"><div style="font-family:var(--mono);font-size:12px;color:var(--blue);font-weight:600;">MMLU-Pro</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Knowledge: 12,032 college-level exam questions across 14 disciplines, up to 10 options each.</div></div>
+      <div class="card-sm"><div style="font-family:var(--mono);font-size:12px;color:var(--purple);font-weight:600;">LiveBench</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Reasoning (Big-Bench Hard, Zebra Puzzles) and Math (competition problems like AMC12 / USAMO).</div></div>
+      <div class="card-sm"><div style="font-family:var(--mono);font-size:12px;color:var(--red);font-weight:600;">LiveCodeBench</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Coding: 300+ contest problems from LeetCode, AtCoder, Codeforces — refreshed to avoid contamination.</div></div>
+      <div class="card-sm"><div style="font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:600;">350 pairs</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">The final split: 154 Knowledge · 98 Reasoning · 56 Math · 42 Coding — comparable in size to MT-Bench (80), FairEval (80), LLMBar (419).</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DOMAINS -->
+<section id="domains">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Four <em>Domains</em> of Pain</h2>
+  <p class="section-desc">Each category targets a different failure mode of judging. In every pair, the wrong answer is polished enough to win on style alone — only verification tells them apart.</p>
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">🧠 Knowledge <span class="pill pill-blue">154 pairs</span></div>
+      <p style="font-size:12px;color:var(--text3);margin:6px 0 10px;">Source: MMLU-Pro — college-level multiple choice across 14 disciplines.</p>
+      <ul class="problem-list">
+        <li><strong>Trap:</strong> a confident, plausible, factually wrong claim — often echoing the most common misconception in the training data.</li>
+        <li><strong>Tiny example:</strong> "Largest desert on Earth?" — "The Sahara, 9.2M km²" (polished ✗) vs "Antarctica, ~14M km²" (✓).</li>
+        <li><strong>Judges here:</strong> 35–68% — the widest model spread after Reasoning.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">🧩 Reasoning <span class="pill pill-purple">98 pairs</span></div>
+      <p style="font-size:12px;color:var(--text3);margin:6px 0 10px;">Source: LiveBench Reasoning — Big-Bench Hard tasks and Zebra Puzzles.</p>
+      <ul class="problem-list">
+        <li><strong>Trap:</strong> a constraint quietly violated mid-derivation — the chain looks airtight until you re-check the premises.</li>
+        <li><strong>Tiny example:</strong> a zebra-puzzle write-up that "the coffee drinker owns the zebra" — contradicting a clue it restated correctly two lines earlier.</li>
+        <li><strong>Judges here:</strong> 34.7–89.8% — the single most separating category.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">🔢 Mathematics <span class="pill pill-amber">56 pairs</span></div>
+      <p style="font-size:12px;color:var(--text3);margin:6px 0 10px;">Source: LiveBench Math — competition problems (AMC12, USAMO).</p>
+      <ul class="problem-list">
+        <li><strong>Trap:</strong> dropped negative roots, sign slips, unproven edge cases — each step locally valid, the conclusion incomplete or wrong.</li>
+        <li><strong>Tiny example:</strong> (x+3)² = 25 → "x = 2" (✗) vs "x = 2 or x = −8" (✓).</li>
+        <li><strong>Judges here:</strong> oddly kind — GPT-4o scores 75.0, its best category, and judges beat their own solvers.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">💻 Coding <span class="pill pill-red">42 pairs</span></div>
+      <p style="font-size:12px;color:var(--text3);margin:6px 0 10px;">Source: LiveCodeBench — contests from LeetCode, AtCoder, Codeforces.</p>
+      <ul class="problem-list">
+        <li><strong>Trap:</strong> off-by-one bounds, mutation while iterating, code that matches its comments but not the spec.</li>
+        <li><strong>Tiny example:</strong> a well-documented loop that starts at 0 and stops one step early — passing the eyeball test, failing the test suite.</li>
+        <li><strong>Judges here:</strong> the graveyard — Gemini-1.5-pro 26.2%, GPT-4o 59.5%; every model judges code worse than it writes it.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Spot the Subtle Error</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">This is the skill JudgeBench actually tests. Two snippets; in each, exactly one line is wrong. Click the buggy line — then see how the paper's judges fared on that domain.</p>
+    <div id="spotError">
+      <div id="seTag" style="font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:8px;"></div>
+      <div id="seTitle" style="font-size:13px;color:var(--text);margin-bottom:10px;"></div>
+      <div id="seContext" style="font-family:var(--mono);font-size:13px;color:var(--text3);background:var(--bg3);border-radius:var(--radius) var(--radius) 0 0;padding:10px 12px;line-height:1.9;white-space:pre-wrap;"></div>
+      <div id="seLines" style="display:grid;gap:6px;margin-bottom:12px;"></div>
+      <div id="seFeedback"></div>
+      <div style="display:flex;gap:10px;margin-top:12px;">
+        <button class="btn-primary" id="seNext" type="button" style="font-size:13px;padding:8px 18px;display:none;">Next Snippet →</button>
+        <button class="btn-outline" id="seRestart" type="button" style="font-size:13px;padding:8px 18px;display:none;">↺ Try Again</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FINDINGS -->
+<section id="findings">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Findings — Judges <em>Struggle</em></h2>
+  <p class="section-desc">On JudgeBench, models that "agree with humans ~85% of the time" land near coin-flips. All numbers below are overall accuracies from the paper's tables (random guessing = 50%).</p>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">VANILLA JUDGE · GPT-4o</div>
+      <div class="result-score" style="color:var(--red);">50.9%</div>
+      <div class="result-label">"which is better?" prompt — ≈ random guessing</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:50.9%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">ARENA-HARD JUDGE · GPT-4o</div>
+      <div class="result-score" style="color:var(--amber);">56.6%</div>
+      <div class="result-label">reference-answer-first prompting, +5.7 over vanilla</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:56.6%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">BEST GENERAL-PURPOSE · CLAUDE-3.5-SONNET</div>
+      <div class="result-score" style="color:var(--teal);">64.3%</div>
+      <div class="result-label">top score among the five models cross-checked on prior benchmarks</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:64.3%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">BEST OVERALL · O3-MINI (HIGH)</div>
+      <div class="result-score" style="color:var(--green);">80.9%</div>
+      <div class="result-label">test-time compute — 100.0% on Coding pairs</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:80.9%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">TOP REWARD MODEL · SKYWORK-REWARD-GEMMA-2-27B</div>
+      <div class="result-score" style="color:var(--purple);">64.3%</div>
+      <div class="result-label">a specialized verifier matching Claude-3.5-Sonnet</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:64.3%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">MULTI-AGENT DEBATE · CHATEVAL</div>
+      <div class="result-score" style="color:var(--red);">34.0%</div>
+      <div class="result-label">debating the verdict does not verify it — below random</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:34%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">The 85% Illusion — Agreement vs Accuracy</div>
+    <div style="margin:10px 0 6px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:220px;text-align:right;">MT-Bench agreement (GPT-4, easy chat)</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;position:relative;"><div style="height:100%;width:85%;background:#3b82f6;border-radius:4px;animation:scaleIn .9s ease;transform-origin:left;"></div><div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(239,68,68,0.55);"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--blue);width:44px;">~85%</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:220px;text-align:right;">JudgeBench accuracy (GPT-4o, Arena-Hard)</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;position:relative;"><div style="height:100%;width:56.6%;background:#f59e0b;border-radius:4px;animation:scaleIn .9s ease;transform-origin:left;"></div><div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(239,68,68,0.55);"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--amber);width:44px;">56.6%</div></div>
+    </div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-top:10px;">A <span class="highlight">~28-point gap</span> between "agrees with humans on easy chat" and "verifies correctness on hard pairs" (red tick = 50%, random). JudgeBench also separates models strongly: <span class="highlight">31 points</span> between the best (Claude-3.5-Sonnet 64.3) and the worst (Claude-3-Haiku 33.1) of the five models cross-checked against prior benchmarks — comparable to LLMBar: Adversarial (33). The strongest model on JudgeBench was the <em>lowest</em> top score of all five benchmark sets.</p>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Judge Families on JudgeBench (overall accuracy, %)</div>
+    <table class="comp-table">
+      <thead><tr><th>Judge family</th><th>Representative</th><th>Overall</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>Prompted</td><td>Arena-Hard judge (GPT-4o)</td><td>56.57</td><td>vs 50.86 with the vanilla prompt</td></tr>
+        <tr><td>Prompted</td><td>VertexAI Evaluation (Gemini-1.5-pro)</td><td class="comp-worst">44.57</td><td>below random guessing</td></tr>
+        <tr><td>Fine-tuned</td><td>Skywork (Llama-3.1-70B)</td><td class="comp-best">57.43</td><td>best fine-tuned judge; +5 over its base model</td></tr>
+        <tr><td>Fine-tuned</td><td>PandaLM</td><td class="comp-worst">13.14</td><td>picked "tie" in 479 of 700 judgments</td></tr>
+        <tr><td>Multi-agent</td><td>ChatEval (debate)</td><td class="comp-worst">34.00</td><td>debate does not produce verification</td></tr>
+        <tr><td>Reward model</td><td>Skywork-Reward-Gemma-2-27B</td><td class="comp-best">64.29</td><td>matches Claude-3.5-Sonnet; family range 59–64</td></tr>
+        <tr><td>Reasoning model</td><td>o3-mini (high), Arena-Hard prompt</td><td class="comp-best">80.86</td><td>test-time compute is the biggest lever</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Random guessing = 50. Most fine-tuned judges (Prometheus 2, JudgeLM, AutoJ) land between 25 and 41 — below random — often by emitting ties or malformed verdicts.</p>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Judge Scoreboard (animated, from the paper's Table 2)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Every judge below uses the same Arena-Hard prompt — only the underlying model changes. Toggle the category to re-rank by domain; the blue bar is the easy-question agreement context, and the red tick marks 50% (random).</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;" id="sbTabs"></div>
+    <div id="scoreboard"></div>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Scores from Table 2 of the paper (v2). Reasoning models — o3-mini, o1, DeepSeek-R1 — are the only judges above 70.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- METHODS -->
+<section id="methods">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">What <em>Improves</em> Judging</h2>
+  <p class="section-desc">JudgeBench is not just a diagnosis — its leaderboard points at the levers that actually move judging accuracy. Four of them work; one is mostly a mirage.</p>
+  <div class="notice-grid" style="margin-bottom:2rem;">
+    <div class="notice-card"><div class="notice-title">📝 Prompting: reference-first helps a bit</div><div class="notice-text">The Arena-Hard judge drafts its own answer first, then compares both candidates against it — lifting GPT-4o from 50.9% to 56.6%. The vanilla "which is better?" prompt leaves it at coin-flip.</div></div>
+    <div class="notice-card"><div class="notice-title">🧠 Test-time compute: the big lever</div><div class="notice-text">Reasoning models that think before answering dominate: o3-mini (high) 80.9, o3-mini (med) 76.6, o1-preview 75.4, DeepSeek-R1 73.1. The paper calls scaling test-time compute "a promising path" for judging.</div></div>
+    <div class="notice-card"><div class="notice-title">🎓 Judge fine-tuning: works, sometimes</div><div class="notice-text">Skywork's fine-tuned judges gain +12 points over their Llama-3.1-8B base (53.4 vs 40.9). But most fine-tuned judges sink below random: PandaLM 13.1, JudgeLM 25.1–35.7 — verdict-format drift is a real failure mode.</div></div>
+    <div class="notice-card"><div class="notice-title">🏅 Specialized verifiers: reward models</div><div class="notice-text">Reward models score 59.4–64.3, rivaling much larger LLM judges. Skywork's Llama-3.1-8B reward model (62.3) crushes its own base model (40.9): a weak model can be trained to judge stronger ones.</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:2rem;overflow-x:auto;">
+    <div class="card-label">Is Verifying Easier Than Solving? (paper's Table 4)</div>
+    <table class="comp-table">
+      <thead><tr><th>Model</th><th>Solver accuracy</th><th>Judge accuracy</th><th>Judge − Solver</th></tr></thead>
+      <tbody>
+        <tr><td>GPT-4o</td><td>54.57</td><td>56.57</td><td class="comp-best">+2.0</td></tr>
+        <tr><td>Claude-3.5-Sonnet</td><td>64.57</td><td>64.29</td><td>−0.3</td></tr>
+        <tr><td>Llama-3.1-405B-Instruct</td><td>57.71</td><td>56.86</td><td>−0.9</td></tr>
+        <tr><td>Gemini-1.5-pro</td><td>40.29</td><td>47.14</td><td class="comp-best">+6.9</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-top:10px;">For a fixed model, judging accuracy <span class="highlight">closely mirrors solving accuracy</span> — the "judging is easy" assumption does not survive. Two twists: in <span class="highlight">Math</span>, judges beat their own solvers (spotting a sign slip is easier than avoiding one); in <span class="highlight">Coding</span>, solvers beat judges for every model — code is easier to write than to check. A judge cannot reliably grade work that is harder than what it can solve.</p>
+  </div>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">⚠️</div>
+      <div class="problem-title">What JudgeBench Did NOT Solve</div>
+      <ul class="problem-list">
+        <li>No judge clears ~81% — roughly one verdict in five is still wrong</li>
+        <li>Pairs are generated by GPT-4o, biasing the split against GPT-4o judges: Claude-3.5-Sonnet drops from 64.3% to 44.8% on self-generated pairs</li>
+        <li>350 pairs is modest; Knowledge dominates the mix (154 of 350)</li>
+        <li>Subjective quality — tone, style, helpfulness — is deliberately out of scope</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🧭</div>
+      <div class="problem-title">Why Those Limits Are OK</div>
+      <ul class="problem-list">
+        <li>When Knowledge was augmented from 154 to 770 pairs, judge rankings stayed the same</li>
+        <li>The pipeline is generator-agnostic: swap in any model and rebuild the split</li>
+        <li>Same-size peers: MT-Bench (80), FairEval (80), LLMBar (419)</li>
+        <li>Objective ground truth is the point — subjective taste already has benchmarks</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Judge Quality</em> Becomes a Field</h2>
+  <p class="section-desc">JudgeBench turned "can we trust the judge?" from a worry into a measurable research question — with consequences for leaderboards, RLHF, and benchmark design.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🔬 A meta-evaluation research line</div><div class="notice-text">JudgeBench complements RewardBench, whose reasoning subsets (PRM Math, HumanEvalPack) are saturated at up to ~97% — likely from training contamination. An unsaturated, verifier-labeled judge benchmark was missing.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ The verifier bottleneck</div><div class="notice-text">The paper cites repeated-sampling results: scaling generation only pays off with an oracle-level verifier. If judges stay weak, they become the limiting factor in the whole AI scaling loop.</div></div>
+    <div class="notice-card"><div class="notice-title">🧮 Judging ≈ solving</div><div class="notice-text">The ablation killed the assumption that LLM judges can cheaply grade work harder than themselves — verifying is roughly as hard as solving, and on code it is harder.</div></div>
+    <div class="notice-card"><div class="notice-title">📉 Recalibrating agreement numbers</div><div class="notice-text">AlpacaEval- and Arena-Hard-style pipelines that lean on LLM judges now have a stress test: ~85% agreement on easy chat says little about 56.6% accuracy on hard objective pairs.</div></div>
+    <div class="notice-card"><div class="notice-title">🛠️ A recipe for meta-benchmarks</div><div class="notice-text">Any dataset with ground truth and a verification algorithm can become judge-eval data — the pipeline turns solvers' difficulty into judges' difficulty, automatically and contamination-free.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ LLM-as-judge, with caution</div><div class="notice-text">The practical rule: before trusting a judge in your domain, test it on your hard, checkable cases. Agreement with humans may only be agreement on style.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Judging ≈ <em>Solving</em> — and Sometimes Harder</h2>
+  <p class="section-desc">JudgeBench's cleanest experiment is its design: both answers in every pair come from the same model, verified correct or subtly wrong, with length and style neutralized (≈562 vs ≈561 tokens). Remove every surface heuristic a judge could exploit, and what's left measures exactly one thing: can the judge work out which answer is right?</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">🧮</div>
+      <div class="problem-title">A Benchmark That Can't Be Gamed by Style</div>
+      <ul class="problem-list">
+        <li>350 pairs from MMLU-Pro, LiveBench, LiveCodeBench: Knowledge 154 · Reasoning 98 · Math 56 · Coding 42</li>
+        <li>Same-source pairs kill style confounds — no "longer = better", no "my family writes like this"</li>
+        <li>Double-judged with order swapped; ties and flip-flops count as <em>wrong</em> — positional shortcuts closed</li>
+        <li>Result: a judge score that tracks a real capability, not a preference</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">📉</div>
+      <div class="problem-title">What the Capability Actually Looks Like</div>
+      <ul class="problem-list">
+        <li>GPT-4o: 50.9% vanilla, 56.6% with Arena-Hard prompt — barely above a coin flip</li>
+        <li>Only test-time reasoning holds up: o3-mini (high) 80.9% · o1-preview 75.4% · DeepSeek-R1 73.1%</li>
+        <li>Correlation that stings: judge accuracy closely tracks solver accuracy on the same content</li>
+        <li>In Coding, judging is <em>harder</em> than solving for every model tested</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Style Trap, Live</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A math pair in the JudgeBench style: one answer verified correct, one subtly wrong — similar length, similar tone. First watch a vibe-judging pass (what GPT-4o-level judges do under pressure), then switch to step-verify mode (what reasoning judges do). Same pair, opposite verdicts.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">PROBLEM (MATH-56 STYLE) · x² − 5x + 6 = 0 · which roots?</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:14px;">
+        <div id="jbA" class="card-sm" style="border:1px solid var(--border);"><div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px;">ANSWER A · 118 tokens</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">"Factoring: (x−2)(x−3) = 0. The equation has two real roots, x = 2 and x = 3, both satisfying the original equation — substitution checks out on both."</div></div>
+        <div id="jbB" class="card-sm" style="border:1px solid var(--border);"><div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px;">ANSWER B · 121 tokens</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">"Factoring: (x−2)(x−4) = 0. The roots are x = 2 and x = 4 — a clean factorization of the quadratic with both solutions verified by inspection."</div></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <button class="btn-primary" id="jbVibe" type="button" style="font-size:12.5px;padding:8px 16px;">👁 Vibe judging</button>
+        <button class="btn-outline" id="jbVerify" type="button" style="font-size:12.5px;padding:8px 16px;">✓ Step-verify mode</button>
+      </div>
+      <div id="jbVerdict"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Hire the judge that shows its work</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The lever that moved judging was not a new model family or a better prompt — it was test-time compute. o3-mini reaching 80.9% while GPT-4o sits at 50.9% on identical pairs is the cleanest demonstration in the eval literature that verification is a reasoning task. The upstream story is in the <a href="./LLM_as_a_Judge.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LLM-as-a-Judge guide</a> (the 85% agreement era); the holistic view of what a judge must pass is <a href="./HELM_Holistic_Evaluation_of_Language_Models.html" style="color:var(--amber);font-weight:600;text-decoration:none;">HELM</a>; where judges must then go is agentic — <a href="./AgentBench_Evaluating_LLMs_as_Agents.html" style="color:var(--amber);font-weight:600;text-decoration:none;">AgentBench</a>.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🎯 Why same-model pairs</div><div class="notice-text">Both answers from GPT-4o means no self-enhancement bias, no family style to favor. The judge can only lean on content — which is the point.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 Order-swap protocol</div><div class="notice-text">Each pair judged twice; a tie or a flip counts wrong. Models that win by sitting in the favored slot get zero free wins here.</div></div>
+    <div class="notice-card"><div class="notice-title">🧑‍💻 Coding inverts the order</div><div class="notice-text">Judging code is harder than writing it for every model tested — reading someone else's logic for a subtle bug is a distinct skill from producing correct logic.</div></div>
+    <div class="notice-card"><div class="notice-title">📐 The correlation</div><div class="notice-text">Judge accuracy tracks solver accuracy category by category. "Can grade it" ≈ "can do it" — the finding that reframed judges as solvers with a formatting job.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key ideas from the JudgeBench paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ JudgeBench = 350 verified response pairs: Knowledge 154, Reasoning 98, Math 56, Coding 42 — built from MMLU-Pro, LiveBench, and LiveCodeBench.</div>
+    <div class="card-sm">✅ Both answers come from the same model (GPT-4o): one verified correct, one subtly wrong — style and length neutralized (≈562 vs ≈561 tokens).</div>
+    <div class="card-sm">✅ GPT-4o scores 50.9% (vanilla) to 56.6% (Arena-Hard) — barely above random, versus ~85% human agreement on easy MT-Bench-style questions.</div>
+    <div class="card-sm">✅ Reasoning models lead: o3-mini (high) 80.9%, o1-preview 75.4%, DeepSeek-R1 73.1% — test-time compute is the biggest lever for judging.</div>
+    <div class="card-sm">✅ Judging ≈ solving: judge accuracy closely tracks solver accuracy; in Coding, judging is harder than solving for every model tested.</div>
+    <div class="card-sm">✅ Verdict protocol: each pair judged twice with order swapped — ties and flip-flops count as wrong, closing the door on positional-bias shortcuts.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2410.12784" target="_blank" rel="noopener noreferrer">"JudgeBench: A Benchmark for Evaluating LLM-based Judges"</a> (Tan et al., 2024)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2410.12784" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./LLM_as_a_Judge.html">LLM as a Judge Guide</a>
+    <a class="footer-link" href="./HELM_Holistic_Evaluation_of_Language_Models.html">HELM Guide</a>
+    <a class="footer-link" href="./AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','construction','domains','findings','methods','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === STAGED FEEDBACK HELPER (respects prefers-reduced-motion) ===
+function stageLines(el,lines,firstColor){if(!el)return;el.innerHTML='';const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;lines.forEach((ln,i)=>{const d=document.createElement('div');d.style.cssText='font-size:12.5px;color:var(--text2);line-height:1.7;padding:8px 12px;background:var(--bg3);border-radius:6px;margin-bottom:6px;';if(i===0){d.style.color=firstColor||'var(--amber)';d.style.fontFamily='var(--mono)';d.style.fontWeight='600';}d.textContent=ln;el.appendChild(d);if(i===0||reduced){d.classList.add('animate-in');}else{d.style.opacity='0';setTimeout(()=>{d.classList.add('animate-in');},220*i);}});}
+
+// === DEMO 1: EASY VS ADVERSARIAL — PLAY THE JUDGE ===
+(function(){
+  const tagEl=document.getElementById('jsTag');
+  const scoreEl=document.getElementById('jsScore');
+  const qEl=document.getElementById('jsQ');
+  const aBtn=document.getElementById('jsA');
+  const bBtn=document.getElementById('jsB');
+  const fbEl=document.getElementById('jsFeedback');
+  const nextBtn=document.getElementById('jsNext');
+  const restartBtn=document.getElementById('jsRestart');
+  if(!tagEl||!scoreEl||!qEl||!aBtn||!bBtn||!fbEl||!nextBtn||!restartBtn)return;
+  const ROUNDS=[
+    {tag:'ROUND 1/4 · EASY CHAT (MT-BENCH STYLE)',hard:false,mono:false,
+     q:'Q: Write a two-sentence bedtime story about a sleepy hedgehog.',
+     a:'Response A\n\n"As the moon rose over the garden, Pip the hedgehog curled into a snug little ball beneath the old oak tree. One by one, his prickles softened into dreams, and the whole garden whispered goodnight."',
+     b:'Response B\n\nHedgehogs are small spiny mammals of the subfamily Erinaceinae. There are seventeen species across five genera, found in parts of Europe, Asia and Africa. They are nocturnal and primarily eat insects.',
+     correct:'a',verdict:'That was easy — and that was the point.',
+     why:['Response A follows the instruction (a two-sentence bedtime story); B ignores it and recites facts. No correctness question ever arises — a judge only needs taste and instruction-following sense.','This is the regime where "~85% agreement with humans" is earned. The answer is obvious to nearly every judge, weak or strong.'],
+     stat:'JudgeBench asks what happens when the question becomes objectively checkable — and the better-looking answer is wrong.'},
+    {tag:'ROUND 2/4 · JUDGEBENCH-STYLE · KNOWLEDGE',hard:true,mono:false,
+     q:'Q: What is the largest desert on Earth?',
+     a:'Response A\n\nAntarctica. A desert is defined by low precipitation, not heat — and at roughly 14 million km², the polar desert of Antarctica is the largest on Earth.',
+     b:'Response B\n\nThe Sahara. Stretching across some 9.2 million km² of North Africa, the Sahara is by far the largest desert on the planet — nothing else even comes close.',
+     correct:'a',verdict:'You fell for the trap — the polished, confident answer is wrong.',verdictRight:'Correct — you resisted the confident one.',
+     why:['B is fluent, specific, and wrong: deserts are defined by precipitation, and Antarctica (~14M km²) beats the Sahara (~9.2M km²). The terse, counterintuitive answer is right.','Why the trap works: B echoes the most common misconception in the training data and dresses it in confident detail. Judges that lean on fluency flip exactly here.'],
+     stat:'Knowledge pairs (154, from MMLU-Pro): GPT-4o as an Arena-Hard judge scores just 50.65 here — a coin-flip.'},
+    {tag:'ROUND 3/4 · JUDGEBENCH-STYLE · MATH',hard:true,mono:false,
+     q:'Q: Solve for x:  (x + 3)² = 25',
+     a:'Response A\n\nx + 3 = ±5, so x = 2 or x = −8.\nCheck: (2+3)² = 25 ✓ and (−8+3)² = 25 ✓ — both roots work.',
+     b:'Response B\n\nTake the square root of both sides: x + 3 = 5.\nSubtract 3: x = 2.\nCheck: (2+3)² = 25 ✓. The solution is x = 2.',
+     correct:'a',verdict:'You fell for it — the neatly verified answer is incomplete.',verdictRight:'Correct — you caught the missing root.',
+     why:['Every line of B is valid algebra; it simply drops the second root (x = −8), then "verifies" its partial answer. A is terse but complete.','Why the trap works: judging means noticing what is missing, not what is written. The check-mark ritual reassures surface-level judges.'],
+     stat:'Math pairs (56, competition problems via LiveBench): GPT-4o reaches 75.0 — its best domain. A dropped root is one of the easier subtle errors.'},
+    {tag:'ROUND 4/4 · JUDGEBENCH-STYLE · CODING',hard:true,mono:true,
+     q:'Q: Write a Python function that returns the sum of the first n positive even numbers: 2 + 4 + … + 2n.',
+     a:'Response A\n\ndef sum_first_n_evens(n):\n    return sum(2 * i for i in range(1, n + 1))\n\n# 2, 4, ..., 2n → exactly n terms\n# sum_first_n_evens(3) → 12  ✓',
+     b:'Response B\n\ndef sum_first_n_evens(n):\n    """Sum of the first n positive even numbers."""\n    total = 0\n    for i in range(n):   # 0 .. n-1\n        total += 2 * i\n    return total\n\n# Well-documented, PEP-8 clean\n# sum_first_n_evens(3) → 0+2+4 = 6  ✗ (expected 12)',
+     correct:'a',verdict:'You fell for it — the clean, documented code is wrong.',verdictRight:'Correct — you traced the loop.',
+     why:['B is documented and formatted, but its loop runs i = 0 … n−1, so it sums 0, 2, …, 2(n−1) — the first n−1 positive evens. For n = 3 it returns 6, not 12.','Why the trap works: the comment agrees with the intent; the code does not. Only tracing an example exposes the off-by-one. This is how LiveCodeBench contest problems become judge traps.'],
+     stat:'Coding pairs (42, from LeetCode / AtCoder / Codeforces): GPT-4o scores 59.5 and Gemini-1.5-pro falls to 26.2 — 24 points below random.'}
+  ];
+  let r=0,phase='vote',hardCorrect=0,hardTotal=0;
+  function styleBtn(btn,txt,mono){btn.style.display='block';btn.textContent=txt;btn.style.fontFamily=mono?'var(--mono)':'var(--sans)';btn.style.fontSize=mono?'12.5px':'13px';btn.style.lineHeight=mono?'1.7':'1.8';btn.style.pointerEvents='auto';btn.style.background='var(--bg2)';btn.style.borderColor='var(--border)';btn.style.color='var(--text2)';btn.style.fontWeight='400';}
+  function renderRound(){
+    const rd=ROUNDS[r];phase='vote';
+    tagEl.textContent=rd.tag;
+    scoreEl.textContent=hardTotal?('Hard rounds so far: '+hardCorrect+'/'+hardTotal):'';
+    qEl.textContent=rd.q;
+    styleBtn(aBtn,rd.a,rd.mono);styleBtn(bBtn,rd.b,rd.mono);
+    fbEl.innerHTML='';nextBtn.style.display='none';restartBtn.style.display='none';
+  }
+  function choose(which){
+    if(phase!=='vote')return;
+    phase='reveal';
+    const rd=ROUNDS[r];
+    const pickRight=which===rd.correct;
+    if(rd.hard){hardTotal++;if(pickRight)hardCorrect++;}
+    const win=rd.correct==='a'?aBtn:bBtn;
+    const lose=rd.correct==='a'?bBtn:aBtn;
+    win.textContent+='\n\n— ✓ objectively correct';
+    lose.textContent+='\n\n— ✗ subtly wrong';
+    win.style.borderColor='rgba(34,197,94,0.55)';win.style.background='var(--green-dim)';win.style.color='var(--green)';win.style.fontWeight='600';
+    lose.style.borderColor='rgba(239,68,68,0.45)';lose.style.background='var(--red-dim)';lose.style.color='var(--red)';
+    aBtn.style.pointerEvents='none';bBtn.style.pointerEvents='none';
+    stageLines(fbEl,[rd.hard?(pickRight?rd.verdictRight:rd.verdict):rd.verdict,rd.why[0],rd.why[1],rd.stat]);
+    scoreEl.textContent=hardTotal?('Hard rounds: '+hardCorrect+'/'+hardTotal):'';
+    nextBtn.textContent=(r===ROUNDS.length-1)?'See Summary →':'Next Round →';
+    nextBtn.style.display='inline-block';
+  }
+  function finish(){
+    phase='done';
+    tagEl.textContent='SUMMARY';
+    scoreEl.textContent='';
+    qEl.textContent='You judged '+hardTotal+' adversarial pairs and got '+hardCorrect+' right.';
+    aBtn.style.display='none';bBtn.style.display='none';
+    stageLines(fbEl,['That is exactly the task JudgeBench gives LLM judges — 350 pairs, each with one subtly wrong answer.','Strong judges do not do much better: GPT-4o 56.6%, Claude-3.5-Sonnet 64.3%. Only reasoning models (o3-mini 80.9%) start to pull away.','The lesson: verifying hard answers is a skill of its own, and agreement on easy questions never tested it.']);
+    nextBtn.style.display='none';
+    restartBtn.style.display='inline-block';
+  }
+  aBtn.addEventListener('click',()=>choose('a'));
+  bBtn.addEventListener('click',()=>choose('b'));
+  nextBtn.addEventListener('click',()=>{if(phase!=='reveal')return;r++;if(r<ROUNDS.length){renderRound();}else{finish();}});
+  restartBtn.addEventListener('click',()=>{r=0;hardCorrect=0;hardTotal=0;renderRound();});
+  renderRound();
+})();
+
+// === DEMO 2: JUDGE SCOREBOARD (paper Table 2) ===
+(function(){
+  const tabsEl=document.getElementById('sbTabs');
+  const el=document.getElementById('scoreboard');
+  if(!tabsEl||!el)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const DATA=[
+    {n:'o3-mini (high)',k:67.53,r:89.80,m:87.50,c:100.00,o:80.86,rs:true},
+    {n:'o3-mini (medium)',k:62.34,r:86.73,m:85.71,c:92.86,o:76.57,rs:true},
+    {n:'o1-preview',k:66.23,r:79.59,m:85.71,c:85.71,o:75.43,rs:true},
+    {n:'DeepSeek-R1',k:59.09,r:82.65,m:80.36,c:92.86,o:73.14,rs:true},
+    {n:'o1-mini',k:58.44,r:62.24,m:82.14,c:78.57,o:65.71,rs:true},
+    {n:'Claude-3.5-Sonnet',k:62.34,r:66.33,m:66.07,c:64.29,o:64.29,rs:false},
+    {n:'Llama-3.1-405B',k:55.84,r:54.08,m:69.64,c:50.00,o:56.86,rs:false},
+    {n:'GPT-4o',k:50.65,r:54.08,m:75.00,c:59.52,o:56.57,rs:false},
+    {n:'GPT-4o-mini',k:48.05,r:43.88,m:69.64,c:45.24,o:50.00,rs:false},
+    {n:'Gemini-1.5-pro',k:49.35,r:42.86,m:64.29,c:26.19,o:47.14,rs:false},
+    {n:'Claude-3-Haiku',k:35.06,r:34.69,m:33.93,c:21.43,o:33.14,rs:false}
+  ];
+  const CATS=[{id:'o',label:'Overall'},{id:'k',label:'Knowledge'},{id:'r',label:'Reasoning'},{id:'m',label:'Math'},{id:'c',label:'Coding'}];
+  let cur='o';
+  function row(name,val,color,nameColor,delay){return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:'+nameColor+';width:150px;text-align:right;flex-shrink:0;">'+name+'</div><div style="flex:1;height:18px;background:var(--bg4);border-radius:4px;overflow:hidden;position:relative;"><div style="height:100%;width:'+val+'%;background:'+color+';border-radius:4px;animation:scaleIn .8s ease '+(reduced?0:delay)+'s;transform-origin:left;"></div><div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(239,68,68,0.55);"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:48px;flex-shrink:0;">'+val.toFixed(1)+'</div></div>';}
+  function render(){
+    tabsEl.innerHTML=CATS.map(c=>'<button type="button" data-cat="'+c.id+'" style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid '+(c.id===cur?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(c.id===cur?'var(--amber-dim)':'var(--bg3)')+';color:'+(c.id===cur?'var(--amber)':'var(--text2)')+';cursor:pointer;">'+c.label+'</button>').join('');
+    const rows=DATA.slice().sort((a,b)=>b[cur]-a[cur]);
+    let html=row('MT-Bench agreement (context)',85,'#3b82f6','var(--blue)',0).replace('85.0','~85%');
+    html+=rows.map((d,i)=>row(d.n,d[cur],d[cur]<50?'#ef4444':(d.rs?'#a855f7':'#f59e0b'),d.rs?'var(--purple)':'var(--text3)',0.04*(i+1))).join('');
+    html+='<div style="font-size:11px;color:var(--text3);margin-top:6px;">Purple = reasoning models · red bar = below random (red tick = 50%) · blue = easy-question agreement, for contrast.</div>';
+    el.innerHTML=html;
+  }
+  tabsEl.addEventListener('click',e=>{const b=e.target.closest('button[data-cat]');if(!b)return;cur=b.getAttribute('data-cat');render();});
+  render();
+})();
+
+// === DEMO 3: SPOT THE SUBTLE ERROR ===
+(function(){
+  const tagEl=document.getElementById('seTag');
+  const titleEl=document.getElementById('seTitle');
+  const ctxEl=document.getElementById('seContext');
+  const linesEl=document.getElementById('seLines');
+  const fbEl=document.getElementById('seFeedback');
+  const nextBtn=document.getElementById('seNext');
+  const restartBtn=document.getElementById('seRestart');
+  if(!tagEl||!titleEl||!ctxEl||!linesEl||!fbEl||!nextBtn||!restartBtn)return;
+  const ROUNDS=[
+    {tag:'SNIPPET 1/2 · CODING',
+     title:'find_max([−5, −2, −9]) should return −2 — but this function returns 0. Click the buggy line.',
+     ctx:'def find_max(nums):',
+     lines:['    best = 0','    for x in nums:','        if x > best: best = x','    return best'],
+     wrong:0,
+     ok:'Line 1 is the bug. best = 0 anchors the maximum at zero — fine for positive lists, wrong when every element is negative: nothing ever beats 0, so the function returns 0. The fix is best = nums[0] (or −∞). Every other line is valid Python.',
+     note:'On JudgeBench Coding pairs, Gemini-1.5-pro scores 26.2% — 24 points below random — and every model judges code worse than it writes it.'},
+    {tag:'SNIPPET 2/2 · MATH',
+     title:'Solve 3 − 2(x + 1) = 5. Exactly one step below is wrong — click it.',
+     ctx:'Solve:  3 − 2(x + 1) = 5',
+     lines:['Step 1:  3 − 2x − 2 = 5','Step 2:  1 − 2x = 5','Step 3:  −2x = 4','Step 4:  x = 4 / 2 = 2'],
+     wrong:3,
+     ok:'Step 4 is the bug. From −2x = 4, dividing by −2 gives x = −2 — the step divides by 2 and drops the sign. Check: 3 − 2(−2 + 1) = 3 + 2 = 5 ✓. Three valid steps and one lost minus sign: exactly the "subtle error" JudgeBench bakes into its wrong answers.',
+     note:'On JudgeBench Math pairs the same models do better (GPT-4o: 75.0) — spotting a sign slip is easier than avoiding one. But roughly one verdict in four is still wrong.'}
+  ];
+  let r=0,phase='vote';
+  function render(){
+    const rd=ROUNDS[r];phase='vote';
+    tagEl.textContent=rd.tag;
+    titleEl.textContent=rd.title;
+    ctxEl.style.display='block';
+    ctxEl.textContent=rd.ctx;
+    linesEl.innerHTML=rd.lines.map((ln,i)=>'<button type="button" data-i="'+i+'" style="text-align:left;font-family:var(--mono);font-size:12.5px;color:var(--text2);background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;cursor:pointer;transition:all .2s;width:100%;">'+ln+'</button>').join('');
+    fbEl.innerHTML='';nextBtn.style.display='none';restartBtn.style.display='none';
+  }
+  linesEl.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-i]');
+    if(!b||phase!=='vote')return;
+    phase='reveal';
+    const rd=ROUNDS[r];
+    const idx=parseInt(b.getAttribute('data-i'),10);
+    const chips=Array.from(linesEl.querySelectorAll('button[data-i]'));
+    const right=idx===rd.wrong;
+    chips.forEach((c,i)=>{
+      c.style.pointerEvents='none';
+      if(i===rd.wrong){c.style.borderColor='rgba(34,197,94,0.5)';c.style.background='var(--green-dim)';c.style.color='var(--green)';}
+      else if(i===idx){c.style.borderColor='rgba(239,68,68,0.4)';c.style.background='var(--red-dim)';c.style.color='var(--red)';}
+    });
+    stageLines(fbEl,[right?'✓ Correct — that is the buggy line.':'✗ Not that one — that line is valid. The buggy line is now green.',rd.ok,rd.note],right?'var(--green)':'var(--red)');
+    nextBtn.textContent=(r===ROUNDS.length-1)?'Finish':'Next Snippet →';
+    nextBtn.style.display='inline-block';
+  });
+  nextBtn.addEventListener('click',()=>{
+    if(phase!=='reveal')return;
+    r++;
+    if(r<ROUNDS.length){render();return;}
+    phase='done';
+    tagEl.textContent='DONE';
+    titleEl.textContent='You just exercised the core skill JudgeBench measures: line-level verification.';
+    ctxEl.style.display='none';
+    linesEl.innerHTML='';
+    stageLines(fbEl,['LLM judges are usually validated with "which response do you prefer?" — a different skill entirely.','On 350 pairs like these, GPT-4o-tier judges hover near 60%. That is the paper’s whole point.']);
+    nextBtn.style.display='none';
+    restartBtn.style.display='inline-block';
+  });
+  restartBtn.addEventListener('click',()=>{r=0;render();});
+  render();
+})();
+
+// === STYLE TRAP (DEEP DIVE) ===
+(function(){
+  const A=document.getElementById('jbA'),B=document.getElementById('jbB'),vibe=document.getElementById('jbVibe'),verify=document.getElementById('jbVerify'),out=document.getElementById('jbVerdict');
+  if(!A||!B||!vibe||!verify||!out)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function reset(){A.style.border='1px solid var(--border)';B.style.border='1px solid var(--border)';A.style.background='';B.style.background='';}
+  function chip(t,c){return t;}
+  function render(mode){
+    reset();
+    if(mode==='vibe'){
+      B.style.border='1px solid rgba(34,197,94,.6)';B.style.background='rgba(34,197,94,.08)';
+      A.style.border='1px solid rgba(239,68,68,.5)';
+      out.innerHTML='<div class="card-sm" style="border-left:3px solid var(--red);'+(RM?'':'opacity:0;animation:fadeUp .5s ease forwards;')+'"><div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:4px;">VERDICT: B — and B is wrong</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">Under vibe judging, the confident cadence ("a clean factorization", "verified by inspection") and the near-identical length read as competence. Nothing in the style layer distinguishes (x−2)(x−3) from (x−2)(x−4). This is the 50.9% regime: GPT-4o-level judges on adversarial pairs.</div></div>';
+    }else{
+      A.style.border='1px solid rgba(34,197,94,.6)';A.style.background='rgba(34,197,94,.08)';
+      B.style.border='1px solid rgba(239,68,68,.6)';
+      out.innerHTML='<div class="card-sm" style="border-left:3px solid var(--green);'+(RM?'':'opacity:0;animation:fadeUp .5s ease forwards;')+'"><div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;">VERDICT: A — substitution settles it: 16 − 20 + 6 = 2 ≠ 0</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">Step-verify mode re-derives instead of skimming: expand (x−2)(x−4) → x² − 6x + 8 ≠ x² − 5x + 6. One executed check flips the verdict. This is the reasoning-judge regime — o3-mini at 80.9% on the same kind of adversarial pairs.</div></div>';
+    }
+  }
+  vibe.addEventListener('click',()=>{vibe.className='btn-primary';verify.className='btn-outline';render('vibe');});
+  verify.addEventListener('click',()=>{verify.className='btn-primary';vibe.className='btn-outline';render('verify');});
+  if(RM||!('IntersectionObserver' in window)){out.innerHTML='<div style="font-size:12px;color:var(--text3);">Pick a judging mode to grade the pair.</div>';}
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'Why does high human-agreement on MT-Bench-style benchmarks overestimate LLM judges?',opts:['The judges simply memorized the benchmark answers','Those benchmarks use open-ended, easy questions where human preference rarely stresses factual or logical correctness','Humans deliberately contradict the judges to lower their scores','Agreement is measured only on math and code'],correct:1,explain:'MT-Bench, LLMEval and FairEval validate judges against crowdsourced human preference on open-ended tasks. Correctness is rarely in doubt there, and crowd annotators struggle on hard math and code — so agreement mostly measures shared stylistic taste, not verification ability.'},
+  {q:'Which four categories does JudgeBench cover?',opts:['Sentiment, translation, summarization, dialogue','Safety, fairness, robustness, privacy','Knowledge, Reasoning, Mathematics, Coding','Instruction-following, style, length, tone'],correct:2,explain:'350 pairs in total: Knowledge (154, MMLU-Pro), Reasoning (98, LiveBench), Math (56, competition problems), and Coding (42, LiveCodeBench).'},
+  {q:'What is the headline finding of the paper?',opts:['GPT-4o judges JudgeBench pairs at over 95% accuracy','LLM judges refuse to answer hard pairs','Many strong models perform just slightly better than random guessing — GPT-4o scores 50.9% to 56.6%','Reward models score 0% on all categories'],correct:2,explain:'From the abstract: many strong models (e.g., GPT-4o) perform just slightly better than random guessing. With the vanilla prompt GPT-4o hits 50.9%; with the Arena-Hard prompt, 56.6% — versus ~85% agreement with humans on easy MT-Bench-style questions.'},
+  {q:'What did the judge-vs-solver ablation reveal about judging vs solving?',opts:['Judging is always far easier than solving','Judging is completely unrelated to solving','Judge accuracy closely mirrors solver accuracy — and on coding, judging is harder than solving','Solvers and judges use different tokenizers'],correct:2,explain:'For each fixed model, judging accuracy closely tracks solving accuracy. In Math, judges beat their own solvers; in Coding, solvers beat judges for every model. A judge cannot reliably grade work that is harder than what it can itself solve.'},
+  {q:'Why does objective ground truth matter for evaluating judges (meta-evaluation)?',opts:['It makes the benchmark smaller and faster to run','It lets judges use any prompt they like','It guarantees judges reach 100% accuracy','It removes reliance on crowdsourced preference — labels come from ground-truth answers and verification algorithms'],correct:3,explain:'JudgeBench pairs are labeled by ground-truth answers plus automatic verifiers (string matching, unit tests), with a second LLM double-checking format-only failures. Correctness becomes measurable rather than voted on — which is what makes meta-evaluation of judges objective.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

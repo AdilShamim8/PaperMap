@@ -254,6 +254,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="nav-link" href="#biases">Biases</a>
     <a class="nav-link" href="#arena">Arena</a>
     <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#quiz">Quiz</a>
   </div>
   <div class="nav-actions">
@@ -270,6 +271,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <a href="#biases">Biases</a>
   <a href="#arena">Arena</a>
   <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
 </div>
 
@@ -613,6 +615,79 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
 <div class="divider"></div>
 
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The Reliability <em>Ceiling</em></h2>
+  <p class="section-desc">The 85% agreement headline was measured where judging is easy — open-ended chat questions. Move the same judges onto adversarial problems with a provable right answer, and a ceiling appears.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">🛋️</div>
+      <div class="problem-title">The Easy Test — Chat Agreement</div>
+      <ul class="problem-list">
+        <li>MT-Bench-style questions: writing, roleplay, explanations</li>
+        <li>Both answers usually decent — "better" is a soft preference call</li>
+        <li>Humans and judges make the same soft call, so agreement climbs</li>
+        <li>GPT-4 judge ≈ 85% agreement with humans — the headline number</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">🧗</div>
+      <div class="problem-title">The Hard Test — Adversarial Correctness</div>
+      <ul class="problem-list">
+        <li>JudgeBench (arXiv 2410.12784): 350 objective adversarial pairs</li>
+        <li>One answer demonstrably right, one subtly wrong — checkable</li>
+        <li>GPT-4o as judge: 50.9% — barely above a coin flip</li>
+        <li>Best reasoning judges reach ~81% (o3-mini) — better, not solved</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Agreement vs Correctness</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Two report cards for the same job. Group A is the familiar number — a judge agreeing with humans on chat-style questions. Group B re-tests LLM judges on JudgeBench's 350 objective pairs, where exactly one answer is right and the verdict can be checked. Toggle the explanation to see why the two numbers live on different planets.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div id="scorePanel"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:1rem;">
+        <button id="gapToggle" type="button" style="font-family:var(--mono);font-size:11.5px;padding:8px 14px;border-radius:8px;border:1px solid rgba(239,68,68,0.4);background:var(--red-dim);color:var(--red);cursor:pointer;font-weight:600;">❓ WHY THE GAP?</button>
+        <span style="font-family:var(--mono);font-size:10.5px;color:var(--text3);">Group A: this paper (MT-Bench) · Group B: JudgeBench (arXiv 2410.12784)</span>
+      </div>
+      <div id="gapCard" style="display:none;">
+        <div class="card-sm" style="margin-top:1rem;border-left:3px solid var(--green);">
+          <div style="font-size:12.5px;font-weight:600;color:var(--green);margin-bottom:4px;">Easy questions inflate agreement</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.7;">On open-ended chat, many answers are acceptable and quality is a matter of degree. When both candidates are decent, "better" is a preference call — and humans and judges tend to make the same soft call, so agreement floats up toward the ~85% headline.</div>
+        </div>
+        <div class="card-sm" style="margin-top:10px;border-left:3px solid var(--red);">
+          <div style="font-size:12.5px;font-weight:600;color:var(--red);margin-bottom:4px;">Adversarial pairs expose the ceiling</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.7;">JudgeBench flips one detail — a sign, a fact, a step of reasoning — so exactly one answer is right. The verdict now requires solving the problem, not sensing a vibe. GPT-4o falls to 50.9%; only judges that reason step-by-step (o3-mini, 80.9%) hold near their chat-level numbers.</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Judging is not solving</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">A judge can fail on problems it could solve directly. Ask the model the question, and it reasons to the right answer; ask it to grade two solutions, and it can still pick the confident, longer, subtly wrong one. Verifying someone else's work is a separate skill — with its own ceiling.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Why Verdicts Drift — The Big Three, In Brief</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:8px;">
+      <div class="card-sm" style="border-left:3px solid var(--red);"><div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px;">1 · Position Bias 🔁</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">Swap the two answers and the verdict flips — the favored slot wins, not the better answer.</div></div>
+      <div class="card-sm" style="border-left:3px solid var(--amber);"><div style="font-size:13px;font-weight:600;color:var(--amber);margin-bottom:4px;">2 · Verbosity Bias 📜</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">Longer answers get rated as more helpful even when the extra text adds nothing — length read as quality.</div></div>
+      <div class="card-sm" style="border-left:3px solid var(--purple);"><div style="font-size:13px;font-weight:600;color:var(--purple);margin-bottom:4px;">3 · Self-Enhancement 🪞</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">Judges favor answers from their own model family — suspect any battle a model grades for its own kin.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Where This Story Continues</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">"Can we trust the judge?" grew into a benchmark lineage of its own. <span class="highlight">JudgeBench</span> assembled 350 objective adversarial pairs to stress judges exactly where agreement numbers never looked — read the <a href="./JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html" style="color:var(--amber);font-weight:600;text-decoration:none;">JudgeBench guide →</a> for the full taxonomy and results. The meta-evaluation lineage — <span class="highlight">HELM's holistic view</span> — supplies the closing moral: no single number certifies a judge. Agreement on easy chat, accuracy on adversarial pairs, and controlled bias checks are different instruments — a trustworthy judge scores on all of them.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
@@ -648,6 +723,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="footer-link" href="./LLaMA.html">LLaMA Guide</a>
     <a class="footer-link" href="./DeepSeek_R1.html">DeepSeek-R1 Guide</a>
     <a class="footer-link" href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT Guide</a>
+    <a class="footer-link" href="./JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html">JudgeBench Guide</a>
   </div>
 <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -670,7 +746,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 (function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
 // === NAV ACTIVE ===
-(function(){const ids=['history','problem','mtbench','judging','biases','arena','impact','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+(function(){const ids=['history','problem','mtbench','judging','biases','arena','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
 
 // === SCROLL REVEAL ===
 (function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
@@ -765,6 +841,45 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   }
   resetBtn.addEventListener('click',()=>{round=0;votes.length=0;resultEl.innerHTML='';renderBattle();});
   renderBattle();
+})();
+
+// === AGREEMENT VS CORRECTNESS (DEEP DIVE) ===
+(function(){
+  const panelEl=document.getElementById('scorePanel');const gapEl=document.getElementById('gapCard');const btn=document.getElementById('gapToggle');
+  if(!panelEl||!gapEl||!btn)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const rows=[
+    {label:'GPT-4 judge · chat',pct:85,color:'var(--green)'},
+    {label:'GPT-4o',pct:50.9,color:'var(--red)'},
+    {label:'Claude-3.5-Sonnet',pct:64.3,color:'var(--amber)'},
+    {label:'o3-mini · reasoning',pct:80.9,color:'var(--amber)'}
+  ];
+  const stagger=[0,120,240,360];
+  function row(r,i){
+    const anim=RM?'':`animation:scaleIn .7s ease ${stagger[i]}ms backwards;`;
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:140px;flex-shrink:0;">${r.label}</div><div style="flex:1;height:14px;background:var(--bg4);border-radius:7px;overflow:hidden;"><div style="height:100%;width:${r.pct}%;background:${r.color};border-radius:7px;transform-origin:left;${anim}"></div></div><div style="font-family:var(--mono);font-size:12px;font-weight:600;color:${r.color};width:48px;text-align:right;flex-shrink:0;">${r.pct}%</div></div>`;
+  }
+  function render(){
+    panelEl.innerHTML='<div style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;color:var(--green);margin-bottom:10px;">GROUP A · MT-BENCH-STYLE AGREEMENT WITH HUMANS</div>'
+      +row(rows[0],0)
+      +'<div style="font-size:12px;color:var(--text3);line-height:1.7;margin:2px 0 14px 150px;">chat questions — a preference call; the paper\'s headline number</div>'
+      +'<div style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;color:var(--red);margin:12px 0 10px;padding-top:12px;border-top:1px dashed var(--border);">GROUP B · JUDGEBENCH OBJECTIVE ACCURACY · 350 PAIRS</div>'
+      +row(rows[1],1)+row(rows[2],2)+row(rows[3],3)
+      +'<div style="font-size:12px;color:var(--text3);line-height:1.7;margin:2px 0 0 150px;">one answer provably right, one subtly wrong — a correctness call</div>';
+  }
+  if(RM||!('IntersectionObserver' in window)){
+    render();
+  }else{
+    const io=new IntersectionObserver(en=>{if(en.some(e=>e.isIntersecting)){render();io.disconnect();}},{threshold:0.25});
+    io.observe(panelEl);
+  }
+  let open=false;
+  btn.addEventListener('click',()=>{
+    open=!open;
+    gapEl.style.display=open?'block':'none';
+    btn.textContent=open?'✕ HIDE EXPLANATION':'❓ WHY THE GAP?';
+    if(open&&!RM){gapEl.classList.remove('animate-in');void gapEl.offsetWidth;gapEl.classList.add('animate-in');}
+  });
 })();
 
 // === QUIZ ===
