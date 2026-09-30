@@ -254,6 +254,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="nav-link" href="#architecture">Architecture</a>
     <a class="nav-link" href="#results">Results</a>
     <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#quiz">Quiz</a>
     <a class="nav-link" href="#takeaways">Takeaways</a>
   </div>
@@ -271,6 +272,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <a href="#architecture">Architecture</a>
   <a href="#results">Results</a>
   <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
   <a href="#takeaways">Takeaways</a>
 </div>
@@ -629,6 +631,85 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
 <div class="divider"></div>
 
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">One Model, <em>Every</em> Task — In Theory</h2>
+  <p class="section-desc">The zero-shot task portfolio: one model, trained only to predict the next token on WebText's 40GB of quality-filtered pages, is asked to translate, summarize, and answer questions purely by prompting — no fine-tuning, ever.</p>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Zero-Shot Task Roulette</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Deal a task to the frozen 1.5B weights. The prompt changes; the weights never do. Then read the honest verdict against 2019's supervised state of the art.</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;" id="ddTabs"></div>
+    <div id="ddPrompt" style="font-family:var(--mono);font-size:13px;color:var(--text2);line-height:2;background:var(--bg3);padding:1rem;border-radius:var(--radius);white-space:pre-line;overflow-x:auto;"></div>
+    <div class="card-sm" id="ddOutcome" style="margin-top:1rem;"></div>
+    <div id="ddVerdict" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card" style="margin-top:2rem;">
+    <div class="card-label">The Zero-Shot Task Ladder</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Same weights, same single objective — only the prompt changes. Reliability falls as a task appears less often and less cleanly in the corpus.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="card-sm" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span class="pill pill-green">1 · Language modeling</span>
+        <span style="font-size:13px;color:var(--text2);flex:1;min-width:260px;">The training task itself — the model's home turf.</span>
+        <span class="pill pill-green">Zero-shot SOTA</span>
+      </div>
+      <div class="card-sm" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span class="pill pill-amber">2 · Translation</span>
+        <span style="font-size:13px;color:var(--text2);flex:1;min-width:260px;">Prompted with example pairs — no parallel corpus, no training.</span>
+        <span class="pill pill-red">Far below SOTA</span>
+      </div>
+      <div class="card-sm" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span class="pill pill-amber">3 · Summarization</span>
+        <span style="font-size:13px;color:var(--text2);flex:1;min-width:260px;">The "TL;DR:" trick — an article, a cue, a continuation.</span>
+        <span class="pill pill-red">Par with naive baselines</span>
+      </div>
+      <div class="card-sm" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span class="pill pill-amber">4 · Question answering</span>
+        <span style="font-size:13px;color:var(--text2);flex:1;min-width:260px;">Questions and answers from the web, continued as text.</span>
+        <span class="pill pill-red">A fraction correct</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="problem-grid" style="margin-top:2rem;">
+    <div class="problem-card bad">
+      <div class="problem-icon">📉</div>
+      <div class="problem-title">The Honest Limits</div>
+      <ul class="problem-list">
+        <li>Translation: far below supervised systems of the time — near weak unsupervised baselines</li>
+        <li>Summarization: at best on par with copying an article's opening sentences</li>
+        <li>Question answering: only a fraction of questions answered correctly</li>
+        <li>Zero-shot GPT-2 was a proof of direction, not a win</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🧭</div>
+      <div class="problem-title">Why It Mattered Anyway</div>
+      <ul class="problem-list">
+        <li>No task training, no examples, no output heads — prompting only</li>
+        <li>One 40GB corpus and one objective produced four task behaviors</li>
+        <li>The gap to supervised systems became an explicit scaling bet</li>
+        <li>Close it with scale, not labels — the GPT-3 hypothesis</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:2rem;">
+    <div class="card">
+      <div class="card-label">Staged Release Meets Its Own Research</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Withholding the 1.5B model came with a research program attached. Alongside the staged checkpoints, OpenAI released a GPT-2 <span class="highlight">output detector</span> — a transformer classifier of the RoBERTa family, trained to separate GPT-2-generated text from human web text. It flagged full-model outputs reliably, yet proved brittle in the wild: short or lightly edited passages could slip past it. AI-text detection has stayed a moving target ever since.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Where the Bet Landed</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">In 2020, GPT-3 scaled the same recipe over 100× and upgraded zero-shot to <span class="highlight">few-shot</span> learning — examples inside the prompt, still no gradient updates. Instruction-tuned descendants then made prompting the default human–computer interface. The task portfolio GPT-2 demonstrated in fragile, prompt-shaped glimpses is now the job description of every general-purpose LLM.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
@@ -687,7 +768,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 (function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
 // === NAV ACTIVE ===
-(function(){const ids=['history','problem','core-idea','webtext','architecture','results','impact','quiz','takeaways'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+(function(){const ids=['history','problem','core-idea','webtext','architecture','results','impact','deepdive','quiz','takeaways'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
 
 // === SCROLL REVEAL ===
 (function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
@@ -760,6 +841,32 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     el.innerHTML=family.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:56px;text-align:right;">${d.name}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${mode==='params'?d.pct:d.lpct}%;background:${d.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:72px;">${mode==='params'?d.label:d.layers}</div></div>`).join('');
   }
   window._famMode=function(m){mode=m;render();};
+  render();
+})();
+
+// === DEEP DIVE — ZERO-SHOT TASK ROULETTE ===
+(function(){
+  const tasks={
+    translate:{label:'🌍 Translation',prompt:'English: The cat sat on the mat.\nFrench: Le chat s\'assit sur le tapis.\nEnglish: The weather is lovely today.\nFrench: Il fait beau aujourd\'hui.\nEnglish: I read a book about robots.\nFrench:',outcome:'GPT-2 continues with plausible French — WebText\'s bilingual pages taught it the mapping as a side effect of next-token prediction. No aligned parallel corpus was ever curated for it.',chip:'Well below supervised MT',chipcls:'pill-red',verdict:'The best 2019 systems, trained on millions of aligned sentence pairs, were far stronger. GPT-2 landed near weak unsupervised baselines — evidence it had learned the task, not mastered it.'},
+    summarize:{label:'✂️ Summarization',prompt:'(article) A 1.5B-parameter language model was trained on 40GB of quality-filtered web text with a single objective: predict the next token. With no fine-tuning and no labeled examples, it translated, summarized, and answered questions from prompts alone. Its creators staged the full release over nine months, citing misuse risk.\nTL;DR:',outcome:'A one-line gist of the article appears as the continuation — the paper\'s own trick: append "TL;DR:" and sample. Compression emerges from the articles-followed-by-summaries patterns of the web.',chip:'Par with naive baselines',chipcls:'pill-red',verdict:'On news summarization, zero-shot GPT-2 was at best comparable to a baseline that copies the article\'s opening sentences — far below the supervised abstractive systems of the time.'},
+    qa:{label:'❓ Question Answering',prompt:'Q: Who wrote the book The Origin of Species?\nA: Charles Darwin\nQ: How many strings does a violin have?\nA: Four\nQ: In what year did the first human walk on the Moon?\nA:',outcome:'A best-guess answer — "1969" — appears, because Q&amp;A pages conditioned the model to continue a question with an answer. Reading comprehension as pure text continuation.',chip:'A fraction correct',chipcls:'pill-red',verdict:'On open-domain QA benchmarks such as Natural Questions, GPT-2 answered only a small fraction of questions correctly — far below supervised systems trained on the datasets themselves.'},
+    completion:{label:'✍️ Text Completion',prompt:'In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains. Even more surprising to the researchers was the fact that the unicorns spoke perfect English.',outcome:'The model continues with paragraphs of fluent, on-topic prose — the famous "unicorn" sample from OpenAI\'s release was generated exactly this way, by the 1.5B model, from this prompt.',chip:'Zero-shot SOTA',chipcls:'pill-green',verdict:'Language modeling is the one task GPT-2 was built for: zero-shot state-of-the-art perplexity on 7 of 8 benchmarks, including 35.76 on Penn Treebank.'}
+  };
+  const tabsEl=document.getElementById('ddTabs');const promptEl=document.getElementById('ddPrompt');const outEl=document.getElementById('ddOutcome');const verEl=document.getElementById('ddVerdict');
+  if(!tabsEl||!promptEl||!outEl||!verEl)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let current='translate';
+  function stag(i){return RM?'':'animation:fadeUp .45s ease both;animation-delay:'+(i*110)+'ms;';}
+  function render(){
+    tabsEl.innerHTML=Object.keys(tasks).map(k=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===current?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===current?'var(--amber-dim)':'var(--bg3)'};color:${k===current?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._ddSelect('${k}')">${tasks[k].label}</button>`).join('');
+    promptEl.textContent=tasks[current].prompt;
+    promptEl.style.animation='none';void promptEl.offsetWidth;
+    if(!RM)promptEl.style.animation='fadeUp .45s ease both';
+    const t=tasks[current];
+    outEl.innerHTML=`<div class="card-label">What GPT-2 Did (1.5B, zero-shot)</div><p style="font-size:13px;color:var(--text2);line-height:1.8;${stag(1)}">${t.outcome}</p>`;
+    verEl.innerHTML=`<div style="${stag(2)}"><div class="card-label" style="margin-bottom:6px;">Verdict — vs Supervised SOTA of 2019</div><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><span class="pill ${t.chipcls}" style="font-size:12px;">${t.chip}</span><span style="font-size:12px;color:var(--text2);line-height:1.6;flex:1;min-width:240px;">${t.verdict}</span></div></div>`;
+  }
+  window._ddSelect=function(k){current=k;render();};
   render();
 })();
 

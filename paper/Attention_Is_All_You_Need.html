@@ -1495,6 +1495,7 @@ footer {
     <a class="nav-link" href="#llm-lens" onclick="scrollToSection('#llm-lens')">LLM Lens</a>
     <a class="nav-link" href="#limitations" onclick="scrollToSection('#limitations')">Limitations</a>
     <a class="nav-link" href="#results" onclick="scrollToSection('#results')">Results</a>
+    <a class="nav-link" href="#deepdive" onclick="scrollToSection('#deepdive')">Deep Dive</a>
     <a class="nav-link" href="#quiz" onclick="scrollToSection('#quiz')">Quiz</a>
     <a class="nav-link" href="#publish" onclick="scrollToSection('#publish')">Publish</a>
   </div>
@@ -1514,6 +1515,7 @@ footer {
   <a href="#llm-lens">LLM Lens</a>
   <a href="#limitations">Limitations</a>
   <a href="#results">Results</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
   <a href="#publish">Publish</a>
 </div>
@@ -2446,6 +2448,120 @@ footer {
 
 <div class="divider"></div>
 
+<!-- SECTION: DEEP DIVE — THE QUADRATIC BILL -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The <em>Quadratic</em> Bill</h2>
+  <p class="section-desc">Every token attending to every other token is what made the Transformer parallel — and what made long context expensive. This is the cost side of the paper's Table 1, in numbers you can move yourself.</p>
+
+  <div class="attention-demo" id="costLab">
+    <div class="tokenizer-header">
+      <span class="tokenizer-title">// Sequence Length vs Attention Cost — pick a context window</span>
+      <span class="pill pill-amber">cells = n²</span>
+    </div>
+    <div class="attn-controls">
+      <button class="attn-word-btn" data-n="128" type="button">128</button>
+      <button class="attn-word-btn active" data-n="512" type="button">512</button>
+      <button class="attn-word-btn" data-n="1024" type="button">1K</button>
+      <button class="attn-word-btn" data-n="4096" type="button">4K</button>
+      <button class="attn-word-btn" data-n="16384" type="button">16K</button>
+      <button class="attn-word-btn" data-n="32768" type="button">32K</button>
+      <span class="attn-label">sequence length (tokens)</span>
+    </div>
+    <div class="attn-vis-wrap">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px;font-family:var(--mono);">ATTENTION MATRIX PER LENGTH — CELLS (n²) AND fp16 MEMORY, LOG-SCALED BARS:</div>
+      <div class="attn-bars" id="costBars"></div>
+      <div class="publish-code" id="costFormula" style="white-space:pre-line;"></div>
+      <div class="card-sm" id="costVerdict" style="margin-top:12px;"></div>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px;">Counts one attention matrix — one head, one layer, fp16 — before softmax copies and backward storage. Causal decoding fills only the lower triangle; the quadratic clock is unchanged.</p>
+    </div>
+  </div>
+  <div class="formula-card">
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;">The Cost of One Attention Matrix</div>
+    <div class="formula-main">cells = n² · memory ≈ n² × 2 bytes</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece">
+        <div class="fp-sym">n²</div>
+        <div class="fp-name">Pairwise grid</div>
+        <div class="fp-desc">Every query must score every key before softmax can normalize even one row. Table 1 prices a self-attention layer at O(n²·d) — the n² is this grid.</div>
+      </div>
+      <div class="formula-piece">
+        <div class="fp-sym">× 2 bytes</div>
+        <div class="fp-name">fp16 cell</div>
+        <div class="fp-desc">One score stored at half precision. Softmax and the backward pass want extra copies, so this is the floor of the bill, not the total.</div>
+      </div>
+      <div class="formula-piece">
+        <div class="fp-sym">× h × N</div>
+        <div class="fp-name">Stacked everywhere</div>
+        <div class="fp-desc">The base model fills this grid once per head (8) in each of its 6 encoder + 6 decoder layers — 96 grids every forward pass.</div>
+      </div>
+      <div class="formula-piece">
+        <div class="fp-sym">÷ √d_k</div>
+        <div class="fp-name">Scaling ≠ savings</div>
+        <div class="fp-desc">The scale factor keeps gradients healthy; it changes nothing about the cell count. Only fewer tokens — or fewer computed pairs — shrinks the bill.</div>
+      </div>
+    </div>
+  </div>
+  <div class="problem-grid" style="margin-top:1rem;">
+    <div class="problem-card bad">
+      <div class="problem-icon">💸</div>
+      <div class="problem-title">What the Square Charges</div>
+      <ul class="problem-list">
+        <li>Doubling the window quadruples the cells — 512 → 32K is ×4,096</li>
+        <li>Scores must exist before softmax can normalize a single row</li>
+        <li>Training also stashes them for the backward pass</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">⚡</div>
+      <div class="problem-title">What the Square Buys</div>
+      <ul class="problem-list">
+        <li>Any two positions one hop apart — O(1) maximum path length</li>
+        <li>All positions scored in parallel, not n sequential steps</li>
+        <li>The paper's escape hatch — restrict to r neighbors — costs O(r·n·d) but degrades path length to O(n/r)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="notice-grid" style="margin-top:1.5rem;">
+    <div class="notice-card">
+      <div class="notice-title" style="color:var(--amber);">FlashAttention (2022)</div>
+      <div class="notice-text">Keeps the exact O(n²) math but never materializes the matrix — tiles and online softmax streamed through on-chip SRAM. Memory falls toward O(n); it is now the default kernel in every major stack.</div>
+    </div>
+    <div class="notice-card">
+      <div class="notice-title" style="color:var(--blue);">Sparse Attention (2020)</div>
+      <div class="notice-text">Longformer and BigBird attend in local windows plus a few global positions — cost linear in n for a fixed window. The paper's "restricted" row in Table 1 sketched this trade years early.</div>
+    </div>
+    <div class="notice-card">
+      <div class="notice-title" style="color:var(--purple);">Linear Attention (2020)</div>
+      <div class="notice-text">Kernel feature maps (linear transformers, Performer) reorder the arithmetic so cost grows ≈O(n), approximating softmax attention — trading exactness for length.</div>
+    </div>
+    <div class="notice-card">
+      <div class="notice-title" style="color:var(--teal);">The KV Cache Surtax</div>
+      <div class="notice-text">At inference, step t attends to all t cached keys — generating n tokens costs ~n²/2 attention work. MQA/GQA shrink that cache; they do not repeal the square.</div>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top:1.5rem;">
+    <div class="card">
+      <div class="card-label">Context-Window Economics</div>
+      <ul class="deep-list">
+        <li><strong>512 — BERT (2018):</strong> sentences and paragraphs fit; the quadratic bill was invisible, so nobody felt it.</li>
+        <li><strong>1K–2K — GPT-2 / GPT-3 (2019–2020):</strong> windows doubled and the bill quadrupled — still manageable with naive kernels.</li>
+        <li><strong>8K–128K — GPT-4 class (2023):</strong> affordable because FlashAttention-class kernels stopped materializing the matrix, with sparse windows on top.</li>
+        <li><strong>1M+ — Gemini 1.5 class (2024):</strong> millions of tokens from a mixture of tricks — sparsity, chunked recurrence, position interpolation — not one silver bullet.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Why the Ceiling Moved by Tricks</div>
+      <div class="card-sm" style="margin-bottom:10px;"><strong>Memory:</strong> fused kernels compute exact attention without ever storing the n² scores.</div>
+      <div class="card-sm" style="margin-bottom:10px;"><strong>FLOPs:</strong> sparsity and linear-attention approximations change the exponent itself.</div>
+      <div class="card-sm"><strong>Positions:</strong> RoPE-style interpolation stretches models trained short to run long cheaply.</div>
+      <div class="card-sm" style="margin-top:10px;"><strong>Verdict:</strong> the window grew from 512 to millions by refusing to pay the square — not by paying it.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- SECTION 9: QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
@@ -2984,7 +3100,7 @@ function initScrollReveal() {
 }
 
 function initNavActiveState() {
-  const sectionIds = ['problem','tokenizer','embeddings','attention','architecture','deep-dive','llm-lens','limitations','results','quiz'];
+  const sectionIds = ['problem','tokenizer','embeddings','attention','architecture','deep-dive','llm-lens','limitations','results','deepdive','quiz','publish'];
   const navLinks = Array.from(document.querySelectorAll('.nav-link'));
   if (!navLinks.length) return;
 
@@ -3492,6 +3608,70 @@ function showLayerInfo(key) {
   </div>`;
   panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
+
+// === DEEP DIVE: SEQUENCE LENGTH VS ATTENTION COST ===
+(function () {
+  const lab = document.getElementById('costLab');
+  const barsEl = document.getElementById('costBars');
+  const formulaEl = document.getElementById('costFormula');
+  const verdictEl = document.getElementById('costVerdict');
+  if (!lab || !barsEl || !formulaEl || !verdictEl) return;
+  const tabs = Array.from(lab.querySelectorAll('.attn-word-btn'));
+  if (!tabs.length) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const LENGTHS = [128, 512, 1024, 4096, 16384, 32768];
+  const BASELINE = 512;
+  let selected = BASELINE;
+  const fmtInt = v => v.toLocaleString('en-US');
+  const compact = v => v >= 1e9 ? (v / 1e9).toFixed(2) + 'B' : v >= 1e6 ? (v / 1e6).toFixed(2) + 'M' : v >= 1e3 ? (v / 1e3).toFixed(1) + 'K' : String(v);
+  const bytesLabel = b => b >= 1073741824 ? (b / 1073741824).toFixed(2) + ' GB' : b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : b >= 1024 ? (b / 1024).toFixed(0) + ' KB' : b + ' B';
+  const seqLabel = n => n >= 1024 ? (n / 1024) + 'K' : String(n);
+  const widthPct = n => { const lo = Math.log10(LENGTHS[0]), hi = Math.log10(LENGTHS[LENGTHS.length - 1]); return 3 + 97 * (Math.log10(n) - lo) / (hi - lo); };
+  function verdictFor(n) {
+    if (n <= 512) return { color: 'var(--green)', title: 'Trivial — the 2017–2018 default', text: 'One head\'s scores sit next to the weights in on-chip memory. At BERT\'s 512 tokens, the quadratic bill was effectively invisible — no tricks needed.' };
+    if (n <= 1024) return { color: 'var(--teal)', title: 'Comfortable — GPT-2 territory', text: 'A 2 MB matrix is noise for a modern GPU, but GPT-2 small\'s 12 layers × 12 heads multiply the working set during training.' };
+    if (n <= 4096) return { color: 'var(--blue)', title: 'Engineering required — the GPT-3/4 era', text: 'One head\'s scores rival the footprint of small models; naive kernels hit memory-bandwidth walls. FlashAttention exists precisely to avoid materializing this matrix.' };
+    if (n <= 16384) return { color: 'var(--purple)', title: 'Kernel tricks mandatory', text: 'Half a GB for one head of one layer, before softmax copies and backward storage. Runs at this length lean on fused kernels, recompute-on-backward, or sparsity.' };
+    return { color: 'var(--red)', title: 'Pay the square — or approximate', text: '2+ GB per matrix. Exact FlashAttention still pays O(n²) FLOPs; beyond this, sparse windows or linear-attention approximations trade expressivity for length.' };
+  }
+  function render() {
+    barsEl.innerHTML = LENGTHS.map(len => {
+      const cells = len * len;
+      const isSel = len === selected;
+      const fill = isSel ? 'linear-gradient(90deg, rgba(245,158,11,0.9), rgba(245,158,11,0.55))' : 'rgba(100,116,139,0.35)';
+      return `<div class="attn-bar-row">
+        <div class="attn-bar-label"${isSel ? ' style="color:var(--amber);font-weight:600;"' : ''}>${seqLabel(len)}</div>
+        <div class="attn-bar-track"><div class="attn-bar-fill" data-w="${widthPct(len).toFixed(1)}" style="width:0%;background:${fill};"></div></div>
+        <span style="font-family:var(--mono);font-size:11px;width:168px;flex-shrink:0;color:${isSel ? 'var(--amber)' : 'var(--text3)'};">${compact(cells)} cells · ${bytesLabel(cells * 2)}</span>
+      </div>`;
+    }).join('');
+    const fills = Array.from(barsEl.querySelectorAll('.attn-bar-fill'));
+    fills.forEach((f, i) => {
+      const w = f.getAttribute('data-w') + '%';
+      if (reduced) { f.style.transition = 'none'; f.style.width = w; }
+      else setTimeout(() => { f.style.width = w; }, 60 + i * 70);
+    });
+    const n = selected;
+    const cells = n * n;
+    const bytes = cells * 2;
+    const baseCells = BASELINE * BASELINE;
+    const ratio = cells / baseCells;
+    const ratioText = ratio >= 1 ? `×${fmtInt(Math.round(ratio))} the cells` : `÷${fmtInt(Math.round(baseCells / cells))} the cells`;
+    formulaEl.innerHTML = `n = ${fmtInt(n)} tokens<br>n² = ${fmtInt(n)} × ${fmtInt(n)} = ${fmtInt(cells)} cells<br>memory ≈ ${fmtInt(cells)} × 2 B = ${fmtInt(bytes)} B ≈ ${bytesLabel(bytes)}<br>vs 512² (BERT-era baseline): ${ratioText}`;
+    const v = verdictFor(n);
+    verdictEl.innerHTML = `<div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Practical-Context Verdict</div><div style="font-weight:600;font-size:13px;color:${v.color};margin-bottom:4px;">${v.title}</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">${v.text}</div>`;
+  }
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const n = parseInt(btn.getAttribute('data-n'), 10);
+      if (!n) return;
+      selected = n;
+      tabs.forEach(b => b.classList.toggle('active', b === btn));
+      render();
+    });
+  });
+  render();
+})();
 
 // QUIZ
 const QUIZ_DATA = [

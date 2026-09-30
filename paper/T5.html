@@ -254,6 +254,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="nav-link" href="#ablations">Ablations</a>
     <a class="nav-link" href="#results">Results</a>
     <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#quiz">Quiz</a>
     <a class="nav-link" href="#takeaways">Takeaways</a>
   </div>
@@ -271,6 +272,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <a href="#ablations">Ablations</a>
   <a href="#results">Results</a>
   <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
   <a href="#takeaways">Takeaways</a>
 </div>
@@ -570,6 +572,42 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
 <div class="divider"></div>
 
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The <em>Ablation</em> Ladder</h2>
+  <p class="section-desc">Beyond the 11B headline, T5's core contribution is a controlled ladder of experiments — sweeping objective, architecture, data, and transfer setups, with every candidate trained under identical conditions at a ~220M-parameter baseline.</p>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Ablation Explorer</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Walk the paper's three decisive sweeps, dimension by dimension. Bars show the real SuperGLUE ablation scores from arXiv 1910.10683 (Tables 2–8); the ~mean averages the 7 reported benchmarks — GLUE, CNN/DM, SQuAD, SuperGLUE and three WMT translation pairs — which mix metrics, so treat it as a rough index (~).</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;" id="ablTabs"></div>
+    <div id="ablChart"></div>
+    <div style="margin-top:1rem;" id="ablVerdict"></div>
+    <div id="ablNote" style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🎯 Objective — span corruption</div><div class="notice-text">Denoising beat everything: 71.4 SuperGLUE vs 65.3 for prefix LM, 64.3 for causal LM, 58.5 for deshuffling. Within the denoising family the gaps were tiny — span corruption was picked because its shorter targets make pre-training cheaper.</div></div>
+    <div class="notice-card"><div class="notice-title">🏗️ Architecture — encoder-decoder</div><div class="notice-text">71.4 vs 68.1 for a decoder-only prefix LM and 55.0 for a decoder-only LM, whose SQuAD fell from 80.9 to 61.1. Sharing the two stacks’ parameters cost only ~0.6 points at half the size; halving layers hurt more.</div></div>
+    <div class="notice-card"><div class="notice-title">🗄️ Dataset — C4, kept for scale</div><div class="notice-text">The honest sweep: Wikipedia+TBC (73.2) and RealNews-like (72.4) beat C4 (71.4), WebText-like matched it, unfiltered 6.1TB C4 trailed (68.0). C4 stayed because 745GB survives ~1T tokens of pre-training without repeating.</div></div>
+    <div class="notice-card"><div class="notice-title">🔀 Transfer — prefixes + fine-tune</div><div class="notice-text">Pre-train then fully fine-tune, with task prefixes, kept the lead (71.4). Multi-task training alone lagged (67.3), adapters worse (60.4–64.3), gradual unfreezing close (70.8) — and prefix wording itself mattered little: a hyperparameter, not a lever.</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Scaling Up the Winner</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Handed a 4× compute budget, the paper compared four ways to spend it: longer training (SGLUE 74.7), bigger batches (74.6), bigger models — 77.2 at 2× size + 2× steps, 78.0 at 4× size + 1× steps — and ensembling. <span class="highlight">Bigger models won.</span> The final recipe scaled to ~1 trillion pre-training tokens, about 32× the ablation baseline, and a family whose rungs are each ~3–4× the last: 60M → 220M → 770M → 3B → 11B.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">The Fine Print — Read at Base Scale</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Every rung of the ladder was compared at ~220M parameters on ~34B pre-training tokens. The released T5-11B runs ~50× the parameters and ~32× the tokens — far outside the ablation regime. The dataset axis is the concrete casualty: the small-scale winner didn’t survive the 1-trillion-token run. Treat every verdict above as a <span class="highlight">~ base-scale result</span> unless re-verified at scale.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
@@ -628,7 +666,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 (function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
 // === NAV ACTIVE ===
-(function(){const ids=['history','problem','core-idea','c4','ablations','results','impact','quiz','takeaways'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+(function(){const ids=['history','problem','core-idea','c4','ablations','results','impact','deepdive','quiz','takeaways'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
 
 // === SCROLL REVEAL ===
 (function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
@@ -711,6 +749,53 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   }
   linBtn.addEventListener('click',()=>{mode='linear';render();});
   logBtn.addEventListener('click',()=>{mode='log';render();});
+  render();
+})();
+
+// === ABLATION EXPLORER ===
+(function(){
+  const tabsEl=document.getElementById('ablTabs');const chartEl=document.getElementById('ablChart');const verdictEl=document.getElementById('ablVerdict');const noteEl=document.getElementById('ablNote');
+  if(!tabsEl||!chartEl||!verdictEl||!noteEl)return;
+  const dims={
+    objective:{label:'🎯 Objective',vh:'Why it won — Objective',verdict:'Span corruption won — the paper calls it only "marginally better" than i.i.d. masking, but its targets are shorter, so pre-training is cheaper. The decisive gap is the family: denoising beat language modeling (64.3 on the same encoder-decoder) and deshuffling (58.5) by a wide margin.',note:'★ the final recipe: span corruption, mean span length 3, 15% corruption rate. Right column: SuperGLUE · ~mean of the 7 reported ablation benchmarks. Bars on a 0–80 SuperGLUE axis (paper Tables 2–8).',rows:[
+      {label:'Span corruption ★',sub:'15% rate · mean span 3',sglue:71.4,mean:49.9,win:true},
+      {label:'BERT-style mask',sub:'i.i.d. 15% corruption',sglue:69.9,mean:49.6},
+      {label:'Drop tokens',sub:'no sentinel tokens',sglue:68.7,mean:49.7},
+      {label:'Prefix LM',sub:'LM obj · prefix arch',sglue:65.3,mean:48.1},
+      {label:'Causal LM',sub:'LM obj · encoder-dec',sglue:64.3,mean:47.3},
+      {label:'Deshuffling',sub:'unscramble the input',sglue:58.5,mean:44.1}
+    ]},
+    architecture:{label:'🏗️ Architecture',vh:'Why it won — Architecture',verdict:'The original Transformer shape won: a bidirectional encoder reads, an autoregressive decoder writes — both abilities in one model, at similar compute cost to a single decoder-only stack. Sharing the two stacks’ parameters cost only ~0.6 SuperGLUE points at half the size. The decoder-only language model fared worst, with SQuAD collapsing from 80.9 to 61.1.',note:'All rows trained with the denoising objective (paper Table 2). 2P = double the parameters of one 12-layer stack, at similar compute cost to a P-parameter decoder-only model. Right column: SuperGLUE · ~mean; bars on a 0–80 axis.',rows:[
+      {label:'Encoder-decoder ★',sub:'2P params · same cost',sglue:71.4,mean:49.9,win:true},
+      {label:'Shared enc-dec',sub:'P params · shared stack',sglue:70.7,mean:49.5},
+      {label:'Halved layers',sub:'P params · half compute',sglue:68.4,mean:48.2},
+      {label:'Prefix LM',sub:'dec-only · prefix mask',sglue:68.1,mean:48.5},
+      {label:'Decoder-only LM',sub:'dec-only · causal mask',sglue:55.0,mean:42.1}
+    ]},
+    dataset:{label:'🗄️ Dataset',vh:'Why C4 was kept — Dataset',verdict:'The honest result: C4 did not win this sweep. Wikipedia+TBC beat it (73.2), RealNews-like edged it (72.4), WebText-like matched it (71.4) — but each is 20–45× smaller, and the paper shows that repeating a corpus hundreds of times over the final ~1-trillion-token pre-training hurts performance. C4 was kept for scale and diversity, not for its ablation score.',note:'★ the paper’s pick for the final recipe · † highest score of the sweep. Right column: SuperGLUE · ~mean of the 7 reported ablation benchmarks; bars on a 0–80 SuperGLUE axis (paper Table 8).',rows:[
+      {label:'C4 ★',sub:'745GB cleaned crawl',sglue:71.4,mean:49.9,win:true},
+      {label:'C4 unfiltered',sub:'6.1TB raw crawl',sglue:68.0,mean:48.6},
+      {label:'RealNews-like',sub:'35GB news domain',sglue:72.4,mean:50.0},
+      {label:'WebText-like',sub:'17GB Reddit-curated',sglue:71.4,mean:50.0},
+      {label:'Wikipedia',sub:'16GB encyclopedic',sglue:68.0,mean:49.3},
+      {label:'Wikipedia+TBC †',sub:'20GB + book corpus',sglue:73.2,mean:50.3,top:true}
+    ]}
+  };
+  let current='objective';
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function render(){
+    tabsEl.innerHTML=Object.keys(dims).map(k=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===current?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===current?'var(--amber-dim)':'var(--bg3)'};color:${k===current?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._selectAbl('${k}')">${dims[k].label}</button>`).join('');
+    const d=dims[current];
+    chartEl.innerHTML=d.rows.map(r=>{
+      const pct=Math.min(r.sglue/80*100,100);
+      const color=r.win?'#f59e0b':(r.top?'#14b8a6':'#94a3b8');
+      const anim=reduced?'':'animation:scaleIn .8s ease;transform-origin:left;';
+      return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;width:128px;text-align:right;color:${r.win?'var(--amber)':'var(--text2)'};"><div${r.win?' style="font-weight:600;"':''}>${r.label}</div><div style="font-size:9px;color:var(--text3);">${r.sub}</div></div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${pct}%;min-width:3px;background:${color};border-radius:4px;${anim}"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:84px;">${r.sglue.toFixed(1)} · ~${r.mean.toFixed(1)}</div></div>`;
+    }).join('');
+    verdictEl.innerHTML=`<div class="card-sm" style="background:var(--amber-dim);border-color:rgba(245,158,11,0.3);"><div style="font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--amber);margin-bottom:6px;">${d.vh}</div><div style="font-size:13px;color:var(--text2);line-height:1.7;">${d.verdict}</div></div>`;
+    noteEl.textContent='→ '+d.note;
+  }
+  window._selectAbl=function(k){current=k;render();};
   render();
 })();
 

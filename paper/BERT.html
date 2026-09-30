@@ -254,6 +254,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="nav-link" href="#pretraining">Pre-Training</a>
     <a class="nav-link" href="#results">Results</a>
     <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#quiz">Quiz</a>
   </div>
   <div class="nav-actions">
@@ -270,6 +271,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <a href="#pretraining">Pre-Training</a>
   <a href="#results">Results</a>
   <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
 </div>
 
@@ -564,6 +566,68 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
 <div class="divider"></div>
 
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Two Directions, <em>One</em> Model</h2>
+  <p class="section-desc">Masked LM and causal LM are two different bets on where a language model's training signal should come from. The bet you take shapes what the model becomes — a fine-tuning workhorse or a scaling rocket.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">➡️</div>
+      <div class="problem-title">The Causal Tax: Prefixes Only</div>
+      <ul class="problem-list">
+        <li>A left-to-right model predicts each next word from the words before it</li>
+        <li>Every position trains on left context only — right-side evidence is never used</li>
+        <li>The 15% mask rule means BERT trains deeply on only a fraction of positions per pass</li>
+        <li>But causal LM trains on 100% of tokens — and every prediction is a generation step</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔁</div>
+      <div class="problem-title">The Masked Win: Both Sides, Always</div>
+      <ul class="problem-list">
+        <li>Hide a word in the middle and predict it from everything around it</li>
+        <li>Each masked prediction is deeply bidirectional — left AND right evidence flow in</li>
+        <li>Exactly the signal that understanding tasks reward: QA, classification, NER</li>
+        <li>The mask makes the encoder's representation useful at every position, not just the end</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">What BERT Bought</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">An encoder whose every token representation is contextualized by the full sentence — so a tiny task head on top already "understands". Fine-tuning culture: one pre-trained model, one output layer, hours of TPU time per task. The cost: a masking rule (80/10/10), a pretrain–fine-tune gap (train–test mismatch, a known criticism later addressed by ELECTRA's replaced-token detection), and no natural way to generate long text.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">What GPT Bought</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">One dead-simple objective — predict the next word — with no masking bookkeeping and no train–test mismatch. That simplicity scaled: more tokens, more parameters, more compute, and the same loss. The cost: half the information (right context) is invisible at every position, and the model must be re-prompted (not re-trained) for each understanding task — the trade GPT-2 and GPT-3 turned into the few-shot era.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Where the Learning Happens</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same sentence, two training signals. Toggle the objective and watch which tokens teach the model — and what they see.</p>
+    <div style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:13px;color:var(--text2);line-height:2;margin-bottom:1rem;" id="ddSentence"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="ddMlmBtn" type="button" style="font-size:13px;padding:8px 18px;">Masked LM · BERT</button>
+      <button class="btn-outline" id="ddCausalBtn" type="button" style="font-size:13px;padding:8px 18px;">Causal LM · GPT</button>
+    </div>
+    <div id="ddCaption" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;min-height:22px;margin-bottom:0.5rem;"></div>
+    <div id="ddCoverage" style="font-size:12px;color:var(--text3);"></div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧭 The fork in the road</div><div class="notice-text">2018: encoders for understanding, decoders for generation. 2019–2023: the decoder won scale, then T5/prefix-LM style models reunited the families — text-to-text everywhere.</div></div>
+    <div class="notice-card"><div class="notice-title">🛠️ ELECTRA's fix (2020)</div><div class="notice-text">Replaced-token detection learns from every position, not 15% — closing the mask tax while keeping bidirectional training.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ No free lunch</div><div class="notice-text">Bidirectionality helps understanding; causal structure is what makes generation and scaling trivially composable. Modern models mostly chose causal + scale, then bought context back with attention over long windows.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Try to spot it</div><div class="notice-text">In the demo above, notice the causal mode's target is always the sentence's LAST word — the only prediction that (nearly) sees everything. That asymmetry is the whole story.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
@@ -622,7 +686,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 (function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
 // === NAV ACTIVE ===
-(function(){const ids=['history','problem','core-idea','architecture','pretraining','results','impact','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+(function(){const ids=['history','problem','core-idea','architecture','pretraining','results','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
 
 // === SCROLL REVEAL ===
 (function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
@@ -680,6 +744,41 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 })();
 
 // === QUIZ ===
+// === DEEP DIVE DEMO: WHERE THE LEARNING HAPPENS ===
+(function(){
+  const sentEl=document.getElementById('ddSentence');
+  const capEl=document.getElementById('ddCaption');
+  const covEl=document.getElementById('ddCoverage');
+  const mlmBtn=document.getElementById('ddMlmBtn');
+  const causalBtn=document.getElementById('ddCausalBtn');
+  if(!sentEl||!capEl||!covEl||!mlmBtn||!causalBtn)return;
+  const words=['The','river','was','flooded','after','the','heavy','storm','.'];
+  function render(mode){
+    sentEl.innerHTML=words.map((w,i)=>{
+      let style='color:var(--text3);opacity:0.45;';
+      if(mode==='mlm'){
+        if(i===1){style='background:var(--amber-dim);color:var(--amber);padding:2px 8px;border-radius:6px;font-weight:600;border:1px dashed rgba(245,158,11,0.4);';}
+        else if(i<1){style='color:var(--blue);font-weight:600;';}
+        else{style='color:var(--teal);font-weight:600;';}
+      }else{
+        if(i===7){style='background:var(--purple-dim);color:var(--purple);padding:2px 8px;border-radius:6px;font-weight:600;border:1px dashed rgba(168,85,247,0.4);';}
+        else if(i<7){style='color:var(--blue);font-weight:600;';}
+      }
+      return `<span style="${style}">${w}</span>`;
+    }).join(' ');
+    if(mode==='mlm'){
+      capEl.textContent='→ MASKED LM: predict the hidden token (amber) using BOTH left (blue) and right (teal) context — "river".';
+      covEl.textContent='Signal: ~15% of positions per pass, each one deeply bidirectional · representations trained at every layer for understanding.';
+    }else{
+      capEl.textContent='→ CAUSAL LM: predict the next token (purple) using ONLY the left context (blue) — "storm".';
+      covEl.textContent='Signal: 100% of positions, each one left-only · every prediction doubles as a generation step — the scaling-friendly bet.';
+    }
+  }
+  mlmBtn.addEventListener('click',()=>render('mlm'));
+  causalBtn.addEventListener('click',()=>render('causal'));
+  render('mlm');
+})();
+
 const QUIZ_DATA=[
   {q:'What are the two pre-training tasks used by BERT?',opts:['Masked language modeling and next sentence prediction','Translation and summarization','Left-to-right language modeling and question answering','Contrastive learning and denoising autoencoding'],correct:0,explain:'BERT pre-trains with (1) Masked LM — predict randomly masked tokens using both directions, and (2) Next Sentence Prediction — decide if sentence B truly follows sentence A.'},
   {q:'How many parameters does BERT-Base have?',opts:['12 million','110 million','340 million','1.5 billion'],correct:1,explain:'BERT-Base has 110M parameters (12 layers, 768 hidden, 12 heads). BERT-Large scales to 340M (24 layers, 1024 hidden, 16 heads).'},

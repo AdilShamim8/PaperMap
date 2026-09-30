@@ -253,6 +253,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="nav-link" href="#findings">Findings</a>
     <a class="nav-link" href="#compute-optimal">Compute</a>
     <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#quiz">Quiz</a>
     <a class="nav-link" href="#takeaways">Takeaways</a>
   </div>
@@ -269,6 +270,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <a href="#findings">Findings</a>
   <a href="#compute-optimal">Compute</a>
   <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
   <a href="#takeaways">Takeaways</a>
 </div>
@@ -547,6 +549,47 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
 <div class="divider"></div>
 
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Forecasting the <em>Final</em> Loss</h2>
+  <p class="section-desc">Prediction is the paper's most practical finding: loss follows power laws so precisely that early training curves forecast late loss. This is the superpower under every big training decision — fit small, extrapolate, commit big.</p>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Early-Curve Forecaster</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Five early loss measurements (steps 100–1k) are fitted to <span class="code-inline">L = a·x<sup>-b</sup></span> with a plain log-log regression — no peeking at the future. Extrapolate: the fit prices the loss at 10× the last measured step, then the measured run arrives for comparison. <em>Scripted data — illustrative of the paper's predictive accuracy.</em></p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
+      <button type="button" class="btn-primary" id="ecBtn" style="font-size:13px;padding:8px 18px;">Extrapolate to 10× steps</button>
+      <span id="ecMeta" style="font-family:var(--mono);font-size:11px;color:var(--amber);font-weight:600;"></span>
+    </div>
+    <div id="ecChart"></div>
+    <div id="ecVerdict" style="display:none;margin-top:12px;"></div>
+  </div>
+
+  <div class="notice-grid" style="margin:2rem 0;">
+    <div class="notice-card"><div class="notice-title">📐 Scale ≫ shape</div><div class="notice-text">Loss depends strongly on N, D, C and only weakly on depth/width within broad ranges — architecture is a second-order effect.</div></div>
+    <div class="notice-card"><div class="notice-title">📉 Power laws, 6+ decades</div><div class="notice-text">L(N), L(D), L(C) follow smooth power laws from toy models to 1.5B parameters — straight lines on log-log plots.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Overfitting is universal</div><div class="notice-text">N and D must grow together (≈ D ∝ N<sup>0.74</sup>) or the loss floor rises — for any architecture.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 Training curves are universal</div><div class="notice-text">The same learning-curve shape recurs across scales — the property that makes early-curve forecasting possible at all.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Transfer holds</div><div class="notice-text">Models trained on one text distribution hold up on others after fine-tuning — scale, not corpus choice, sets the ceiling.</div></div>
+    <div class="notice-card"><div class="notice-title">⚡ Big models train faster</div><div class="notice-text">Large models reach any target loss on fewer samples — sample efficiency improves with scale.</div></div>
+    <div class="notice-card"><div class="notice-title">💰 Compute-optimal training</div><div class="notice-text">At fixed budget, N ∝ C<sup>0.73</sup>: spend on parameters, keep data modest, stop before convergence.</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The Engineering Consequence</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Train small, extrapolate, commit big. Fit the laws on runs <span class="highlight">100–1000× cheaper</span> than the target, read the expected loss — and the compute-optimal (N, D) — off the curves, and only then commit the budget. GPT-3's 175B run was sized this way, and labs still forecast the final loss of frontier runs from the first hours of a run.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Honest Note — Right in Form, Off in Balance</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Chinchilla (2022) re-fit the laws and corrected the data-side balance: compute-optimal training wants far more tokens per parameter (≈ N ∝ C<sup>0.5</sup>, not C<sup>0.73</sup>). The power-law <em>form</em> and its use as a forecasting tool survived — the optimum had simply leaned too far toward parameters. <a href="./Chinchilla.html" style="color:var(--amber);">Read the correction →</a></p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
@@ -604,7 +647,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 (function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
 // === NAV ACTIVE ===
-(function(){const ids=['history','problem','power-laws','findings','compute-optimal','impact','quiz','takeaways'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+(function(){const ids=['history','problem','power-laws','findings','compute-optimal','impact','deepdive','quiz','takeaways'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
 
 // === SCROLL REVEAL ===
 (function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
@@ -704,6 +747,77 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   window._coSelect=function(C){current=C;render();};
   render();
 })();
+// === EARLY-CURVE FORECASTER (DEEP DIVE) ===
+(function(){
+  const chartEl=document.getElementById('ecChart'),btnEl=document.getElementById('ecBtn'),metaEl=document.getElementById('ecMeta'),verdictEl=document.getElementById('ecVerdict');
+  if(!chartEl||!btnEl||!metaEl||!verdictEl)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const anim=RM?'':'animation:scaleIn .8s ease;transform-origin:left;';
+  // scripted, illustrative data: the five early losses sit on L = 5x^(-0.25)
+  const meas=[[100,'100',1.581],[200,'200',1.329],[400,'400',1.118],[700,'700',0.971],[1000,'1k',0.889]];
+  const extra=[[1500,'1.5k'],[2500,'2.5k'],[4000,'4k'],[7000,'7k'],[10000,'10k']];
+  const drift=[0.007,0.012,-0.012,0.011,0.021]; // scripted deviation of the later "measured" run (illustrative)
+  // simple power-law fit L = a*x^-b: linear regression in log-log space on the 5 early points
+  const n=meas.length,mx=meas.reduce((s,p)=>s+Math.log(p[0]),0)/n,my=meas.reduce((s,p)=>s+Math.log(p[2]),0)/n;
+  let sxy=0,sxx=0;
+  meas.forEach(p=>{const dx=Math.log(p[0])-mx,dy=Math.log(p[2])-my;sxy+=dx*dy;sxx+=dx*dx;});
+  const slope=sxy/sxx,A=Math.exp(my-slope*mx),B=-slope,fit=x=>A*Math.pow(x,-B);
+  const maxL=meas[0][2],wOf=L=>Math.max(5,(L/maxL)*100);
+  const rowCSS='display:flex;align-items:center;gap:8px;margin-bottom:6px;';
+  const labCSS='font-family:var(--mono);font-size:11px;color:var(--text3);width:84px;text-align:right;';
+  const valCSS='font-family:var(--mono);font-size:11px;color:var(--text2);width:88px;';
+  const ghostBG='repeating-linear-gradient(45deg,rgba(59,130,246,0.75) 0 4px,rgba(59,130,246,0.25) 4px 8px)';
+  function measRow(m){return `<div style="${rowCSS}"><div style="${labCSS}">step ${m[1]}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${wOf(m[2])}%;background:#f59e0b;border-radius:4px;${anim}"></div></div><div style="${valCSS}">L ${m[2].toFixed(2)}</div></div>`;}
+  function predRow(x,l,i){
+    const L=fit(x),act=L*(1+drift[i]);
+    return `<div data-x="${x}" style="${rowCSS}"><div style="${labCSS}">step ${l}</div><div style="flex:1;"><div style="height:14px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${wOf(L)}%;background:rgba(245,158,11,0.45);border-radius:4px;${anim}"></div></div><div class="ec-ghost" style="height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:3px;opacity:0;${RM?'':'transition:opacity .5s ease;'}"><div style="height:100%;width:${wOf(act)}%;background:${ghostBG};border-radius:3px;"></div></div></div><div class="ec-val" style="${valCSS}"><span style="color:var(--amber);">L ${L.toFixed(2)}</span></div></div>`;
+  }
+  let phase=0,timers=[];
+  function render(){
+    chartEl.innerHTML=
+      `<div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">LOSS vs TRAINING STEPS — SCRIPTED, ILLUSTRATIVE</div>`+
+      `<div style="display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:10px;"><span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:14px;height:8px;background:#f59e0b;border-radius:2px;"></span>measured (early)</span><span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:14px;height:8px;background:rgba(245,158,11,0.45);border-radius:2px;"></span>predicted by fit</span><span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:14px;height:8px;background:${ghostBG};border-radius:2px;"></span>actual (measured later)</span></div>`+
+      meas.map(measRow).join('');
+    metaEl.textContent=`Fit from 5 early points: L(x) ≈ ${A.toFixed(2)}·x^-${B.toFixed(3)}`;
+    verdictEl.style.display='none';verdictEl.innerHTML='';
+    btnEl.textContent='Extrapolate to 10× steps';btnEl.disabled=false;
+  }
+  function reset(){timers.forEach(clearTimeout);timers=[];phase=0;render();}
+  function showVerdict(){
+    const Lp=fit(10000),La=Lp*(1+drift[4]);
+    verdictEl.style.display='block';
+    verdictEl.innerHTML=`<div class="card-sm" style="background:var(--green-dim);border-color:rgba(34,197,94,0.35);display:flex;gap:10px;align-items:flex-start;"><span style="font-size:16px;line-height:1.4;">🎯</span><div><div style="font-size:13px;font-weight:600;color:var(--green);">Fit 5, predict 10×</div><div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:3px;">The five cheap early points priced a 10× longer run: predicted L(10,000 steps) ≈ ${Lp.toFixed(2)}, measured ≈ ${La.toFixed(2)} — within ${(Math.abs(drift[4])*100).toFixed(1)}%. This is why labs trust early curves. <em>Illustrative of the paper's predictive accuracy.</em></div></div></div>`;
+    phase=2;btnEl.textContent='Replay forecast';btnEl.disabled=false;
+  }
+  btnEl.addEventListener('click',()=>{
+    if(phase===1)return;
+    if(phase===2)reset();
+    phase=1;btnEl.disabled=true;
+    const lbl=document.createElement('div');
+    lbl.style.cssText='font-family:var(--mono);font-size:10px;color:var(--amber);opacity:0.75;margin:10px 0 6px 92px;';
+    lbl.textContent='PREDICTED FROM THE FIT — OUT TO 10× THE LAST MEASURED STEP';
+    chartEl.appendChild(lbl);
+    extra.forEach((p,i)=>{
+      timers.push(setTimeout(()=>{
+        const wrap=document.createElement('div');wrap.innerHTML=predRow(p[0],p[1],i);chartEl.appendChild(wrap.firstChild);
+      },RM?0:i*220));
+    });
+    const base=RM?0:extra.length*220+500;
+    extra.forEach((p,i)=>{
+      timers.push(setTimeout(()=>{
+        const row=chartEl.querySelector('[data-x="'+p[0]+'"]');
+        if(!row)return;
+        const g=row.querySelector('.ec-ghost');if(g)g.style.opacity='1';
+        const L=fit(p[0]),act=L*(1+drift[i]);
+        const v=row.querySelector('.ec-val');
+        if(v)v.innerHTML=`<span style="color:var(--amber);">${L.toFixed(2)}</span><span style="color:var(--text3);">→</span><span style="color:var(--blue);">${act.toFixed(2)}</span>`;
+      },base+(RM?0:i*150)));
+    });
+    timers.push(setTimeout(showVerdict,base+(RM?0:extra.length*150+450)));
+  });
+  render();
+})();
+
 // === QUIZ ===
 const QUIZ_DATA=[
   {q:'According to the paper, what does language-model loss depend on strongly — and weakly?',opts:['Strongly on shape (depth/width), weakly on scale','Strongly on scale (N, D, C), weakly on shape','Strongly on the learning-rate schedule, weakly on data','Strongly on tokenizer choice, weakly on compute'],correct:1,explain:'Within broad ranges, performance depends strongly on scale — parameters N, data D, compute C — and only weakly on the shape of the model. That is why one set of power laws holds across very different Transformer shapes.'},

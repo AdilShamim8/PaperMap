@@ -265,6 +265,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="nav-link" href="#generation">Generation</a>
     <a class="nav-link" href="#contamination">Contamination</a>
     <a class="nav-link" href="#limitations">Limitations</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#quiz">Quiz</a>
   </div>
   <div class="nav-actions">
@@ -283,6 +284,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <a href="#generation">Generation</a>
   <a href="#contamination">Contamination</a>
   <a href="#limitations">Limitations</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
 </div>
 
@@ -792,6 +794,60 @@ An example: <span style="color:var(--amber);font-weight:600;">We screeghed at ea
 
 <div class="divider"></div>
 
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The Few-Shot <em>Gradient</em></h2>
+  <p class="section-desc">A closer look at the paper's most consequential pattern: in-context learning is a scaling phenomenon — demonstrations and parameters multiply each other.</p>
+
+  <div class="deep-grid">
+    <div class="card">
+      <div class="card-label">Size × Shots — The Core Interaction</div>
+      <ul class="deep-list">
+        <li><strong>125M → 175B, same prompts:</strong> the paper's cross-size comparison shows few-shot gains growing with scale — the curve doesn't just shift up, it steepens.</li>
+        <li><strong>Small models barely use the shots:</strong> hand a 125M or 13B model 32 demonstrations and it gains only a few points — most of the prompt's signal goes unused.</li>
+        <li><strong>175B converts shots into score:</strong> the same demonstrations move the full model dramatically — few-shot SuperGLUE climbs to 71.8 at 175B, far beyond the smaller models' reach.</li>
+        <li><strong>Learning without weight updates:</strong> the 175B parameters stay frozen — the "learning" happens entirely inside one forward pass, within the 2048-token context window.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-label">Bridge — How Do Frozen Weights "Learn"?</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7;">The paper demonstrates <span class="highlight">that</span> scale unlocks in-context learning, but not <span class="highlight">how</span>. Later mechanistic interpretability work proposed a mechanism: <strong>Induction Heads</strong> (Olsson et al., 2022) — attention heads implementing "A B … A → B", which spot earlier occurrences in context and copy what followed. They emerge over the course of training and measurably strengthen in-context learning, tying GPT-3's few-shot gradient to real circuits. <a href="./Induction_Heads.html" style="color:var(--amber);text-decoration:none;font-weight:500;">Read the Induction Heads guide →</a></p>
+      </div>
+      <div class="card-sm" style="background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15);">
+        <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:4px;">⚠️ Read the gradient with care</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6;">The paper is candid that this story is told on benchmarks it flagged itself: its contamination analysis (Section 4) marked a quarter of benchmarks as &gt;50% potentially contaminated via 13-gram overlap. Clean-subset scores mostly changed negligibly — but the authors call data contamination a genuine risk to exactly these few-shot gains.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive few-shot gradient demo -->
+  <div class="card" style="overflow:hidden;margin-top:1.5rem;">
+    <div style="padding:0 0 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+      <span style="font-family:var(--mono);font-size:13px;color:var(--text2);">// Few-Shot Gradient Explorer — shots × scale</span>
+      <div style="display:flex;gap:6px;" id="ddTaskTabs"></div>
+    </div>
+    <div style="padding:1rem 0 0;">
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">Shots (K)</span>
+        <div style="display:flex;gap:6px;" id="ddShotsBtns"></div>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-left:8px;">Highlight</span>
+        <div style="display:flex;gap:6px;" id="ddModelTabs"></div>
+      </div>
+      <div id="ddChart"></div>
+      <div id="ddReadout" style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-top:10px;background:var(--bg3);padding:8px 12px;border-radius:6px;"></div>
+      <div class="card-sm" style="margin-top:10px;">
+        <div style="font-size:13px;font-weight:600;color:var(--amber);margin-bottom:4px;">Verdict — shots × scale multiply</div>
+        <div id="ddVerdict" style="font-size:12px;color:var(--text2);line-height:1.6;"></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;font-family:var(--mono);">Bars are illustrative of the paper's reported pattern (Figures 3.8–3.10, 3.14): 175B anchors — 25.2/28.3/32.6 BLEU EN→FR, 71.8 SuperGLUE, 100% 2-digit addition — match the paper's tables; 13B and intermediate values are ~ approximations.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
@@ -873,7 +929,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 (function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
 // === NAV ACTIVE ===
-(function(){const ids=['problem','few-shot','architecture','training','scaling','benchmarks','generation','contamination','limitations','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+(function(){const ids=['problem','few-shot','architecture','training','scaling','benchmarks','generation','contamination','limitations','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
 
 // === SCROLL REVEAL ===
 (function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
@@ -892,6 +948,33 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 
 // === FEW-SHOT DEMO ===
 (function(){const tasks={translation:{label:'🌐 Translation',examples:[{i:'sea',o:'mer'},{i:'hello',o:'bonjour'},{i:'cat',o:'chat'}],test:'cheese',answer:'fromage'},sentiment:{label:'😊 Sentiment',examples:[{i:'I love this movie!',o:'Positive'},{i:'Terrible waste of time',o:'Negative'},{i:'Pretty good overall',o:'Positive'}],test:'This is the worst restaurant ever',answer:'Negative'},arithmetic:{label:'🔢 Arithmetic',examples:[{i:'2 + 3',o:'5'},{i:'7 + 8',o:'15'},{i:'11 + 14',o:'25'}],test:'23 + 47',answer:'70'}};const tabsEl=document.getElementById('fewShotTabs');const promptEl=document.getElementById('fewShotPrompt');const resultEl=document.getElementById('fewShotResult');const runBtn=document.getElementById('fewShotRunBtn');let current='translation';function render(){tabsEl.innerHTML=Object.keys(tasks).map(k=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===current?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===current?'var(--amber-dim)':'var(--bg3)'};color:${k===current?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._selectTask('${k}')">${tasks[k].label}</button>`).join('');const t=tasks[current];let prompt='';t.examples.forEach((ex,i)=>{prompt+=`${ex.i} → ${ex.o}\n`;});prompt+=`${t.test} → ???`;promptEl.textContent=prompt;resultEl.textContent='';}window._selectTask=function(k){current=k;render();};runBtn.addEventListener('click',()=>{resultEl.textContent='✓ '+tasks[current].answer;});render();})();
+
+// === FEW-SHOT GRADIENT EXPLORER (DEEP DIVE) ===
+(function(){
+const chart=document.getElementById('ddChart'),tabs=document.getElementById('ddTaskTabs'),shotsEl=document.getElementById('ddShotsBtns'),modelEl=document.getElementById('ddModelTabs'),readEl=document.getElementById('ddReadout'),verdictEl=document.getElementById('ddVerdict');
+if(!chart||!tabs||!shotsEl||!modelEl||!readEl||!verdictEl)return;
+const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+const SHOTS=[0,1,8,32],MODELS=['13B','175B'];
+const TASKS={
+translation:{label:'🌐 Translation',metric:'EN→FR (BLEU)',rows:{'13B':{0:15,1:16,8:18,32:20},'175B':{0:25.2,1:28.3,8:30.5,32:32.6}}},
+superglue:{label:'🧠 SuperGLUE',metric:'SuperGLUE avg score',rows:{'13B':{0:35,1:37,8:41,32:45},'175B':{0:52,1:57,8:65,32:71.8}}},
+arithmetic:{label:'🔢 Arithmetic',metric:'2-digit addition (acc)',rows:{'13B':{0:84,1:85,8:87,32:88},'175B':{0:85,1:90,8:97,32:100}}}};
+const ANCHORS={translation:{'175B':[25.2,28.3,32.6]},superglue:{'175B':[71.8]},arithmetic:{'175B':[100]}};
+let task='translation',k=32,focus='175B';
+function fmt(m){const v=TASKS[task].rows[m][k],a=ANCHORS[task][m]||[];return a.indexOf(v)>=0?String(v):'~'+v;}
+function btn(label,active,cb){const b=document.createElement('button');b.type='button';b.textContent=label;b.setAttribute('style','font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid '+(active?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(active?'var(--amber-dim)':'var(--bg3)')+';color:'+(active?'var(--amber)':'var(--text2)')+';cursor:pointer;');b.addEventListener('click',cb);return b;}
+function render(){
+tabs.innerHTML='';Object.keys(TASKS).forEach(key=>{tabs.appendChild(btn(TASKS[key].label,key===task,()=>{task=key;render();}));});
+shotsEl.innerHTML='';SHOTS.forEach(s=>{shotsEl.appendChild(btn(s===0?'0-shot':s+'-shot',s===k,()=>{k=s;render();}));});
+modelEl.innerHTML='';MODELS.forEach(m=>{modelEl.appendChild(btn(m,m===focus,()=>{focus=m;render();}));});
+const t=TASKS[task];
+chart.innerHTML=MODELS.map(m=>{const v=t.rows[m][k],glow=m===focus?'box-shadow:0 0 0 2px rgba(245,158,11,0.35);':'',anim=reduced?'':'animation:scaleIn .8s ease;';return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-family:var(--mono);font-size:11px;color:'+(m===focus?'var(--amber)':'var(--text3)')+';width:48px;text-align:right;flex-shrink:0;">'+m+'</div><div style="flex:1;height:26px;background:var(--bg4);border-radius:4px;overflow:hidden;position:relative;'+glow+'"><div style="height:100%;width:'+Math.max(v,2)+'%;background:'+(m==='175B'?'#f59e0b':'#a855f7')+';border-radius:4px;'+anim+'transform-origin:left;"></div><span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11px;color:var(--text2);">'+fmt(m)+'</span></div></div>';}).join('');
+const big=t.rows['175B'][k],small=t.rows['13B'][k],g=m=>(t.rows[m][k]-t.rows[m][0]).toFixed(1);
+readEl.textContent=k+'-shot · '+t.metric+' — 175B '+fmt('175B')+' vs 13B '+fmt('13B')+' · gap +'+(big-small).toFixed(1)+(k===0?' · no demonstrations — gradient n/a':' · '+focus+' gain 0→'+k+' shots: +'+g(focus)+' (other model: +'+g(focus==='175B'?'13B':'175B')+')');
+const VERDICTS={0:"At 0-shot the gap is mostly raw scale — with no demonstrations to exploit, both models sit near their instruction-only baseline.",1:"One example nudges both models, but only the 175B model reliably extracts the pattern — the gap starts to widen.",8:"Eight shots in, the 175B bar is pulling away: its gain from 0-shot already beats what the 13B model gains from its entire 32-shot budget.",32:"Thirty-two shots: shots × scale multiply — the 175B model converts demonstrations into performance at a rate the 13B model cannot match, the paper's core model-size × shots interaction."};
+verdictEl.textContent=VERDICTS[k];}
+render();
+})();
 
 // === QUIZ ===
 const QUIZ_DATA=[

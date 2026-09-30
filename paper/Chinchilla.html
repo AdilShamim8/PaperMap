@@ -253,6 +253,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="nav-link" href="#rule-of-thumb">Rule of Thumb</a>
     <a class="nav-link" href="#results">Results</a>
     <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#quiz">Quiz</a>
     <a class="nav-link" href="#takeaways">Takeaways</a>
   </div>
@@ -269,6 +270,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <a href="#rule-of-thumb">Rule of Thumb</a>
   <a href="#results">Results</a>
   <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
   <a href="#takeaways">Takeaways</a>
 </div>
@@ -559,6 +561,37 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
 <div class="divider"></div>
 
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The <em>Frontier</em> of Compute</h2>
+  <p class="section-desc">Chapter 02 found the optimum — this section draws the whole curve it sits on. Fix a compute budget and every (params, tokens) split that spends it lands on one iso-compute curve; loss bottoms out at a single balance point along it.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">One Budget, One Curve</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Training compute is roughly C ≈ 6·N·D — about 6 FLOPs per parameter per token — so a fixed budget traces a hyperbola through (N, D) space. Every point on it is the same bill: a 280B model on 350B tokens costs the same to train as <span class="highlight">70B on 1.4T tokens</span>. The frontier answers the question that raises: of all those equally-priced points, which one reaches the lowest loss?</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Iso-Loss Meets Iso-Compute</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The fitted loss surface L(N, D) ≈ E + A/N<sup>~0.34</sup> + B/D<sup>~0.28</sup> has contour lines of equal loss. The compute-optimal point is where an iso-loss contour just <span class="highlight">touches</span> the iso-compute hyperbola. Slide along the hyperbola toward small-N / many-tokens and capacity limits you; slide toward big-N / few-tokens and you starve the model — GPT-3 and Gopher both lived off the tangency.</p>
+    </div>
+  </div>
+  <div class="notice-grid" style="margin-top:2rem;">
+    <div class="notice-card"><div class="notice-title">🦙 Beyond the frontier — on purpose</div><div class="notice-text">LLaMA-style models deliberately train past the compute-optimal point — smaller N on far more than ~20 tokens/param — because inference, not training, dominates lifetime cost (Chapter 05). Compute-optimal ≠ inference-optimal, and both words now appear in lab planning docs.</div></div>
+    <div class="notice-card"><div class="notice-title">📐 A shallow valley</div><div class="notice-text">Near the minimum the curve is flat-ish: splits within ~2× of optimal give up very little loss. The ~20 tokens-per-parameter rule is a rule of thumb, not a cliff — but extreme splits waste the budget.</div></div>
+    <div class="notice-card"><div class="notice-title">🔬 Later refinements</div><div class="notice-text">Honest note: repeated-data scaling (Muennalo et al., 2023 — up to ~4 epochs, repeated tokens act nearly fresh) and inference-aware scaling laws both refined the "train once on fresh data" story. Chinchilla's frontier is the training-compute-only slice of a larger optimization.</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;margin-top:2rem;">
+    <div class="card-label">Interactive Demo — Iso-Compute Frontier</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a compute budget (qualitative tiers). All five candidate splits spend it exactly — they differ only in the N : D trade-off. Loss follows the paper's power-law shape, L ≈ E + A/N<sup>~0.34</sup> + B/D<sup>~0.28</sup>, calibrated so the minimum sits on the ~20 tokens-per-parameter rule. <em>Illustrative.</em></p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="ifTabs"></div>
+    <div id="ifGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;"></div>
+    <div id="ifResult" style="font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:600;margin-top:10px;line-height:1.7;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
@@ -617,7 +650,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 (function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
 // === NAV ACTIVE ===
-(function(){const ids=['history','problem','methods','rule-of-thumb','results','impact','quiz','takeaways'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+(function(){const ids=['history','problem','methods','rule-of-thumb','results','impact','deepdive','quiz','takeaways'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
 
 // === SCROLL REVEAL ===
 (function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
@@ -731,6 +764,47 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       `<div style="font-size:12px;color:var(--text3);margin-top:6px;">Bars are log-scaled from 1 to 200 tokens per parameter; the | marker sits at the ~20 optimum.</div>`;
   }
   window._utSelect=function(k){current=k;render();};
+  render();
+})();
+
+// === ISO-COMPUTE FRONTIER ===
+(function(){
+  const tabsEl=document.getElementById('ifTabs');const gridEl=document.getElementById('ifGrid');const resEl=document.getElementById('ifResult');
+  if(!tabsEl||!gridEl||!resEl)return;
+  const rm=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const anim=rm?'':'animation:scaleIn .8s ease;transform-origin:left;';
+  const budgets=[1e21,1e22,1e23];
+  const labels=['10²¹','10²²','10²³'];
+  let current=1e23;
+  const E=1.69,A=64,B=40,AL=0.34,BE=0.28;
+  const m=[0.15,0.4,1,2.5,4];
+  const loss=(n,d)=>E+A/Math.pow(n,AL)+B/Math.pow(d,BE);
+  const fN=v=>{const b=v/1e9;return (b>=20?b.toFixed(0):b.toFixed(1))+'B';};
+  const fD=v=>v>=1e12?((v/1e12)>=1?(v/1e12).toFixed(1):(v/1e12).toFixed(2))+'T':(v/1e9).toFixed(0)+'B';
+  const fT=r=>r>=10?r.toFixed(0):r>=1?r.toFixed(1):r.toFixed(2);
+  function render(){
+    tabsEl.innerHTML=budgets.map((C,i)=>{const on=C===current;return `<button type="button" style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${on?'rgba(245,158,11,0.4)':'var(--border)'};background:${on?'var(--amber-dim)':'var(--bg3)'};color:${on?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._ifSelect(${C})">${labels[i]} FLOPs</button>`;}).join('');
+    const s=Math.sqrt(current/1e23);
+    const rows=m.map(mm=>({n:mm*70e9*s,d:20*70e9*s/mm}));
+    const Ls=rows.map(r=>loss(r.n,r.d));
+    const lo=Math.min.apply(null,Ls),hi=Math.max.apply(null,Ls);
+    gridEl.innerHTML=rows.map((r,i)=>{
+      const win=Ls[i]===lo;
+      const w=10+90*((Ls[i]-lo)/(hi-lo));
+      const tp=r.d/r.n;
+      return `<div class="card-sm" style="text-align:center;${win?'border-color:rgba(245,158,11,0.5);background:var(--amber-dim);box-shadow:0 0 0 3px rgba(245,158,11,0.15);':''}">
+        <div style="font-family:var(--mono);font-size:15px;font-weight:600;color:${win?'var(--amber)':'var(--text)'};">${fN(r.n)}<span style="font-size:10px;color:var(--text3);font-weight:400;"> params</span></div>
+        <div style="font-family:var(--mono);font-size:15px;font-weight:600;color:${win?'var(--amber)':'var(--text)'};">${fD(r.d)}<span style="font-size:10px;color:var(--text3);font-weight:400;"> tokens</span></div>
+        <div style="margin:6px 0 4px;"><span class="pill ${win?'pill-amber':'pill-blue'}">${fT(tp)} t/p</span></div>
+        <div style="height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;"><div style="height:100%;width:${w.toFixed(1)}%;background:${win?'#f59e0b':'#94a3b8'};border-radius:3px;${anim}"></div></div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:5px;">L ≈ ${Ls[i].toFixed(3)}</div>
+        ${win?'<div style="margin-top:5px;"><span class="pill pill-amber">✓ minimum loss at this budget</span></div>':''}
+      </div>`;}).join('')+
+      `<div style="grid-column:1 / -1;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:8px;"><span>← small N · many tokens (LLaMA territory)</span><span>big N · few tokens (Gopher territory) →</span></div>`;
+    const o=rows[Ls.indexOf(lo)];
+    resEl.innerHTML=`${labels[budgets.indexOf(current)]} FLOPs → minimum loss at ≈${fN(o.n)} params on ≈${fD(o.d)} tokens — <strong>≈20 tokens per parameter</strong> (D* ≈ 20·N). Bars = relative excess loss (shortest bar = optimal); the printed L values show how shallow the valley really is. <span style="color:var(--text3);font-weight:400;">(qualitative tiers; E ≈ 1.69, α ≈ 0.34, β ≈ 0.28 per the paper's fit, A/B calibrated to the ~20 t/p optimum — illustrative)</span>`;
+  }
+  window._ifSelect=function(C){current=C;render();};
   render();
 })();
 
