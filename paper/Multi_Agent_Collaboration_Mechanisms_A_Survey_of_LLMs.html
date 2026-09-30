@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Agent Collaboration Mechanisms: A Survey of LLMs — Interactive Guide</title>
+<meta name="description" content="A comprehensive interactive explainer of Multi-Agent Collaboration Mechanisms for LLMs, featuring communication topologies, coordination strategies, decision paradigms, and failure modes.">
+<meta name="keywords" content="multi-agent collaboration, LLM survey, communication topology, star network, peer to peer, multi-agent debate, consensus, collective intelligence, interactive tutorial">
+<meta name="author" content="Adil Shamim">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Multi_Agent_Collaboration_Mechanisms_A_Survey_of_LLMs.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Multi-Agent Collaboration Mechanisms: A Survey of LLMs — Interactive Guide">
+<meta property="og:description" content="Comprehensive interactive taxonomy of multi-agent LLM collaboration topologies, debate mechanisms, and collective intelligence.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Multi_Agent_Collaboration_Mechanisms_A_Survey_of_LLMs.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Multi-Agent Collaboration Mechanisms Survey — Interactive Guide">
+<meta name="twitter:description" content="Understand the mathematical and structural taxonomies of LLM multi-agent systems with interactive network diagrams.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+
+.hero { min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 3rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:1.5rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 5.5vw, 4.2rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.2rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:640px;color:var(--text2);font-size:16px;margin-bottom:2rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+
+.meta-badges { display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:2.5rem; }
+.meta-chip { display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--text2); }
+
+section { max-width:1100px;margin:0 auto;padding:4.5rem 2rem; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:620px;font-size:15px;margin-bottom:2.2rem; }
+
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 8px 24px rgba(15,23,42,0.04);transition:transform .2s ease, box-shadow .2s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,0.07); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px; }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:1.5rem; }
+.three-col { display:grid;grid-template-columns:repeat(3, 1fr);gap:1.2rem; }
+.four-col { display:grid;grid-template-columns:repeat(4, 1fr);gap:1rem; }
+
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+
+/* Interactive Topology Visualizer */
+.topo-container { background:#0f172a;color:#f8fafc;border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 20px 40px rgba(0,0,0,0.25);margin-top:1.5rem; }
+.topo-nav { display:flex;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap; }
+.topo-tab { background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s; }
+.topo-tab.active { background:var(--amber);color:#000;border-color:var(--amber);font-weight:600; }
+.topo-view { display:grid;grid-template-columns:1.2fr 1fr;gap:1.5rem;align-items:center; }
+.canvas-holder { background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:10px;height:240px;display:flex;align-items:center;justify-content:center;position:relative; }
+
+/* Quiz styles */
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;margin-bottom:1.5rem; }
+.quiz-q { font-weight:600;font-size:15px;margin-bottom:1rem;color:var(--text); }
+.quiz-opt { display:block;width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;margin-bottom:8px;cursor:pointer;font-family:var(--sans);font-size:14px;color:var(--text);transition:all .2s; }
+.quiz-opt:hover { background:var(--bg3);border-color:rgba(245,158,11,0.4); }
+.quiz-opt.correct { background:rgba(34,197,94,0.15);border-color:var(--green);color:var(--green);font-weight:600; }
+.quiz-opt.wrong { background:rgba(239,68,68,0.15);border-color:var(--red);color:var(--red); }
+.quiz-explain { font-size:13px;color:var(--text2);margin-top:8px;padding:8px 12px;border-radius:6px;background:var(--bg3);display:none; }
+
+footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem; }
+.footer-links { display:flex;gap:1rem;flex-wrap:wrap; }
+.footer-link { font-family:var(--mono);font-size:12px;color:var(--text2);text-decoration:none; }
+.footer-link:hover { color:var(--amber); }
+
+@media(max-width:850px){
+  .topo-view, .two-col, .three-col, .four-col { grid-template-columns:1fr; }
+  .nav-links, .nav-actions { display:none; }
+  .nav-toggle { display:flex;align-items:center;justify-content:center; }
+  .hero-title { font-size:2.4rem; }
+}
+</style>
+</head>
+<body>
+
+<a href="#content" class="skip-link">Skip to main content</a>
+
+<nav>
+  <a href="../index.html" class="nav-logo">PaperMap</a>
+  <div class="nav-links">
+    <a href="#taxonomy" class="nav-link">Taxonomy</a>
+    <a href="#topologies" class="nav-link">Topologies</a>
+    <a href="#pitfalls" class="nav-link">Failure Modes</a>
+    <a href="#quiz" class="nav-link">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <span class="nav-badge">Category VII · Multi-Agent</span>
+    <a href="https://arxiv.org/abs/2402.01680" target="_blank" rel="noopener" class="btn-primary" style="padding:6px 14px;font-size:12px;">Paper PDF ↗</a>
+  </div>
+  <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
+</nav>
+
+<div id="mobileMenu" class="mobile-menu">
+  <a href="../index.html">← All Papers</a>
+  <a href="#taxonomy">Taxonomy</a>
+  <a href="#topologies">Topologies</a>
+  <a href="#pitfalls">Failure Modes</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<main id="content">
+
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Survey Paper · Multi-Agent Coordination</div>
+  <h1 class="hero-title">Multi-Agent Collaboration<br><em>Mechanisms: A Survey</em></h1>
+  <p class="hero-subtitle">A systematic taxonomy of interaction structures, communication topologies, consensus algorithms, and emergent pathologies in LLM multi-agent societies.</p>
+  
+  <div class="hero-actions">
+    <a href="#topologies" class="btn-primary">Explore Topologies</a>
+    <a href="#taxonomy" class="btn-outline">View Mechanism Taxonomy</a>
+  </div>
+
+  <div class="meta-badges">
+    <div class="meta-chip"><span>Focus:</span> Multi-Agent Architectures & Interaction Dynamics</div>
+    <div class="meta-chip"><span>Taxonomy:</span> Topologies, Coordination, Consensus, Failures</div>
+    <div class="meta-chip"><span>Coverage:</span> 100+ Multi-Agent Systems & Frameworks</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 1: TAXONOMY -->
+<section id="taxonomy">
+  <div class="section-tag">Classification Framework</div>
+  <h2 class="section-title">The Four Dimensions of <em>Agent Collaboration</em></h2>
+  <p class="section-desc">Every multi-agent LLM system can be decomposed along four fundamental design axes.</p>
+
+  <div class="four-col">
+    <div class="card">
+      <div class="card-label">1. Topology</div>
+      <h3 style="font-size:15px;color:var(--amber);margin-bottom:6px;">Information Routing</h3>
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">How messages travel between nodes: Centralized Star, Hierarchical Tree, Peer-to-Peer Mesh, or Linear Assembly Line.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">2. Strategy</div>
+      <h3 style="font-size:15px;color:var(--blue);margin-bottom:6px;">Agent Incentives</h3>
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Cooperative (shared reward), Competitive (zero-sum gaming), or Adversarial Debate (truth discovery through thesis-antithesis).</p>
+    </div>
+    <div class="card">
+      <div class="card-label">3. Consensus</div>
+      <h3 style="font-size:15px;color:var(--teal);margin-bottom:6px;">Decision Synthesis</h3>
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">How the collective picks a final answer: Majority Voting, Elo Tournament ranking, Hierarchical Judge, or Iterative Discussion.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">4. Memory</div>
+      <h3 style="font-size:15px;color:var(--purple);margin-bottom:6px;">State Sharing</h3>
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Private local scratchpads vs Central Blackboards vs Pub-Sub message buses with topic filters.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 2: INTERACTIVE TOPOLOGIES -->
+<section id="topologies">
+  <div class="section-tag">Interactive Topology Explorer</div>
+  <h2 class="section-title">Visualizing <em>Communication Networks</em></h2>
+  <p class="section-desc">Select a network topology to compare message complexity, fault tolerance, and context token overhead.</p>
+
+  <div class="topo-container">
+    <div class="topo-nav">
+      <button class="topo-tab active" data-topo="star">Centralized (Star / Hub)</button>
+      <button class="topo-tab" data-topo="mesh">Decentralized (Fully-Connected Mesh)</button>
+      <button class="topo-tab" data-topo="tree">Hierarchical (Tree / Pyramidal)</button>
+      <button class="topo-tab" data-topo="pipeline">Linear (Sequential Assembly)</button>
+    </div>
+
+    <div class="topo-view">
+      <div id="topoCanvas" class="canvas-holder">
+        <!-- SVG diagram rendered via JS -->
+      </div>
+      <div>
+        <div id="topoTitle" style="font-size:16px;font-weight:600;color:var(--amber);margin-bottom:8px;"></div>
+        <div id="topoDesc" style="font-size:13px;color:#cbd5e1;line-height:1.7;margin-bottom:12px;"></div>
+        <div id="topoStats" style="font-family:var(--mono);font-size:11px;color:#94a3b8;line-height:1.8;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 3: FAILURE MODES -->
+<section id="pitfalls">
+  <div class="section-tag">Pathologies & Risks</div>
+  <h2 class="section-title">Multi-Agent <em>Emergent Failure Modes</em></h2>
+  <p class="section-desc">When multi-agent societies malfunction, they exhibit failure patterns not seen in single-agent prompts.</p>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-label">Sycophancy & Conformity</div>
+      <h3 style="font-size:15px;color:var(--red);margin-bottom:6px;">Echo Chambers</h3>
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Agents quickly converge to agree with the most confident or first-responding agent, abandoning correct contrarian factual knowledge.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Information Distortions</div>
+      <h3 style="font-size:15px;color:var(--amber);margin-bottom:6px;">Chinese Whispers</h3>
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Across long sequential chains, critical constraints or numerical bounds get dropped or subtly distorted as summaries replace raw evidence.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Conversational Lock</div>
+      <h3 style="font-size:15px;color:var(--purple);margin-bottom:6px;">Politeness Deadlocks</h3>
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Without strict halting criteria, agents enter cycles of mutual praise and repetitive meta-commentary, draining API budgets.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 4: QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Collaboration Mechanisms <em>Quiz</em></h2>
+  <p class="section-desc">Test your understanding of multi-agent topologies and collective coordination strategies.</p>
+
+  <div id="quizContainer">
+    <!-- Quiz injected by JS -->
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-links">
+    <a href="../index.html" class="footer-link">← Homepage</a>
+    <a href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html" class="footer-link">CAMEL Guide</a>
+    <a href="./MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html" class="footer-link">MetaGPT Guide</a>
+    <a href="./MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html" class="footer-link">MultiAgentBench Guide →</a>
+  </div>
+  <div style="font-family:var(--mono);font-size:12px;color:var(--text3);">
+    PaperMap · Created by Adil Shamim
+  </div>
+</footer>
+
+<script>
+const TOPOLOGIES = {
+  star: {
+    title: 'Centralized Hub (Star Network)',
+    desc: 'All communications pass through a central Orchestrator. Subagents never converse directly with one another. Prevents runaway chatter but creates a bottleneck at the central hub.',
+    stats: '• Message Complexity: O(N)\n• Context Overhead: Low for workers, High for Hub\n• Single Point of Failure: Yes (Hub)\n• Typical Examples: Magentic-One, AutoGen Orchestrator',
+    svg: `<svg width="220" height="180" viewBox="0 0 220 180">
+      <line x1="110" y1="90" x2="40" y2="40" stroke="#f59e0b" stroke-width="2" />
+      <line x1="110" y1="90" x2="180" y2="40" stroke="#f59e0b" stroke-width="2" />
+      <line x1="110" y1="90" x2="40" y2="140" stroke="#f59e0b" stroke-width="2" />
+      <line x1="110" y1="90" x2="180" y2="140" stroke="#f59e0b" stroke-width="2" />
+      <circle cx="110" cy="90" r="24" fill="#f59e0b" />
+      <text x="110" y="94" font-size="10" font-family="sans-serif" text-anchor="middle" fill="#000" font-weight="bold">HUB</text>
+      <circle cx="40" cy="40" r="14" fill="#3b82f6" />
+      <circle cx="180" cy="40" r="14" fill="#14b8a6" />
+      <circle cx="40" cy="140" r="14" fill="#a855f7" />
+      <circle cx="180" cy="140" r="14" fill="#ef4444" />
+    </svg>`
+  },
+  mesh: {
+    title: 'Decentralized Mesh (Fully Connected)',
+    desc: 'Every agent can send messages to every other agent. Maximizes emergence and creative debate, but token cost grows quadratically with team size.',
+    stats: '• Message Complexity: O(N²)\n• Context Overhead: Extremely High\n• Fault Tolerance: High (No single point of failure)\n• Typical Examples: Multi-Agent Debate, Free-form ChatDev',
+    svg: `<svg width="220" height="180" viewBox="0 0 220 180">
+      <polygon points="110,30 180,80 150,150 70,150 40,80" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3,3" />
+      <line x1="110" y1="30" x2="150" y2="150" stroke="#64748b" stroke-width="1" />
+      <line x1="110" y1="30" x2="70" y2="150" stroke="#64748b" stroke-width="1" />
+      <line x1="40" y1="80" x2="180" y2="80" stroke="#64748b" stroke-width="1" />
+      <circle cx="110" cy="30" r="14" fill="#f59e0b" />
+      <circle cx="180" cy="80" r="14" fill="#3b82f6" />
+      <circle cx="150" cy="150" r="14" fill="#14b8a6" />
+      <circle cx="70" cy="150" r="14" fill="#a855f7" />
+      <circle cx="40" cy="80" r="14" fill="#ef4444" />
+    </svg>`
+  },
+  tree: {
+    title: 'Hierarchical Tree (Pyramidal)',
+    desc: 'Management hierarchy where high-level manager agents supervise mid-level team leads who in turn dispatch execution workers. Mimics enterprise human corporate structure.',
+    stats: '• Message Complexity: O(N log N)\n• Context Overhead: Controlled\n• Specialization: High (Strict role boundaries)\n• Typical Examples: AgentVerse, MetaGPT Org Chart',
+    svg: `<svg width="220" height="180" viewBox="0 0 220 180">
+      <line x1="110" y1="30" x2="65" y2="85" stroke="#f59e0b" stroke-width="2" />
+      <line x1="110" y1="30" x2="155" y2="85" stroke="#f59e0b" stroke-width="2" />
+      <line x1="65" y1="85" x2="40" y2="145" stroke="#3b82f6" stroke-width="2" />
+      <line x1="65" y1="85" x2="90" y2="145" stroke="#3b82f6" stroke-width="2" />
+      <line x1="155" y1="85" x2="130" y2="145" stroke="#14b8a6" stroke-width="2" />
+      <line x1="155" y1="85" x2="180" y2="145" stroke="#14b8a6" stroke-width="2" />
+      <circle cx="110" cy="30" r="16" fill="#f59e0b" />
+      <circle cx="65" cy="85" r="13" fill="#3b82f6" />
+      <circle cx="155" cy="85" r="13" fill="#14b8a6" />
+      <circle cx="40" cy="145" r="10" fill="#a855f7" />
+      <circle cx="90" cy="145" r="10" fill="#a855f7" />
+      <circle cx="130" cy="145" r="10" fill="#22c55e" />
+      <circle cx="180" cy="145" r="10" fill="#22c55e" />
+    </svg>`
+  },
+  pipeline: {
+    title: 'Linear Sequential Assembly Line',
+    desc: 'Each agent strictly consumes the output artifact of the preceding agent and passes its refined deliverable forward. Minimal chatter, highly deterministic.',
+    stats: '• Message Complexity: O(N)\n• Context Overhead: Lowest\n• Feedback Loops: Requires explicit backward backtrack\n• Typical Examples: Standard MetaGPT SOP, LangGraph Chains',
+    svg: `<svg width="220" height="180" viewBox="0 0 220 180">
+      <line x1="25" y1="90" x2="195" y2="90" stroke="#f59e0b" stroke-width="3" stroke-dasharray="4,4" />
+      <circle cx="35" cy="90" r="14" fill="#3b82f6" />
+      <circle cx="85" cy="90" r="14" fill="#14b8a6" />
+      <circle cx="135" cy="90" r="14" fill="#f59e0b" />
+      <circle cx="185" cy="90" r="14" fill="#22c55e" />
+    </svg>`
+  }
+};
+
+function setTopo(key) {
+  const item = TOPOLOGIES[key];
+  document.getElementById('topoCanvas').innerHTML = item.svg;
+  document.getElementById('topoTitle').textContent = item.title;
+  document.getElementById('topoDesc').textContent = item.desc;
+  document.getElementById('topoStats').innerHTML = item.stats.replace(/\n/g, '<br>');
+}
+
+document.querySelectorAll('.topo-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.topo-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    setTopo(tab.getAttribute('data-topo'));
+  });
+});
+
+setTopo('star');
+
+// Quiz
+const QUIZ_ITEMS = [
+  {
+    q: 'What is the primary drawback of a fully-connected (mesh) multi-agent communication topology?',
+    options: [
+      'It cannot generate creative solutions',
+      'Communication token costs grow quadratically (O(N²)) with the number of agents',
+      'Agents are legally required to sign NDAs',
+      'It cannot run on Linux servers'
+    ],
+    correct: 1,
+    explain: 'In a fully-connected mesh where all agents read all messages, token overhead scales with O(N²), causing severe context window saturation.'
+  },
+  {
+    q: 'What is "Sycophancy" in multi-agent conversational dynamics?',
+    options: [
+      'An agent refusing to answer user prompts',
+      'The tendency of agents to unthinkingly agree with other agents or authoritative personas, suppressing accurate contrarian insights',
+      'A hardware error on GPU clusters',
+      'Translating English into French automatically'
+    ],
+    correct: 1,
+    explain: 'Sycophancy occurs when LLM agents conform to peers or supervisors even when the peer provides factually flawed reasoning.'
+  },
+  {
+    q: 'How does Multi-Agent Debate enhance reasoning accuracy over a single model?',
+    options: [
+      'By running models at higher temperatures',
+      'By forcing divergent models to present thesis and antithesis, exposing flawed intermediate chain-of-thought assumptions to a referee',
+      'By deleting failed runs from disk',
+      'By doubling the GPU clock speed'
+    ],
+    correct: 1,
+    explain: 'Debate pits opposing rationales against one another, compelling agents to defend premises and catch reasoning slips.'
+  },
+  {
+    q: 'Which topology best characterizes an enterprise software assembly line (e.g. PRD -> Architecture -> Implementation)?',
+    options: [
+      'Fully-connected mesh',
+      'Linear sequential or hierarchical pipeline',
+      'Ring buffer',
+      'Random gossip network'
+    ],
+    correct: 1,
+    explain: 'Linear sequential assembly lines pass validated artifacts strictly from role to role, minimizing conversational entropy.'
+  },
+  {
+    q: 'What mechanism prevents multi-agent societies from falling into endless mutual praise loops?',
+    options: [
+      'Disabling the internet router',
+      'Explicit termination tokens, max-turn constraints, and task-verifier halting checks',
+      'Resetting model weights to zero',
+      'Limiting prompt responses to 2 words'
+    ],
+    correct: 1,
+    explain: 'Engineered termination criteria, finite turn horizons, and objective goal-completion checkers prevent infinite chatting deadlocks.'
+  }
+];
+
+function renderQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  QUIZ_ITEMS.forEach((item, qIdx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    const title = document.createElement('div');
+    title.className = 'quiz-q';
+    title.textContent = `${qIdx + 1}. ${item.q}`;
+    card.appendChild(title);
+
+    const optsDiv = document.createElement('div');
+    item.options.forEach((optText, optIdx) => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt';
+      btn.textContent = optText;
+      btn.addEventListener('click', () => {
+        const parent = btn.parentElement;
+        const all = parent.querySelectorAll('.quiz-opt');
+        all.forEach(b => b.disabled = true);
+        if (optIdx === item.correct) {
+          btn.classList.add('correct');
+        } else {
+          btn.classList.add('wrong');
+          all[item.correct].classList.add('correct');
+        }
+        explain.style.display = 'block';
+      });
+      optsDiv.appendChild(btn);
+    });
+    card.appendChild(optsDiv);
+
+    const explain = document.createElement('div');
+    explain.className = 'quiz-explain';
+    explain.textContent = `Explanation: ${item.explain}`;
+    card.appendChild(explain);
+
+    container.appendChild(card);
+  });
+}
+renderQuiz();
+
+// Nav toggle
+const navBtn = document.getElementById('navToggle');
+const mobMenu = document.getElementById('mobileMenu');
+navBtn.addEventListener('click', () => {
+  mobMenu.classList.toggle('open');
+});
+</script>
+</body>
+</html>

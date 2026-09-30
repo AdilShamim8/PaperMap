@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAMEL: Communicative Agents for "Mind" Exploration — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of CAMEL (Communicative Agents for 'Mind' Exploration), featuring inception prompting simulators, autonomous role-play mechanics, and multi-agent coordination dynamics.">
+<meta name="keywords" content="CAMEL, communicative agents, multi-agent systems, inception prompting, role playing, autonomous agents, NeurIPS 2023, LLM society, interactive tutorial">
+<meta name="author" content="Adil Shamim">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/CAMEL_Communicative_Agents_for_Mind_Exploration.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="CAMEL: Communicative Agents for 'Mind' Exploration — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the CAMEL framework with inception prompting and autonomous role-playing simulations.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/CAMEL_Communicative_Agents_for_Mind_Exploration.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CAMEL — Interactive Guide">
+<meta name="twitter:description" content="Learn how inception prompting enables autonomous cooperative LLM agent societies.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+
+.hero { min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 3rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:1.5rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 5.5vw, 4.2rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.2rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:640px;color:var(--text2);font-size:16px;margin-bottom:2rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+
+.meta-badges { display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:2.5rem; }
+.meta-chip { display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--text2); }
+
+section { max-width:1100px;margin:0 auto;padding:4.5rem 2rem; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:620px;font-size:15px;margin-bottom:2.2rem; }
+
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 8px 24px rgba(15,23,42,0.04);transition:transform .2s ease, box-shadow .2s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,0.07); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px; }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:1.5rem; }
+.three-col { display:grid;grid-template-columns:repeat(3, 1fr);gap:1.2rem; }
+
+.highlight { background:var(--amber-dim);color:var(--amber);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:13px; }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+
+/* Interactive Simulator */
+.sim-container { background:#0f172a;color:#f8fafc;border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 20px 40px rgba(0,0,0,0.25);margin-top:1.5rem; }
+.sim-header { display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:1rem;margin-bottom:1.2rem;flex-wrap:wrap;gap:10px; }
+.sim-controls { display:flex;gap:8px;align-items:center; }
+.sim-btn { background:var(--amber);color:#000;font-family:var(--mono);font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;border:none;cursor:pointer;transition:background .2s; }
+.sim-btn:hover { background:#fbbf24; }
+.sim-btn-outline { background:transparent;color:#94a3b8;border:1px solid rgba(255,255,255,0.2);font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer; }
+.sim-btn-outline:hover { color:#fff;border-color:rgba(255,255,255,0.4); }
+.chat-window { max-height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:10px 4px; }
+.chat-bubble { max-width:85%;padding:12px 16px;border-radius:12px;font-size:13px;line-height:1.6; }
+.chat-user { align-self:flex-start;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:#bfdbfe; }
+.chat-assistant { align-self:flex-end;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:#fef08a; }
+.chat-system { align-self:center;background:rgba(255,255,255,0.06);border:1px dashed rgba(255,255,255,0.2);color:#94a3b8;font-family:var(--mono);font-size:11px;text-align:center; }
+.chat-author { font-family:var(--mono);font-size:11px;font-weight:600;margin-bottom:4px;opacity:0.9; }
+
+/* Quiz styles */
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;margin-bottom:1.5rem; }
+.quiz-q { font-weight:600;font-size:15px;margin-bottom:1rem;color:var(--text); }
+.quiz-opt { display:block;width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;margin-bottom:8px;cursor:pointer;font-family:var(--sans);font-size:14px;color:var(--text);transition:all .2s; }
+.quiz-opt:hover { background:var(--bg3);border-color:rgba(245,158,11,0.4); }
+.quiz-opt.correct { background:rgba(34,197,94,0.15);border-color:var(--green);color:var(--green);font-weight:600; }
+.quiz-opt.wrong { background:rgba(239,68,68,0.15);border-color:var(--red);color:var(--red); }
+.quiz-explain { font-size:13px;color:var(--text2);margin-top:8px;padding:8px 12px;border-radius:6px;background:var(--bg3);display:none; }
+
+footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem; }
+.footer-links { display:flex;gap:1rem;flex-wrap:wrap; }
+.footer-link { font-family:var(--mono);font-size:12px;color:var(--text2);text-decoration:none; }
+.footer-link:hover { color:var(--amber); }
+
+@media(max-width:850px){
+  .two-col, .three-col { grid-template-columns:1fr; }
+  .nav-links, .nav-actions { display:none; }
+  .nav-toggle { display:flex;align-items:center;justify-content:center; }
+  .hero-title { font-size:2.4rem; }
+}
+</style>
+</head>
+<body>
+
+<a href="#content" class="skip-link">Skip to main content</a>
+
+<nav>
+  <a href="../index.html" class="nav-logo">PaperMap</a>
+  <div class="nav-links">
+    <a href="#problem" class="nav-link">The Bottleneck</a>
+    <a href="#inception" class="nav-link">Inception Prompting</a>
+    <a href="#simulator" class="nav-link">Live Dialogue</a>
+    <a href="#deepdive" class="nav-link">Deep Dive</a>
+    <a href="#quiz" class="nav-link">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <span class="nav-badge">Category VII · Multi-Agent</span>
+    <a href="https://arxiv.org/abs/2303.17760" target="_blank" rel="noopener" class="btn-primary" style="padding:6px 14px;font-size:12px;">Paper PDF ↗</a>
+  </div>
+  <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
+</nav>
+
+<div id="mobileMenu" class="mobile-menu">
+  <a href="../index.html">← All Papers</a>
+  <a href="#problem">The Bottleneck</a>
+  <a href="#inception">Inception Prompting</a>
+  <a href="#simulator">Live Dialogue</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<main id="content">
+
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">NeurIPS 2023 · Foundational Multi-Agent Paper</div>
+  <h1 class="hero-title">Communicative Agents for<br><em>"Mind" Exploration</em> (CAMEL)</h1>
+  <p class="hero-subtitle">How role-playing and Inception Prompting unlock autonomous cooperation between LLM agents without human intervention or conversational drift.</p>
+  
+  <div class="hero-actions">
+    <a href="#simulator" class="btn-primary">Try Interactive Role-Play</a>
+    <a href="#inception" class="btn-outline">Explore Inception Prompting</a>
+  </div>
+
+  <div class="meta-badges">
+    <div class="meta-chip"><span>Authors:</span> Guohao Li, Hasan Abed Al Kader Hammoud, et al.</div>
+    <div class="meta-chip"><span>Institution:</span> KAUST</div>
+    <div class="meta-chip"><span>Published:</span> March 2023 · NeurIPS 2023</div>
+    <div class="meta-chip"><span>Core Contribution:</span> Inception Prompting & Role-Playing Framework</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 1: THE BOTTLENECK -->
+<section id="problem">
+  <div class="section-tag">The Multi-Agent Problem</div>
+  <h2 class="section-title">Why Naive Autonomous Agents <em>Fail in Conversation</em></h2>
+  <p class="section-desc">Putting two conversational LLMs together in a free-form loop quickly results in degenerated interactions, endless pleasantries, or hallucinated task completion.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Naive Loop Pitfalls</div>
+      <div class="card-sm" style="margin-bottom:10px;border-left:3px solid var(--red);">
+        <strong>Endless Politeness:</strong> Agents repeatedly thank each other ("You're welcome! Let me know if you need more.") without advancing the task.
+      </div>
+      <div class="card-sm" style="margin-bottom:10px;border-left:3px solid var(--amber);">
+        <strong>Role Inversion & Drift:</strong> The assistant starts giving instructions while the user starts doing the work, muddying boundaries.
+      </div>
+      <div class="card-sm" style="border-left:3px solid var(--purple);">
+        <strong>Premature Halting:</strong> One agent hallucinates that the software has already been compiled and deployed, stopping exploration.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">The CAMEL Solution</div>
+      <div class="card-sm" style="margin-bottom:10px;border-left:3px solid var(--green);">
+        <strong>Task Specifier:</strong> A preparatory LLM converts an abstract user idea (e.g., "build a game") into a concrete, actionable specification with strict constraints.
+      </div>
+      <div class="card-sm" style="margin-bottom:10px;border-left:3px solid var(--blue);">
+        <strong>Inception Prompting:</strong> Asymmetric system messages with complementary rules (AI User gives instructions & evaluations; AI Assistant writes code & answers).
+      </div>
+      <div class="card-sm" style="border-left:3px solid var(--teal);">
+        <strong>Strict Termination Protocols:</strong> Concrete token triggers ("<CAMEL_TASK_DONE>") and step limits prevent infinite looping.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 2: INCEPTION PROMPTING -->
+<section id="inception">
+  <div class="section-tag">Framework Architecture</div>
+  <h2 class="section-title">The Three Pillars of <em>Inception Prompting</em></h2>
+  <p class="section-desc">CAMEL designs static prompts applied at session initialization to steer communicative agents toward productive problem-solving.</p>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-label">Pillar 1</div>
+      <h3 style="font-size:16px;margin-bottom:8px;color:var(--blue);">Task Specifier</h3>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">Takes the user's vague prompt ("Develop a trading bot") and fleshes out specific indicators, APIs, stop-loss logic, and programming language before dialogue begins.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Pillar 2</div>
+      <h3 style="font-size:16px;margin-bottom:8px;color:var(--amber);">AI User Agent</h3>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">Plays the role of the client/planner. Bound by inception rules never to write solution code itself, but always to provide clear, single-step tasks and verify assistant deliverables.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Pillar 3</div>
+      <h3 style="font-size:16px;margin-bottom:8px;color:var(--teal);">AI Assistant Agent</h3>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">Plays the role of the technical domain expert. Bound never to ask generic open-ended questions, but to supply precise solutions followed by actionable next-step proposals.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 3: INTERACTIVE SIMULATOR -->
+<section id="simulator">
+  <div class="section-tag">Interactive Playground</div>
+  <h2 class="section-title">Step Through an <em>Autonomous Agent Society</em></h2>
+  <p class="section-desc">Select a collaborative domain and click 'Next Turn' to observe how CAMEL agents coordinate step-by-step.</p>
+
+  <div class="sim-container">
+    <div class="sim-header">
+      <div>
+        <label for="domainSelect" style="font-family:var(--mono);font-size:11px;color:#94a3b8;margin-right:8px;">DOMAIN:</label>
+        <select id="domainSelect" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;border-radius:6px;padding:5px 10px;font-family:var(--mono);font-size:12px;">
+          <option value="trading">Quantitative Finance (Trader + Python Dev)</option>
+          <option value="game">Game Engine (Creative Director + Game Dev)</option>
+          <option value="biotech">Bioinformatics (Geneticist + ML Engineer)</option>
+        </select>
+      </div>
+      <div class="sim-controls">
+        <button id="stepBtn" class="sim-btn">Next Turn ▶</button>
+        <button id="resetBtn" class="sim-btn-outline">Reset</button>
+      </div>
+    </div>
+
+    <div id="chatWindow" class="chat-window">
+      <!-- Chat bubbles injected via JS -->
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 4: DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive Lab</div>
+  <h2 class="section-title">Why Role Assignment <em>Scales Collaboration</em></h2>
+  <p class="section-desc">Analysis of multi-agent dynamics: communication efficiency, hallucination suppression, and autonomous instruction generation.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Hallucination Mitigation in Societies</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:12px;">
+        When a single LLM attempts end-to-end engineering, it frequently hallucinates intermediate progress because it holds both the goal and the implementation in one context.
+      </p>
+      <div class="card-sm">
+        <strong>The Critic Effect:</strong> By separating the User (evaluator) from the Assistant (coder), the User agent cross-examines outputs against specifications. If code lacks test cases, the User agent rejects it on the next turn.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Data Generation Scale</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:12px;">
+        CAMEL was used to synthesize massive conversational instruction datasets:
+      </p>
+      <ul style="font-size:13px;color:var(--text2);line-height:1.8;padding-left:1.2rem;">
+        <li><strong>AI Society Dataset:</strong> 25,000+ multi-turn dialogues across 50 roles and 1,000 tasks.</li>
+        <li><strong>Code Dataset:</strong> 20,000+ problem-solution pairs with verifiable test scripts.</li>
+        <li><strong>Zero Human Demonstrations:</strong> Generated entirely through autonomous role-play.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 5: QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">CAMEL <em>Mastery Quiz</em></h2>
+  <p class="section-desc">Test your understanding of communicative multi-agent architectures and Inception Prompting.</p>
+
+  <div id="quizContainer">
+    <!-- Questions injected by JS -->
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-links">
+    <a href="../index.html" class="footer-link">← Homepage</a>
+    <a href="./MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html" class="footer-link">MetaGPT Guide →</a>
+    <a href="./Magentic_One_A_Generalist_Multi_Agent_System.html" class="footer-link">Magentic-One Guide →</a>
+    <a href="./MemGPT_Towards_LLMs_as_Operating_Systems.html" class="footer-link">MemGPT Guide</a>
+  </div>
+  <div style="font-family:var(--mono);font-size:12px;color:var(--text3);">
+    PaperMap · Created by Adil Shamim
+  </div>
+</footer>
+
+<script>
+// Simulator script
+const SCENARIOS = {
+  trading: [
+    { role: 'system', text: 'TASK SPECIFIER: Develop a Python SMA Crossover strategy on BTC/USDT with 2% risk stop-loss using CCXT.' },
+    { role: 'user', author: 'AI User (Fund Manager)', text: 'Instruction: Please specify the exact parameters for the short-term and long-term Moving Average windows, and list required dependencies.' },
+    { role: 'assistant', author: 'AI Assistant (Python Dev)', text: 'Solution: We will use a 20-period Fast MA and a 50-period Slow MA on 1-hour candles. Dependencies: ccxt, pandas, numpy, and backtrader for execution.' },
+    { role: 'user', author: 'AI User (Fund Manager)', text: 'Instruction: Write the data-fetching and signal-generation function in Python that flags golden crosses (Fast > Slow).' },
+    { role: 'assistant', author: 'AI Assistant (Python Dev)', text: 'Solution: ```python\ndef generate_signals(df):\n    df["sma_fast"] = df["close"].rolling(20).mean()\n    df["sma_slow"] = df["close"].rolling(50).mean()\n    df["signal"] = 0\n    df["signal"][20:] = np.where(df["sma_fast"][20:] > df["sma_slow"][20:], 1, 0)\n    df["position"] = df["signal"].diff()\n    return df\n```\nNext step: Implement order execution with stop-loss logic.' },
+    { role: 'user', author: 'AI User (Fund Manager)', text: 'Instruction: Excellent. Now attach the 2% ATR-based trailing stop-loss execution hook. <CAMEL_TASK_DONE>' }
+  ],
+  game: [
+    { role: 'system', text: 'TASK SPECIFIER: Create a 2D Roguelike room generation algorithm in Godot GDScript using Cellular Automata.' },
+    { role: 'user', author: 'AI User (Creative Director)', text: 'Instruction: Provide the cellular automata configuration parameters (grid dimensions, initial wall probability, iterations).' },
+    { role: 'assistant', author: 'AI Assistant (Game Dev)', text: 'Solution: Grid size: 64x64 tiles. Initial fill rate: 45% wall chance. 4 smoothing steps using Moore neighborhood rules (>=5 neighbors becomes wall).' },
+    { role: 'user', author: 'AI User (Creative Director)', text: 'Instruction: Implement the primary simulation loop in GDScript and ensure cave connectivity.' },
+    { role: 'assistant', author: 'AI Assistant (Game Dev)', text: 'Solution: Generated GDScript cellular simulation with Flood Fill verification to cull disconnected cavern pockets. Ready to bind to TileMap.' },
+    { role: 'user', author: 'AI User (Creative Director)', text: 'Instruction: Looks structurally solid. Verified connected components. <CAMEL_TASK_DONE>' }
+  ],
+  biotech: [
+    { role: 'system', text: 'TASK SPECIFIER: Train a 1D-CNN in PyTorch to detect pathogenic splice-site mutations in FASTA genomic sequences.' },
+    { role: 'user', author: 'AI User (Geneticist)', text: 'Instruction: Define the sequence one-hot encoding schema and window size around canonical GT/AG dinucleotides.' },
+    { role: 'assistant', author: 'AI Assistant (ML Engineer)', text: 'Solution: Window length: 400bp centered at splice donor/acceptor. Channel depth: 4 (A, C, G, T) plus an N-mask channel. Target tensor is binary classification.' },
+    { role: 'user', author: 'AI User (Geneticist)', text: 'Instruction: Write the PyTorch model definition with residual dilation layers.' },
+    { role: 'assistant', author: 'AI Assistant (ML Engineer)', text: 'Solution: Implemented DilatedSpliceNet with dilated Conv1D (kernel=3, dilation=[1,2,4,8]) and BatchNorm to handle long-range nucleotide motifs.' },
+    { role: 'user', author: 'AI User (Geneticist)', text: 'Instruction: Model specifications verified against ClinVar benchmark. <CAMEL_TASK_DONE>' }
+  ]
+};
+
+let currentDomain = 'trading';
+let currentStep = 0;
+
+function renderChat() {
+  const box = document.getElementById('chatWindow');
+  box.innerHTML = '';
+  const list = SCENARIOS[currentDomain].slice(0, currentStep);
+  list.forEach(msg => {
+    const d = document.createElement('div');
+    if (msg.role === 'system') {
+      d.className = 'chat-bubble chat-system';
+      d.textContent = msg.text;
+    } else if (msg.role === 'user') {
+      d.className = 'chat-bubble chat-user';
+      d.innerHTML = `<div class="chat-author">${msg.author}</div><div>${msg.text}</div>`;
+    } else {
+      d.className = 'chat-bubble chat-assistant';
+      d.innerHTML = `<div class="chat-author">${msg.author}</div><div>${msg.text}</div>`;
+    }
+    box.appendChild(d);
+  });
+  box.scrollTop = box.scrollHeight;
+}
+
+document.getElementById('domainSelect').addEventListener('change', (e) => {
+  currentDomain = e.target.value;
+  currentStep = 1;
+  renderChat();
+});
+
+document.getElementById('stepBtn').addEventListener('click', () => {
+  if (currentStep < SCENARIOS[currentDomain].length) {
+    currentStep++;
+    renderChat();
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  currentStep = 1;
+  renderChat();
+});
+
+currentStep = 1;
+renderChat();
+
+// Quiz Data
+const QUIZ_ITEMS = [
+  {
+    q: 'What is the primary role of the Task Specifier in the CAMEL framework?',
+    options: [
+      'To execute code and test compiler outputs in a sandbox',
+      'To concretize an initial ambiguous user prompt into detailed instructions and constraints',
+      'To arbitrate disputes between the user and assistant agents',
+      'To calculate token cost and API latency'
+    ],
+    correct: 1,
+    explain: 'The Task Specifier takes high-level user ideas and expands them into structured, constrained task specifications before dialogue starts, removing ambiguity.'
+  },
+  {
+    q: 'Why does CAMEL prohibit the AI User agent from answering its own technical tasks?',
+    options: [
+      'To reduce prompt token length',
+      'To prevent the user agent from doing the assistant’s job, preserving clear role division and preventing conversational collapse',
+      'Because the user agent uses an older language model',
+      'To ensure both agents speak exactly the same number of words'
+    ],
+    correct: 1,
+    explain: 'Strict role asymmetry prevents role confusion and endless loops where agents redundantly validate or perform each other\'s responsibilities.'
+  },
+  {
+    q: 'How does CAMEL prevent infinite conversation loops between autonomous agents?',
+    options: [
+      'By turning off the internet connection after 30 seconds',
+      'By defining explicit terminal tokens (e.g. <CAMEL_TASK_DONE>) and hard step limits',
+      'By asking human evaluators to click "Stop" after each response',
+      'By training a dedicated discriminator model to delete messages'
+    ],
+    correct: 1,
+    explain: 'CAMEL enforces termination protocols, including token conditions (like <CAMEL_TASK_DONE>) and step boundaries, to stop loops cleanly.'
+  },
+  {
+    q: 'What distinguishes Inception Prompting from standard few-shot prompting?',
+    options: [
+      'It involves recursive model training at test time',
+      'It installs static operational protocols and behavioral rules during system-prompt initialization rather than supplying input-output examples',
+      'It requires fine-tuning weights using LoRA',
+      'It only operates on vector embeddings'
+    ],
+    correct: 1,
+    explain: 'Inception Prompting configures agent personas, responsibilities, and interaction protocols at initialization to govern autonomous multi-turn dynamics.'
+  },
+  {
+    q: 'Which major dataset was created using the CAMEL role-playing framework?',
+    options: [
+      'ImageNet',
+      'AI Society and Code instruction datasets containing over 45,000 multi-turn dialogues',
+      'The Pile',
+      'SQuAD 2.0'
+    ],
+    correct: 1,
+    explain: 'CAMEL generated large-scale conversational instruction datasets (AI Society and Code) across hundreds of domains without human demonstrations.'
+  }
+];
+
+function renderQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  QUIZ_ITEMS.forEach((item, qIdx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    const title = document.createElement('div');
+    title.className = 'quiz-q';
+    title.textContent = `${qIdx + 1}. ${item.q}`;
+    card.appendChild(title);
+
+    const optsDiv = document.createElement('div');
+    item.options.forEach((optText, optIdx) => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt';
+      btn.textContent = optText;
+      btn.addEventListener('click', () => {
+        const parent = btn.parentElement;
+        const all = parent.querySelectorAll('.quiz-opt');
+        all.forEach(b => b.disabled = true);
+        if (optIdx === item.correct) {
+          btn.classList.add('correct');
+        } else {
+          btn.classList.add('wrong');
+          all[item.correct].classList.add('correct');
+        }
+        explain.style.display = 'block';
+      });
+      optsDiv.appendChild(btn);
+    });
+    card.appendChild(optsDiv);
+
+    const explain = document.createElement('div');
+    explain.className = 'quiz-explain';
+    explain.textContent = `Explanation: ${item.explain}`;
+    card.appendChild(explain);
+
+    container.appendChild(card);
+  });
+}
+renderQuiz();
+
+// Nav toggle
+const navBtn = document.getElementById('navToggle');
+const mobMenu = document.getElementById('mobileMenu');
+navBtn.addEventListener('click', () => {
+  mobMenu.classList.toggle('open');
+});
+</script>
+</body>
+</html>

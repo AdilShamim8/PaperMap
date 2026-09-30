@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MetaGPT: Meta Programming for Multi-Agent Collaboration — Interactive Guide</title>
+<meta name="description" content="An interactive explainer of MetaGPT (ICLR 2024 Oral), exploring Standard Operating Procedures (SOPs), structured communication, role-based workflows, and software generation pipelines.">
+<meta name="keywords" content="MetaGPT, multi-agent framework, SOP, standard operating procedures, ICLR 2024, software engineering agents, product manager, architect, QA engineer, interactive tutorial">
+<meta name="author" content="Adil Shamim">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="MetaGPT: Meta Programming for Multi-Agent Collaboration — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of MetaGPT's SOP-driven multi-agent framework.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MetaGPT — Interactive Guide">
+<meta name="twitter:description" content="Learn how MetaGPT encodes Standard Operating Procedures into LLM societies to engineer complete software systems.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+
+.hero { min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 3rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:1.5rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 5.5vw, 4.2rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.2rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:640px;color:var(--text2);font-size:16px;margin-bottom:2rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+
+.meta-badges { display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:2.5rem; }
+.meta-chip { display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--text2); }
+
+section { max-width:1100px;margin:0 auto;padding:4.5rem 2rem; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:620px;font-size:15px;margin-bottom:2.2rem; }
+
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 8px 24px rgba(15,23,42,0.04);transition:transform .2s ease, box-shadow .2s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,0.07); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px; }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:1.5rem; }
+.three-col { display:grid;grid-template-columns:repeat(3, 1fr);gap:1.2rem; }
+
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+
+/* Interactive SOP Pipeline */
+.sop-pipeline { display:grid;grid-template-columns:repeat(5, 1fr);gap:10px;margin:2rem 0; }
+.sop-step { background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s; }
+.sop-step.active { border-color:var(--amber);background:var(--amber-dim);transform:scale(1.03);box-shadow:0 4px 16px rgba(245,158,11,0.2); }
+.sop-role { font-family:var(--mono);font-size:11px;font-weight:600;color:var(--amber);margin-bottom:4px; }
+.sop-doc { font-size:13px;font-weight:600;color:var(--text); }
+
+.terminal-view { background:#0f172a;color:#f8fafc;border-radius:var(--radius-lg);padding:1.6rem;font-family:var(--mono);font-size:13px;line-height:1.7;box-shadow:0 20px 40px rgba(0,0,0,0.2);min-height:220px;overflow-x:auto; }
+
+/* Quiz styles */
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;margin-bottom:1.5rem; }
+.quiz-q { font-weight:600;font-size:15px;margin-bottom:1rem;color:var(--text); }
+.quiz-opt { display:block;width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;margin-bottom:8px;cursor:pointer;font-family:var(--sans);font-size:14px;color:var(--text);transition:all .2s; }
+.quiz-opt:hover { background:var(--bg3);border-color:rgba(245,158,11,0.4); }
+.quiz-opt.correct { background:rgba(34,197,94,0.15);border-color:var(--green);color:var(--green);font-weight:600; }
+.quiz-opt.wrong { background:rgba(239,68,68,0.15);border-color:var(--red);color:var(--red); }
+.quiz-explain { font-size:13px;color:var(--text2);margin-top:8px;padding:8px 12px;border-radius:6px;background:var(--bg3);display:none; }
+
+footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem; }
+.footer-links { display:flex;gap:1rem;flex-wrap:wrap; }
+.footer-link { font-family:var(--mono);font-size:12px;color:var(--text2);text-decoration:none; }
+.footer-link:hover { color:var(--amber); }
+
+@media(max-width:850px){
+  .sop-pipeline { grid-template-columns:1fr 1fr; }
+  .two-col, .three-col { grid-template-columns:1fr; }
+  .nav-links, .nav-actions { display:none; }
+  .nav-toggle { display:flex;align-items:center;justify-content:center; }
+  .hero-title { font-size:2.4rem; }
+}
+</style>
+</head>
+<body>
+
+<a href="#content" class="skip-link">Skip to main content</a>
+
+<nav>
+  <a href="../index.html" class="nav-logo">PaperMap</a>
+  <div class="nav-links">
+    <a href="#sop" class="nav-link">SOP Philosophy</a>
+    <a href="#pipeline" class="nav-link">Role Pipeline</a>
+    <a href="#pubsub" class="nav-link">Pub-Sub Message Bus</a>
+    <a href="#deepdive" class="nav-link">Deep Dive</a>
+    <a href="#quiz" class="nav-link">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <span class="nav-badge">Category VII · Multi-Agent</span>
+    <a href="https://arxiv.org/abs/2308.00352" target="_blank" rel="noopener" class="btn-primary" style="padding:6px 14px;font-size:12px;">Paper PDF ↗</a>
+  </div>
+  <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
+</nav>
+
+<div id="mobileMenu" class="mobile-menu">
+  <a href="../index.html">← All Papers</a>
+  <a href="#sop">SOP Philosophy</a>
+  <a href="#pipeline">Role Pipeline</a>
+  <a href="#pubsub">Pub-Sub Message Bus</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<main id="content">
+
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">ICLR 2024 Oral · DeepWisdom</div>
+  <h1 class="hero-title">MetaGPT: <em>Meta-Programming</em> for<br>Multi-Agent Collaboration</h1>
+  <p class="hero-subtitle">Encoding human Standard Operating Procedures (SOPs) into multi-agent systems to produce complete software architectures from a single line of natural language.</p>
+  
+  <div class="hero-actions">
+    <a href="#pipeline" class="btn-primary">Inspect Role Pipeline</a>
+    <a href="#pubsub" class="btn-outline">Explore Pub-Sub Mechanics</a>
+  </div>
+
+  <div class="meta-badges">
+    <div class="meta-chip"><span>Authors:</span> Sirui Hong, Mingchen Zhuge, et al.</div>
+    <div class="meta-chip"><span>Affiliation:</span> DeepWisdom & Fudan University</div>
+    <div class="meta-chip"><span>Venue:</span> ICLR 2024 Oral</div>
+    <div class="meta-chip"><span>Key Idea:</span> Code = SOP(Team); Structured Outputs over Chit-Chat</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 1: SOP PHILOSOPHY -->
+<section id="sop">
+  <div class="section-tag">Core Architecture</div>
+  <h2 class="section-title">The Standard Operating Procedure <em>(SOP) Breakthrough</em></h2>
+  <p class="section-desc">Why informal agent chat fails to produce enterprise-grade software, and how assembly-line SOPs eliminate cascading hallucination.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The Natural Language Chat Trap</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
+        In traditional multi-agent setups (e.g. ChatDev or raw agent loops), agents communicate via free-form natural language. As task complexity increases:
+      </p>
+      <div class="card-sm" style="border-left:3px solid var(--red);margin-bottom:8px;">
+        <strong>Unbounded Information Entropy:</strong> Dialogue explodes in length without converging on strict specifications.
+      </div>
+      <div class="card-sm" style="border-left:3px solid var(--amber);">
+        <strong>Cascade of Distortions:</strong> A slight misunderstanding in step 1 cascades exponentially by step 5, leading to broken imports and disjointed architectures.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">The MetaGPT Solution: Structured Artifacts</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
+        MetaGPT mandates that agents deliver rigorous standardized documents:
+      </p>
+      <div class="card-sm" style="border-left:3px solid var(--green);margin-bottom:8px;">
+        <strong>Schema-Constrained Deliverables:</strong> PRDs (Product Requirement Docs), System Architecture diagrams, and Data API specifications.
+      </div>
+      <div class="card-sm" style="border-left:3px solid var(--teal);">
+        <strong>One-Way Assembly Line:</strong> Output of Agent <em>N</em> becomes the immutable input context for Agent <em>N+1</em>, isolating errors.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 2: INTERACTIVE PIPELINE -->
+<section id="pipeline">
+  <div class="section-tag">Interactive Simulation</div>
+  <h2 class="section-title">The MetaGPT <em>Assembly Line</em></h2>
+  <p class="section-desc">Click any role to see its SOP inputs, system prompt constraints, and generated software artifacts.</p>
+
+  <div class="sop-pipeline">
+    <div class="sop-step active" data-role="pm">
+      <div class="sop-role">Role 1</div>
+      <div class="sop-doc">Product Manager</div>
+    </div>
+    <div class="sop-step" data-role="architect">
+      <div class="sop-role">Role 2</div>
+      <div class="sop-doc">Architect</div>
+    </div>
+    <div class="sop-step" data-role="project_manager">
+      <div class="sop-role">Role 3</div>
+      <div class="sop-doc">Project Manager</div>
+    </div>
+    <div class="sop-step" data-role="engineer">
+      <div class="sop-role">Role 4</div>
+      <div class="sop-doc">Engineer</div>
+    </div>
+    <div class="sop-step" data-role="qa">
+      <div class="sop-role">Role 5</div>
+      <div class="sop-doc">QA Engineer</div>
+    </div>
+  </div>
+
+  <div id="terminalDisplay" class="terminal-view">
+    <!-- Populated by JS -->
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 3: PUB-SUB BUS -->
+<section id="pubsub">
+  <div class="section-tag">Communication Topology</div>
+  <h2 class="section-title">Publish-Subscribe <em>Message Bus</em></h2>
+  <p class="section-desc">Instead of O(N²) pairwise broadcast chatter, MetaGPT uses an asynchronous Pub-Sub event pool.</p>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-label">1. Environment Pool</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">A shared global event broker where all published documents, PRDs, code blocks, and test results are archived with typed metadata.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">2. Subscription Filters</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">Each agent declares an interest profile. The Engineer agent only watches for Architect schemas and PM tasks, completely ignoring raw user brainstorming.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">3. Linear Token Scaling</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">By filtering irrelevant chatter, total context window consumption scales linearly with pipeline depth rather than quadratically with agent count.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 4: DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Benchmark Results on <em>HumanEval & SoftwareBench</em></h2>
+  <p class="section-desc">How structured multi-agent decomposition outperforms single-prompt LLM code generation.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">HumanEval Pass@1 Comparison</div>
+      <div style="margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
+          <span>GPT-4 (Zero-Shot Single Agent)</span>
+          <span style="color:var(--text3);font-weight:600;">67.0%</span>
+        </div>
+        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin-bottom:14px;">
+          <div style="width:67%;height:100%;background:var(--text3);"></div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
+          <span>ChatDev (Peer-to-Peer Dialogue)</span>
+          <span style="color:var(--blue);font-weight:600;">82.9%</span>
+        </div>
+        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin-bottom:14px;">
+          <div style="width:82.9%;height:100%;background:var(--blue);"></div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
+          <span>MetaGPT (SOP Assembly Line)</span>
+          <span style="color:var(--amber);font-weight:600;">85.9%</span>
+        </div>
+        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;">
+          <div style="width:85.9%;height:100%;background:var(--amber);"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Software Engineering Integrity</div>
+      <ul style="font-size:13px;color:var(--text2);line-height:1.8;padding-left:1.2rem;margin-top:6px;">
+        <li><strong>Code Executability:</strong> Reaches 100% executable rates on generated CLI utilities and web mini-apps vs 60-70% for unstructured agents.</li>
+        <li><strong>Cost Efficiency:</strong> Average cost per complete software project: ~$0.20 using GPT-3.5 and ~$2.00 using GPT-4.</li>
+        <li><strong>Dependency Resolution:</strong> Zero unresolved imports due to the Architect agent specifying shared file trees and class interfaces upfront.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 5: QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">MetaGPT <em>Mastery Quiz</em></h2>
+  <p class="section-desc">Assess your grasp of Standard Operating Procedures and multi-agent software engineering architectures.</p>
+
+  <div id="quizContainer">
+    <!-- Questions injected by JS -->
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-links">
+    <a href="../index.html" class="footer-link">← Homepage</a>
+    <a href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html" class="footer-link">CAMEL Guide</a>
+    <a href="./Magentic_One_A_Generalist_Multi_Agent_System.html" class="footer-link">Magentic-One Guide →</a>
+    <a href="./MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html" class="footer-link">MultiAgentBench Guide</a>
+  </div>
+  <div style="font-family:var(--mono);font-size:12px;color:var(--text3);">
+    PaperMap · Created by Adil Shamim
+  </div>
+</footer>
+
+<script>
+const ROLE_DETAILS = {
+  pm: {
+    title: 'Product Manager (Alice)',
+    input: 'User Prompt: "Create a 2048 game in Python with Pygame"',
+    output: `## Product Requirements Document (PRD)
+- Target Audience: Casual desktop gamers
+- Core Gameplay: 4x4 sliding tile grid, tile merger rules (2+2=4), arrow key inputs
+- UI Requirements: Clean modern grid, score & high-score display, game-over modal
+- Competitive Analysis: 2048-original, threes
+- Modular Breakdown: game_logic.py, ui.py, main.py`
+  },
+  architect: {
+    title: 'Architect (Bob)',
+    input: 'PRD from Product Manager',
+    output: `## System Architecture & Data API Design
+- Implementation Approach: Pygame 2.5+, dataclasses for state representation
+- File Directory:
+  ├── main.py (Entry point & loop)
+  ├── board.py (Grid matrix & merge logic)
+  └── display.py (Surface rendering & animations)
+- Data Structures:
+  class BoardState:
+    grid: List[List[int]] (4x4)
+    score: int
+    over: bool`
+  },
+  project_manager: {
+    title: 'Project Manager (Eve)',
+    input: 'Architecture Design & File Directory from Bob',
+    output: `## Task Allocation & Dependency Graph
+1. [board.py] Write matrix slide/merge algorithm + unit tests
+2. [display.py] Build Pygame tile drawing & color dictionary
+3. [main.py] Wire event loop to BoardState and render surface
+- Priority: board.py MUST pass unit tests before main.py integration`
+  },
+  engineer: {
+    title: 'Engineer (Alex)',
+    input: 'Tasks from Eve + API Specs from Bob',
+    output: `## Code Implementation: board.py
+import numpy as np
+
+class Board:
+    def __init__(self):
+        self.grid = np.zeros((4, 4), dtype=int)
+        self.score = 0
+        self.spawn_tile()
+        self.spawn_tile()
+        
+    def move_left(self):
+        # Implementation of 2048 slide & merge
+        pass`
+  },
+  qa: {
+    title: 'QA Engineer (David)',
+    input: 'Implemented Code from Alex + PRD specs',
+    output: `## Test Suite: test_board.py
+import unittest
+from board import Board
+
+class TestBoard(unittest.TestCase):
+    def test_merge_tiles(self):
+        b = Board()
+        b.grid = [[2, 2, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+        b.move_left()
+        self.assertEqual(b.grid[0][0], 4)
+        
+- Status: 12/12 tests PASS. Executable verified.`
+  }
+};
+
+function showRole(roleKey) {
+  const data = ROLE_DETAILS[roleKey];
+  const terminal = document.getElementById('terminalDisplay');
+  terminal.innerHTML = `
+    <div style="color:var(--amber);margin-bottom:8px;font-weight:600;">// ACTIVE ROLE: ${data.title}</div>
+    <div style="color:#94a3b8;margin-bottom:12px;">INPUT: ${data.input}</div>
+    <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;color:#f8fafc;white-space:pre-wrap;">${data.output}</div>
+  `;
+}
+
+document.querySelectorAll('.sop-step').forEach(step => {
+  step.addEventListener('click', () => {
+    document.querySelectorAll('.sop-step').forEach(s => s.classList.remove('active'));
+    step.classList.add('active');
+    showRole(step.getAttribute('data-role'));
+  });
+});
+
+showRole('pm');
+
+// Quiz
+const QUIZ_ITEMS = [
+  {
+    q: 'What is the core conceptual thesis of the MetaGPT paper?',
+    options: [
+      'Multi-agent systems should use reinforcement learning from scratch',
+      '"Code = SOP(Team)" — encoding human Standard Operating Procedures into agents yields structured, verifiable deliverables',
+      'Agents should talk as much as possible in natural language to discover emergent behaviors',
+      'Only single-agent systems can write bug-free Python code'
+    ],
+    correct: 1,
+    explain: 'MetaGPT\'s fundamental philosophy is "Code = SOP(Team)", translating proven human organizational workflows (PRD -> Architecture -> Task -> Code -> QA) into structured LLM interactions.'
+  },
+  {
+    q: 'How does MetaGPT avoid the quadratic token explosion of broadcast multi-agent communication?',
+    options: [
+      'By deleting all messages after 5 seconds',
+      'Through a Publish-Subscribe message broker where agents only subscribe to relevant artifact types',
+      'By limiting total project generation to 10 lines of code',
+      'By compressing prompts using zip algorithms'
+    ],
+    correct: 1,
+    explain: 'MetaGPT uses a Publish-Subscribe environment pool. Agents observe documents based on role profiles, keeping context window usage linear.'
+  },
+  {
+    q: 'What artifact does the Architect agent generate before the Engineer begins writing code?',
+    options: [
+      'A marketing website',
+      'System Architecture diagram, file directory structure, and Data API class specifications',
+      'Financial balance sheets',
+      'A git commit history'
+    ],
+    correct: 1,
+    explain: 'The Architect formalizes file structures, class interfaces, and API designs upfront, preventing dependency and import mismatches.'
+  },
+  {
+    q: 'What performance did MetaGPT achieve on the HumanEval programming benchmark?',
+    options: [
+      '45.2%',
+      '67.0%',
+      '85.9%',
+      '100%'
+    ],
+    correct: 2,
+    explain: 'MetaGPT achieved 85.9% pass@1 on HumanEval, significantly outperforming zero-shot single GPT-4 (67.0%) and peer-to-peer ChatDev (82.9%).'
+  },
+  {
+    q: 'Why are structured outputs (PRDs, JSON, UML) preferred over informal natural language in MetaGPT?',
+    options: [
+      'LLMs cannot read English paragraphs',
+      'Structured artifacts enforce unambiguous contractual boundaries, suppressing the cascading accumulation of errors',
+      'Structured formats take more tokens, which makes models think longer',
+      'Compilers only accept JSON as input'
+    ],
+    correct: 1,
+    explain: 'Structured documents act as immutable specification contracts, preventing semantic ambiguity and keeping agent downstream tasks aligned.'
+  }
+];
+
+function renderQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  QUIZ_ITEMS.forEach((item, qIdx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    const title = document.createElement('div');
+    title.className = 'quiz-q';
+    title.textContent = `${qIdx + 1}. ${item.q}`;
+    card.appendChild(title);
+
+    const optsDiv = document.createElement('div');
+    item.options.forEach((optText, optIdx) => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt';
+      btn.textContent = optText;
+      btn.addEventListener('click', () => {
+        const parent = btn.parentElement;
+        const all = parent.querySelectorAll('.quiz-opt');
+        all.forEach(b => b.disabled = true);
+        if (optIdx === item.correct) {
+          btn.classList.add('correct');
+        } else {
+          btn.classList.add('wrong');
+          all[item.correct].classList.add('correct');
+        }
+        explain.style.display = 'block';
+      });
+      optsDiv.appendChild(btn);
+    });
+    card.appendChild(optsDiv);
+
+    const explain = document.createElement('div');
+    explain.className = 'quiz-explain';
+    explain.textContent = `Explanation: ${item.explain}`;
+    card.appendChild(explain);
+
+    container.appendChild(card);
+  });
+}
+renderQuiz();
+
+// Nav toggle
+const navBtn = document.getElementById('navToggle');
+const mobMenu = document.getElementById('mobileMenu');
+navBtn.addEventListener('click', () => {
+  mobMenu.classList.toggle('open');
+});
+</script>
+</body>
+</html>

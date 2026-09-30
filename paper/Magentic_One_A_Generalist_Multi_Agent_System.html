@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magentic-One: A Generalist Multi-Agent System — Interactive Guide</title>
+<meta name="description" content="An interactive explainer of Microsoft's Magentic-One generalist multi-agent system, featuring orchestrator ledger mechanics, WebSurfer, FileSurfer, Coder, and outer/inner loop replanning.">
+<meta name="keywords" content="Magentic-One, Microsoft Research, multi-agent systems, orchestrator, WebSurfer, FileSurfer, GAIA benchmark, generalist agents, AutoGen, interactive tutorial">
+<meta name="author" content="Adil Shamim">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Magentic_One_A_Generalist_Multi_Agent_System.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Magentic-One: A Generalist Multi-Agent System — Interactive Guide">
+<meta property="og:description" content="Visual walkthrough of Microsoft's Magentic-One orchestrator-led multi-agent architecture for complex multimodal tasks.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Magentic_One_A_Generalist_Multi_Agent_System.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Magentic-One — Interactive Guide">
+<meta name="twitter:description" content="Explore how Magentic-One solves open-ended web and computer tasks with an Orchestrator and specialized subagents.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+
+.hero { min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 3rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:1.5rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 5.5vw, 4.2rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.2rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:640px;color:var(--text2);font-size:16px;margin-bottom:2rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+
+.meta-badges { display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:2.5rem; }
+.meta-chip { display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--text2); }
+
+section { max-width:1100px;margin:0 auto;padding:4.5rem 2rem; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:620px;font-size:15px;margin-bottom:2.2rem; }
+
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 8px 24px rgba(15,23,42,0.04);transition:transform .2s ease, box-shadow .2s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,0.07); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px; }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:1.5rem; }
+.three-col { display:grid;grid-template-columns:repeat(3, 1fr);gap:1.2rem; }
+.four-col { display:grid;grid-template-columns:repeat(4, 1fr);gap:1rem; }
+
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+
+/* Interactive Ledger Simulator */
+.ledger-box { background:#0f172a;color:#f8fafc;border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 20px 40px rgba(0,0,0,0.25);margin-top:1.5rem;font-family:var(--mono);font-size:13px; }
+.ledger-header { display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:1rem;margin-bottom:1rem; }
+.ledger-body { display:grid;grid-template-columns:1fr 1.3fr;gap:1.5rem; }
+.task-ledger { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px; }
+.progress-ledger { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px; }
+
+/* Quiz styles */
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;margin-bottom:1.5rem; }
+.quiz-q { font-weight:600;font-size:15px;margin-bottom:1rem;color:var(--text); }
+.quiz-opt { display:block;width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;margin-bottom:8px;cursor:pointer;font-family:var(--sans);font-size:14px;color:var(--text);transition:all .2s; }
+.quiz-opt:hover { background:var(--bg3);border-color:rgba(245,158,11,0.4); }
+.quiz-opt.correct { background:rgba(34,197,94,0.15);border-color:var(--green);color:var(--green);font-weight:600; }
+.quiz-opt.wrong { background:rgba(239,68,68,0.15);border-color:var(--red);color:var(--red); }
+.quiz-explain { font-size:13px;color:var(--text2);margin-top:8px;padding:8px 12px;border-radius:6px;background:var(--bg3);display:none; }
+
+footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem; }
+.footer-links { display:flex;gap:1rem;flex-wrap:wrap; }
+.footer-link { font-family:var(--mono);font-size:12px;color:var(--text2);text-decoration:none; }
+.footer-link:hover { color:var(--amber); }
+
+@media(max-width:850px){
+  .ledger-body, .two-col, .three-col, .four-col { grid-template-columns:1fr; }
+  .nav-links, .nav-actions { display:none; }
+  .nav-toggle { display:flex;align-items:center;justify-content:center; }
+  .hero-title { font-size:2.4rem; }
+}
+</style>
+</head>
+<body>
+
+<a href="#content" class="skip-link">Skip to main content</a>
+
+<nav>
+  <a href="../index.html" class="nav-logo">PaperMap</a>
+  <div class="nav-links">
+    <a href="#orchestrator" class="nav-link">Orchestrator</a>
+    <a href="#agents" class="nav-link">Specialists</a>
+    <a href="#ledger" class="nav-link">Ledger Simulator</a>
+    <a href="#results" class="nav-link">GAIA Results</a>
+    <a href="#quiz" class="nav-link">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <span class="nav-badge">Category VII · Multi-Agent</span>
+    <a href="https://arxiv.org/abs/2411.04468" target="_blank" rel="noopener" class="btn-primary" style="padding:6px 14px;font-size:12px;">Paper PDF ↗</a>
+  </div>
+  <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
+</nav>
+
+<div id="mobileMenu" class="mobile-menu">
+  <a href="../index.html">← All Papers</a>
+  <a href="#orchestrator">Orchestrator</a>
+  <a href="#agents">Specialists</a>
+  <a href="#ledger">Ledger Simulator</a>
+  <a href="#results">GAIA Results</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<main id="content">
+
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Microsoft Research · AutoGen · Nov 2024</div>
+  <h1 class="hero-title">Magentic-One: A Generalist<br><em>Multi-Agent System</em></h1>
+  <p class="hero-subtitle">How a centralized dual-loop Orchestrator directs specialized web, coding, and filesystem agents to conquer open-ended real-world multimodal tasks.</p>
+  
+  <div class="hero-actions">
+    <a href="#ledger" class="btn-primary">Inspect Dual Ledger</a>
+    <a href="#agents" class="btn-outline">Meet the Specialists</a>
+  </div>
+
+  <div class="meta-badges">
+    <div class="meta-chip"><span>Authors:</span> Adam Fourney, Gagan Bansal, et al.</div>
+    <div class="meta-chip"><span>Institution:</span> Microsoft Research</div>
+    <div class="meta-chip"><span>Framework:</span> Built on AutoGen</div>
+    <div class="meta-chip"><span>Key Feature:</span> Dual-loop Ledger Orchestration + WebSurfer</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 1: ORCHESTRATOR -->
+<section id="orchestrator">
+  <div class="section-tag">Core Architecture</div>
+  <h2 class="section-title">The Dual-Loop <em>Orchestrator Pattern</em></h2>
+  <p class="section-desc">Magentic-One places a centralized Orchestrator in charge of all subagent delegations, maintaining global coherence and dynamic replanning.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Outer Loop: Planning & Replanning</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
+        The outer loop maintains the <strong>Task Ledger</strong>. It formulates initial high-level sub-goals, tracks facts learned across tasks, and triggers wholesale strategy revisions if multiple subagents stall.
+      </p>
+      <div class="card-sm" style="border-left:3px solid var(--amber);">
+        <strong>Stall Counter:</strong> If the inner loop takes more than 3 turns without measurable progress, the outer loop executes a reset, clearing hallucinated context.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Inner Loop: Progress Assessment</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
+        The inner loop maintains the <strong>Progress Ledger</strong>. After every single subagent tool call or message, it evaluates whether the current sub-step succeeded or failed.
+      </p>
+      <div class="card-sm" style="border-left:3px solid var(--blue);">
+        <strong>Dynamic Dispatch:</strong> Selects the next specialist (WebSurfer vs Coder vs FileSurfer) based on immediate intermediate deliverables.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 2: SPECIALISTS -->
+<section id="agents">
+  <div class="section-tag">Agent Ecosystem</div>
+  <h2 class="section-title">The Four <em>Specialist Subagents</em></h2>
+  <p class="section-desc">Each agent is purpose-built with tailored prompts, actions, and isolated sandboxes.</p>
+
+  <div class="four-col">
+    <div class="card">
+      <div class="card-label">1. WebSurfer</div>
+      <h3 style="font-size:15px;color:var(--blue);margin-bottom:6px;">Autonomous Browser</h3>
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Operates Chromium via Playwright. Navigates, clicks interactive elements, scrolls pages, solves captchas, and extracts clean markdown DOMs.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">2. FileSurfer</div>
+      <h3 style="font-size:15px;color:var(--teal);margin-bottom:6px;">Document Explorer</h3>
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Inspects local files, parses complex PDFs, parses multi-sheet Excel files, and runs OCR on scanned diagrams.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">3. Coder</div>
+      <h3 style="font-size:15px;color:var(--amber);margin-bottom:6px;">Algorithm Writer</h3>
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Writes statistical Python scripts, data cleaning routines, and web scraping regexes tailored to subagent requests.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">4. ComputerTerminal</div>
+      <h3 style="font-size:15px;color:var(--purple);margin-bottom:6px;">Sandbox Executor</h3>
+      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Executes Python and shell scripts inside an isolated container, capturing stdout, stderr, and returned figures.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 3: SIMULATOR -->
+<section id="ledger">
+  <div class="section-tag">Interactive Simulation</div>
+  <h2 class="section-title">Magentic-One <em>Ledger State Machine</em></h2>
+  <p class="section-desc">Observe how the Orchestrator tracks Task and Progress Ledgers on a multimodal GAIA benchmark question.</p>
+
+  <div class="ledger-box">
+    <div class="ledger-header">
+      <div>TASK: "Find the 2023 revenue of Microsoft's cloud segment, write a script to plot year-over-year growth, and save the chart."</div>
+      <button id="nextStepBtn" class="btn-primary" style="padding:6px 12px;font-size:12px;">Next Step ▶</button>
+    </div>
+    <div class="ledger-body">
+      <div class="task-ledger">
+        <div style="color:var(--amber);margin-bottom:8px;font-weight:600;">📋 TASK LEDGER (Outer Loop)</div>
+        <div id="taskLedgerContent" style="color:#cbd5e1;line-height:1.6;font-size:12px;"></div>
+      </div>
+      <div class="progress-ledger">
+        <div style="color:var(--blue);margin-bottom:8px;font-weight:600;">⚡ PROGRESS LEDGER (Inner Loop)</div>
+        <div id="progressLedgerContent" style="color:#cbd5e1;line-height:1.6;font-size:12px;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 4: GAIA RESULTS -->
+<section id="results">
+  <div class="section-tag">Benchmark Evaluation</div>
+  <h2 class="section-title">State-of-the-Art on <em>GAIA & AssistantBench</em></h2>
+  <p class="section-desc">Evaluating performance on real-world multimodal problem solving.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">GAIA Benchmark (General AI Assistants)</div>
+      <div style="margin-top:12px;">
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
+          <span>Single Agent (GPT-4o)</span>
+          <span style="color:var(--text3);font-weight:600;">32.4%</span>
+        </div>
+        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin-bottom:14px;">
+          <div style="width:32.4%;height:100%;background:var(--text3);"></div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
+          <span>OpenAI Assistants API + Tools</span>
+          <span style="color:var(--blue);font-weight:600;">34.8%</span>
+        </div>
+        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin-bottom:14px;">
+          <div style="width:34.8%;height:100%;background:var(--blue);"></div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
+          <span>Magentic-One (Multi-Agent)</span>
+          <span style="color:var(--amber);font-weight:600;">47.8%</span>
+        </div>
+        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;">
+          <div style="width:47.8%;height:100%;background:var(--amber);"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Why the Architecture Wins</div>
+      <ul style="font-size:13px;color:var(--text2);line-height:1.8;padding-left:1.2rem;margin-top:6px;">
+        <li><strong>Tool Specialization:</strong> WebSurfer handles browser state trees without polluting the Coder's namespace.</li>
+        <li><strong>Stall Recovery:</strong> When WebSurfer hits an anti-bot wall, the Orchestrator pivots to FileSurfer searching downloaded local annual reports.</li>
+        <li><strong>Stateless Agent Reset:</strong> Subagents can be rebooted fresh with clean context while the Orchestrator preserves the global goal.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SECTION 5: QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Magentic-One <em>Mastery Quiz</em></h2>
+  <p class="section-desc">Assess your understanding of orchestrator-led multi-agent architectures and specialized tool routing.</p>
+
+  <div id="quizContainer">
+    <!-- Quiz injected by JS -->
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-links">
+    <a href="../index.html" class="footer-link">← Homepage</a>
+    <a href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html" class="footer-link">CAMEL Guide</a>
+    <a href="./MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html" class="footer-link">MetaGPT Guide</a>
+    <a href="./MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html" class="footer-link">MultiAgentBench Guide →</a>
+  </div>
+  <div style="font-family:var(--mono);font-size:12px;color:var(--text3);">
+    PaperMap · Created by Adil Shamim
+  </div>
+</footer>
+
+<script>
+const LEDGER_STEPS = [
+  {
+    task: `[1] Search SEC EDGAR / MSFT IR for 2023 Cloud Revenue (Pending)\n[2] Extract figures into tabular format (Pending)\n[3] Plot YoY growth chart using Python (Pending)\nFacts: Target is Microsoft Intelligent Cloud segment.`,
+    progress: `Turn 1: Orchestrator -> WebSurfer\nInstruction: "Navigate to microsoft.com/investor and locate FY23 Q4 press release."\nAction: WebSurfer opens browser to investor site.`
+  },
+  {
+    task: `[1] Search SEC EDGAR / MSFT IR (Completed)\n[2] Extract figures into tabular format (Pending)\n[3] Plot YoY growth chart using Python (Pending)\nFacts: Intelligent Cloud FY23 = $87.91B; FY22 = $75.25B (+17%).`,
+    progress: `Turn 2: WebSurfer -> Orchestrator\nWebSurfer extracted Segment Revenue table.\nTurn 3: Orchestrator -> Coder\nInstruction: "Write a matplotlib script to plot FY22 vs FY23 Cloud Revenue."`
+  },
+  {
+    task: `[1] Search SEC EDGAR / MSFT IR (Completed)\n[2] Extract figures into tabular format (Completed)\n[3] Plot YoY growth chart using Python (In Progress)\nFacts: Data verified against 10-K report.`,
+    progress: `Turn 4: Coder -> ComputerTerminal\nInstruction: "Execute growth_plot.py in container sandbox."\nTerminal runs python script and outputs 'cloud_growth.png' (Exit code 0).`
+  },
+  {
+    task: `[1] Search SEC EDGAR / MSFT IR (Completed)\n[2] Extract figures into tabular format (Completed)\n[3] Plot YoY growth chart using Python (Completed)\nTASK COMPLETE: Saved growth chart and compiled summary report.`,
+    progress: `Turn 5: Orchestrator Final Verdict\nVerification passed. Task complete in 5 turns with 0 stalls.`
+  }
+];
+
+let simIdx = 0;
+function updateLedger() {
+  const item = LEDGER_STEPS[simIdx];
+  document.getElementById('taskLedgerContent').innerHTML = item.task.replace(/\n/g, '<br>');
+  document.getElementById('progressLedgerContent').innerHTML = item.progress.replace(/\n/g, '<br>');
+}
+
+document.getElementById('nextStepBtn').addEventListener('click', () => {
+  simIdx = (simIdx + 1) % LEDGER_STEPS.length;
+  updateLedger();
+});
+
+updateLedger();
+
+// Quiz Data
+const QUIZ_ITEMS = [
+  {
+    q: 'What is the role of the Orchestrator\'s Task Ledger in Magentic-One?',
+    options: [
+      'It stores git credentials and SSH keys',
+      'It tracks global goals, sub-tasks, and accumulated facts across the entire session (Outer Loop)',
+      'It logs every individual keystroke of the human user',
+      'It executes C++ binaries'
+    ],
+    correct: 1,
+    explain: 'The Task Ledger is part of the Orchestrator\'s outer loop, maintaining the high-level roadmap, verified facts, and sub-task statuses.'
+  },
+  {
+    q: 'How does Magentic-One detect that subagents are stuck in a dead-end loop?',
+    options: [
+      'By checking GPU temperature',
+      'Using a progress stall counter; if no measurable progress occurs over successive turns, a replanning reset is triggered',
+      'By waiting 24 hours',
+      'By having human engineers manually intervene'
+    ],
+    correct: 1,
+    explain: 'Magentic-One tracks stall counters in the Progress Ledger; if progress stagnates, the outer loop intervenes to revise the plan or clear noisy context.'
+  },
+  {
+    q: 'Which specialized agent in Magentic-One is responsible for web browsing?',
+    options: [
+      'FileSurfer',
+      'WebSurfer',
+      'TerminalSurfer',
+      'DOMParser'
+    ],
+    correct: 1,
+    explain: 'WebSurfer is the dedicated multimodal web browsing agent powered by Playwright and Chromium.'
+  },
+  {
+    q: 'What open-source multi-agent framework serves as the underlying substrate for Magentic-One?',
+    options: [
+      'LangChain Classic',
+      'AutoGen',
+      'Hugging Face Transformers',
+      'Haystack'
+    ],
+    correct: 1,
+    explain: 'Magentic-One was built and released by Microsoft Research as part of the AutoGen multi-agent ecosystem.'
+  },
+  {
+    q: 'On which challenging multimodal general assistant benchmark did Magentic-One demonstrate state-of-the-art multi-agent results?',
+    options: [
+      'GAIA (General AI Assistants)',
+      'ImageNet',
+      'MNIST',
+      'GLUE'
+    ],
+    correct: 0,
+    explain: 'Magentic-One achieved competitive SOTA results on the GAIA benchmark, outperforming previous single-agent and tool-augmented baselines.'
+  }
+];
+
+function renderQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  QUIZ_ITEMS.forEach((item, qIdx) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    const title = document.createElement('div');
+    title.className = 'quiz-q';
+    title.textContent = `${qIdx + 1}. ${item.q}`;
+    card.appendChild(title);
+
+    const optsDiv = document.createElement('div');
+    item.options.forEach((optText, optIdx) => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt';
+      btn.textContent = optText;
+      btn.addEventListener('click', () => {
+        const parent = btn.parentElement;
+        const all = parent.querySelectorAll('.quiz-opt');
+        all.forEach(b => b.disabled = true);
+        if (optIdx === item.correct) {
+          btn.classList.add('correct');
+        } else {
+          btn.classList.add('wrong');
+          all[item.correct].classList.add('correct');
+        }
+        explain.style.display = 'block';
+      });
+      optsDiv.appendChild(btn);
+    });
+    card.appendChild(optsDiv);
+
+    const explain = document.createElement('div');
+    explain.className = 'quiz-explain';
+    explain.textContent = `Explanation: ${item.explain}`;
+    card.appendChild(explain);
+
+    container.appendChild(card);
+  });
+}
+renderQuiz();
+
+// Nav toggle
+const navBtn = document.getElementById('navToggle');
+const mobMenu = document.getElementById('mobileMenu');
+navBtn.addEventListener('click', () => {
+  mobMenu.classList.toggle('open');
+});
+</script>
+</body>
+</html>
