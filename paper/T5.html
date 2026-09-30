@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T5: Text-to-Text Transfer Transformer — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the T5 paper, with demos for the text-to-text task switcher, the C4 cleaning pipeline, ablation findings, and the T5 model family.">
+<meta name="keywords" content="T5, text-to-text transfer transformer, Raffel, C4, Common Crawl, transfer learning, encoder-decoder, task prefixes, SuperGLUE, GLUE, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/T5.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="T5: Text-to-Text Transfer Transformer — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the T5 paper with practical intuition and demos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/T5.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="T5 — Interactive Guide">
+<meta name="twitter:description" content="Learn how one text-to-text framework unified all of NLP, with animations and interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#c4">C4</a>
+    <a class="nav-link" href="#ablations">Ablations</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+    <a class="nav-link" href="#takeaways">Takeaways</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">JMLR 2020</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#c4">C4</a>
+  <a href="#ablations">Ablations</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#takeaways">Takeaways</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Text-to-<em>Text</em><br>T5
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that reframed every NLP task as
+    plain text in, plain text out — one model, one objective, and a systematic
+    study of the entire transfer-learning design space.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/1910.10683" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">11B</div>
+      <div class="stat-label">Parameters (Largest)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">750GB</div>
+      <div class="stat-label">C4 Pre-Training Corpus</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">20+</div>
+      <div class="stat-label">NLP Tasks, One Format</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2019</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Task-Specific Models to <em>One Framework</em></h2>
+  <p class="section-desc">T5 arrived after years of transfer-learning one-upmanship. Every new paper changed the architecture, the objective, and the recipe — T5 stepped back and compared them all.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2013</div><div class="tl-title">word2vec (Mikolov et al.)</div><div class="tl-desc">Static word embeddings — one vector per word. Transfer learning meant initializing your model with better vectors.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2018</div><div class="tl-title">ULMFiT &amp; GPT-1</div><div class="tl-desc">The modern recipe lands: pre-train a language model on unlabeled text, then fine-tune it on your target task.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2018 · Oct</div><div class="tl-title">BERT (Devlin et al.)</div><div class="tl-desc">Masked LM over a bidirectional encoder. Pre-train once, fine-tune everywhere — but each task still needs its own output head.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2019 · Oct</div><div class="tl-title">🚀 T5 (Raffel et al.)</div><div class="tl-desc">One text-to-text framework for every task — plus a systematic study of architectures, objectives, corpora, and scale.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2021 →</div><div class="tl-title">FLAN &amp; Flan-T5</div><div class="tl-desc">Instruction tuning scales T5's task-prefix idea to thousands of phrased tasks — the direct lineage to chat-ready models.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Every NLP task — translation, classification, regression, QA, summarization — can be expressed as <span class="highlight">text in, text out</span>. Once every task speaks the same language, one model can learn them all, and every design choice can be compared on the same scale.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE T5 FRAMING</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          <span style="color:var(--amber);font-weight:600;">task prefix:</span> input text<br>→ <span style="color:var(--teal);font-weight:600;">output text</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">One format for translation, QA, classification, regression, and summarization alike.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem with <em>Transfer-Learning Chaos</em></h2>
+  <p class="section-desc">By 2019, transfer learning clearly worked — but nobody could say which ingredient was doing the work. Every paper changed several at once.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🔀</div>
+      <div class="problem-title">The Fragmented Landscape</div>
+      <ul class="problem-list">
+        <li>Each paper picks its own architecture, objective, corpus, and fine-tuning recipe</li>
+        <li>Results can't be compared — too many variables change at once</li>
+        <li>Task-specific heads: classifiers, span predictors, regression layers — one per task</li>
+        <li>Unclear which choice actually drives the reported gains</li>
+        <li>Scale, data, and training tricks get tangled into a single "recipe"</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🧭</div>
+      <div class="problem-title">T5's Unified Approach</div>
+      <ul class="problem-list">
+        <li>One framework: every task is text-to-text, no task-specific heads</li>
+        <li>Systematic ablations — each design axis tested under identical conditions</li>
+        <li>A shared measuring stick: same benchmarks, same budget, same format</li>
+        <li>Clear answers on architecture, objective, data, transfer, and scale</li>
+        <li>Everything learned feeds one final model: T5-11B</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Analogy — USB-C for NLP</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Before USB-C, every device shipped with its own charging plug — barrell tips, mini-USB, Lightning, proprietary docks. NLP in 2019 looked the same: every task came with a bespoke output head, loss, and training pipeline. T5 is the <span class="highlight">USB-C of NLP</span>: one port — plain text — for everything. Translation, sentiment scores, extractive answers, and summaries all plug into the identical interface, so upgrading the "charger" (the model) upgrades every device at once.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Core Idea — <em>Text-to-Text</em></h2>
+  <p class="section-desc">T5 casts every task as a sequence-to-sequence problem: a text instruction goes in, text comes out. Labels, answer spans, and even numbers become generable tokens.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">"translate English to German: That is good." → "Das ist gut."</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">task prefix</div><div class="fp-name">The instruction</div><div class="fp-desc">A short text command prepended to the input — "summarize:", "question:", "sst2 sentence:".</div></div>
+      <div class="formula-piece"><div class="fp-sym">input →</div><div class="fp-name">Text in</div><div class="fp-desc">The task input as plain text — a document, a question with context, a sentence pair.</div></div>
+      <div class="formula-piece"><div class="fp-sym">output</div><div class="fp-name">Text out</div><div class="fp-desc">The target, also plain text — a translation, a summary, an answer, a label, even a number like "3.8".</div></div>
+      <div class="formula-piece"><div class="fp-sym">1 loss</div><div class="fp-name">One objective</div><div class="fp-desc">The same cross-entropy loss trains every task. Nothing task-specific anywhere in the model.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — One Model, Five Task Formats</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Switch tasks and watch the same text-in → text-out pattern cover translation, summarization, QA, classification — and even regression.</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;" id="t2tTabs"></div>
+    <div style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:13px;color:var(--text2);line-height:2;white-space:pre-wrap;word-break:break-word;" id="t2tInput"></div>
+    <div style="display:flex;align-items:center;gap:8px;margin:0.6rem 0;">
+      <div style="font-family:var(--mono);font-size:16px;color:var(--amber);">↓</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">same model · same loss · no task-specific head</div>
+    </div>
+    <div style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;line-height:2;white-space:pre-wrap;word-break:break-word;" id="t2tOutput"></div>
+    <div id="t2tNote" style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:8px;"></div>
+  </div>
+
+  <div class="two-col" style="margin-top:2rem;">
+    <div class="card">
+      <div class="card-label">Task Prefixes — Conditioning by Text</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">How does one model know which job it's being asked to do? A short <span class="code-inline">prefix</span> prepended to the input: <span class="code-inline">translate English to German:</span>, <span class="code-inline">summarize:</span>, <span class="code-inline">question:</span>. During multi-task training the model learns to condition on them — the task signal lives in the text itself, not in extra parameters or a separate head.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">No More Special Heads</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">BERT bolted a classifier on top for each task; GPT added per-task output layers and alignment hacks. T5's decoder emits text directly, so class labels ("positive"), answer spans ("Paris"), and numeric scores ("3.8") all share one softmax over the vocabulary — the model "writes" its answers.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- C4 -->
+<section id="c4">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">C4 — The <em>Colossal</em> Clean Crawled Corpus</h2>
+  <p class="section-desc">Transfer learning runs on unlabeled text. T5 built its own: April 2019's Common Crawl snapshot, scrubbed down to roughly 750GB of clean English text.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🕸️ Raw material</div><div class="notice-text">Common Crawl, April 2019 — a massive snapshot of scraped web pages, mostly noisy HTML.</div></div>
+    <div class="notice-card"><div class="notice-title">🗣️ Natural-language detection</div><div class="notice-text">Language detection keeps pages that read as English natural language, dropping much of the machine-generated and code-heavy junk.</div></div>
+    <div class="notice-card"><div class="notice-title">⌨️ Code &amp; boilerplate removal</div><div class="notice-text">Pages containing curly braces are filtered out — a blunt but effective heuristic for scraping source code.</div></div>
+    <div class="notice-card"><div class="notice-title">🚫 Bad-word filtering</div><div class="notice-text">Any page containing a word from a public "bad words" blocklist is dropped wholesale.</div></div>
+    <div class="notice-card"><div class="notice-title">🧹 Deduplication &amp; hygiene</div><div class="notice-text">Duplicate lines within pages are removed; lines that don't end in terminal punctuation are discarded to avoid truncated fragments.</div></div>
+    <div class="notice-card"><div class="notice-title">📦 The result</div><div class="notice-text">~750GB of clean English text — orders of magnitude larger than Wikipedia-scale corpora.</div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Cleaning Pipeline</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A typical scraped page carries menus, code, and duplicates. Toggle the pipeline to see what survives C4's filters.</p>
+    <div style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;white-space:pre-wrap;word-break:break-word;min-height:170px;" id="c4Text"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:1rem;flex-wrap:wrap;">
+      <button class="btn-primary" id="c4Btn" type="button" style="font-size:13px;padding:8px 18px;">Run C4 Filters →</button>
+      <div id="c4Status" style="font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:600;"></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Pre-Training Corpus Sizes</div>
+      <div id="corpusChart"></div>
+      <p style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6;">C4 dwarfs the classic corpora — and its diversity (every topic on the web, not just encyclopedias) meant the model could train far longer without repeating itself.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Why a New Corpus?</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Wikipedia and books are clean but limited. When the paper's ablations compared pre-training corpora, <span class="highlight">bigger and more diverse kept winning</span>: Wikipedia-only pre-training lagged C4, and aggressively filtered "high-quality" subsets gave up too much diversity. For T5's goals — long training at scale — only the web was big enough.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABLATIONS -->
+<section id="ablations">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">The Ablation <em>Matrix</em></h2>
+  <p class="section-desc">T5's deepest contribution isn't a leaderboard number — it's a controlled study of the entire transfer-learning design space, with every variant scored on the same benchmarks.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">What the Systematic Study Found</div>
+    <table class="comp-table">
+      <thead><tr><th>Design Choice</th><th>What Was Compared</th><th>What Won</th></tr></thead>
+      <tbody>
+        <tr><td>Architecture</td><td>encoder-only · decoder-only · encoder-decoder</td><td class="comp-best">Encoder-decoder — bidirectional understanding plus autoregressive generation</td></tr>
+        <tr><td>Objective</td><td>causal LM · BERT-style MLM · prefix LM · span corruption</td><td class="comp-best">Masked / span-style objectives — causal LM lags on understanding tasks</td></tr>
+        <tr><td>Unlabeled data</td><td>C4 vs Wikipedia-scale and filtered variants</td><td class="comp-best">More, more-diverse data — bigger corpora consistently won</td></tr>
+        <tr><td>Training length</td><td>shorter vs longer pre-training</td><td class="comp-best">Longer training kept helping — no saturation in sight</td></tr>
+        <tr><td>Scale</td><td>60M → 11B parameters</td><td class="comp-best">Bigger models won consistently across every benchmark</td></tr>
+        <tr><td>Transfer method</td><td>task prefixes · multi-task training · alternative conditioning schemes</td><td class="comp-best">Task prefixes — the task signal stays in the text</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="formula-card">
+    <div class="formula-main">T5 = encoder-decoder + span corruption + C4 + task prefixes</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">architecture</div><div class="fp-name">Encoder-decoder</div><div class="fp-desc">The original Transformer shape: a bidirectional encoder reads, an autoregressive decoder writes.</div></div>
+      <div class="formula-piece"><div class="fp-sym">objective</div><div class="fp-name">Span corruption</div><div class="fp-desc">Mask contiguous spans of text and regenerate them with unique sentinel tokens — masked LM adapted to text-to-text.</div></div>
+      <div class="formula-piece"><div class="fp-sym">data</div><div class="fp-name">C4</div><div class="fp-desc">750GB of cleaned Common Crawl — scale and diversity beat curated, filtered corpora.</div></div>
+      <div class="formula-piece"><div class="fp-sym">transfer</div><div class="fp-name">Task prefixes</div><div class="fp-desc">Fine-tune multi-task on all benchmarks at once, each task distinguished only by its text prefix.</div></div>
+    </div>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">ARCHITECTURE</div><div class="result-score" style="color:var(--blue);">2-way</div><div class="result-label">encoder reads both directions, decoder generates</div></div>
+    <div class="result-card"><div class="result-model">OBJECTIVE</div><div class="result-score" style="color:var(--teal);">MLM ≈</div><div class="result-label">masked and prefix objectives tie; causal LM trails on understanding</div></div>
+    <div class="result-card"><div class="result-model">MORE TRAINING</div><div class="result-score" style="color:var(--purple);">↑</div><div class="result-label">more data and longer pre-training never stopped helping</div></div>
+    <div class="result-card"><div class="result-model">SCALE</div><div class="result-score" style="color:var(--amber);">↑↑</div><div class="result-label">parameters gave consistent gains across every benchmark</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Results — <em>State of the Art</em>, Systematically</h2>
+  <p class="section-desc">Plug the winning recipe into an 11B-parameter encoder-decoder, and it sets a new record on SuperGLUE — the hardest language-understanding benchmark of the era.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">SuperGLUE — Language Understanding at the Limit</div>
+    <table class="comp-table">
+      <thead><tr><th>System</th><th>Size</th><th>SuperGLUE</th><th>What Changed</th></tr></thead>
+      <tbody>
+        <tr><td>BERT-Large (2018)</td><td>340M</td><td>69.0</td><td>Encoder-only + masked LM + task-specific heads</td></tr>
+        <tr><td>RoBERTa (2019)</td><td>355M</td><td>~84–85</td><td>Same architecture, tuned recipe — more data, longer training</td></tr>
+        <tr><td class="comp-best">T5-11B (2019)</td><td>11B</td><td class="comp-best">88.9</td><td class="comp-best">Text-to-text + the ablation-selected recipe, at scale</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">88.9 was the best SuperGLUE score reported at the time — within sight of the human baseline. T5 also set a new best on GLUE (~89) and scored strong results across summarization, question answering, and translation — all from one model with no task-specific machinery.</p>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">SUPERGLUE (T5-11B)</div><div class="result-score" style="color:var(--amber);">88.9</div><div class="result-label">new leaderboard record at the time</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:99%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">GLUE BENCHMARK</div><div class="result-score" style="color:var(--teal);">~89</div><div class="result-label">new GLUE state of the art as well</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:96%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">TASK-SPECIFIC HEADS</div><div class="result-score" style="color:var(--blue);">0</div><div class="result-label">every task is plain text out — even regression</div></div>
+    <div class="result-card"><div class="result-model">TASKS IN ONE MODEL</div><div class="result-score" style="color:var(--purple);">20+</div><div class="result-label">translation, QA, summarization, GLUE &amp; more</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Chapter 06 — The T5 Family, in Practice</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Five checkpoints from laptop-scale to research-cluster scale. Toggle the axis to compare them fairly (log scale) or feel the true gap (linear).</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="scaleLinearBtn" type="button" style="font-size:12px;padding:6px 14px;">Linear</button>
+      <button class="btn-primary" id="scaleLogBtn" type="button" style="font-size:12px;padding:6px 14px;">Log</button>
+    </div>
+    <div id="familyChart"></div>
+    <div id="familyNote" style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:8px;"></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">"Turing NLP" — the 11B Model</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">At the time of release, T5-11B was the largest, most accurate language model of its kind — and it was shared with researchers through a request process rather than a public download. The smaller family sizes shipped alongside the code and the C4 recipe, making the whole pipeline reproducible.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Zero-Shot Task Transfer</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Because every task is just text in → text out, a multi-task T5 can attempt tasks it was never fine-tuned on — simply describe the task with a prefix and let the decoder write. The paper explores how far this "zero-shot" transfer reaches within the unified framework.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>One Format</em> to Rule Them All</h2>
+  <p class="section-desc">T5's text-to-text framing became the default way to think about task conditioning — and its ablation playbook became the standard way to build models.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🏷️ Task prefixes everywhere</div><div class="notice-text">"summarize:", "translate French to English:", "question:" — prefix conditioning became standard practice for multi-task models.</div></div>
+    <div class="notice-card"><div class="notice-title">🎓 FLAN &amp; Flan-T5 (2021–22)</div><div class="notice-text">Instruction tuning scaled T5's idea to thousands of tasks phrased as natural instructions — Flan-T5 became a staple open-source model.</div></div>
+    <div class="notice-card"><div class="notice-title">🧹 The ablation playbook</div><div class="notice-text">"Sweep every design axis, one variable at a time" became the norm for architecture, data, and scaling papers.</div></div>
+    <div class="notice-card"><div class="notice-title">🌐 C4 as infrastructure</div><div class="notice-text">The 750GB corpus became a standard pre-training dataset, powering follow-up research well beyond the original paper.</div></div>
+    <div class="notice-card"><div class="notice-title">🌍 mT5 &amp; seq2seq heirs</div><div class="notice-text">The encoder-decoder, text-to-text blueprint was extended to 100+ languages — the template for unified sequence-to-sequence models.</div></div>
+    <div class="notice-card"><div class="notice-title">🖼️ Beyond text</div><div class="notice-text">Unified input/output framing spread to images, audio, and beyond: one interface, many modalities.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the T5 paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Every NLP task — classification, regression, QA, summarization, translation — becomes text in, text out.</div>
+    <div class="card-sm">✅ Task prefixes ("translate English to German:", "summarize:") let one model serve many tasks with no architecture changes.</div>
+    <div class="card-sm">✅ C4: ~750GB of cleaned April 2019 Common Crawl — scale and diversity beat curated, filtered corpora.</div>
+    <div class="card-sm">✅ Ablations: encoder-decoder + span corruption won; more data, longer training, and more parameters kept helping.</div>
+    <div class="card-sm">✅ T5-11B set a new SuperGLUE record — 88.9, within sight of the human baseline — plus a new GLUE best (~89).</div>
+    <div class="card-sm">✅ The family ships in five sizes: 60M, 220M, 770M, 3B, and 11B parameters.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/1910.10683" target="_blank" rel="noopener noreferrer">"Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer"</a> (Raffel et al., 2019)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/1910.10683" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./BERT.html">BERT Guide</a>
+    <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
+    <a class="footer-link" href="./Attention_Is_All_You_Need.html">Transformer Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','core-idea','c4','ablations','results','impact','quiz','takeaways'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === TEXT-TO-TEXT TASK SWITCHER ===
+(function(){
+  const tasks={
+    translate:{label:'🌍 Translation',prefix:'translate English to German:',input:'That is good.',output:'Das ist gut.',note:'sequence-to-sequence translation — the "native" text-to-text task.'},
+    summarize:{label:'📝 Summarization',prefix:'summarize:',input:'(the full text of a long news article …)',output:'a one- or two-sentence summary of the article',note:'the model must compress the input, not copy it.'},
+    qa:{label:'❓ Question Answering',prefix:'question:',input:'What is the capital of France? context: Paris is the capital and largest city of France.',output:'Paris',note:'span-style answers become plain output text — no span predictor.'},
+    classify:{label:'😀 Classification',prefix:'sst2 sentence:',input:'This movie is great!',output:'positive',note:'class labels become generated words — no classifier head.'},
+    regress:{label:'📈 Regression',prefix:'stsb sentence1:',input:'Two children play on a swing. sentence2: Kids enjoy the playground.',output:'3.8',note:'even a similarity score is written out as text.'}
+  };
+  const tabsEl=document.getElementById('t2tTabs');const inEl=document.getElementById('t2tInput');const outEl=document.getElementById('t2tOutput');const noteEl=document.getElementById('t2tNote');
+  if(!tabsEl||!inEl||!outEl||!noteEl)return;
+  let current='translate';
+  function render(){
+    tabsEl.innerHTML=Object.keys(tasks).map(k=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===current?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===current?'var(--amber-dim)':'var(--bg3)'};color:${k===current?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._selectT2T('${k}')">${tasks[k].label}</button>`).join('');
+    const t=tasks[current];
+    const rest=t.input;
+    const sub=rest.indexOf('context:')>-1?'context:':(rest.indexOf('sentence2:')>-1?'sentence2:':null);
+    let restHtml;
+    if(sub){
+      const parts=rest.split(sub);
+      restHtml=`<span style="color:var(--text2);">${parts[0]}</span><span style="color:var(--blue);font-weight:600;">${sub}</span><span style="color:var(--text2);">${parts[1]}</span>`;
+    }else{
+      restHtml=`<span style="color:var(--text2);">${rest}</span>`;
+    }
+    inEl.innerHTML=`<span style="color:var(--amber);font-weight:600;">${t.prefix}</span> ${restHtml}`;
+    outEl.textContent=t.output;
+    noteEl.textContent='→ '+t.note;
+  }
+  window._selectT2T=function(k){current=k;render();};
+  render();
+})();
+
+// === C4 CLEANING DEMO ===
+(function(){
+  const el=document.getElementById('c4Text');const btn=document.getElementById('c4Btn');const st=document.getElementById('c4Status');
+  if(!el||!btn||!st)return;
+  const raw=[
+    'Home | About | Contact | Blog © 2019 ExampleSite',
+    'def clean_text(page): { return page.strip() }',
+    'Home | About | Contact | Blog © 2019 ExampleSite',
+    'Transfer learning has transformed NLP.',
+    'click here to subscribe!!! click here',
+    'Transfer learning has transformed NLP.',
+    'The encoder reads the source sequence'
+  ].join('\n');
+  const clean='Transfer learning has transformed NLP.\nThe encoder reads the source sequence.';
+  let filtered=false;
+  function render(){
+    el.textContent=filtered?clean:raw;
+    el.style.color=filtered?'var(--green)':'var(--text2)';
+    st.textContent=filtered?'✓ 2 lines kept — dropped menu boilerplate, code (curly braces), a duplicate line, and a non-sentence fragment':'7 lines of raw scrape — run the filters';
+    btn.textContent=filtered?'↺ Show Raw Scrape':'Run C4 Filters →';
+  }
+  btn.addEventListener('click',()=>{filtered=!filtered;render();});
+  render();
+})();
+
+// === CORPUS SIZE CHART ===
+(function(){const el=document.getElementById('corpusChart');if(!el)return;const data=[{label:'C4',gb:'750GB',pct:100,color:'#f59e0b'},{label:'Wikipedia',gb:'~26GB',pct:3.5,color:'#3b82f6'},{label:'BooksCorpus',gb:'~5GB',pct:0.7,color:'#14b8a6'}];el.innerHTML=data.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:86px;text-align:right;">${d.label}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${d.pct}%;min-width:3px;background:${d.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:56px;">${d.gb}</div></div>`).join('');})();
+
+// === T5 FAMILY SCALE DEMO ===
+(function(){
+  const el=document.getElementById('familyChart');const linBtn=document.getElementById('scaleLinearBtn');const logBtn=document.getElementById('scaleLogBtn');const noteEl=document.getElementById('familyNote');
+  if(!el||!linBtn||!logBtn||!noteEl)return;
+  const models=[{name:'T5-Small',params:60,disp:'60M',color:'#94a3b8'},{name:'T5-Base',params:220,disp:'220M',color:'#3b82f6'},{name:'T5-Large',params:770,disp:'770M',color:'#14b8a6'},{name:'T5-3B',params:3000,disp:'3B',color:'#a855f7'},{name:'T5-11B',params:11000,disp:'11B',color:'#f59e0b'}];
+  let mode='log';
+  const logMax=Math.log10(11001);
+  function render(){
+    el.innerHTML=models.map(m=>{
+      const pct=mode==='linear'?(m.params/11000*100):(Math.log10(m.params+1)/logMax*100);
+      return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:70px;text-align:right;">${m.name}</div><div style="flex:1;height:24px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${Math.max(pct,0.6)}%;min-width:3px;background:${m.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:46px;">${m.disp}</div></div>`;
+    }).join('');
+    linBtn.className=mode==='linear'?'btn-primary':'btn-outline';
+    logBtn.className=mode==='log'?'btn-primary':'btn-outline';
+    noteEl.textContent=mode==='linear'?'Linear axis: 11B is ~183× T5-Small — everything below 3B nearly vanishes.':'Log axis: each rung up the ladder is roughly 3–4× the previous size.';
+  }
+  linBtn.addEventListener('click',()=>{mode='linear';render();});
+  logBtn.addEventListener('click',()=>{mode='log';render();});
+  render();
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'What does "text-to-text" mean in T5?',opts:['Every NLP task is cast as input text → output text, handled by one model and one loss','The model only works on speech-to-text transcription','Inputs are text, but every task still needs its own output head','It refers strictly to translation between two languages'],correct:0,explain:'T5 frames every task — translation, summarization, QA, classification, even regression — as text in, text out. Labels, answers, and numbers are all generated as plain text, so one model and one cross-entropy loss cover everything.'},
+  {q:'What is C4?',opts:['~750GB of cleaned English text scraped from April 2019 Common Crawl','A 750GB dump of Wikipedia articles','A synthetic corpus generated by T5 during pre-training','A curated collection of published books'],correct:0,explain:'C4 (Colossal Clean Crawled Corpus) is April 2019 Common Crawl, filtered with heuristics — natural-language detection, bad-word filtering, code/boilerplate removal, and deduplication — down to roughly 750GB of clean English text.'},
+  {q:'Which architecture came out on top in T5’s systematic comparisons?',opts:['Decoder-only (GPT-style) language models','Encoder-only (BERT-style) models','Encoder-decoder (the original Transformer shape)','Recurrent LSTM networks'],correct:2,explain:'The encoder-decoder won: a bidirectional encoder for understanding plus an autoregressive decoder for generation — both abilities in one text-to-text model.'},
+  {q:'What is the role of a task prefix like "summarize:"?',opts:['It swaps in a task-specific output head','It tells the model which task to perform — the signal stays in the text','It is a special token that resets the decoder state','It switches the model from training to evaluation mode'],correct:1,explain:'Task prefixes are short text commands prepended to the input. The model learns to condition on them during multi-task training — no extra parameters, no architecture changes, no separate heads.'},
+  {q:'What headline result did T5-11B achieve on SuperGLUE?',opts:['69.0 — the same as BERT-Large','~75 — solid but mid-pack','88.9 — a new leaderboard record at the time','It was not evaluated on SuperGLUE'],correct:2,explain:'T5-11B scored 88.9 on SuperGLUE — the best score reported at the time and within sight of the human baseline — alongside a new GLUE best (~89), all with zero task-specific heads.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

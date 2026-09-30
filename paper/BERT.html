@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BERT: Pre-training of Deep Bidirectional Transformers — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the BERT paper, with visual demos for masked language modeling, bidirectional encoding, next sentence prediction, fine-tuning, and GLUE results.">
+<meta name="keywords" content="BERT, masked language modeling, bidirectional Transformer, pre-training, NLP, fine-tuning, GLUE, SQuAD, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/BERT.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="BERT: Pre-training of Deep Bidirectional Transformers — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the BERT paper with practical intuition and demos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/BERT.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BERT — Interactive Guide">
+<meta name="twitter:description" content="Learn how bidirectional pre-training changed NLP, with animations and interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#architecture">Architecture</a>
+    <a class="nav-link" href="#pretraining">Pre-Training</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">NAACL 2019</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#pretraining">Pre-Training</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    <em>Bidirectional</em> Transformers<br>BERT
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that introduced BERT — the deep bidirectionally
+    pre-trained Transformer that reached state-of-the-art on 11 NLP tasks with a single
+    model and one extra output layer.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">340M</div>
+      <div class="stat-label">Parameters (Large)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">11</div>
+      <div class="stat-label">NLP Tasks Conquered</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3.3B</div>
+      <div class="stat-label">Pre-Training Words</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2018</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Word Vectors to <em>BERT</em></h2>
+  <p class="section-desc">BERT arrived at the end of a five-year sprint in transfer learning for NLP. Here is the road that led there.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2013</div><div class="tl-title">word2vec (Mikolov et al.)</div><div class="tl-desc">Static word embeddings — one vector per word, learned with shallow networks. "bank" gets one meaning.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2017</div><div class="tl-title">Transformer (Vaswani et al.)</div><div class="tl-desc">Attention-only architecture. Fast, parallel, and expressive — but used as an encoder-decoder for translation.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2018 · Feb</div><div class="tl-title">ELMo (Peters et al.)</div><div class="tl-desc">Contextual embeddings from a bidirectional LSTM. "bank" finally changed meaning with the sentence.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2018 · Jun</div><div class="tl-title">GPT-1 (Radford et al.)</div><div class="tl-desc">Generative pre-training on a left-to-right Transformer decoder + task-specific fine-tuning. Unidirectional.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2018 · Oct</div><div class="tl-title">🚀 BERT (Devlin et al.)</div><div class="tl-desc">Pre-train a Transformer <em>encoder</em> with masked language modeling. Deep bidirectionality at scale.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2019 →</div><div class="tl-title">RoBERTa, ALBERT, ELECTRA…</div><div class="tl-desc">The "BERTology" era: better training recipes, smaller and faster variants, and BERT in Google Search.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Language understanding is <span class="highlight">deeply bidirectional</span>. To predict the masked word in "I went to the ___ to deposit money", you need both the left context ("went to the") and the right context ("to deposit money"). Models that only read left-to-right are solving the task half-blind.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">CONTEXT NEEDED FOR THE MASK</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          <span style="color:var(--blue);">I went to the</span> <span style="background:var(--amber-dim);color:var(--amber);padding:2px 8px;border-radius:6px;font-weight:600;">[MASK]</span> <span style="color:var(--teal);">to deposit money</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">Blue = left context · Teal = right context · BERT uses both.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem with <em>One-Way</em> Reading</h2>
+  <p class="section-desc">Before BERT, the best pre-trained language models read text strictly left-to-right — or stitched together shallow halves. Both approaches crippled context.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">⬅️</div>
+      <div class="problem-title">Unidirectional Pre-Training</div>
+      <ul class="problem-list">
+        <li>GPT-style models condition only on previous tokens</li>
+        <li>Masked words can never use future context</li>
+        <li>Left-to-right "right-context" predictions are weak</li>
+        <li>Fine-tuning is suboptimal for token-level tasks like QA</li>
+        <li>One direction = half the information, always</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">↔️</div>
+      <div class="problem-title">BERT's Solution</div>
+      <ul class="problem-list">
+        <li>Mask random tokens, then predict them from BOTH sides</li>
+        <li>Deep Transformer encoder, fully bidirectional</li>
+        <li>One pre-trained model, one added layer per task</li>
+        <li>State-of-the-art on 11 tasks with minimal task engineering</li>
+        <li>Pre-training learns from unlabeled text at internet scale</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Why Direction Matters</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">The word "bank" is ambiguous. Toggle what a model is allowed to see and watch the prediction flip.</p>
+    <div style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:13px;color:var(--text2);line-height:2;margin-bottom:1rem;" id="dirDemoSentence"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="dirLeftBtn" type="button" style="font-size:13px;padding:8px 18px;">Left-Only (GPT-style)</button>
+      <button class="btn-outline" id="dirBothBtn" type="button" style="font-size:13px;padding:8px 18px;">Both Sides (BERT)</button>
+    </div>
+    <div id="dirDemoResult" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;min-height:22px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Core Idea — <em>Masked Language Modeling</em></h2>
+  <p class="section-desc">BERT corrupts the input by masking words, then learns to reconstruct them. It trains on unlabeled text — a task that generates itself, at any scale.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">Input:  "The capital of France is [MASK]."<br>Target: "[MASK] → Paris"</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">[MASK]</div><div class="fp-name">Masked Token</div><div class="fp-desc">15% of tokens are selected for corruption in each sequence.</div></div>
+      <div class="formula-piece"><div class="fp-sym">80%</div><div class="fp-name">→ [MASK]</div><div class="fp-desc">80% of selected tokens are replaced with the mask token.</div></div>
+      <div class="formula-piece"><div class="fp-sym">10%</div><div class="fp-name">→ random</div><div class="fp-desc">10% are replaced with a random vocabulary word.</div></div>
+      <div class="formula-piece"><div class="fp-sym">10%</div><div class="fp-name">→ keep</div><div class="fp-desc">10% stay unchanged — the model must stay calibrated on real text.</div></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">Task 1 — Masked LM (MLM)</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">A cloze test, at scale. BERT sees both directions for every masked position, so every layer of the encoder can exchange information across the whole sentence. MLM turns the entire web into a supervised dataset for free.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Task 2 — Next Sentence Prediction (NSP)</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Is sentence B the actual next sentence after A, or a random one? 50/50 construction. NSP teaches sentence-pair relationships for QA and natural language inference. Later research (RoBERTa) showed its value is limited — but it was part of the original recipe.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Masked Token Prediction</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a sentence, run the "prediction", and see the candidate distribution a bidirectional model would produce.</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;" id="mlmTabs"></div>
+    <div id="mlmPrompt" style="font-family:var(--mono);font-size:13px;color:var(--text2);line-height:2;background:var(--bg3);padding:1rem;border-radius:var(--radius);white-space:pre-line;"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:1rem;">
+      <button class="btn-primary" id="mlmRunBtn" type="button" style="font-size:13px;padding:8px 18px;">Predict Mask →</button>
+      <div id="mlmResult" style="font-family:var(--mono);font-size:14px;color:var(--amber);font-weight:600;"></div>
+    </div>
+    <div id="mlmBars" style="margin-top:1rem;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">BERT <em>Architecture</em></h2>
+  <p class="section-desc">The Transformer encoder from "Attention Is All You Need", stripped of the decoder and scaled into two sizes: Base and Large.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Architecture Overview</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:8px;">
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">🧱</div><div style="font-weight:600;font-size:14px;">Encoder-Only</div><div style="font-size:12px;color:var(--text2);">Full self-attention, no causal mask, no decoder.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">⬛</div><div style="font-weight:600;font-size:14px;">[CLS] + [SEP]</div><div style="font-size:12px;color:var(--text2);">Special tokens for classification and sentence pairs.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">📉</div><div style="font-weight:600;font-size:14px;">WordPiece</div><div style="font-size:12px;color:var(--text2);">30,000-token subword vocabulary from GPT-style BPE era.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">📏</div><div style="font-weight:600;font-size:14px;">512 Tokens</div><div style="font-size:12px;color:var(--text2);">Fixed maximum input length, position + segment embeddings.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">⚡</div><div style="font-weight:600;font-size:14px;">GELU</div><div style="font-size:12px;color:var(--text2);">Gaussian Error Linear Unit activations, layer norm everywhere.</div></div>
+    </div>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">BERT-BASE</div>
+      <div class="result-score" style="color:var(--blue);">110M</div>
+      <div class="result-label">parameters</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:32%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">12 layers · 768 hidden · 12 heads</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">BERT-LARGE</div>
+      <div class="result-score" style="color:var(--amber);">340M</div>
+      <div class="result-label">parameters</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">24 layers · 1024 hidden · 16 heads</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">GPT-1 (reference)</div>
+      <div class="result-score" style="color:var(--text3);">117M</div>
+      <div class="result-label">parameters</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--text3);width:34%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">12 layers · 768 hidden · 12 heads (decoder)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Input Representation</div>
+    <div style="font-family:var(--mono);font-size:13px;color:var(--text2);line-height:2.2;background:var(--bg3);padding:1rem;border-radius:var(--radius);">
+      Input&nbsp;=&nbsp;<span style="color:var(--blue);">TokenEmbedding</span> + <span style="color:var(--teal);">PositionEmbedding</span> + <span style="color:var(--purple);">SegmentEmbedding</span><br>
+      <span style="color:var(--text3);">[CLS] the capital of france is  [MASK]  [SEP] my cat is cute [SEP]</span><br>
+      <span style="color:var(--text3);">E&nbsp;&nbsp;&nbsp;&nbsp;E E E E E E E E E&nbsp;&nbsp;&nbsp;E&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;E E E E E E&nbsp;&nbsp;&nbsp;E&nbsp;&nbsp;&nbsp;&nbsp;— segment A = 0s, segment B = 1s</span>
+    </div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-top:1rem;">Every token is the sum of three embeddings. The <span class="code-inline">[CLS]</span> token's final hidden state becomes the sentence (or sentence-pair) representation for classification tasks; token-level outputs feed span tasks like QA. That's it — the same encoder, no task-specific architecture.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRE-TRAINING -->
+<section id="pretraining">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Pre-Training at <em>Scale</em></h2>
+  <p class="section-desc">Two objectives, two corpora, no labels. Everything BERT "knows" about language comes from this single unlabeled pass.</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">📚 BooksCorpus</div><div class="notice-text">800M words of clean, continuous narrative text — 11,038 unpublished books.</div></div>
+    <div class="notice-card"><div class="notice-title">📖 English Wikipedia</div><div class="notice-text">2,500M words — lists, tables, and headers stripped, prose kept.</div></div>
+    <div class="notice-card"><div class="notice-title">🔢 ~3.3B words total</div><div class="notice-text">Roughly 40 epochs over the corpus during training — about 131B tokens seen.</div></div>
+    <div class="notice-card"><div class="notice-title">⚙️ 4 TPU days (Base)</div><div class="notice-text">1M steps, batch 256 sequences of 512 tokens, Adam 1e-4, warmup 10K. Large: 4 days on 16 TPUs.</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The 80 / 10 / 10 Rule</div>
+      <div id="maskRuleChart"></div>
+      <p style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6;">The 80/10/10 split keeps the model from believing every position could be masked, and keeps representations sharp on unmasked tokens. Fine-tuning inputs never contain <span class="code-inline">[MASK]</span> — this mismatch is the cost of deep bidirectionality.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Ablations — What Actually Mattered</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>NSP on/off:</strong> removing NSP hurt QQP, MNLI, and SQuAD scores modestly (RoBERTa later removed it entirely with more data — and improved).</li>
+        <li><strong>Longer training:</strong> more steps, more data, longer sequences consistently helped — gains had not saturated.</li>
+        <li><strong>Model size:</strong> BERT-Large beat Base on every single task; capacity was still the binding constraint.</li>
+        <li><strong>MLM vs LTR:</strong> left-to-right-only pre-training was far worse on token-level tasks (SQuAD), and even hurt sentence-level tasks.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FINE-TUNING + RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Fine-Tuning — One Model, <em>Eleven Tasks</em></h2>
+  <p class="section-desc">Swap in a single linear layer, fine-tune for a few hours on a TPU, and beat every task-specific architecture of the era.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">GLUE & Benchmark Results (single models unless noted)</div>
+    <table class="comp-table">
+      <thead><tr><th>System</th><th>Score</th><th>Task</th></tr></thead>
+      <tbody>
+        <tr><td>Previous best (ensemble era)</td><td>72.8</td><td>GLUE benchmark</td></tr>
+        <tr><td>OpenAI GPT</td><td>72.8</td><td>GLUE benchmark</td></tr>
+        <tr><td class="comp-best">BERT-Base</td><td>79.6</td><td>GLUE benchmark</td></tr>
+        <tr><td class="comp-best">BERT-Large</td><td class="comp-best">80.5</td><td class="comp-best">GLUE benchmark (+7.7 points)</td></tr>
+        <tr><td>ELMo / BiLSTM era</td><td>~85.8 F1</td><td>SQuAD 1.1 (QA)</td></tr>
+        <tr><td class="comp-best">BERT-Large (single)</td><td>90.9 F1</td><td>SQuAD 1.1 (QA)</td></tr>
+        <tr><td class="comp-best">BERT-Large (ensemble)</td><td>93.2 F1</td><td>SQuAD 1.1 — human level</td></tr>
+        <tr><td class="comp-best">BERT-Large</td><td>86.3</td><td>SWAG (commonsense)</td></tr>
+        <tr><td class="comp-best">BERT-Large</td><td>92.8 F1</td><td>CoNLL-2003 NER</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">BERT reached a new state of the art on all 11 tasks evaluated in the paper — sentence-level and token-level, with the same pre-trained weights.</p>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">FINE-TUNING COST</div><div class="result-score" style="color:var(--amber);">hours</div><div class="result-label">on a single TPU vs months of task engineering</div></div>
+    <div class="result-card"><div class="result-model">TASK-SPECIFIC PARAMS</div><div class="result-score" style="color:var(--blue);">1</div><div class="result-label">linear output layer per task</div></div>
+    <div class="result-card"><div class="result-model">STEPS TO BEAT SOTA</div><div class="result-score" style="color:var(--teal);">2–4</div><div class="result-label">epochs of fine-tuning, typically</div></div>
+    <div class="result-card"><div class="result-model">MNLI ACCURACY</div><div class="result-score" style="color:var(--purple);">86.7</div><div class="result-label">BERT-Large, vs 82.1 for previous best</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>BERTology</em></h2>
+  <p class="section-desc">BERT reframed NLP: pre-train bidirectionally once, fine-tune everywhere. An entire research literature grew from it.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🚀 RoBERTa (2019)</div><div class="notice-text">Same architecture, better recipe: more data, longer training, dynamic masking, no NSP.</div></div>
+    <div class="notice-card"><div class="notice-title">🔍 ALBERT (2019)</div><div class="notice-text">Parameter sharing across layers cut parameters drastically at similar quality.</div></div>
+    <div class="notice-card"><div class="notice-title">⚡ DistilBERT (2019)</div><div class="notice-text">Knowledge distillation made BERT 40% smaller, 60% faster, retaining ~97% quality.</div></div>
+    <div class="notice-card"><div class="notice-title">🎯 ELECTRA (2020)</div><div class="notice-text">Replaced masking with "replaced-token detection" — learn from every position, not 15%.</div></div>
+    <div class="notice-card"><div class="notice-title">🌐 Google Search (2019)</div><div class="notice-text">BERT was deployed in Google Search — reportedly touching ~1 in 10 English US queries at launch.</div></div>
+    <div class="notice-card"><div class="notice-title">🖼️ Beyond text</div><div class="notice-text">The masked-modeling recipe jumped to vision (ViT, MAE), audio, and protein sequences.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the BERT paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Deep bidirectionality: masked LM lets every layer see both left and right context.</div>
+    <div class="card-sm">✅ Pre-training = masked LM + next sentence prediction on 3.3B words of unlabeled text.</div>
+    <div class="card-sm">✅ One Transformer encoder, two sizes: Base (110M) and Large (340M).</div>
+    <div class="card-sm">✅ Fine-tuning adds a single output layer — hours of TPU time per task.</div>
+    <div class="card-sm">✅ State of the art on all 11 tasks evaluated, including GLUE 80.5 and SQuAD 93.2 (F1, ensemble).</div>
+    <div class="card-sm">✅ The 80/10/10 masking rule, [CLS] token, and segment embeddings became standard vocabulary.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener noreferrer">"BERT: Pre-training of Deep Bidirectional Transformers"</a> (Devlin et al., 2018)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Attention_Is_All_You_Need.html">Transformer Guide</a>
+    <a class="footer-link" href="./GPT_2.html">GPT-2 Guide</a>
+    <a class="footer-link" href="./T5.html">T5 Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','core-idea','architecture','pretraining','results','impact','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === DIRECTION DEMO ===
+(function(){
+  const sentEl=document.getElementById('dirDemoSentence');
+  const resEl=document.getElementById('dirDemoResult');
+  if(!sentEl||!resEl)return;
+  const words=['I','went','to','the','bank','to','deposit','my','money.'];
+  const idx=4; // "bank"
+  function render(mode){
+    sentEl.innerHTML=words.map((w,i)=>{
+      let style='';
+      if(i===idx){style='background:var(--amber-dim);color:var(--amber);padding:2px 8px;border-radius:6px;font-weight:600;';}
+      else if(mode==='left'&&i<idx){style='color:var(--blue);font-weight:600;';}
+      else if(mode==='both'){style='color:'+(i<idx?'var(--blue)':'var(--teal)')+';font-weight:600;';}
+      else{style='color:var(--text3);opacity:0.45;';}
+      return `<span style="${style}">${w}</span>`;
+    }).join(' ');
+    resEl.textContent = mode==='left'
+      ? '→ prediction: "river"?? Left-only context is ambiguous — no signal for the financial sense. ✗'
+      : '→ prediction: "bank" (financial institution) — right context "to deposit money" disambiguates. ✓';
+  }
+  document.getElementById('dirLeftBtn').addEventListener('click',()=>render('left'));
+  document.getElementById('dirBothBtn').addEventListener('click',()=>render('both'));
+  render('both');
+})();
+
+// === MASK RULE CHART (80/10/10) ===
+(function(){const el=document.getElementById('maskRuleChart');if(!el)return;const data=[{label:'→  $MASK$',pct:80,color:'#f59e0b'},{label:'→ random',pct:10,color:'#3b82f6'},{label:'→ keep',pct:10,color:'#14b8a6'}];el.innerHTML=data.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:84px;text-align:right;">${d.label}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${d.pct}%;background:${d.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:38px;">${d.pct}%</div></div>`).join('');})();
+
+// === MLM DEMO ===
+(function(){
+  const tasks={
+    paris:{label:'🌍 Geography',prompt:'The capital of France is  $.',answer:'Paris',cands:[{w:'Paris',p:91},{w:'Lyon',p:3},{w:'Marseille',p:2},{w:'Berlin',p:1}]},
+    coffee:{label:'☕ Everyday',prompt:'She poured the coffee into her  $.',answer:'cup',cands:[{w:'cup',p:74},{w:'mug',p:18},{w:'saucer',p:4},{w:'bowl',p:2}]},
+    dog:{label:'🐕 Commonsense',prompt:'The  $ barked loudly at the mailman.',answer:'dog',cands:[{w:'dog',p:88},{w:'puppy',p:6},{w:'cat',p:3},{w:'fox',p:1}]}
+  };
+  const tabsEl=document.getElementById('mlmTabs');const promptEl=document.getElementById('mlmPrompt');const resultEl=document.getElementById('mlmResult');const barsEl=document.getElementById('mlmBars');const runBtn=document.getElementById('mlmRunBtn');
+  if(!tabsEl||!promptEl) return;
+  let current='paris';
+  function render(){
+    tabsEl.innerHTML=Object.keys(tasks).map(k=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===current?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===current?'var(--amber-dim)':'var(--bg3)'};color:${k===current?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._selectTask('${k}')">${tasks[k].label}</button>`).join('');
+    promptEl.textContent=tasks[current].prompt;
+    resultEl.textContent='';barsEl.innerHTML='';
+  }
+  window._selectTask=function(k){current=k;render();};
+  runBtn.addEventListener('click',()=>{
+    const t=tasks[current];
+    resultEl.textContent='✓ '+t.answer;
+    barsEl.innerHTML=t.cands.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:80px;text-align:right;">${d.w}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${d.p}%;background:${d.p>50?'#f59e0b':'#94a3b8'};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:42px;">${d.p}%</div></div>`).join('');
+  });
+  render();
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'What are the two pre-training tasks used by BERT?',opts:['Masked language modeling and next sentence prediction','Translation and summarization','Left-to-right language modeling and question answering','Contrastive learning and denoising autoencoding'],correct:0,explain:'BERT pre-trains with (1) Masked LM — predict randomly masked tokens using both directions, and (2) Next Sentence Prediction — decide if sentence B truly follows sentence A.'},
+  {q:'How many parameters does BERT-Base have?',opts:['12 million','110 million','340 million','1.5 billion'],correct:1,explain:'BERT-Base has 110M parameters (12 layers, 768 hidden, 12 heads). BERT-Large scales to 340M (24 layers, 1024 hidden, 16 heads).'},
+  {q:'What is the key architectural difference between BERT and GPT-1?',opts:['BERT uses LSTM layers instead of attention','BERT is bidirectional (encoder), GPT-1 is left-to-right (decoder)','BERT has no pre-training objective','GPT-1 cannot be fine-tuned'],correct:1,explain:'GPT-1 pre-trains a unidirectional Transformer decoder (left context only). BERT pre-trains a bidirectional Transformer encoder with masked tokens, so every position sees the full sentence.'},
+  {q:'In the 80/10/10 masking rule, what happens to the 10% "keep" tokens?',opts:['They are deleted from the input','They are replaced with [CLS]','They stay unchanged but are still predicted','They are duplicated'],correct:2,explain:'10% of selected tokens remain unchanged — the model must still predict them. This biases representations toward real (unmasked) tokens, which is what fine-tuning sees.'},
+  {q:'What headline result did BERT-Large achieve on GLUE?',opts:['72.8 — matching OpenAI GPT','80.5 — a 7.7 point absolute jump over the previous best','92.8 on NER only','It did not reach state of the art on GLUE'],correct:1,explain:'BERT-Large scored 80.5 on GLUE, 7.7 points above the previous best system, and reached a new state of the art on all 11 tasks evaluated in the paper.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

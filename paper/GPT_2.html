@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPT-2: Language Models are Unsupervised Multitask Learners — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the GPT-2 paper, with working demos for zero-shot prompt switching, byte-level BPE tokenization, the 117M-to-1.5B model family, and zero-shot benchmark results.">
+<meta name="keywords" content="GPT-2, zero-shot learning, unsupervised multitask learning, language modeling, WebText, byte-level BPE, decoder-only Transformer, OpenAI, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/GPT_2.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="GPT-2: Language Models are Unsupervised Multitask Learners — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the GPT-2 paper with practical intuition and demos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/GPT_2.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GPT-2 — Interactive Guide">
+<meta name="twitter:description" content="Learn how one big next-token predictor learned to translate, summarize, and answer questions zero-shot, with interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#webtext">WebText</a>
+    <a class="nav-link" href="#architecture">Architecture</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+    <a class="nav-link" href="#takeaways">Takeaways</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">OpenAI 2019</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#webtext">WebText</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#takeaways">Takeaways</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    <em>Unsupervised</em> Multitask Learners<br>GPT-2
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that showed a language model trained only to
+    predict the next token on web text can learn to perform downstream tasks
+    <span class="highlight">zero-shot</span> — no supervision, no labels, no task-specific training.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">1.5B</div>
+      <div class="stat-label">Parameters (XL)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">40GB</div>
+      <div class="stat-label">WebText Training Data</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">8M</div>
+      <div class="stat-label">Documents in WebText</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2019</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Fine-Tuning to <em>Zero-Shot</em></h2>
+  <p class="section-desc">GPT-2 is a link in a chain: the Transformer made scale possible, GPT-1 and BERT proved that pre-training transfers — and GPT-2 made the radical bet that scale alone is enough.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2017</div><div class="tl-title">Transformer (Vaswani et al.)</div><div class="tl-desc">Attention-only architecture replaces recurrence — fast, parallel, and ready to scale.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2018 · Jun</div><div class="tl-title">GPT-1 (Radford et al.)</div><div class="tl-desc">A 117M-parameter decoder pre-trained on unlabeled text, then <em>fine-tuned per task</em>. Transfer learning works — but every task still needs labels.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2018 · Oct</div><div class="tl-title">BERT (Devlin et al.)</div><div class="tl-desc">A bidirectional encoder with masked LM, new state of the art on 11 tasks — but again, fine-tuning on labeled data for each one.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2019 · Feb</div><div class="tl-title">🚀 GPT-2 (Radford et al.)</div><div class="tl-desc">1.5B parameters trained on 40GB of web text. No fine-tuning at all: every task is attempted <em>zero-shot</em> by the raw language model.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2020</div><div class="tl-title">GPT-3 (Brown et al.)</div><div class="tl-desc">175B parameters — the scaling bet pays off with <em>few-shot</em> prompting and still no gradient updates.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2022 →</div><div class="tl-title">The ChatGPT era</div><div class="tl-desc">Instruction-tuned descendants of the GPT line bring conversational LLMs to everyone.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Language modeling looks like one narrow task — guess the next word. But to do it well across the entire web, a model must absorb <span class="highlight">translation pairs, Q&amp;A pages, summaries, facts, and reasoning patterns</span> buried in the text. GPT-2's bet: a good-enough next-token predictor, trained on diverse-enough data, becomes an <span class="highlight">unsupervised multitask learner</span>.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">ONE OBJECTIVE, MANY ABILITIES</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          <span style="color:var(--blue);">"The capital of France is"</span> → <span style="color:var(--amber);">" Paris"</span><br>
+          <span style="color:var(--blue);">"translate to french: cheese →"</span> → <span style="color:var(--amber);">" fromage"</span><br>
+          <span style="color:var(--blue);">"(article) … TL;DR:"</span> → <span style="color:var(--amber);">" a one-line summary"</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">All three are just next-token prediction — none of them is a labeled task.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem — <em>Labels Don't Scale</em></h2>
+  <p class="section-desc">In 2019, NLP's best systems were specialists: one architecture, one labeled dataset, one task at a time. GPT-2's authors made the opposite bet — that the best path is one general model trained on raw text alone.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🧩</div>
+      <div class="problem-title">Supervised, Task-Specific NLP</div>
+      <ul class="problem-list">
+        <li>Every task needs its own hand-labeled dataset</li>
+        <li>Every task often needs its own architecture or output head</li>
+        <li>Models stay narrow — a QA model cannot summarize</li>
+        <li>Annotation cost grows with every new task and language</li>
+        <li>The web's text is mostly unlabeled — and mostly unusable</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🌐</div>
+      <div class="problem-title">GPT-2's Bet</div>
+      <ul class="problem-list">
+        <li>One model for all tasks — a single language model</li>
+        <li>No labels: it learns from raw web text only</li>
+        <li>Zero-shot task transfer — no fine-tuning, no examples</li>
+        <li>Tasks are expressed in plain natural language</li>
+        <li>More data + more parameters ⇒ more abilities</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">The Analogy</div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;">Think of a student who reads the entire internet — forums, news, stories, Q&amp;A pages, translation sites — but is never given a single quiz or lesson plan. When you later ask them to translate a sentence or summarize an article, they simply… can. Not because anyone taught them those tasks, but because <span class="highlight">all the practice they ever needed was already inside the text</span>. GPT-2 is that student: 8 million documents of raw reading, zero homework assignments.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Core Idea — <em>Zero-Shot Task Transfer</em></h2>
+  <p class="section-desc">Condition a language model on text that describes the task — no examples, no fine-tuning, no special tokens — and let its continuation be the answer.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">p(output | input) = ∏ₜ p(outputₜ | input, output₁ … outputₜ₋₁)</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">input</div><div class="fp-name">Task as Text</div><div class="fp-desc">A context plus a question, an article plus "TL;DR:", or a translation request — all written in plain language.</div></div>
+      <div class="formula-piece"><div class="fp-sym">∏ₜ</div><div class="fp-name">Autoregressive</div><div class="fp-desc">The output is generated one token at a time, each conditioned on everything before it.</div></div>
+      <div class="formula-piece"><div class="fp-sym">p(output|input)</div><div class="fp-name">One Model, All Tasks</div><div class="fp-desc">Every task reduces to conditional text continuation — same network, same weights.</div></div>
+      <div class="formula-piece"><div class="fp-sym">θ frozen</div><div class="fp-name">Zero-Shot</div><div class="fp-desc">No gradient updates, no demonstrations, no per-task parameters — inference only.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Zero-Shot Prompting</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a task, send the prompt to the (simulated) model, and watch the same frozen weights answer all three. Nothing is fine-tuned between tasks.</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;" id="zsTabs"></div>
+    <div id="zsPrompt" style="font-family:var(--mono);font-size:13px;color:var(--text2);line-height:2;background:var(--bg3);padding:1rem;border-radius:var(--radius);white-space:pre-line;overflow-x:auto;"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:1rem;flex-wrap:wrap;">
+      <button class="btn-primary" id="zsRunBtn" type="button" style="font-size:13px;padding:8px 18px;">Generate →</button>
+      <div id="zsResult" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;min-height:22px;"></div>
+    </div>
+    <div id="zsNote" style="font-size:12px;color:var(--text3);margin-top:10px;min-height:18px;"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:1rem;">
+      <span class="pill pill-amber">0 gradient updates</span>
+      <span class="pill pill-blue">0 examples</span>
+      <span class="pill pill-green">0 special tokens</span>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:2rem;">
+    <div class="card">
+      <div class="card-label">Why It Works — Tasks Occur Naturally</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The web is full of task-shaped text: Q&amp;A forums, translation pages, articles followed by abstracts, questions followed by answers. While modeling WebText, GPT-2 sees millions of such patterns and learns the mapping from question to answer as a <span class="highlight">side effect</span> of predicting text. Nobody labels anything — the supervision is free.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">What It Replaces</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The classic pipeline — dataset → architecture → training → evaluation, repeated per task — collapses into a single step: write the task down and sample from the model. Task engineering becomes <span class="highlight">prompt engineering</span>, the skill that defines the modern LLM era.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WEBTEXT -->
+<section id="webtext">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">WebText — <em>Quality Over Quantity</em></h2>
+  <p class="section-desc">GPT-2's abilities come from its corpus. WebText is a quality-filtered, human-curated snapshot of the web — not a raw dump.</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🗳️ Karma ≥ 3</div><div class="notice-text">Only outbound Reddit links that received at least 3 upvotes — a cheap, massive human quality filter.</div></div>
+    <div class="notice-card"><div class="notice-title">🌐 ~8M Documents</div><div class="notice-text">Pages scraped from those links — articles, discussions, stories, and reference material.</div></div>
+    <div class="notice-card"><div class="notice-title">💾 ~40GB of Text</div><div class="notice-text">After cleaning and deduplication — far smaller than a raw crawl, far higher in signal.</div></div>
+    <div class="notice-card"><div class="notice-title">🧹 Deduplicated</div><div class="notice-text">Near-duplicate documents removed, so the model learns from variety rather than repetition.</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">WebText — The Filtered Web</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Curated, implicitly, by millions of Reddit voters</li>
+        <li>~40GB across ~8M documents, deduplicated</li>
+        <li>High signal-to-noise: pages real people chose to share</li>
+        <li>A like-for-like model trained on it beats the same model trained on raw CommonCrawl</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Raw CommonCrawl — The Alternative</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>A raw dump of the entire crawled web</li>
+        <li>Vast in scale, but full of noise, boilerplate, and spam</li>
+        <li>Curation by machines that cannot judge quality</li>
+        <li>In 2019, quality — not quantity — was the binding constraint</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:2rem;">
+    <div class="card-label">Why This Matters</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">The corpus is the curriculum. When the same small language model is trained on WebText versus raw CommonCrawl, the WebText version learns better — <span class="highlight">upvotes are a free quality label</span>. The lesson stuck: nearly every large model since has invested heavily in data filtering, and "what text you train on" became as important as "how many parameters you have."</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Architecture — <em>One Decoder, Four Sizes</em></h2>
+  <p class="section-desc">No new architecture: GPT-2 is the original Transformer decoder freed from its encoder, scaled up in a family of four, plus a tokenizer fix that lets it read anything.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Architecture Overview</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:8px;">
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">🔁</div><div style="font-weight:600;font-size:14px;">Decoder-Only</div><div style="font-size:12px;color:var(--text2);">Stacked masked (causal) self-attention blocks — each token attends only to its past.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">📏</div><div style="font-weight:600;font-size:14px;">1024-Token Context</div><div style="font-size:12px;color:var(--text2);">The model conditions on up to 1024 tokens when predicting the next one.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">🧮</div><div style="font-weight:600;font-size:14px;">Pre-LayerNorm</div><div style="font-size:12px;color:var(--text2);">Layer norm moved to each block's input — the tweak that made 48-layer training stable.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">🔤</div><div style="font-weight:600;font-size:14px;">Byte-Level BPE</div><div style="font-size:12px;color:var(--text2);">A 50,257-token vocabulary built from raw bytes — any Unicode text, never an unknown-token.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">🎯</div><div style="font-weight:600;font-size:14px;">One Objective</div><div style="font-size:12px;color:var(--text2);">Predict the next token — no masks, no heads, no auxiliary losses.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">The GPT-2 Model Family</div>
+    <table class="comp-table">
+      <thead><tr><th>Model</th><th>Parameters</th><th>Layers</th><th>Hidden Size</th><th>Attention Heads</th></tr></thead>
+      <tbody>
+        <tr><td>GPT-2 Small</td><td>117M</td><td>12</td><td>768</td><td>12</td></tr>
+        <tr><td>GPT-2 Medium</td><td>345M</td><td>24</td><td>1024</td><td>16</td></tr>
+        <tr><td>GPT-2 Large</td><td>762M</td><td>36</td><td>1280</td><td>20</td></tr>
+        <tr class="comp-best"><td>GPT-2 XL</td><td>1.5B</td><td>48</td><td>1600</td><td>25</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">GPT-2 Small matches GPT-1's shape; each step up the ladder roughly doubles capacity. All headline zero-shot results come from the 1.5B XL model.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Interactive — Scale the Family</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:10px;">Toggle what the bars measure — every model in the family scales together.</p>
+      <div id="familyTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;"></div>
+      <div id="familyChart"></div>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px;">GPT-2 XL is roughly 10× GPT-1. The zero-shot abilities that define the paper only emerge at the top of this ladder.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Interactive — Byte-Level BPE</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:10px;">Pick a word, tokenize it, and see how subword pieces cover any input.</p>
+      <div id="tokTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;"></div>
+      <div id="tokPrompt" style="font-family:var(--mono);font-size:13px;color:var(--text2);line-height:2;background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
+        <button class="btn-primary" id="tokRunBtn" type="button" style="font-size:13px;padding:8px 18px;">Tokenize →</button>
+        <div id="tokCount" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;"></div>
+      </div>
+      <div id="tokPieces" style="margin-top:10px;min-height:30px;"></div>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px;">256 raw byte tokens + 50,000 learned merges + 1 end-of-text token = a 50,257 vocabulary that encodes <em>any</em> Unicode text — emoji, typos, any language — with no unknown-token fallback, ever.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Results — <em>Zero-Shot</em>, No Fine-Tuning</h2>
+  <p class="section-desc">Every number below is the same pre-trained 1.5B language model, prompted in natural language — no task training, no labeled examples, no output heads.</p>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">LAMBADA</div>
+      <div class="result-score" style="color:var(--amber);">63.2%</div>
+      <div class="result-label">predicting the last word of a passage</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:63%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">CHILDREN'S BOOK TEST (NE)</div>
+      <div class="result-score" style="color:var(--teal);">87.08%</div>
+      <div class="result-label">choosing the correct named entity in a story</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:87%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">PTB (PERPLEXITY)</div>
+      <div class="result-score" style="color:var(--blue);">35.76</div>
+      <div class="result-label">a new zero-shot record — lower is better</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:36%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">WINOGRAD SCHEMA</div>
+      <div class="result-score" style="color:var(--purple);">61.2%</div>
+      <div class="result-label">pronoun resolution — a large jump, close to SOTA</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:61%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Zero-Shot Results (1.5B model, no fine-tuning)</div>
+    <table class="comp-table">
+      <thead><tr><th>Benchmark / Task</th><th>Result</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>Language modeling overall</td><td class="comp-best">7 of 8</td><td>Zero-shot state-of-the-art perplexity on 7 of 8 LM benchmarks</td></tr>
+        <tr><td>LAMBADA</td><td class="comp-best">63.2%</td><td>Last-word prediction — a big jump for an untrained system</td></tr>
+        <tr><td>Children's Book Test (Named Entities)</td><td class="comp-best">87.08%</td><td>Correctly picks named entities from story context</td></tr>
+        <tr><td>Penn Treebank</td><td class="comp-best">35.76 ppl</td><td>A new record achieved with zero training on the corpus</td></tr>
+        <tr><td>Winograd Schema Challenge</td><td class="comp-best">61.2%</td><td>A large jump, closing in on the supervised state of the art</td></tr>
+        <tr><td>Translation (EN↔FR)</td><td class="comp-worst">far from SOTA</td><td>Roughly comparable to weak baselines — nowhere near fine-tuned systems</td></tr>
+        <tr><td>Summarization &amp; QA</td><td class="comp-worst">promising, not SOTA</td><td>Qualitatively convincing; quantitatively far from supervised systems</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Language-model scores rose smoothly with model size — and the 1.5B model was still the smallest size that produced coherent multi-paragraph text.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-label">The Honest Read</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">GPT-2 did <strong>not</strong> beat fine-tuned systems on translation, summarization, or question answering — it was competitive with weak baselines at best, and far from state of the art there. The headline is not "GPT-2 solved NLP." It is: <span class="highlight">a model trained on nothing but next-token prediction got within striking range of supervised systems with zero task-specific training.</span> That gap became the explicit bet of the next generation — close it with scale, not labels. GPT-3 cashed that bet.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Chapter 06 · Legacy</div>
+  <h2 class="section-title">Impact — <em>Too Dangerous to Release</em>?</h2>
+  <p class="section-desc">GPT-2's most influential decision was not architectural. OpenAI withheld the full 1.5B model at publication, arguing the risk of misuse was too high — and every release debate since still echoes that moment.</p>
+
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2019 · Feb</div><div class="tl-title">Paper published, full model withheld</div><div class="tl-desc">The paper releases alongside the smallest 117M model. The full 1.5B model stays locked, citing synthetic-text misuse: spam, fake news, impersonation.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2019 · Spring–Summer</div><div class="tl-title">Staged release</div><div class="tl-desc">Larger checkpoints roll out gradually over the following months, while the team monitors misuse and detection research matures.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2019 · Nov</div><div class="tl-title">Full 1.5B model released</div><div class="tl-desc">Later that year, OpenAI publishes the complete model, concluding the staged release worked roughly as intended.</div></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:1rem;">
+        <div class="card-label">The Case for Withholding</div>
+        <ul class="problem-list" style="margin-top:8px;">
+          <li>1.5B parameters made believable synthetic text cheap and scalable</li>
+          <li>Feared uses: coordinated spam, fake news, impersonation</li>
+          <li>No reliable AI-text detection existed at the time</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-label">The Counter-Case</div>
+        <ul class="problem-list" style="margin-top:8px;">
+          <li>Critics argued capable-enough models were already reachable</li>
+          <li>Open weights accelerate detection and defense research</li>
+          <li>The episode set the template for today's open-vs-closed model debates</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice-grid" style="margin-top:2rem;">
+    <div class="notice-card"><div class="notice-title">🚀 GPT-3 (2020)</div><div class="notice-text">The direct continuation: the same recipe over 100× bigger, upgrading zero-shot to few-shot.</div></div>
+    <div class="notice-card"><div class="notice-title">📈 The Scaling Hypothesis</div><div class="notice-text">GPT-2 was early evidence that capability arrives with scale — the idea that now defines the field.</div></div>
+    <div class="notice-card"><div class="notice-title">🛡️ Release Discourse</div><div class="notice-text">Staged release became a real policy tool; the open-vs-closed weights debate continues today.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 The WebText Recipe</div><div class="notice-text">Human-filtered web text became the template for the LLM pre-training corpora that followed.</div></div>
+    <div class="notice-card"><div class="notice-title">💬 The ChatGPT Lineage</div><div class="notice-text">Instruction-tuned descendants of the GPT line brought conversational LLMs to the mainstream in 2022.</div></div>
+    <div class="notice-card"><div class="notice-title">🔍 Detection Research</div><div class="notice-text">The misuse debate spurred work on detecting AI-generated text — a field that grew with every model since.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the GPT-2 paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ GPT-2 is a 1.5B-parameter decoder-only Transformer trained on 40GB of WebText (~8M documents) with a single objective: predict the next token.</div>
+    <div class="card-sm">✅ Zero-shot task transfer: describe the task in natural language and the frozen model answers — no fine-tuning, no examples, no special tokens.</div>
+    <div class="card-sm">✅ WebText = outbound Reddit links with karma ≥ 3, deduplicated — quality filtering that beat raw CommonCrawl.</div>
+    <div class="card-sm">✅ A four-size family (117M / 345M / 762M / 1.5B) and a byte-level BPE tokenizer (50,257 tokens) that can encode any Unicode text with no unknown-token.</div>
+    <div class="card-sm">✅ Zero-shot SOTA perplexity on 7 of 8 LM benchmarks; LAMBADA 63.2%, CBT 87.08%, PTB 35.76, Winograd 61.2% — but translation, summarization, and QA stayed far from SOTA.</div>
+    <div class="card-sm">✅ The staged release (full model out in Nov 2019) started the modern model-safety debate, and the scaling bet led straight to GPT-3.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank" rel="noopener noreferrer">"Language Models are Unsupervised Multitask Learners"</a> (Radford et al., 2019)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./BERT.html">BERT Guide</a>
+    <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
+    <a class="footer-link" href="./Attention_Is_All_You_Need.html">Transformer Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+<div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','core-idea','webtext','architecture','results','impact','quiz','takeaways'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === ZERO-SHOT PROMPT DEMO ===
+(function(){
+  const tasks={
+    translate:{label:'🌍 Translation',prompt:'translate to french: cheese →',output:'fromage',note:'WebText contains bilingual pages — GPT-2 absorbed French–English pairs without ever being taught translation.'},
+    reading:{label:'📖 Reading Comprehension',prompt:'CONTEXT: The Eiffel Tower is a wrought-iron lattice tower in Paris, France. It was completed in 1889 and stands 330 meters tall.\nQ: How tall is the Eiffel Tower?\nA:',output:'330 meters',note:'Q&A pages abound on the web; answering a question is just predicting a plausible continuation.'},
+    summarize:{label:'✂️ Summarization',prompt:'(ARTICLE) Researchers trained a 1.5B-parameter language model on 40GB of web text. With no labeled examples and no fine-tuning, the model translated, summarized, and answered questions zero-shot. Citing misuse concerns, its creators initially withheld the full model.\nTL;DR:',output:'A web-trained model learned many tasks with no supervision; its makers held it back at first.',note:'The paper-style trick: append "TL;DR:" to an article and let the model continue.'}
+  };
+  const tabsEl=document.getElementById('zsTabs');const promptEl=document.getElementById('zsPrompt');const resEl=document.getElementById('zsResult');const noteEl=document.getElementById('zsNote');const runBtn=document.getElementById('zsRunBtn');
+  if(!tabsEl||!promptEl||!runBtn)return;
+  let current='translate';
+  function render(){
+    tabsEl.innerHTML=Object.keys(tasks).map(k=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===current?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===current?'var(--amber-dim)':'var(--bg3)'};color:${k===current?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._zsSelect('${k}')">${tasks[k].label}</button>`).join('');
+    promptEl.textContent=tasks[current].prompt;
+    if(resEl)resEl.textContent='';
+    if(noteEl)noteEl.textContent='';
+  }
+  window._zsSelect=function(k){current=k;render();};
+  runBtn.addEventListener('click',()=>{
+    const t=tasks[current];
+    if(resEl)resEl.textContent='→ '+t.output;
+    if(noteEl)noteEl.textContent=t.note;
+  });
+  render();
+})();
+
+// === TOKENIZER DEMO (BYTE-LEVEL BPE) ===
+(function(){
+  const words={
+    unhappiness:{label:'unhappiness',pieces:['un','happ','iness']},
+    transformers:{label:'transformers',pieces:['transform','ers']},
+    misunderstanding:{label:'misunderstanding',pieces:['mis','understand','ing']}
+  };
+  const tabsEl=document.getElementById('tokTabs');const wordEl=document.getElementById('tokPrompt');const resEl=document.getElementById('tokCount');const piecesEl=document.getElementById('tokPieces');const runBtn=document.getElementById('tokRunBtn');
+  if(!tabsEl||!wordEl||!runBtn)return;
+  const colors=['#3b82f6','#14b8a6','#a855f7','#f59e0b'];
+  let current='unhappiness';
+  function render(){
+    tabsEl.innerHTML=Object.keys(words).map(k=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===current?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===current?'var(--amber-dim)':'var(--bg3)'};color:${k===current?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._tokSelect('${k}')">${words[k].label}</button>`).join('');
+    wordEl.textContent='"'+words[current].label+'"';
+    if(resEl)resEl.textContent='';
+    if(piecesEl)piecesEl.innerHTML='';
+  }
+  window._tokSelect=function(k){current=k;render();};
+  runBtn.addEventListener('click',()=>{
+    const w=words[current];
+    if(resEl)resEl.textContent=w.pieces.length+' tokens';
+    if(piecesEl)piecesEl.innerHTML=w.pieces.map((p,i)=>`<span style="display:inline-block;font-family:var(--mono);font-size:12px;padding:3px 10px;margin:0 4px 6px 0;border-radius:6px;background:${colors[i%colors.length]}1A;color:${colors[i%colors.length]};border:1px solid ${colors[i%colors.length]}55;animation:fadeUp .4s ease;">${p}</span>`).join('<span style="color:var(--text3);font-family:var(--mono);font-size:12px;"> + </span>');
+  });
+  render();
+})();
+
+// === MODEL FAMILY CHART ===
+(function(){
+  const el=document.getElementById('familyChart');const tabsEl=document.getElementById('familyTabs');
+  if(!el||!tabsEl)return;
+  const family=[
+    {name:'Small',label:'117M',pct:8,layers:'12 layers',lpct:25,color:'#94a3b8'},
+    {name:'Medium',label:'345M',pct:23,layers:'24 layers',lpct:50,color:'#3b82f6'},
+    {name:'Large',label:'762M',pct:51,layers:'36 layers',lpct:75,color:'#14b8a6'},
+    {name:'XL',label:'1.5B',pct:100,layers:'48 layers',lpct:100,color:'#f59e0b'}
+  ];
+  let mode='params';
+  function btn(m,txt){return `<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${mode===m?'rgba(245,158,11,0.4)':'var(--border)'};background:${mode===m?'var(--amber-dim)':'var(--bg3)'};color:${mode===m?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._famMode('${m}')">${txt}</button>`;}
+  function render(){
+    tabsEl.innerHTML=btn('params','Parameters')+btn('layers','Layers');
+    el.innerHTML=family.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:56px;text-align:right;">${d.name}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${mode==='params'?d.pct:d.lpct}%;background:${d.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:72px;">${mode==='params'?d.label:d.layers}</div></div>`).join('');
+  }
+  window._famMode=function(m){mode=m;render();};
+  render();
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'How many parameters does the largest GPT-2 model (XL) have?',opts:['117 million','345 million','762 million','1.5 billion'],correct:3,explain:'The GPT-2 family spans 117M (Small), 345M (Medium), 762M (Large), and 1.5B (XL) parameters. All headline zero-shot results come from the 1.5B model.'},
+  {q:'What is WebText, the dataset GPT-2 was trained on?',opts:['All of English Wikipedia, manually cleaned','Outbound Reddit links with at least 3 karma, deduplicated to about 40GB','A hand-labeled collection of news articles','Machine-translated text from CommonCrawl'],correct:1,explain:'WebText was built from outbound Reddit links that received karma ≥ 3 — a human quality filter — then deduplicated, yielding roughly 40GB of text across ~8M documents.'},
+  {q:'What does "zero-shot" mean for GPT-2?',opts:['The model is fine-tuned on one example per task','The task is described in natural language and the frozen model answers — no gradient updates, no examples','A new output head is trained before each task','The model trains on task labels but skips evaluation'],correct:1,explain:'Zero-shot task transfer: the task itself is expressed as text (a prompt), and the same pre-trained weights generate the answer with no fine-tuning and no demonstrations.'},
+  {q:'What tokenizer does GPT-2 use, and why does it matter?',opts:['WordPiece with a 30,000-word vocabulary','Character-level encoding with a separate unknown-word class','Byte-level BPE with a 50,257-token vocabulary — any Unicode text can be encoded','Word-level tokenization with a fixed English dictionary'],correct:2,explain:'GPT-2 tokenizes at the byte level with BPE: 256 byte tokens + 50,000 learned merges + 1 end-of-text token = 50,257. Any string — emoji, other languages, typos — decomposes into known pieces, so the unknown-token disappears.'},
+  {q:'What headline result did GPT-2 achieve on language modeling benchmarks?',opts:['State-of-the-art perplexity on 7 of 8 benchmarks, zero-shot — including 63.2% on LAMBADA','It beat fine-tuned supervised systems on translation and summarization','It solved the Winograd Schema Challenge at 100%','It matched GPT-1 exactly on every benchmark'],correct:0,explain:'Zero-shot, GPT-2 set state-of-the-art perplexity on 7 of 8 LM benchmarks: 63.2% on LAMBADA, 87.08% on the CBT (named entities), 35.76 on PTB, and 61.2% on Winograd. On translation, summarization, and QA it remained far from supervised state of the art.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
