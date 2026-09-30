@@ -254,6 +254,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="nav-link" href="#results">Results</a>
     <a class="nav-link" href="#cost">Cost</a>
     <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#quiz">Quiz</a>
   </div>
   <div class="nav-actions">
@@ -270,6 +271,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <a href="#results">Results</a>
   <a href="#cost">Cost</a>
   <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
 </div>
 
@@ -584,6 +586,65 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
 <div class="divider"></div>
 
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The <em>Wisdom</em> of Sampled Crowds</h2>
+  <p class="section-desc">How many paths is enough? The paper's path-count analysis draws one saturating curve — more voters, better answers, until the crowd stops paying for itself. A close look at the full spectrum: the accuracy curve, the compute bill, and the two ways the vote fails.</p>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Path Count Explorer</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a sampling budget, then run the vote. Chips are sampled final answers drawn from the same ~70%-correct illustrative distribution as the demos above; the accuracy bar follows the paper's saturating pattern while the cost bar climbs in lockstep with k.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">paths</span>
+      <button id="pcK1" type="button">k = 1</button>
+      <button id="pcK5" type="button">k = 5</button>
+      <button id="pcK10" type="button">k = 10</button>
+      <button id="pcK20" type="button">k = 20</button>
+      <button id="pcK40" type="button">k = 40</button>
+      <button id="pcVote" type="button" style="font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:8px;border:1px solid rgba(245,158,11,0.4);background:var(--amber-dim);color:var(--amber);cursor:pointer;">🗳️ run majority vote</button>
+    </div>
+    <div id="pcChips" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px;min-height:34px;"></div>
+    <div id="pcTally" style="font-family:var(--mono);font-size:12.5px;color:var(--text2);margin-top:12px;padding:10px 12px;background:var(--bg3);border-radius:8px;line-height:1.8;min-height:44px;">k = 10 — budget set. Press <b>run majority vote</b> to draw the chips and tally them.</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:1rem;margin-bottom:6px;">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);width:150px;text-align:right;flex-shrink:0;">ACCURACY (GSM8K-STYLE ~)</div>
+      <div style="flex:1;height:24px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div id="pcAccFill" style="height:100%;width:0%;background:var(--green);border-radius:6px;transition:width .35s ease;"></div></div>
+      <div id="pcAccVal" style="font-family:var(--mono);font-size:11px;color:var(--green);font-weight:600;width:56px;flex-shrink:0;">—</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);width:150px;text-align:right;flex-shrink:0;">INFERENCE COST</div>
+      <div style="flex:1;height:24px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div id="pcCostFill" style="height:100%;width:0%;background:var(--amber);border-radius:6px;transition:width .35s ease;"></div></div>
+      <div id="pcCostVal" style="font-family:var(--mono);font-size:11px;color:var(--amber);font-weight:600;width:56px;flex-shrink:0;">—</div>
+    </div>
+    <div class="card-sm" id="pcVerdict" style="margin-top:12px;"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:10px;">Illustrative — chips follow a ~70%-correct sampled-answer distribution; the accuracy curve is anchored to the paper's GSM8K headline (56.5 → 74.4 at k = 40) and modeled as saturating (~), while the cost line is exact: every sampled path is a full generation.</p>
+  </div>
+
+  <div class="two-col" style="margin-top:2rem;">
+    <div class="card">
+      <div class="card-label">📈 The Sampling Spectrum</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Accuracy rises <span class="highlight">monotonically</span> with the number of sampled paths and then saturates: on GSM8K, PaLM-540B climbs 56.5 → 74.4 (<span class="highlight">+17.9 absolute</span>) by k = 40, with most of the gain arriving well before the fortieth path. Reliability is a dial, not a fixed property — accuracy as a function of the inference budget, the idea the test-time compute era is built on.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">💵 Accuracy per Dollar</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The bill side of the spectrum: every sampled path is a <span class="highlight">full generation</span>, so k paths always means roughly k× the tokens, latency and dollars. The honest metric is not peak accuracy but points per unit of compute — in this curve the 20 → 40 doubling buys only ~+1.4 points (~), which is why budget-conscious systems park k well below 40 and stop where the marginal path stops paying.</p>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:2rem;">
+    <div class="card">
+      <div class="card-label">🚫 When the Crowd Fails</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Two failure modes. <em>No agreed answer:</em> open-ended or subjective questions admit several defensible outputs, so the vote has no target to converge on — the paper scopes itself to discrete final answers. <em>Sampling too narrow:</em> turn diversity down and the "independent" paths correlate, errors stop scattering, and 40 votes become one opinion repeated 40 times. Diversity is load-bearing.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">🔎 Consistency as a Truth Signal</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The asymmetry that powers the vote — right answers stable across samples, wrong ones wobbly — is also a lie detector: a fact the model actually knows repeats, a hallucination drifts. That insight inspired <span class="highlight">SelfCheckGPT</span> (2023), a zero-resource black-box hallucination detector that scores sampled passages for agreement with a claim — consistency, used as a truth signal. <a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber);">Read the SelfCheckGPT guide →</a></p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
@@ -643,7 +704,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 (function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
 // === NAV ACTIVE ===
-(function(){const ids=['history','problem','core-idea','why-it-works','results','cost','impact','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+(function(){const ids=['history','problem','core-idea','why-it-works','results','cost','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
 
 // === SCROLL REVEAL ===
 (function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
@@ -814,6 +875,104 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   });
   slider.addEventListener('input',render);
   render();
+})();
+
+// === PATH COUNT EXPLORER (DEEP DIVE) ===
+(function(){
+  const chipsEl=document.getElementById('pcChips');
+  const tallyEl=document.getElementById('pcTally');
+  const verdictEl=document.getElementById('pcVerdict');
+  const accFill=document.getElementById('pcAccFill');
+  const costFill=document.getElementById('pcCostFill');
+  const voteBtn=document.getElementById('pcVote');
+  if(!chipsEl||!tallyEl||!verdictEl||!accFill||!costFill||!voteBtn)return;
+  const accVal=document.getElementById('pcAccVal');
+  const costVal=document.getElementById('pcCostVal');
+  const SEQ=[59,12,9,9,9,3,9,12,9,9,3,9,9,59,9,9,12,9,9,3,9,9,9,59,9,9,12,9,9,3,9,9,9,59,9,9,9,9,9,9];
+  const CORRECT=9,RUNGS=[1,5,10,20,40],BASE=56.5,GAIN=17.9;
+  const S=function(k){return (1-Math.exp(-k/8))/(1-Math.exp(-40/8));};
+  const acc=function(k){return BASE+GAIN*S(k);};
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let curK=10,timers=[],chipEls=[];
+  const kBtns=RUNGS.map(function(k){return{k:k,b:document.getElementById('pcK'+k)};});
+  function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+  function styleButtons(){kBtns.forEach(function(o){if(!o.b)return;const on=o.k===curK;o.b.style.cssText='font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:8px;border:1px solid '+(on?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(on?'var(--amber-dim)':'var(--bg3)')+';color:'+(on?'var(--amber)':'var(--text2)')+';cursor:pointer;';});}
+  function buildChips(){
+    chipsEl.innerHTML='';
+    chipEls=[];
+    for(let i=0;i<curK;i++){
+      const d=document.createElement('div');
+      d.textContent='?';
+      d.style.cssText='font-family:var(--mono);font-size:12px;font-weight:600;text-align:center;padding:6px 4px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text3);transition:border-color .25s ease,background .25s ease,color .25s ease,box-shadow .25s ease;';
+      chipsEl.appendChild(d);
+      chipEls.push(d);
+    }
+  }
+  function revealChip(i){
+    const d=chipEls[i];
+    if(!d)return;
+    const ok=SEQ[i]===CORRECT;
+    d.textContent=SEQ[i];
+    d.style.borderColor=ok?'rgba(34,197,94,0.45)':'rgba(239,68,68,0.3)';
+    d.style.background=ok?'var(--green-dim)':'var(--red-dim)';
+    d.style.color=ok?'var(--green)':'var(--red)';
+  }
+  function tally(){
+    const counts={};
+    for(let i=0;i<curK;i++)counts[SEQ[i]]=(counts[SEQ[i]]||0)+1;
+    let best=0,bc=0;
+    Object.keys(counts).forEach(function(a){if(counts[a]>bc){bc=counts[a];best=+a;}});
+    chipEls.forEach(function(d,i){if(SEQ[i]===best){d.style.borderColor='rgba(34,197,94,0.7)';d.style.boxShadow='0 0 0 2px rgba(34,197,94,0.18)';}});
+    const ok=best===CORRECT;
+    const wrong=Object.keys(counts).filter(function(a){return +a!==CORRECT;}).map(function(a){return a+' ×'+counts[a];}).join(', ');
+    tallyEl.innerHTML='k = '+curK+' → majority vote: <b style="color:'+(ok?'var(--green)':'var(--red)')+';">'+best+(ok?' ✓':' ✗')+'</b> · '+bc+'/'+curK+' ('+Math.round(bc/curK*100)+'%) agree · wrong mass scattered: '+(wrong||'none')+'.';
+  }
+  function bars(){
+    if(RM){accFill.style.transition='none';costFill.style.transition='none';}
+    accFill.style.width=(S(curK)*100).toFixed(1)+'%';
+    costFill.style.width=(curK/40*100).toFixed(1)+'%';
+    if(accVal)accVal.textContent='~'+acc(curK).toFixed(1);
+    if(costVal)costVal.textContent=curK+'×';
+  }
+  function verdict(){
+    const a=acc(curK),idx=RUNGS.indexOf(curK),eff=a/curK;
+    let line;
+    if(curK===1)line='k = 1 is just greedy decoding — cheap, but one slip decides the answer and nothing checks it.';
+    else{
+      const prev=RUNGS[idx-1],mg=a-acc(prev);
+      line='the '+prev+' → '+curK+' step costs <b style="color:var(--amber);">'+(curK/prev)+'× more compute</b> for <b style="color:var(--green);">~+'+mg.toFixed(1)+' pts</b>'+(curK>=20?' — deep into diminishing returns: the last paths buy a fraction of what the first ones did.':' — the curve is already flattening; the next doubling buys less.');
+    }
+    verdictEl.innerHTML='<div class="card-label">Accuracy per Compute</div>'
+      +'<div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--amber);">~'+eff.toFixed(1)+' <span style="font-size:11px;color:var(--text3);font-weight:400;">accuracy pts per × of compute</span></div>'
+      +'<p style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:6px;">k = '+curK+': ~'+a.toFixed(1)+' accuracy ('+Math.round(S(curK)*100)+'% of the +17.9 max gain) for '+curK+'× generation. '+line+'</p>';
+  }
+  function selectK(k){
+    clearTimers();
+    curK=k;
+    styleButtons();
+    buildChips();
+    bars();
+    verdict();
+    voteBtn.textContent='🗳️ run majority vote';
+    tallyEl.innerHTML='k = '+curK+' — budget set. Press <b>run majority vote</b> to draw '+curK+' chip'+(curK>1?'s':'')+' and tally them.';
+  }
+  function runVote(){
+    clearTimers();
+    buildChips();
+    voteBtn.textContent='🗳️ re-run majority vote';
+    const step=RM?0:Math.max(14,Math.floor(560/curK));
+    for(let i=0;i<curK;i++){
+      if(RM)revealChip(i);
+      else timers.push(setTimeout(function(){revealChip(i);},i*step));
+    }
+    timers.push(setTimeout(tally,RM?0:curK*step+200));
+  }
+  kBtns.forEach(function(o){if(o.b)o.b.addEventListener('click',function(){selectK(o.k);});});
+  voteBtn.addEventListener('click',runVote);
+  styleButtons();
+  buildChips();
+  bars();
+  verdict();
 })();
 
 // === QUIZ ===

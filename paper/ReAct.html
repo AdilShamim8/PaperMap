@@ -254,6 +254,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="nav-link" href="#results">Results</a>
     <a class="nav-link" href="#why-it-works">Why It Works</a>
     <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#quiz">Quiz</a>
   </div>
   <div class="nav-actions">
@@ -270,6 +271,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <a href="#results">Results</a>
   <a href="#why-it-works">Why It Works</a>
   <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
 </div>
 
@@ -603,6 +605,71 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
 <div class="divider"></div>
 
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Grounding <em>Cuts</em> Confabulation</h2>
+  <p class="section-desc">The paper's error analysis in one line: acting trades imagination for evidence — usually a win, occasionally a trap, and never the whole story.</p>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Grounding Showdown</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">One HotpotQA-style multi-hop question, three worlds. Press a strategy and watch where each one gets its "facts".</p>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:0.9rem 1rem;font-family:var(--mono);font-size:12.5px;color:var(--text2);margin-bottom:1rem;">
+      <span style="color:var(--amber);font-weight:600;">Q:</span> Blue Peak, the highest summit of the Apex Mountains, is named after which person?
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
+      <button class="btn-primary" id="gsCotBtn" type="button" style="font-size:13px;padding:8px 18px;">🧠 CoT only ▸</button>
+      <button class="btn-primary" id="gsRaBtn" type="button" style="font-size:13px;padding:8px 18px;">🔁 ReAct ▸</button>
+      <button class="btn-primary" id="gsNoiseBtn" type="button" style="font-size:13px;padding:8px 18px;">📢 Noisy observation ▸</button>
+      <button class="btn-outline" id="gsResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset ↺</button>
+    </div>
+    <div id="gsTrace" style="min-height:120px;"></div>
+    <div id="gsVerdict" style="margin-top:1rem;"></div>
+    <p style="font-size:12px;color:var(--text3);margin-top:0.75rem;">Illustrative traces in the style of the paper's qualitative HotpotQA case studies — the reported pattern: CoT hallucinates its evidence, ReAct grounds every hop, and bad evidence grounds badly.</p>
+  </div>
+
+  <div class="notice-grid" style="margin-top:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🧠 CoT errors: imagined</div><div class="notice-text">In the paper's case studies, CoT composes rationale chains out of facts that were never retrieved — invented entities, dates, even whole supporting sentences. Confident, plausible, uncheckable.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 ReAct errors: inherited</div><div class="notice-text">When ReAct fails, it fails differently: the retriever returns the wrong passage, and the agent reasons faithfully over bad evidence. Grounding moves the error from imagination to retrieval.</div></div>
+    <div class="notice-card"><div class="notice-title">📉 The recall tax</div><div class="notice-text">On HotpotQA, ReAct alone trails CoT self-consistency on exact match — search caps what the model can recall from its own weights. Faithfulness is bought with recall.</div></div>
+  </div>
+
+  <div class="problem-grid" style="margin-top:1.5rem;">
+    <div class="problem-card bad">
+      <div class="problem-icon">📢</div>
+      <div class="problem-title">When grounding betrays you</div>
+      <ul class="problem-list">
+        <li>Retriever surfaces the wrong entity or an irrelevant passage</li>
+        <li>The agent trusts the observation and reasons on, politely, into the ditch</li>
+        <li>Repeated Search/Lookup loops crowd out actual progress</li>
+        <li>No fallback to internal knowledge once the trace derails</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">⚖️</div>
+      <div class="problem-title">The hybrid recipe that won</div>
+      <ul class="problem-list">
+        <li>Run CoT with self-consistency — keep recall, get a confidence signal</li>
+        <li>Run ReAct — keep faithfulness, ground every claim</li>
+        <li>On disagreement, re-act: search out the deciding evidence</li>
+        <li>Consistency votes on the final answer — ~34.2 EM, best of both</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-label">Bridge — the agentic line it opened</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;">
+      <div class="card-sm">🛠️ <a href="./Toolformer.html" style="color:var(--amber);">Toolformer ↗</a> — where ReAct is prompted, Toolformer self-learns its tool calls; the loop goes native.</div>
+      <div class="card-sm">📊 <a href="./AgentBench_Evaluating_LLMs_as_Agents.html" style="color:var(--amber);">AgentBench ↗</a> — the loop becomes the test harness: LLMs graded as agents across multi-environment tasks.</div>
+      <div class="card-sm">⚠️ <a href="./InjecAgent_Benchmarking_Indirect_Prompt_Injections.html" style="color:var(--amber);">InjecAgent ↗</a> — grounded agents inherit grounded risks: tool-integrated agents proved exposed to indirect prompt injection.</div>
+    </div>
+    <p style="font-size:12.5px;color:var(--text2);line-height:1.7;margin-top:0.75rem;">Every tool-integrated agent since ReAct inherits both halves of the bargain — the grounding that cuts confabulation, and the attack surface that comes with trusting retrieved text.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
@@ -638,6 +705,8 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="footer-link" href="./Toolformer.html">Toolformer Guide</a>
     <a class="footer-link" href="./Chain_Of_Thought_Prompting.html">Chain-of-Thought Guide</a>
     <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
+    <a class="footer-link" href="./AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench Guide</a>
+    <a class="footer-link" href="./InjecAgent_Benchmarking_Indirect_Prompt_Injections.html">InjecAgent Guide</a>
   </div>
   <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -661,7 +730,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 (function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
 // === NAV ACTIVE ===
-(function(){const ids=['history','problem','core-idea','action-space','results','why-it-works','impact','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+(function(){const ids=['history','problem','core-idea','action-space','results','why-it-works','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
 
 // === SCROLL REVEAL ===
 (function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
@@ -861,6 +930,96 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       +'<div style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.7;">'+v.out+'</div></div>';
   }
   render();
+})();
+
+// === GROUNDING SHOWDOWN DEMO (DEEP DIVE) ===
+(function(){
+  const traceEl=document.getElementById('gsTrace');
+  const verdictEl=document.getElementById('gsVerdict');
+  const cotBtn=document.getElementById('gsCotBtn');
+  const raBtn=document.getElementById('gsRaBtn');
+  const noiseBtn=document.getElementById('gsNoiseBtn');
+  const resetBtn=document.getElementById('gsResetBtn');
+  if(!traceEl||!verdictEl||!cotBtn||!raBtn||!noiseBtn||!resetBtn)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const modeBtns=[cotBtn,raBtn,noiseBtn];
+  const pal={
+    cot:{b:'var(--text3)',t:'var(--text3)',bg:'rgba(148,163,184,0.08)',c:'var(--text2)'},
+    bad:{b:'var(--red)',t:'var(--red)',bg:'rgba(239,68,68,0.10)',c:'var(--red)'},
+    thought:{b:'var(--amber)',t:'var(--amber)',bg:'rgba(245,158,11,0.06)',c:'var(--text2)'},
+    action:{b:'var(--blue)',t:'var(--blue)',bg:'rgba(59,130,246,0.07)',c:'var(--text2)',mono:true},
+    obs:{b:'#94a3b8',t:'var(--text3)',bg:'rgba(148,163,184,0.10)',c:'var(--text2)'},
+    noise:{b:'#f59e0b',t:'#b45309',bg:'rgba(245,158,11,0.12)',c:'#92400e'},
+    good:{b:'var(--green)',t:'var(--green)',bg:'rgba(34,197,94,0.06)',c:'var(--text2)'},
+    warn:{b:'#f59e0b',t:'#b45309',bg:'rgba(245,158,11,0.10)',c:'#92400e'}
+  };
+  const cot=[
+    {k:'cot',tag:'THINK 1',text:'Blue Peak is the highest summit of the Apex Mountains — the question wants the person the peak was named after.'},
+    {k:'bad',tag:'THINK 2 — INVENTED',text:'Peaks in the southern interior were named by the Northern Geological Survey, whose founder James Whitfield had several summits named after him.',note:'✗ fabricated — no source was ever consulted'},
+    {k:'cot',tag:'THINK 3',text:'That fits the era and the region, so the summit must be one of Whitfield\'s.'},
+    {k:'bad',tag:'ANSWER',text:'Explorer James Whitfield.'}
+  ];
+  const ra=[
+    {k:'thought',tag:'THOUGHT 1',text:'I don\'t trust my memory for local trivia — search for the range first.'},
+    {k:'action',tag:'ACTION 1',text:'Search[Apex Mountains]'},
+    {k:'obs',tag:'OBSERVATION 1',text:'The Apex Mountains are a small mountain range in the southern interior region … its highest summit, Blue Peak, reaches 2,278 m (7,474 ft).'},
+    {k:'thought',tag:'THOUGHT 2',text:'The summit is Blue Peak, but the naming isn\'t in the intro. Search for the peak itself.'},
+    {k:'action',tag:'ACTION 2',text:'Search[Blue Peak]'},
+    {k:'obs',tag:'OBSERVATION 2',text:'Blue Peak was named in 1913 for Marta Lindqvist, surveyor of the Northern Geological Survey, who led the first recorded ascent.'},
+    {k:'good',tag:'FINISH',text:'Blue Peak is named after surveyor Marta Lindqvist.'}
+  ];
+  const noisy=ra.slice(0,5).concat([
+    {k:'noise',tag:'OBSERVATION 2 — OFF-TARGET',text:'Blue Peak is a small coastal resort town founded in 1887, known for its annual blueberry festival and its clifftop lighthouse.',note:'⚠ irrelevant — the retriever surfaced the wrong "Blue Peak"'},
+    {k:'thought',tag:'THOUGHT 3',text:'This article is about a town, not a summit — but its founder, Captain Elias Marsh, is the only person tied to the name. Best evidence available, so take it.'},
+    {k:'warn',tag:'FINISH',text:'Named after Captain Elias Marsh.'}
+  ]);
+  const verdicts={
+    cot:{b:'rgba(239,68,68,0.35)',bg:'rgba(239,68,68,0.05)',c:'var(--red)',title:'VERDICT — HALLUCINATION',pill:'pill-red',pl:'CoT: James Whitfield ✗',txt:'CoT invented a surveyor, then cited its own invention as corroboration — the signature CoT failure in the paper\'s case studies: confident, plausible, never checked against the world.'},
+    ra:{b:'rgba(34,197,94,0.35)',bg:'rgba(34,197,94,0.05)',c:'var(--green)',title:'VERDICT — GROUNDED',pill:'pill-green',pl:'ReAct: Marta Lindqvist ✓',txt:'Two hops, two observations — every claim in the trace maps to retrieved text. This is why the paper reports far fewer hallucinations than CoT on HotpotQA and FEVER.'},
+    noisy:{b:'rgba(245,158,11,0.45)',bg:'rgba(245,158,11,0.07)',c:'#b45309',title:'VERDICT — GROUNDED, BUT WRONG',pill:'pill-amber',pl:'ReAct: Elias Marsh ✗',txt:'The agent did nothing "wrong" — it followed a bad observation faithfully. Grounding trades imagination errors for retrieval errors: when evidence is noisy or irrelevant, ReAct inherits the noise. The paper\'s fix: know when to re-act (ReAct + CoT-SC).'}
+  };
+  let timers=[];
+  function mkStep(s){
+    const p=pal[s.k];
+    const d=document.createElement('div');
+    d.style.cssText='margin-bottom:8px;padding:8px 11px;border-radius:6px;border-left:3px solid '+p.b+';background:'+p.bg+';'+(RM?'':'animation:fadeUp .4s ease;');
+    const tg=document.createElement('div');
+    tg.style.cssText='font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:'+p.t+';margin-bottom:3px;';
+    tg.textContent=s.tag;
+    const tx=document.createElement('div');
+    tx.style.cssText=(p.mono?'font-family:var(--mono);':'')+'font-size:12.5px;line-height:1.65;color:'+p.c+';';
+    tx.textContent=s.text;
+    d.appendChild(tg);d.appendChild(tx);
+    if(s.note){
+      const nt=document.createElement('div');
+      nt.style.cssText='font-size:11px;color:'+p.t+';margin-top:4px;';
+      nt.textContent=s.note;
+      d.appendChild(nt);
+    }
+    return d;
+  }
+  function showVerdict(mode){
+    const v=verdicts[mode];
+    verdictEl.innerHTML='<div style="border:1px solid '+v.b+';background:'+v.bg+';border-radius:var(--radius);padding:1rem 1.2rem;'+(RM?'':'animation:fadeUp .5s ease;')+'">'
+      +'<div style="font-family:var(--mono);font-size:11px;color:'+v.c+';letter-spacing:0.08em;margin-bottom:6px;">'+v.title+'</div>'
+      +'<div style="font-size:13px;color:var(--text2);line-height:1.8;"><span class="pill '+v.pill+'">'+v.pl+'</span>&nbsp;'+v.txt+'</div></div>';
+  }
+  function setBtns(on){modeBtns.forEach(function(b){b.disabled=!on;b.style.opacity=on?'1':'0.5';});}
+  function stop(){timers.forEach(clearTimeout);timers=[];}
+  function idle(){traceEl.innerHTML='<div style="font-family:var(--mono);font-size:12px;color:var(--text3);line-height:1.9;">▸ pick a strategy — one question, three very different "facts".<br>▸ CoT reasons from memory · ReAct checks the world · noise poisons the evidence.</div>';}
+  function run(mode){
+    stop();traceEl.innerHTML='';verdictEl.innerHTML='';setBtns(false);
+    const seq=(mode==='cot'?cot:(mode==='ra'?ra:noisy));
+    const gap=RM?0:340;
+    seq.forEach(function(s,i){timers.push(setTimeout(function(){traceEl.appendChild(mkStep(s));},i*gap));});
+    timers.push(setTimeout(function(){showVerdict(mode);setBtns(true);},seq.length*gap+(RM?0:250)));
+  }
+  function reset(){stop();verdictEl.innerHTML='';idle();setBtns(true);}
+  cotBtn.addEventListener('click',function(){run('cot');});
+  raBtn.addEventListener('click',function(){run('ra');});
+  noiseBtn.addEventListener('click',function(){run('noisy');});
+  resetBtn.addEventListener('click',reset);
+  idle();
 })();
 
 // === QUIZ DATA ===

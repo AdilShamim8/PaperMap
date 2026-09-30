@@ -491,6 +491,7 @@ p{margin-bottom:.9rem;}
     <a class="nav-link" href="#sec2">Architecture</a>
     <a class="nav-link" href="#sec5">Variants</a>
     <a class="nav-link" href="#sec8">Results</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#sec13">Resources</a>
   </div>
   <div class="nav-actions">
@@ -505,6 +506,7 @@ p{margin-bottom:.9rem;}
   <a href="#sec2">Architecture</a>
   <a href="#sec5">Variants</a>
   <a href="#sec8">Results</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#sec13">Resources</a>
   <a href="../index.html">PaperMap Home</a>
 </div>
@@ -1419,6 +1421,93 @@ p'θ(yᵢ | x, y₁:ᵢ₋₁) = Σ  pη(zᵢ|x) · pθ(yᵢ | x, zᵢ, y₁:ᵢ
 
 <div class="divider"></div>
 
+<!-- SECTION: DEEP DIVE (unnumbered — no chapter renumbering) -->
+<div class="section" id="deepdive">
+  <div class="section-header">
+    <div class="section-icon" style="background:#fffde7;">🧭</div>
+    <div class="section-meta">
+      <div class="chapter-tag" style="color:#b45309;">Deep Dive</div>
+      <h2>What RAG <em>Fixes</em> — and What It Doesn't</h2>
+    </div>
+  </div>
+
+  <p style="font-size:14px;color:var(--gray-700);">Chapter 10 ended on the split that defines this paper: <strong>parametric memory</strong> baked into BART's weights vs. <strong>non-parametric memory</strong> held in a retrievable index. This deep dive stresses that split — what each channel is actually good at, the trap where stale weights leak past a perfect retrieval, and the honest number later corpus work put on RAG's residual hallucination.</p>
+
+  <div class="quiz-card" id="ddDemo">
+    <div class="quiz-q">🎬 Interactive Demo — Knowledge Refresh Race</div>
+    <p style="font-size:13px;color:var(--gray-700);margin-bottom:1rem;">One question about a fact that changed <em>after</em> training; two memory channels race to answer it. (Real events: Nemo won Eurovision 2024 for Switzerland with "The Code"; the weights below froze on the paper's Dec 2018 Wikipedia dump.)</p>
+    <div class="ex-item">
+      <div class="ex-level" style="color:var(--purple);">Fact Card</div>
+      <div class="ex-q">Who won the Eurovision Song Contest in 2024?</div>
+      <div style="font-family:'Fira Code',monospace;font-size:11px;color:var(--gray-500);margin-top:.4rem;">knowledge cutoff of the weights: December 2018 (the paper's Wikipedia dump)</div>
+    </div>
+    <div class="quiz-opts" style="flex-direction:row;flex-wrap:wrap;">
+      <div class="quiz-opt" id="ddRun">▶&nbsp;Run the race</div>
+      <div class="quiz-opt" id="ddHalluc" style="display:none;">⚠&nbsp;But hallucination persists…</div>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-card compare-bad">
+        <h4>🧠 Lane 1 — Parametric only (weights)</h4>
+        <ul id="ddPUl" style="display:none;">
+          <li>generates from pθ(y|x) alone — no retrieval channel exists</li>
+          <li>freshest Eurovision fact in the weights: the 2018 contest</li>
+        </ul>
+        <p id="ddPAns" style="display:none;font-size:13px;margin-top:.5rem;">Answer: <strong>"Netta — 'Toy', Israel"</strong> <span class="tag tag-red">stale · 2018</span></p>
+        <p id="ddPVerdict" style="display:none;font-size:13px;color:var(--danger);margin-top:.4rem;"><strong>✗ Verdict:</strong> confident and stale. The only fix is a full retrain — index hot-swapping can't touch weights.</p>
+      </div>
+      <div class="compare-card compare-good">
+        <h4>🔎 Lane 2 — RAG (weights + retrievable index)</h4>
+        <p id="ddRStep" style="display:none;font-size:13px;">query → MIPS over a 2024-swapped index → top-1 document (no retraining):</p>
+        <div id="ddRDoc" style="display:none;background:#fffde7;border:1px dashed rgba(245,158,11,.45);border-radius:8px;padding:.55rem .8rem;font-size:12px;color:var(--gray-700);margin-top:.5rem;">📄 <strong>Retrieved doc:</strong> "The Eurovision Song Contest 2024 was won by Switzerland's Nemo with the song 'The Code'."</div>
+        <p id="ddRAns" style="display:none;font-size:13px;margin-top:.5rem;">Answer: <strong>"Nemo — 'The Code', Switzerland"</strong> <span class="tag tag-green">fresh · 2024</span></p>
+        <p id="ddRVerdict" style="display:none;font-size:13px;color:var(--success);margin-top:.4rem;"><strong>✓ Verdict:</strong> correct and auditable — you just read the passage that produced it.</p>
+        <p id="ddFab" style="display:none;font-size:13px;margin-top:.5rem;">Re-run, <strong>same correct doc</strong> → "Nemo — 'The Code', Switzerland — <span style="background:var(--amber-dim);border-bottom:2px dashed var(--amber);padding:0 3px;">the contest's youngest-ever winner</span>" <span class="tag tag-orange">unsupported span</span></p>
+      </div>
+    </div>
+    <p id="ddFabNote" style="display:none;font-size:13px;color:#854d0e;margin-top:1rem;">⚠ Retrieval worked and the doc is right — yet the model appended a fluent detail that appears nowhere in the evidence. Parametric memory, leaking straight through a grounded pipeline.</p>
+    <div class="callout callout-yellow" id="ddStat" style="display:none;">
+      <div class="callout-icon">📊</div>
+      <div class="callout-body">
+        <strong>Measured on 17,790 real RAG responses: hallucination persists</strong>
+        RAGTruth (ACL 2024) had humans annotate 17,790 naturally generated RAG responses from 6 LLMs at word level: 7,664 of them — <strong>43.1%</strong> — contain at least one hallucinated span, with the retrieved evidence sitting in the prompt the whole time. The corpus, taxonomy, and detector results: <a href="./RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html">RAGTruth Guide</a>.
+      </div>
+    </div>
+  </div>
+
+  <h3>Two Memory Channels, Honestly Compared</h3>
+  <div class="compare-grid">
+    <div class="compare-card compare-bad">
+      <h4>🧠 Parametric — knowledge in the weights</h4>
+      <ul>
+        <li><strong>Stale:</strong> frozen at training time; the paper's dump ends Dec 2018, and updating means retraining</li>
+        <li><strong>Fuzzy:</strong> facts smear across billions of parameters — years, names, and songs blur together</li>
+        <li><strong>Opaque:</strong> no way to point at the source of an answer</li>
+        <li>Fast, though: one forward pass, no retrieval latency</li>
+      </ul>
+    </div>
+    <div class="compare-card compare-good">
+      <h4>📚 Non-parametric — knowledge in the index</h4>
+      <ul>
+        <li><strong>Refreshable:</strong> the paper's 2016→2018 index hot-swap flipped 82 world-leader answers instantly</li>
+        <li><strong>Inspectable:</strong> the retrieved passages <em>are</em> the provenance — you can audit exactly what conditioned the answer</li>
+        <li><strong>Precise:</strong> verbatim facts stay verbatim through generation</li>
+        <li>Costs: retrieval latency, ~100 GB index RAM, retrieval misses</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>The Parametric-Memory Leak</h3>
+  <div class="box box-warning">
+    <span class="box-label" style="color:var(--danger);">🕳️ Known failure: right doc, stale answer</span>
+    <p style="font-size:13.5px;color:var(--gray-700);">Retrieval does not <em>force</em> the generator to use what it retrieved. When the retriever receives weak gradient signal, it collapses (Chapter 09) and the generator quietly falls back to its weights — answering from stale parametric memory while wearing RAG's grounded costume. The answer looks auditable but isn't: the document says 2024, the mouth says 2018. Later corpus work exists precisely to catch this leak — the amber span in the demo above is it in miniature.</p>
+  </div>
+
+  <h3>The Honest Headline</h3>
+  <p style="font-size:14px;color:var(--gray-700);">RAG shifts the odds; it never zeroed them. The paper's own evidence was a human-preference margin — factuality wins of 42.7% vs. BART's 7.1% — not an absence of hallucination. Four years later, RAGTruth put a number on the residue: 7,664 hallucinated responses out of 17,790 (43.1%). Build with RAG, but build with that number in view — then continue with the <a href="./RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html">RAGTruth Guide</a> to see how the field learned to detect these spans.</p>
+</div>
+
+<div class="divider"></div>
+
 <!-- SECTION 11: INTERVIEW Q&A -->
 <div class="section" id="sec11">
   <div class="section-header">
@@ -1611,6 +1700,7 @@ p'θ(yᵢ | x, y₁:ᵢ₋₁) = Σ  pη(zᵢ|x) · pθ(yᵢ | x, zᵢ, y₁:ᵢ
     <a class="footer-link" href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT Guide</a>
     <a class="footer-link" href="./LoRA_Low_Rank_Adaptation.html">LoRA Guide</a>
     <a class="footer-link" href="./ColBERTv2.html">ColBERTv2 Guide</a>
+    <a class="footer-link" href="./RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html">RAGTruth Guide</a>
   </div>
   <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -1667,7 +1757,7 @@ document.addEventListener('click', e => {
 
 // Nav active state
 (function(){
-  const ids = ['sec0','sec1','sec2','sec5','sec8','sec13'];
+  const ids = ['sec0','sec1','sec2','sec5','sec8','deepdive','sec13'];
   const links = Array.from(document.querySelectorAll('.nav-link'));
   window.addEventListener('scroll', () => {
     let cur = ids[0];
@@ -1696,6 +1786,46 @@ document.addEventListener('click', e => {
     });
   }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
   targets.forEach(t => obs.observe(t));
+})();
+
+// === DEEP DIVE DEMO: Knowledge Refresh Race (guarded, reduced-motion aware) ===
+(function(){
+  const run = document.getElementById('ddRun');
+  if (!run) return;
+  const halluc = document.getElementById('ddHalluc');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function show(id, delay, slide){
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (reduce || !el.animate){ el.style.display = 'block'; return; }
+    setTimeout(() => {
+      el.style.display = 'block';
+      el.animate(slide
+        ? [{opacity:0, transform:'translateX(24px)'},{opacity:1, transform:'translateX(0)'}]
+        : [{opacity:0, transform:'translateY(10px)'},{opacity:1, transform:'translateY(0)'}],
+        {duration:420, easing:'ease-out'});
+    }, delay);
+  }
+  run.addEventListener('click', () => {
+    run.style.pointerEvents = 'none';
+    run.style.opacity = '.55';
+    const D = reduce ? 0 : 300;
+    show('ddPUl', 0);
+    show('ddPAns', D);
+    show('ddPVerdict', 2 * D);
+    show('ddRStep', D);
+    show('ddRDoc', 2 * D, true);
+    show('ddRAns', 4 * D);
+    show('ddRVerdict', 5 * D);
+    if (halluc) setTimeout(() => { halluc.style.display = 'flex'; }, 6 * D);
+  });
+  if (halluc) halluc.addEventListener('click', () => {
+    halluc.style.pointerEvents = 'none';
+    halluc.style.opacity = '.55';
+    show('ddFab', 0, true);
+    show('ddFabNote', reduce ? 0 : 450);
+    show('ddStat', reduce ? 0 : 1000);
+  });
 })();
 
 // === QUIZ (standard PaperMap pattern) ===

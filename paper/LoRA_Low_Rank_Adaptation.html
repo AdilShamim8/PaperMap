@@ -291,6 +291,7 @@ p{margin-bottom:.85rem;}
     <a class="nav-link" href="#s2">Math</a>
     <a class="nav-link" href="#s3">Mechanism</a>
     <a class="nav-link" href="#s7">Results</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#s13">Resources</a>
   </div>
   <div class="nav-actions">
@@ -305,6 +306,7 @@ p{margin-bottom:.85rem;}
   <a href="#s2">Math</a>
   <a href="#s3">Mechanism</a>
   <a href="#s7">Results</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#s13">Resources</a>
   <a href="../index.html">PaperMap Home</a>
 </div>
@@ -1160,6 +1162,90 @@ r:  rank (hyperparameter)     &lt;&lt; min(d,k)
 </div>
 <div class="div"></div>
 
+<!-- DEEP DIVE: THE RANK SPECTRUM -->
+<div class="sec" id="deepdive">
+  <div class="sec-hdr">
+    <div class="sec-ico" style="background:var(--tl);">🎚️</div>
+    <div>
+      <div class="ch-tag" style="color:var(--t);">Deep Dive</div>
+      <h2>How Low Can the <em>Rank</em> Go?</h2>
+    </div>
+  </div>
+  <p>LoRA gives you exactly one structural knob: the rank <code>r</code>. The paper's sweep is blunt about how little it takes — <strong>r = 1</strong> is already competitive on WikiSQL-style tasks (73.4% against a 73.8% best, with MNLI just as flat), quality saturates across the practical band <strong>r = 4–64</strong> long before the parameter budget does, and the trainable share of a d₁×d₂ matrix scales as <code>r·(d₁+d₂) / (d₁·d₂)</code> — linear in rank, against an update it replaces that is quadratic in width.</p>
+  <div style="background:var(--gray1);border:1px solid var(--gray3);border-radius:var(--rad);padding:1.2rem 1.4rem;margin:.9rem 0;">
+    <span class="bl" style="color:var(--t);">🎚️ Interactive — Rank Explorer</span>
+    <p style="font-size:13px;color:var(--gray7);margin-bottom:.6rem;">Pick a rank for one fixed weight matrix (4096×4096). Parameters and percentages are exact arithmetic; the quality bar is ~ illustrative of the paper's WikiSQL pattern (Table 6).</p>
+    <div id="ddTabs" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 1rem;"></div>
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--text2);margin-bottom:4px;">
+          <span style="font-weight:600;">Trainable params — full fine-tune (d₁×d₂)</span>
+          <span style="font-family:var(--mono);font-size:11.5px;color:var(--gray7);">16,777,216 (100%)</span>
+        </div>
+        <div style="height:14px;border-radius:5px;background:linear-gradient(90deg,#94a3b8,#64748b);"></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--text2);margin-bottom:4px;">
+          <span style="font-weight:600;">Trainable params — LoRA (r×(d₁+d₂)) <span style="font-weight:400;color:var(--gray5);">log scale</span></span>
+          <span id="ddValA" style="font-family:var(--mono);font-size:11.5px;color:var(--a);"></span>
+        </div>
+        <div style="height:20px;border-radius:6px;background:var(--gray3);overflow:hidden;">
+          <div id="ddBarA" style="height:100%;width:0%;border-radius:6px;background:linear-gradient(90deg,#fbbf24,#f59e0b);"></div>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--text2);margin-bottom:4px;">
+          <span style="font-weight:600;">% of full params <span style="font-weight:400;color:var(--gray5);">log-feel scale</span></span>
+          <span id="ddValB" style="font-family:var(--mono);font-size:11.5px;color:var(--p);"></span>
+        </div>
+        <div style="height:20px;border-radius:6px;background:var(--gray3);overflow:hidden;">
+          <div id="ddBarB" style="height:100%;width:0%;border-radius:6px;background:linear-gradient(90deg,#60a5fa,#3b82f6);"></div>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--text2);margin-bottom:4px;">
+          <span style="font-weight:600;">Task quality retention <span style="font-weight:400;color:var(--gray5);">~ illustrative, zoomed axis</span></span>
+          <span id="ddValC" style="font-family:var(--mono);font-size:11.5px;color:var(--g);"></span>
+        </div>
+        <div style="height:20px;border-radius:6px;background:var(--gray3);overflow:hidden;">
+          <div id="ddBarC" style="height:100%;width:0%;border-radius:6px;background:linear-gradient(90deg,#4ade80,#22c55e);"></div>
+        </div>
+      </div>
+    </div>
+    <div id="ddReadout" style="font-family:var(--mono);font-size:12.5px;line-height:1.9;color:var(--gray7);background:var(--gray2);border-radius:8px;padding:.7rem .95rem;margin-top:1rem;"></div>
+    <div class="callout cl-g" style="margin:1rem 0 0 0;">
+      <div class="callout-ico">🚀</div>
+      <div class="callout-body"><strong>Verdict — same zero-latency deployment at every rank</strong>
+      Whatever r you pick, serving is identical: merge <code>W = W₀ + BA</code> once after training and the deployed matrix is a plain 4096×4096 multiply — no adapter layers, no extra path, no added milliseconds (adapters pay +20.7% to +30.3% latency at batch size 1, Table 1). Rank changes the training bill, never the serving bill.</div>
+    </div>
+  </div>
+  <div class="callout cl-v">
+    <div class="callout-ico">🧠</div>
+    <div class="callout-body"><strong>The adaptation subspace — why r = 1 already works</strong>
+    ΔW = BA lives in an r-dimensional subspace of a 4096-dimensional space, and the paper shows this is barely a constraint: the top directions learned at r = 8 and at r = 64 overlap with subspace similarity φ &gt; 0.5, so the meaningful adaptation is essentially one-dimensional. Rank buys spare directions — most fine-tuning tasks spend only one or two (the low "intrinsic rank" of the update).</div>
+  </div>
+  <div class="cg">
+    <div class="cc cc-ok">
+      <h4>✅ Merge W + BA — the deployment superpower</h4>
+      <ul>
+        <li>W₀ and BA are both d×k, so W = W₀ + BA is a stock weight matrix</li>
+        <li>0% added inference latency — vs adapters' +20–30% at batch size 1</li>
+        <li>Swap tasks cheaply: subtract the old BA, add the new B′A′</li>
+        <li>Rank-independent: every r from 1 to 64 merges the same way</li>
+      </ul>
+    </div>
+    <div class="cc cc-bad">
+      <h4>❌ The honest edge — when high rank earns its keep</h4>
+      <ul>
+        <li>The paper's own caveat: tasks far from pre-training (new domain, new language) can outrun low rank</li>
+        <li>Later work debates the split qualitatively — style/format adaptation thrives at tiny r, while knowledge-heavy edits (new facts, code) tend to want more rank or full fine-tuning</li>
+        <li>No principled r-chooser exists: sweep r on validation data before committing</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="div"></div>
+
 <!-- S11: INTERVIEW -->
 <div class="sec" id="s11">
   <div class="sec-hdr">
@@ -1396,7 +1482,7 @@ document.addEventListener('click',e=>{
 })();
 
 (function(){
-  const ids=['s0','s1','s2','s3','s7','s13'];
+  const ids=['s0','s1','s2','s3','s7','deepdive','s13'];
   const links=Array.from(document.querySelectorAll('.nav-link'));
   window.addEventListener('scroll',()=>{
     let cur=ids[0];
@@ -1424,6 +1510,56 @@ document.addEventListener('click',e=>{
     });
   },{threshold:.12,rootMargin:'0px 0px -30px 0px'});
   targets.forEach(t=>obs.observe(t));
+})();
+
+// === DEEP DIVE: RANK EXPLORER (guarded, reduced-motion aware) ===
+(function(){
+  const tabs=document.getElementById('ddTabs');
+  const aF=document.getElementById('ddBarA'),bF=document.getElementById('ddBarB'),cF=document.getElementById('ddBarC');
+  const aV=document.getElementById('ddValA'),bV=document.getElementById('ddValB'),cV=document.getElementById('ddValC');
+  const out=document.getElementById('ddReadout');
+  if(!tabs||!aF||!bF||!cF||!aV||!bV||!cV||!out)return;
+  const D1=4096,D2=4096,FULL=D1*D2;                  // fixed layer: 4096x4096 = 16,777,216
+  const RANKS=[1,4,8,16,64];
+  const QUAL={1:73.4,4:73.7,8:73.8,16:73.7,64:73.5};  // GPT-3 WikiSQL acc, Wq+Wv (Table 6)
+  const INTERP={16:true},FTQ=73.8;                    // r=16 not reported -> interpolated (~)
+  const RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt=n=>n.toLocaleString('en-US');
+  const logW=(p,lo,hi)=>Math.min(100,Math.max(10,100*(Math.log10(p)-Math.log10(lo)+1)/(Math.log10(hi)-Math.log10(lo)+1)));
+  const qualW=q=>Math.min(100,Math.max(12,10+90*(q-72.8)/(74.0-72.8)));
+  const setW=(el,w)=>{el.style.width=(w>100?100:w).toFixed(1)+'%';};
+  function render(r,anim){
+    const lora=r*(D1+D2),pct=100*lora/FULL,red=FULL/lora,q=QUAL[r];
+    const rows=[[aF,logW(lora,D1+D2,FULL)],[bF,logW(pct,0.048828125,3.125)],[cF,qualW(q)]];
+    Array.prototype.forEach.call(tabs.children,b=>{
+      const on=parseInt(b.getAttribute('data-r'),10)===r;
+      b.style.background=on?'var(--amber)':'#fff';
+      b.style.color=on?'#000':'var(--text2)';
+      b.style.borderColor=on?'var(--amber)':'var(--gray3)';
+    });
+    rows.forEach((row,i)=>{
+      if(anim&&!RM)setTimeout(()=>setW(row[0],row[1]),i*90);
+      else setW(row[0],row[1]);
+    });
+    aV.textContent=fmt(lora)+' params';
+    bV.textContent=(pct<0.1?pct.toFixed(3):pct.toFixed(2))+'% of full → '+fmt(red)+'× fewer';
+    cV.textContent='~'+q.toFixed(1)+' acc · '+(q/FTQ*100).toFixed(1)+'% of FT'+(INTERP[r]?' · r=16 interpolated':'');
+    out.innerHTML='d1×d2     = '+D1+'×'+D2+' = '+fmt(FULL)+'  (full fine-tune)<br>'+
+      'r×(d1+d2) = '+r+'×'+(D1+D2)+' = '+fmt(lora)+'  (LoRA trainable)<br>'+
+      'share     = '+fmt(lora)+' / '+fmt(FULL)+' = '+(pct<0.1?pct.toFixed(3):pct.toFixed(2))+'%  ('+fmt(red)+'× reduction)<br>'+
+      'quality   = ~'+q.toFixed(1)+' vs '+FTQ+' full-FT WikiSQL acc ('+(INTERP[r]?'r=16 not in Table 6 — interpolated':'Table 6')+')';
+  }
+  if(!RM)[aF,bF,cF].forEach(f=>f.style.transition='width .55s ease');
+  RANKS.forEach(r=>{
+    const b=document.createElement('button');
+    b.textContent='r = '+r;
+    b.setAttribute('data-r',String(r));
+    b.style.cssText='font-family:var(--mono);font-size:12px;padding:5px 13px;border-radius:8px;border:1px solid var(--gray3);background:#fff;color:var(--text2);cursor:pointer;';
+    b.addEventListener('click',()=>render(r,true));
+    tabs.appendChild(b);
+  });
+  window._ddRank=render;  // smoke-test hook
+  requestAnimationFrame(()=>render(8,true));
 })();
 
 // === QUIZ (standard PaperMap pattern) ===

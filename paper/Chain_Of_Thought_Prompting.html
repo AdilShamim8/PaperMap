@@ -254,6 +254,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="nav-link" href="#results">Results</a>
     <a class="nav-link" href="#ablations">Ablations</a>
     <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
     <a class="nav-link" href="#quiz">Quiz</a>
   </div>
   <div class="nav-actions">
@@ -270,6 +271,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <a href="#results">Results</a>
   <a href="#ablations">Ablations</a>
   <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
 </div>
 
@@ -561,6 +563,31 @@ A: Olivia had 23 dollars. 5 bagels for 3 dollars each will be 5 x 3 = 15 dollars
 
 <div class="divider"></div>
 
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Reasoning <em>Arrives</em> at Scale</h2>
+  <p class="section-desc">CoT's headline number hides its sharpest finding: the gains are not spread evenly across model sizes — they concentrate in the largest ones. Below ~10B parameters the same prompt subtracts points; at 540B it adds thirty-nine. This is the paper's emergence claim, zoomed in.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🔓 The unlocked ability</div><div class="notice-text">The paper's own framing: reasoning in large language models "can be unlocked by a simple method". CoT adds no parameters and no training — PaLM-540B already had the capacity, and standard prompting simply never asked for it. The +39 points are latent capability being <em>released</em>, not new knowledge being installed.</div></div>
+    <div class="notice-card"><div class="notice-title">📉 Flat or negative below ~10B</div><div class="notice-text">LaMDA-8B: 3.2 → 1.6. PaLM-8B: 4.9 → 4.1. LaMDA-68B gains just 5.7 → 8.2. Small models imitate the chain's <em>format</em> fluently, but "fluent but illogical chains of thought" (the paper's words) still land on wrong answers — so CoT actively hurts performance.</div></div>
+    <div class="notice-card"><div class="notice-title">🪞 Mirage or metric? — an open question</div><div class="notice-text">Honest note: the sharp cliff may be partly a measurement artifact. Schaeffer et al. (2023, "Are Emergent Abilities a Mirage?") argue that discontinuous metrics like exact-match accuracy can make smooth improvement look sudden — switch to a smoother metric and the cliff becomes a slope. Whether the scale gate is threshold-real or metric-made remains an open debate.</div></div>
+    <div class="notice-card"><div class="notice-title">🔬 Why scale fixes the chain</div><div class="notice-text">The authors read 45 GSM8K errors made by PaLM-62B: 20 semantic-understanding, 18 one-step-missing, 7 other. Scaling to 540B fixed 6, 12, and 4 of them respectively — the bigger model reads the problem and completes the steps a chain needs. For a mechanistic candidate, see the <a href="./Induction_Heads.html" style="color:var(--amber);">Induction Heads Guide →</a> — in-context copying circuits that strengthen with scale.</div></div>
+    <div class="notice-card"><div class="notice-title">🔀 Bridge: self-consistency</div><div class="notice-text">If one chain can be wrong, sample many: Wang et al. (2022) draw diverse CoT paths and majority-vote the final answers, stacking a second large gain on top of CoT. The natural next stop: <a href="./Self_Consistency.html" style="color:var(--amber);">Self-Consistency Guide →</a></div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Emergence Curve Explorer</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">The paper's evaluated model sizes, one benchmark. Click a tab to see that model's two GSM8K bars — standard prompting vs chain-of-thought — and where the delta from CoT actually lands. All values are the paper's reported solve rates (appendix Table 3; GPT-3 = text-davinci-002).</p>
+    <div id="ecTabs" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:1rem;"></div>
+    <div id="ecChart"></div>
+    <div id="ecDelta" style="margin-top:4px;"></div>
+    <div id="ecVerdict" style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-top:12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;line-height:1.8;min-height:44px;"></div>
+    <div style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">GSM8K solve rate (%), 8-shot, bars scaled to 60%. Within the PaLM family the delta climbs with size: <span class="highlight">−0.8 (8B) → +20.3 (62B) → +39.0 (540B)</span>; LaMDA-137B (+7.8) and GPT-3-175B (+31.3) sit either side of the ~100B gate.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
 <!-- QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
@@ -619,7 +646,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 (function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
 // === NAV ACTIVE ===
-(function(){const ids=['history','problem','core-idea','emergence','results','ablations','impact','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+(function(){const ids=['history','problem','core-idea','emergence','results','ablations','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
 
 // === SCROLL REVEAL ===
 (function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
@@ -746,6 +773,38 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     vEl.textContent=a.verdict;
   }
   window._abSelect=k=>{cur=k;render();};
+  render();
+})();
+
+// === EMERGENCE CURVE EXPLORER (DEEP DIVE) ===
+(function(){
+  const tabsEl=document.getElementById('ecTabs');
+  const chartEl=document.getElementById('ecChart');
+  const deltaEl=document.getElementById('ecDelta');
+  const verdictEl=document.getElementById('ecVerdict');
+  if(!tabsEl||!chartEl||!deltaEl||!verdictEl)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const models=[
+    {key:'lamda137',label:'LaMDA 137B',std:6.5,cot:14.3,note:'modest — the ~100B gate is only just crossed',verdict:'6.5 → 14.3. First positive delta, but a modest one; the model follows the chain while the reasoning still wobbles.'},
+    {key:'gpt3175',label:'GPT-3 175B',std:15.6,cot:46.9,note:'clear — the biggest jump until PaLM-540B',verdict:'15.6 → 46.9. A clear gain at ~175B — evidence the emergence gate sits near ~100B, not at 540B.'},
+    {key:'palm62',label:'PaLM 62B',std:9.6,cot:29.9,note:'real, but half the 540B delta',verdict:'9.6 → 29.9. Same family as the star at one-eighth the size: the gain is real, yet the chain still drops steps (18 of 45 sampled errors).'},
+    {key:'palm540',label:'PaLM 540B',std:17.9,cot:56.9,note:'the unlock — largest delta in the paper',verdict:'17.9 → 56.9. The unlock: largest model, largest delta — prompting alone beats fine-tuned GPT-3 with a verifier.'}
+  ];
+  let cur='lamda137';
+  const byKey=k=>models.find(m=>m.key===k)||models[0];
+  const row=(lbl,color,barId,valId)=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:110px;text-align:right;flex-shrink:0;">${lbl}</div><div style="flex:1;height:24px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div id="${barId}" style="height:100%;width:0%;background:${color};border-radius:4px;${reduced?'':'transition:width .7s ease;'}transform-origin:left;"></div></div><div id="${valId}" style="font-family:var(--mono);font-size:12px;color:${color};width:46px;flex-shrink:0;font-weight:600;"></div></div>`;
+  function render(){
+    tabsEl.innerHTML=models.map(m=>{const sel=m.key===cur;return `<button type="button" data-ec="${m.key}" style="font-family:var(--mono);font-size:11px;padding:8px 10px;border-radius:8px;border:1px solid ${sel?'rgba(245,158,11,0.4)':'var(--border)'};background:${sel?'var(--amber-dim)':'var(--bg3)'};color:${sel?'var(--amber)':'var(--text2)'};cursor:pointer;font-weight:${sel?'600':'400'};">${m.label}</button>`;}).join('');
+    const m=byKey(cur);
+    const diff=m.cot-m.std;
+    chartEl.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:10px;">GSM8K SOLVE RATE (%) · ${m.label} · 8-SHOT · BARS SCALED TO 60%</div>`+row('Standard','#94a3b8','ecStdBar','ecStdVal')+row('Chain-of-thought','#f59e0b','ecCotBar','ecCotVal');
+    const fill=()=>{const b1=document.getElementById('ecStdBar'),b2=document.getElementById('ecCotBar'),v1=document.getElementById('ecStdVal'),v2=document.getElementById('ecCotVal');if(b1)b1.style.width=(m.std/60*100)+'%';if(b2)b2.style.width=(m.cot/60*100)+'%';if(v1)v1.textContent=m.std.toFixed(1);if(v2)v2.textContent=m.cot.toFixed(1);};
+    if(reduced){fill();}else{setTimeout(fill,40);}
+    const cls=diff>=25?'pill-green':(diff>=5?'pill-amber':'pill-red');
+    deltaEl.innerHTML=`<span style="font-family:var(--mono);font-size:11px;color:var(--text3);">Δ FROM COT</span>&nbsp; <span class="pill ${cls}">${diff>0?'+':''}${diff.toFixed(1)} pts</span> <span style="font-size:12px;color:var(--text3);">${m.note}</span>`;
+    verdictEl.innerHTML=`<span class="pill pill-amber">VERDICT</span>&nbsp; <strong>CoT is a large-model skill</strong> — ${m.verdict}`;
+  }
+  tabsEl.addEventListener('click',e=>{const b=e.target.closest('button[data-ec]');if(!b)return;cur=b.getAttribute('data-ec');render();});
   render();
 })();
 
