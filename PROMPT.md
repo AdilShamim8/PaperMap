@@ -15,23 +15,24 @@ The Paper Section is the heart of PaperMap: a growing collection of **interactiv
 - A **5-question quiz** with explanations
 - A **Key Takeaways** reference section
 
-The library currently contains **20 papers organized into 7 learning tracks** — a guided path from the original 2017 Transformer to modern open reasoning models.
+The library currently contains **37 core papers organized into 7 categories** — plus **7 supplementary guides** — a comprehensive path from foundational self-attention to autonomous multi-agent systems.
 
 ## 2. How Papers Are Organized
 
-The curriculum is ordered so each track builds on the last. Papers are grouped by theme, and within a track they follow a rough chronology.
+The curriculum is structured into 7 core thematic categories plus supplementary explainers:
 
-| Track | Theme | Papers |
+| Category | Theme | Core Papers |
 |---|---|---|
-| **I** | Transformer → Modern Language Models | Attention Is All You Need (2017) · BERT (2018) · GPT-2 (2019) · GPT-3 (2020) · T5 (2020) |
-| **II** | Scaling + Training | Scaling Laws (2020) · Chinchilla (2022) — *study these two together* |
-| **III** | Knowledge + Adaptation | RAG (2020) · LoRA (2021) · ColBERTv2 (2022) |
-| **IV** | Instruction + Alignment | InstructGPT / RLHF (2022) · DPO (2023) |
-| **V** | In-Context Learning + Reasoning | Chain-of-Thought (2022) · Self-Consistency (2022) · Induction Heads (2022) |
-| **VI** | Agents + Tools | ReAct (2022) · Toolformer (2023) |
-| **VII** | Open Models + Evaluation | LLaMA (2023) · LLM-as-a-Judge (2023) · DeepSeek-R1 (2025) |
+| **I** | LLM Foundations | Attention Is All You Need (2017) · BERT (2018) · GPT-2 (2019) · GPT-3 (2020) · T5 (2020) · Scaling Laws (2020) · Chinchilla (2022) |
+| **II** | Retrieval, Reasoning & Adaptation | RAG (2020) · LoRA (2021) · Chain-of-Thought (2022) · Self-Consistency (2022) · ReAct (2022) |
+| **III** | Hallucination & Factuality | TruthfulQA (2021) · SelfCheckGPT (2023) · HaluEval (2023) · Survey on Hallucination (2023) · FActScore (2023) · RAGTruth (2024) |
+| **IV** | Evaluation & Benchmarks | HELM (2022) · LLM-as-a-Judge (2023) · JudgeBench (2024) · AgentBench (2024) |
+| **V** | Agent Safety & Security | AgentDojo (2024) · InjecAgent (2024) · Agent-SafetyBench (2024) · Agent Security Bench (2024) |
+| **VI** | Agent Memory | Generative Agents (2023) · MemGPT (2023) · Survey on Memory (2024) · LongMemEval (2024) · A-MEM (2025) · LoCoMo-Plus (2026) |
+| **VII** | Multi-Agent Systems | CAMEL (2023) · MetaGPT (2023) · Magentic-One (2024) · Multi-Agent Collaboration Survey (2025) · MultiAgentBench (2025) |
+| **+** | Supplementary Beyond Core | ColBERTv2 (2022) · InstructGPT (2022) · DPO (2023) · Induction Heads (2022) · Toolformer (2023) · LLaMA (2023) · DeepSeek-R1 (2025) |
 
-**On the homepage**, the Paper Library section renders: a quick-navigation chip row for the 7 tracks, a curriculum overview map, and one subsection per track containing its paper cards. When you add a paper, it must be placed in the correct track — never appended to the end of the grid.
+**On the homepage**, the Paper Library section renders: quick-navigation category buttons, live real-time search, stats counter, and category sections containing interactive paper cards. When you add a paper, place it in the correct category.
 
 **Study-pair rule.** Some papers are explicitly designed to be read together (Scaling Laws → Chinchilla). If your paper corrects, extends, or directly follows another paper, cross-link both explainers in the body and footer.
 
