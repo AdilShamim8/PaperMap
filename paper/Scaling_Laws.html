@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scaling Laws for Neural Language Models — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the Kaplan et al. scaling-laws paper, with interactive demos for power-law loss curves, compute-optimal budget allocation, and the N vs D data balance.">
+<meta name="keywords" content="scaling laws, Kaplan, power laws, compute-optimal training, language models, GPT-3, Chinchilla, model size, dataset size, compute, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Scaling_Laws.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Scaling Laws for Neural Language Models — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the scaling-laws paper with practical intuition and demos.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Scaling_Laws.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Scaling Laws — Interactive Guide">
+<meta name="twitter:description" content="See how power laws predict loss from model size, data, and compute — with interactive demos.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#power-laws">Power Laws</a>
+    <a class="nav-link" href="#findings">Findings</a>
+    <a class="nav-link" href="#compute-optimal">Compute</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+    <a class="nav-link" href="#takeaways">Takeaways</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2020</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#power-laws">Power Laws</a>
+  <a href="#findings">Findings</a>
+  <a href="#compute-optimal">Compute</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#takeaways">Takeaways</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    The <em>Power Laws</em><br>Scaling Laws
+  </h1>
+  <p class="hero-subtitle">
+    An interactive guide to "Scaling Laws for Neural Language Models" — the paper
+    showing that performance depends strongly on scale and only weakly on shape,
+    and that smooth power laws predict loss from model size, data, and compute
+    across many orders of magnitude.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">6+</div>
+      <div class="stat-label">Orders of Compute Studied</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1.5B</div>
+      <div class="stat-label">Largest Model in Study</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Resource Axes (N, D, C)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2020</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Craft to a <em>Science of Scale</em></h2>
+  <p class="section-desc">Before 2020, making models bigger was an art. Kaplan et al. turned it into quantitative science — and the field used it to plan the largest training runs ever attempted.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2012–2017</div><div class="tl-title">Hand-crafted architectures</div><div class="tl-desc">Deep learning gains came from clever architectures — CNNs, LSTMs, attention. Bigger helped, but nobody could say by how much, or predict it ahead of time.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2018</div><div class="tl-title">GPT-1 & BERT — pre-training arrives</div><div class="tl-desc">Pre-train on unlabeled text, fine-tune on tasks. Scale starts to matter — but each size jump is still a costly experiment, not a prediction.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2019</div><div class="tl-title">GPT-2 (1.5B)</div><div class="tl-desc">A 1.5-billion-parameter model shows surprisingly broad language abilities. The hunch forms: maybe raw scale is the secret ingredient.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2020 · Jan</div><div class="tl-title">🚀 Kaplan et al. — Scaling Laws</div><div class="tl-desc">Empirical laws: test loss follows smooth power laws in parameters N, data D, and compute C — over six orders of magnitude. Scaling becomes predictable.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2020 · May</div><div class="tl-title">GPT-3 (175B)</div><div class="tl-desc">A 100× jump over GPT-2, designed using the scaling-law framework — planned on curves, not guesswork. Few-shot learning emerges at scale.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2022</div><div class="tl-title">Chinchilla — the correction</div><div class="tl-desc">DeepMind shows the compute-optimal balance leans more toward data (N ∝ C^0.5, not C^0.73). <a href="./Chinchilla.html" style="color:var(--green);">Study it together with the Chinchilla guide</a>.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">A power law means loss falls as a <span class="highlight">straight line on a log-log plot</span>: multiply the resources, subtract a fixed amount of loss. That straightness — holding over six-plus orders of magnitude — is what turned scale from a gamble into a planning problem.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">LOSS vs RESOURCES — LOG-LOG (ILLUSTRATIVE)</div>
+        <div style="display:flex;align-items:flex-end;gap:6px;height:90px;">
+          <div style="flex:1;background:var(--amber);opacity:0.30;border-radius:4px 4px 0 0;height:100%;"></div>
+          <div style="flex:1;background:var(--amber);opacity:0.40;border-radius:4px 4px 0 0;height:85%;"></div>
+          <div style="flex:1;background:var(--amber);opacity:0.50;border-radius:4px 4px 0 0;height:70%;"></div>
+          <div style="flex:1;background:var(--amber);opacity:0.60;border-radius:4px 4px 0 0;height:55%;"></div>
+          <div style="flex:1;background:var(--amber);opacity:0.70;border-radius:4px 4px 0 0;height:40%;"></div>
+          <div style="flex:1;background:var(--amber);opacity:0.85;border-radius:4px 4px 0 0;height:25%;"></div>
+          <div style="flex:1;background:var(--amber);border-radius:4px 4px 0 0;height:10%;"></div>
+        </div>
+        <div style="display:flex;gap:6px;font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:4px;">
+          <div style="flex:1;text-align:center;">1×</div>
+          <div style="flex:1;text-align:center;">10×</div>
+          <div style="flex:1;text-align:center;">10²×</div>
+          <div style="flex:1;text-align:center;">10³×</div>
+          <div style="flex:1;text-align:center;">10⁴×</div>
+          <div style="flex:1;text-align:center;">10⁵×</div>
+          <div style="flex:1;text-align:center;">10⁶×</div>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">Equal steps down in loss for equal 10× steps in resources — a straight line in log-log space.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem — Scaling by <em>Guesswork</em></h2>
+  <p class="section-desc">Before scaling laws, every size increase was a bet. How big should the next model be? How much data does it need? When do you stop training? There was no quantitative guidance.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🎲</div>
+      <div class="problem-title">Scaling Without Laws</div>
+      <ul class="problem-list">
+        <li>How big should the next model be? Nobody could predict</li>
+        <li>How much data? Folklore and expensive trial-and-error</li>
+        <li>When to stop training? Watch the loss curve and hope</li>
+        <li>Wasted compute on runs that under-delivered</li>
+        <li>Unpredictable performance made planning impossible</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">📐</div>
+      <div class="problem-title">Scaling With Laws</div>
+      <ul class="problem-list">
+        <li>Smooth, predictable power laws for loss vs scale</li>
+        <li>Compute-optimal recipes: the best loss per FLOP</li>
+        <li>Plan and price a run before spending the compute</li>
+        <li>Know the loss floor a model size can reach</li>
+        <li>A science of scale, not folklore</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — Building Without Stress Math</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Before stress calculations, builders made bridges thick and hoped. Stress math turned bridge-building into engineering: given a load, the numbers tell you the beams. Kaplan et al. did the same for compute. Given a budget C, the laws say how big to build the model (N), how much data to feed it (D), and what loss to expect when you stop — so the guesswork, and the costly over-engineering, goes away.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- POWER LAWS -->
+<section id="power-laws">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Core Idea — <em>Power Laws</em></h2>
+  <p class="section-desc">Test loss follows smooth power laws in each of the three resource axes. On a log-log plot, loss versus scale is a straight line — one simple formula per resource.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">
+      L(N) = (N<sub>c</sub> / N)<sup>α<sub>N</sub></sup> &nbsp;·&nbsp; α<sub>N</sub> ≈ 0.076<br>
+      L(D) = (D<sub>c</sub> / D)<sup>α<sub>D</sub></sup> &nbsp;·&nbsp; α<sub>D</sub> ≈ 0.095<br>
+      L(C) = (C<sub>c</sub> / C)<sup>α<sub>C</sub></sup> &nbsp;·&nbsp; α<sub>C</sub> ≈ 0.050
+    </div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">N</div><div class="fp-name">Non-embedding parameters</div><div class="fp-desc">Model size, counting only transformer-body parameters. The strongest single lever: L(N) = (N_c/N)^0.076.</div></div>
+      <div class="formula-piece"><div class="fp-sym">D</div><div class="fp-name">Dataset size (tokens)</div><div class="fp-desc">Number of training tokens. Data obeys its own power law: L(D) = (D_c/D)^0.095.</div></div>
+      <div class="formula-piece"><div class="fp-sym">C</div><div class="fp-name">Training compute</div><div class="fp-desc">Estimated non-embedding training FLOPs (the paper reports PF-days). L(C) = (C_c/C)^0.050.</div></div>
+      <div class="formula-piece"><div class="fp-sym">L</div><div class="fp-name">Cross-entropy loss</div><div class="fp-desc">Test loss on held-out text — the single number all three laws predict.</div></div>
+      <div class="formula-piece"><div class="fp-sym">N<sub>c</sub>, D<sub>c</sub>, C<sub>c</sub></div><div class="fp-name">Critical constants</div><div class="fp-desc">Scale thresholds from the fit — the resources must pass these before the power law takes hold.</div></div>
+      <div class="formula-piece"><div class="fp-sym">α ≈ 0.05–0.10</div><div class="fp-name">Small exponents</div><div class="fp-desc">Each 10× in resources buys a modest but very predictable slice of loss.</div></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">Read It Off a Log-Log Plot</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Plot loss against N, D, or C with both axes logarithmic, and the points land on a <span class="highlight">straight line</span> — across six-plus orders of magnitude of compute. A straight line in log-log space is the fingerprint of a power law: multiply the resources by 10, subtract a fixed amount of loss. The fits hold from toy models up to 1.5B parameters, which is exactly why extrapolating beyond them became credible.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Three Levers, One Recipe</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Each resource obeys its own law, and they interlock: compute is roughly <span class="code-inline">C ≈ 6ND</span>, tying FLOPs to model size and data. Fit the constants on cheap, small runs, then read off the expected loss of a run you could never afford to explore blindly — the extrapolation that later sized GPT-3.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Power-Law Loss Explorer</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a model size and watch the loss predicted by L(N) = (N<sub>c</sub>/N)<sup>α<sub>N</sub></sup> with α<sub>N</sub> ≈ 0.076 and N<sub>c</sub> = 8.8×10<sup>13</sup>. Every 10× in parameters buys roughly the same cut in loss — the signature of a power law. <em>Loss values are illustrative.</em></p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="plTabs"></div>
+    <div id="plBars"></div>
+    <div id="plResult" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;margin-top:10px;min-height:22px;"></div>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- FINDINGS -->
+<section id="findings">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Finding 1 — Shape <em>Barely Matters</em></h2>
+  <p class="section-desc">Within broad ranges, performance depends strongly on total scale — and only weakly on the shape of the model. Depth versus width is nearly a wash.</p>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">Depth ⇄ Width — Almost a Wash</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Models with the same non-embedding parameter count but very different depth-to-width ratios — shallow-wide versus deep-narrow Transformers — land on essentially the <span class="highlight">same loss curve</span>. Shape knobs matter within broad ranges, but they are second-order effects compared to total scale: a kind of "universality" across architectures.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Why That's Liberating</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">If shape barely matters, you don't need to search architectures before scaling. Pick a workable shape and spend the budget on size and data — the ceiling is set by N, D, and C, which you can plan, not by architecture roulette.</p>
+    </div>
+  </div>
+
+  <div class="notice-grid" style="margin-bottom:2rem;">
+    <div class="notice-card"><div class="notice-title">⚖️ Universality of Overfitting</div><div class="notice-text">N and D must scale together — roughly D ∝ N<sup>0.74</sup> — or the loss floor rises: more parameters on the same data eventually stop helping.</div></div>
+    <div class="notice-card"><div class="notice-title">📈 Universality of Training</div><div class="notice-text">Late-time loss is predictable from the early training curve — the same learning-curve shape shows up across scales.</div></div>
+    <div class="notice-card"><div class="notice-title">🔀 Transfer</div><div class="notice-text">Models trained on one text distribution still do well on others after fine-tuning — scale, not your corpus choice, sets the ceiling.</div></div>
+    <div class="notice-card"><div class="notice-title">⚡ Sample Efficiency</div><div class="notice-text">Large models reach any target loss with fewer training samples — big models learn more per example.</div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The N vs D Balance</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">You've built a 100B-parameter model. Slide the dataset size: starve it of data and the loss floor rises (overfitting); drown it in data and the model can't absorb it all (undertrained). The efficient frontier sits near <strong>D ∝ N<sup>0.74</sup></strong>. <em>Illustrative.</em></p>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;">
+      <span style="font-family:var(--mono);font-size:11px;color:var(--text3);">DATA BUDGET</span>
+      <span id="ndVal" style="font-family:var(--mono);font-size:12px;color:var(--teal);font-weight:600;"></span>
+    </div>
+    <input type="range" id="ndSlider" min="0" max="100" value="47" step="1" aria-label="Dataset size" style="width:100%;accent-color:#14b8a6;margin:4px 0 12px;">
+    <div id="ndTrack" style="position:relative;height:14px;margin:0 0 4px;"></div>
+    <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:12px;">
+      <span>← overfit</span><span>balanced</span><span>data-rich →</span>
+    </div>
+    <div id="ndBars"></div>
+    <div id="ndStatus"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COMPUTE OPTIMAL -->
+<section id="compute-optimal">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Finding 2 — <em>Compute-Optimal</em> Training</h2>
+  <p class="section-desc">Given a fixed compute budget C, don't train a small model to convergence. Train a larger model and stop early — the best allocation follows N ∝ C<sup>0.73</sup>.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">N* ∝ C<sup>0.73</sup> &nbsp;·&nbsp; D* ∝ C<sup>0.27</sup> &nbsp;→&nbsp; train larger, stop early</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">C</div><div class="fp-name">Fixed compute budget</div><div class="fp-desc">The FLOPs you can afford — the constraint every training decision hangs on.</div></div>
+      <div class="formula-piece"><div class="fp-sym">N* ∝ C^0.73</div><div class="fp-name">Optimal model size</div><div class="fp-desc">The best N grows fast with budget — most new compute buys parameters.</div></div>
+      <div class="formula-piece"><div class="fp-sym">D* ∝ C^0.27</div><div class="fp-name">Optimal dataset size</div><div class="fp-desc">The best D grows slowly — bigger models run on relatively modest data.</div></div>
+      <div class="formula-piece"><div class="fp-sym">stop early</div><div class="fp-name">Never converge</div><div class="fp-desc">The optimum sits before convergence — an unconverged big model beats a converged small one at equal compute.</div></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">The Efficient Frontier</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">For every budget C there is a best (N, D) pair — the <span class="highlight">efficient frontier</span>. Depart from it and you pay: the same FLOPs land you at a worse loss. The frontier is what lets a lab say "with our budget, build exactly this model, on exactly this much data, and stop exactly here."</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Why Stopping Early Wins</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Because loss curves are power laws in training time too, a big model that has <em>not</em> converged still beats a smaller one that has — at equal compute. So spend the budget on size, not on squeezing out the last few percent of training. Most compute should go to bigger models on modest data.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Compute Budget Allocator</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Choose a total compute budget. The bars show the Kaplan-optimal model size N* (following N* ∝ C<sup>0.73</sup>) and dataset size D* (from C ≈ 6ND), anchored so the ~10<sup>23</sup> FLOP point matches GPT-3's 175B run. Watch the tokens-per-parameter bar fall as the budget grows — <strong>the model grows faster than the data</strong>. <em>Illustrative.</em></p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="coTabs"></div>
+    <div id="coBars"></div>
+    <div id="coResult" style="font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:600;margin-top:10px;line-height:1.7;"></div>
+  </div>
+
+  <div class="card" style="margin-top:2rem;overflow-x:auto;">
+    <div class="card-label">Chapter 05 — GPT-3: The Proof at Scale</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">GPT-3 — 175B parameters trained on 300B tokens — followed this paper's compute-optimal prescription within its framework: the first 100× scale-up planned on curves instead of hope.</p>
+    <table class="comp-table">
+      <thead><tr><th>Model</th><th>Parameters</th><th>Training Tokens</th><th>Year</th></tr></thead>
+      <tbody>
+        <tr><td>GPT-2</td><td>1.5B</td><td>~10B (WebText)</td><td>2019</td></tr>
+        <tr><td class="comp-best">GPT-3</td><td class="comp-best">175B</td><td class="comp-best">300B</td><td>2020</td></tr>
+        <tr><td>Chinchilla</td><td>70B</td><td>1.4T</td><td>2022</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Honest footnote: Chinchilla (2022) revised the compute-optimal exponents — optimal models need more data per parameter than Kaplan's laws suggested. <a href="./Chinchilla.html" style="color:var(--amber);">Read the two papers together → Chinchilla guide</a>.</p>
+  </div>
+</section>
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>Scaling Hypothesis</em></h2>
+  <p class="section-desc">Scaling laws turned "bigger is better" into a quantitative research program that guided the largest training runs in history.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧭 A Research Program</div><div class="notice-text">The "scaling hypothesis" — that capabilities keep improving as scale grows — became a deliberate program, not a hope.</div></div>
+    <div class="notice-card"><div class="notice-title">📐 Compute Planning</div><div class="notice-text">Compute-optimal curves guided GPT-3's 175B run and much that followed — scale-ups sized on paper before hardware.</div></div>
+    <div class="notice-card"><div class="notice-title">🔮 Loss Forecasting</div><div class="notice-text">Teams now fit the laws on small runs and predict the loss of frontier runs before committing the compute.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Frontier Thinking</div><div class="notice-text">"Train larger, stop early" reshaped training practice — convergence stopped being the target at every serious lab.</div></div>
+    <div class="notice-card"><div class="notice-title">📚 Chinchilla (2022)</div><div class="notice-text">Data scaling laws rebalanced the optimum toward more tokens per parameter — <a href="./Chinchilla.html" style="color:var(--amber);">read it alongside this guide</a>.</div></div>
+    <div class="notice-card"><div class="notice-title">🚀 The Scale-Up Era</div><div class="notice-text">From GPT-3 onward, frontier models were bets placed on curves — see the <a href="./Language_Models_are_Few_Shot_Learners.html" style="color:var(--amber);">GPT-3 guide</a>.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the scaling-laws paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Smooth power laws: L ≈ (N_c/N)^0.076, (D_c/D)^0.095, (C_c/C)^0.050 — straight lines on log-log plots.</div>
+    <div class="card-sm">✅ Scale ≫ shape: loss depends strongly on N, D, C and only weakly on depth/width within broad ranges.</div>
+    <div class="card-sm">✅ The fits hold over six-plus orders of magnitude of compute — from toy models to 1.5B parameters.</div>
+    <div class="card-sm">✅ Compute-optimal: at fixed C, N ∝ C^0.73 — spend on bigger models on modest data, stopped early.</div>
+    <div class="card-sm">✅ N and D must grow together (≈ D ∝ N^0.74) or overfitting raises the loss floor.</div>
+    <div class="card-sm">✅ GPT-3 (175B, 300B tokens) was planned on these curves — Chinchilla (2022) later rebalanced toward more data.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener noreferrer">"Scaling Laws for Neural Language Models"</a> (Kaplan et al., 2020)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Chinchilla.html">Chinchilla Guide</a>
+    <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
+    <a class="footer-link" href="./GPT_2.html">GPT-2 Guide</a>
+  </div>
+    <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','power-laws','findings','compute-optimal','impact','quiz','takeaways'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === POWER-LAW LOSS EXPLORER ===
+(function(){
+  const tabsEl=document.getElementById('plTabs');const barsEl=document.getElementById('plBars');const resEl=document.getElementById('plResult');
+  if(!tabsEl||!barsEl||!resEl)return;
+  const NC=8.8e13,AN=0.076;
+  const sizes=[{n:1e6,l:'10⁶'},{n:1e7,l:'10⁷'},{n:1e8,l:'10⁸'},{n:1e9,l:'10⁹'}];
+  let current=1e7;
+  const loss=n=>Math.pow(NC/n,AN);
+  function render(){
+    tabsEl.innerHTML=sizes.filter(s=>s.n>=1e7).map(s=>{const on=s.n===current;return `<button type="button" style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${on?'rgba(245,158,11,0.4)':'var(--border)'};background:${on?'var(--amber-dim)':'var(--bg3)'};color:${on?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._plSelect(${s.n})">${s.l} params</button>`;}).join('');
+    const maxL=loss(1e6);
+    barsEl.innerHTML=sizes.map(s=>{const L=loss(s.n);const w=Math.max(4,(L/maxL)*100);const on=s.n===current;return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:84px;text-align:right;">${s.l} params</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${w}%;background:${on?'#f59e0b':'#94a3b8'};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:64px;">L ≈ ${L.toFixed(2)}</div></div>`;}).join('');
+    const cur=sizes.find(s=>s.n===current);
+    const L=loss(current),Lprev=loss(current/10);
+    resEl.textContent=`At ${cur.l} parameters: L ≈ ${L.toFixed(2)} (illustrative) — 10× more parameters ≈ ${Math.round((1-L/Lprev)*100)}% less loss.`;
+  }
+  window._plSelect=function(n){current=n;render();};
+  render();
+})();
+
+// === N vs D BALANCE DEMO ===
+(function(){
+  const slider=document.getElementById('ndSlider');const valEl=document.getElementById('ndVal');const trackEl=document.getElementById('ndTrack');const barsEl=document.getElementById('ndBars');const statusEl=document.getElementById('ndStatus');
+  if(!slider||!barsEl||!statusEl||!trackEl||!valEl)return;
+  const N=1e11;
+  const Dstar=Math.pow(10,2.2)*Math.pow(N,0.74);
+  const EXP_MIN=8,EXP_MAX=13;
+  const pos=e=>((e-EXP_MIN)/(EXP_MAX-EXP_MIN))*100;
+  function fmtT(v){if(v>=1e12)return (v/1e12).toFixed(1)+'T';if(v>=1e9)return (v/1e9).toFixed(1)+'B';return (v/1e6).toFixed(0)+'M';}
+  function render(){
+    const e=EXP_MIN+(slider.value/100)*(EXP_MAX-EXP_MIN);
+    const D=Math.pow(10,e);
+    valEl.textContent=fmtT(D)+' tokens';
+    const pRed=pos(Math.log10(0.3*Dstar)),pGrn=pos(Math.log10(3*Dstar));
+    trackEl.innerHTML=
+      `<div style="position:absolute;left:0;width:${pRed}%;top:5px;height:5px;background:var(--red);opacity:0.7;border-radius:2px 0 0 2px;"></div>`+
+      `<div style="position:absolute;left:${pRed}%;width:${pGrn-pRed}%;top:5px;height:5px;background:var(--green);opacity:0.7;"></div>`+
+      `<div style="position:absolute;left:${pGrn}%;width:${100-pGrn}%;top:5px;height:5px;background:var(--amber);opacity:0.7;border-radius:0 2px 2px 0;"></div>`+
+      `<div style="position:absolute;left:${slider.value}%;top:0;width:2px;height:14px;background:var(--text);transform:translateX(-1px);"></div>`;
+    const wD=Math.max(4,pos(e));
+    barsEl.innerHTML=
+      `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:72px;text-align:right;">model N</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:100%;background:#3b82f6;border-radius:4px;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:64px;">100B params</div></div>`+
+      `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:72px;text-align:right;">data D</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${wD}%;background:#14b8a6;border-radius:4px;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:64px;">${fmtT(D)}</div></div>`;
+    const ratio=D/Dstar;
+    let color,msg;
+    if(ratio<0.3){color='#ef4444';msg='<strong style="color:var(--red);">Overfitting:</strong> too little data for a 100B model — the loss floor rises and extra parameters are wasted.';}
+    else if(ratio<=3){color='#22c55e';msg='<strong style="color:var(--green);">Balanced:</strong> near the efficient frontier (D ∝ N<sup>0.74</sup>) — model size and data are in step.';}
+    else{color='#f59e0b';msg='<strong style="color:var(--amber);">Data-rich / undertrained:</strong> the model is too small to absorb this much data — scale N before collecting more.';}
+    statusEl.innerHTML=`<div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text2);margin-top:8px;"><span style="width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0;margin-top:6px;"></span><span>${msg}</span></div><div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:6px;">tokens per parameter: ${(D/N).toFixed(2)} · balanced point D* ≈ ${fmtT(Dstar)} tokens (illustrative)</div>`;
+  }
+  slider.addEventListener('input',render);
+  render();
+})();
+
+// === COMPUTE BUDGET ALLOCATOR ===
+(function(){
+  const tabsEl=document.getElementById('coTabs');const barsEl=document.getElementById('coBars');const resEl=document.getElementById('coResult');
+  if(!tabsEl||!barsEl||!resEl)return;
+  const budgets=[1e18,1e20,1e22,1e24];
+  const labels=['10¹⁸','10²⁰','10²²','10²⁴'];
+  const AC=3.2e23,AN=1.75e11;
+  const Nst=C=>AN*Math.pow(C/AC,0.73);
+  const Dst=C=>C/(6*Nst(C));
+  const Ns=budgets.map(Nst),Ds=budgets.map(Dst);
+  const nLo=Math.log10(Math.min(...Ns)),nHi=Math.log10(Math.max(...Ns));
+  const dLo=Math.log10(Math.min(...Ds)),dHi=Math.log10(Math.max(...Ds));
+  let current=1e22;
+  function fmt(v){if(v>=1e12)return (v/1e12).toFixed(1)+'T';if(v>=1e9)return (v/1e9).toFixed(v>=1e10?0:1)+'B';if(v>=1e6)return (v/1e6).toFixed(0)+'M';return v.toExponential(1);}
+  function barRow(label,w,color,val){return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:96px;text-align:right;">${label}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${w}%;background:${color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:84px;">${val}</div></div>`;}
+  function render(){
+    tabsEl.innerHTML=budgets.map((C,i)=>{const on=C===current;return `<button type="button" style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${on?'rgba(245,158,11,0.4)':'var(--border)'};background:${on?'var(--amber-dim)':'var(--bg3)'};color:${on?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._coSelect(${C})">${labels[i]} FLOPs</button>`;}).join('');
+    const idx=budgets.indexOf(current);
+    const N=Nst(current),D=Dst(current);
+    const wN=Math.max(4,((Math.log10(N)-nLo)/(nHi-nLo))*100);
+    const wD=Math.max(4,((Math.log10(D)-dLo)/(dHi-dLo))*100);
+    const tpp=D/N;
+    const wT=Math.max(4,Math.min(100,((Math.log10(tpp)+1)/4)*100));
+    barsEl.innerHTML=
+      barRow('model N*',wN,'#f59e0b',fmt(N)+' params')+
+      barRow('data D*',wD,'#3b82f6',fmt(D)+' tokens')+
+      barRow('tokens/param',wT,'#14b8a6',tpp>=10?tpp.toFixed(0):tpp.toFixed(1));
+    let comp;
+    if(idx>0){
+      const p=budgets[idx-1];
+      const mn=N/Nst(p),md=D/Dst(p);
+      comp=` Budget ×100 → model ×${mn.toFixed(0)}, data only ×${md.toFixed(1)} — <strong>the model grows faster than the data</strong>.`;
+    }else{
+      comp=` This is the baseline — pick a bigger budget and watch N* outgrow D*.`;
+    }
+    resEl.innerHTML=`${labels[idx]} FLOPs → N* ≈ ${fmt(N)} params on D* ≈ ${fmt(D)} tokens, stopped before convergence.${comp} <span style="color:var(--text3);font-weight:400;">(illustrative — anchored to GPT-3: N* ∝ C<sup>0.73</sup>, C ≈ 6ND)</span>`;
+  }
+  window._coSelect=function(C){current=C;render();};
+  render();
+})();
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'According to the paper, what does language-model loss depend on strongly — and weakly?',opts:['Strongly on shape (depth/width), weakly on scale','Strongly on scale (N, D, C), weakly on shape','Strongly on the learning-rate schedule, weakly on data','Strongly on tokenizer choice, weakly on compute'],correct:1,explain:'Within broad ranges, performance depends strongly on scale — parameters N, data D, compute C — and only weakly on the shape of the model. That is why one set of power laws holds across very different Transformer shapes.'},
+  {q:'Which value is the paper\u2019s approximate exponent \u03B1_N in L(N) = (N_c/N)^\u03B1_N for non-embedding parameters?',opts:['0.050','0.076','0.095','0.73'],correct:1,explain:'\u03B1_N \u2248 0.076 for non-embedding parameters. For reference: \u03B1_D \u2248 0.095 for dataset size, \u03B1_C \u2248 0.050 for compute — and 0.73 is the compute-allocation exponent, not a loss exponent.'},
+  {q:'The law N \u221D C^0.73 tells you how to spend a compute budget. What does it imply?',opts:['Train small models to full convergence — data is everything','Train larger models and stop early, before convergence','Keep the model fixed and only grow the dataset','Train many tiny models and ensemble them'],correct:1,explain:'At fixed compute, the optimal allocation grows the model as N \u221D C^0.73 — so most extra compute buys a bigger model, trained on relatively modest data, stopped before convergence.'},
+  {q:'What does \u201Cuniversality of overfitting\u201D mean in this paper?',opts:['Only small models overfit','N and D must grow together (roughly D \u221D N^0.74) or the loss floor rises','Overfitting disappears at large scale','Regularization fully prevents overfitting'],correct:1,explain:'Overfitting is universal: if parameters grow without data growing alongside them — roughly along D \u221D N^0.74 — the achievable loss floor rises and the extra parameters stop helping.'},
+  {q:'Which later paper revised the compute-optimal exponents, favoring more data per parameter?',opts:['Chinchilla (Hoffmann et al., 2022)','BERT (Devlin et al., 2018)','GPT-2 (Radford et al., 2019)','ELMo (Peters et al., 2018)'],correct:0,explain:'Chinchilla (2022) re-fit the scaling laws with a joint (N, D) model and found compute-optimal training wants far more tokens per parameter than N \u221D C^0.73 implies. Read them together: <a href="./Chinchilla.html" style="color:var(--amber);">Chinchilla Guide</a>.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
