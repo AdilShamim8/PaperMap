@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReAct: Synergizing Reasoning and Acting in Language Models — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the ReAct paper, with a live agent trace player, a CoT-vs-ReAct hallucination showdown, action-space demos, and results across HotpotQA, FEVER, ALFWorld and WebShop.">
+<meta name="keywords" content="ReAct, reasoning and acting, language agents, chain-of-thought, tool use, PaLM, HotpotQA, FEVER, ALFWorld, WebShop, interactive tutorial">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/ReAct.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="ReAct: Synergizing Reasoning and Acting in Language Models — Interactive Guide">
+<meta property="og:description" content="Reasoning + acting in one loop — trace player, showdown demos, and the story of the template behind every modern AI agent.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/ReAct.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ReAct — Interactive Guide">
+<meta name="twitter:description" content="Thought → Action → Observation: play an agent trace, catch a hallucination, and meet the template behind modern AI agents.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber); }
+.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red); }
+.problem-card.good .problem-title { color:var(--green); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green);font-weight:600; }
+.comp-worst { color:var(--red); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#action-space">Action Space</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#why-it-works">Why It Works</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">ICLR 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#action-space">Action Space</a>
+  <a href="#results">Results</a>
+  <a href="#why-it-works">Why It Works</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    <em>Reasoning</em> + <em>Acting</em><br>ReAct
+  </h1>
+  <p class="hero-subtitle">
+    The paper that taught language models to interleave thinking with doing — reasoning traces
+    guide actions, actions gather evidence, and observations ground reasoning. It became the
+    template behind every modern AI agent.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Loop Steps (Thought · Action · Observation)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Benchmarks (HotpotQA · FEVER · ALFWorld · WebShop)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">540B</div>
+      <div class="stat-label">Backbone (PaLM-540B)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2022</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">Two Threads, <em>One Loop</em></h2>
+  <p class="section-desc">One research thread taught models to act; the other taught them to reason. ReAct is where the two finally met.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2017</div><div class="tl-title">RL agents in text worlds</div><div class="tl-desc">Reinforcement-learning agents act in text-based environments, learning from reward signals alone — acting without reasoning, at huge sample cost.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2020–21</div><div class="tl-title">Language models become policies</div><div class="tl-desc">LMs start choosing actions in interactive environments — by 2022, SayCan grounds LM plans on real robots. The reasoning behind each action stays implicit.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">Chain-of-Thought prompting</div><div class="tl-desc">Pure reasoning in text — step-by-step traces unlock multi-step problems, but the model never touches the world, so confident hallucination persists. <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber);">CoT Guide ↗</a></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · Oct</div><div class="tl-title">🚀 ReAct (Yao et al.)</div><div class="tl-desc">Reasoning and acting in one loop: thoughts steer actions, actions fetch evidence, observations correct the plan — all taught with a handful of example traces.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023</div><div class="tl-title">Toolformer & function calling</div><div class="tl-desc">Models teach themselves to call tools (Toolformer) and APIs ship native function calling — tool traces go mainstream. <a href="./Toolformer.html" style="color:var(--amber);">Toolformer Guide ↗</a></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2024 →</div><div class="tl-title">The agent era</div><div class="tl-desc">AutoGPT-style autonomous loops and agent frameworks (LangChain, LlamaIndex, …) standardize on ReAct-style traces — "agentic AI" enters the vocabulary.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Reasoning and acting are <span class="highlight">two halves of one skill</span>. The reasoning trace tells the agent <em>why</em> it is about to act; the action brings back <em>facts</em> that reasoning alone could never invent. Interleave them, and each half fixes the other's failure mode.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE LOOP IN ONE GLANCE</div>
+        <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:var(--text2);">
+          <span style="color:var(--amber);font-weight:600;">Thought 1</span>&nbsp;&nbsp;I should search for the entity first.<br>
+          <span style="color:var(--blue);font-weight:600;">Action 1</span>&nbsp;&nbsp;Search[Apex Mountains]<br>
+          <span style="color:var(--text3);">Observation 1</span>&nbsp;&nbsp;(intro paragraphs of the article…)<br>
+          <span style="color:var(--amber);font-weight:600;">Thought 2</span>&nbsp;&nbsp;The range isn't mentioned — look it up…
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">Thought (amber) plans · Action (blue) executes · Observation (gray) reports back.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem — <em>Half a Brain</em></h2>
+  <p class="section-desc">In 2022, an agent could act or it could reason — almost never both at once. Each camp had a signature failure mode.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🤖</div>
+      <div class="problem-title">Acting without reasoning</div>
+      <ul class="problem-list">
+        <li>Imitation / RL agents map states straight to actions</li>
+        <li>No explicit reasoning to explain why a move was chosen</li>
+        <li>One wrong action compounds — nothing notices the drift</li>
+        <li>Opaque decision chains — hard to debug, hard to trust</li>
+        <li>Limited to behaviors seen (or rewarded) in training</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">🧠</div>
+      <div class="problem-title">Reasoning without acting</div>
+      <ul class="problem-list">
+        <li>Chain-of-thought never queries the outside world</li>
+        <li>Confidently hallucinated facts read exactly like true ones</li>
+        <li>Knowledge frozen at pre-training time — stale, unchecked</li>
+        <li>Early errors propagate silently to the final answer</li>
+        <li>No way to gather missing evidence mid-chain</li>
+      </ul>
+    </div>
+    <div class="problem-card good" style="grid-column:1 / -1;">
+      <div class="problem-icon">🔁</div>
+      <div class="problem-title">ReAct — both halves, one loop</div>
+      <ul class="problem-list">
+        <li><strong>Thoughts</strong> plan, track progress, and flag uncertainty</li>
+        <li><strong>Actions</strong> retrieve ground truth (Search, Lookup) or change the world</li>
+        <li><strong>Observations</strong> correct the plan mid-episode</li>
+        <li>Every step is plain text — readable, debuggable, promptable</li>
+        <li>Few-shot: a handful of example traces teaches the format — no training</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — Compass vs. Eyes</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:6px;">
+      <div class="card-sm">
+        <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px;">🤖 Acting-only agent</div>
+        <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">A courier sprinting a route on pure muscle memory — fast, but it never reads a street sign, never notices the wrong turn, and cannot tell you why it turned left.</div>
+      </div>
+      <div class="card-sm">
+        <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px;">🧠 Reasoning-only agent</div>
+        <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">A navigator plotting the whole trip from a beautiful, decades-old map — the plan is impeccable, but the bridge it crosses was demolished years ago.</div>
+      </div>
+      <div class="card-sm">
+        <div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:4px;">🔁 ReAct agent</div>
+        <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">Plan a few streets, look around, re-plan — compass in one hand, open eyes in the other. The map and the street signs finally agree.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Core Idea — <em>One Loop</em></h2>
+  <p class="section-desc">ReAct prompts a large language model to solve tasks by interleaving thinking and doing. Every step of an episode is plain text — either the model writes it, or a tool writes it back.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">Thought 1 → Action 1 → Observation 1 → Thought 2 → … → Finish[answer]</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">💭 Thought</div><div class="fp-name">Private reasoning</div><div class="fp-desc">The model analyzes the current state — what is known, what is missing, what to do next — and writes the reasoning down.</div></div>
+      <div class="formula-piece"><div class="fp-sym">⚡ Action</div><div class="fp-name">Tool call</div><div class="fp-desc">A formatted verb: Search[query], Lookup[term], Finish[answer] — or an environment command like "go to shelf 1".</div></div>
+      <div class="formula-piece"><div class="fp-sym">👁 Observation</div><div class="fp-name">Evidence returns</div><div class="fp-desc">Whatever the tool or environment answers is appended to the context — fresh, external, grounded.</div></div>
+      <div class="formula-piece"><div class="fp-sym">🏁 Finish</div><div class="fp-name">Exit</div><div class="fp-desc">When the thoughts say the goal is met, the agent emits Finish[answer] and the episode ends.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Agent Trace Player</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A HotpotQA-style question, solved the ReAct way. Press <strong>Next step</strong> to advance the precomputed trace — watch thoughts plan, actions execute, and observations report back.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:0.9rem 1rem;font-family:var(--mono);font-size:13px;color:var(--text2);margin-bottom:1rem;">
+      <span style="color:var(--amber);font-weight:600;">Q:</span> What is the elevation range for the Apex Mountains?
+    </div>
+    <div style="background:#0f172a;border:1px solid #1e293b;border-radius:var(--radius-lg);overflow:hidden;">
+      <div style="background:#1e293b;padding:8px 14px;font-family:var(--mono);font-size:10.5px;color:#94a3b8;display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+        <span style="color:#ef4444;">●</span><span style="color:#fbbf24;">●</span><span style="color:#22c55e;">●</span>
+        <span style="margin-left:6px;">react-agent — wikipedia api · PaLM-540B</span>
+        <span id="traceStepCounter" style="margin-left:auto;color:#cbd5e1;">step 0 / 8</span>
+      </div>
+      <div id="reactConsole" style="padding:14px;min-height:210px;"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:1rem;">
+      <button class="btn-primary" id="traceNextBtn" type="button" style="font-size:13px;padding:8px 18px;">Next step ▸</button>
+      <button class="btn-outline" id="traceAutoBtn" type="button" style="font-size:13px;padding:8px 18px;">Auto-play ▸▸</button>
+      <button class="btn-outline" id="traceResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset ↺</button>
+      <span style="font-size:12px;color:var(--text3);font-family:var(--mono);">Thought = amber · Action = blue · Observation = gray</span>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-label">What the model actually sees</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">The question, a handful of demonstration traces, and the growing episode itself — one flat sequence of text. Nothing is hidden: the "agent" is a language model reading and writing a transcript of its own actions. No fine-tuning is involved; the loop is pure prompting.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ACTION SPACE -->
+<section id="action-space">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The <em>Action Space</em></h2>
+  <p class="section-desc">ReAct keeps the interface tiny. For question answering, three verbs cover everything; in interactive environments, the verbs come from the world itself.</p>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Three QA Verbs</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Click a card to inspect the exact text the model writes, and what it gets back.</p>
+    <div id="verbCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:1rem;"></div>
+    <div id="verbDetail"></div>
+  </div>
+
+  <div class="notice-grid" style="margin-top:1.5rem;">
+    <div class="notice-card"><div class="notice-title">📚 Wikipedia API</div><div class="notice-text">The QA setting for HotpotQA &amp; FEVER. Verbs: <span class="code-inline">Search[entity]</span>, <span class="code-inline">Lookup[term]</span>, <span class="code-inline">Finish[answer]</span> over a preprocessed Wikipedia dump.</div></div>
+    <div class="notice-card"><div class="notice-title">🏠 ALFWorld</div><div class="notice-text">Text-based household tasks: <span class="code-inline">go to shelf 1</span>, <span class="code-inline">take candle 1</span>, <span class="code-inline">use candle 1 to examine the letters</span>… The loop is identical — only the verbs change.</div></div>
+    <div class="notice-card"><div class="notice-title">🛒 WebShop</div><div class="notice-text">A simulated e-commerce store: <span class="code-inline">search [running shoes]</span>, <span class="code-inline">click [item]</span>, <span class="code-inline">buy now</span>. Scored on how well the purchase matches the instruction.</div></div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-label">Why keep it tiny?</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Every action must be plain text the model can write. A small verb set keeps the prompt short, the format stable, and the trace readable — and adding a new environment means writing new demonstrations, not new code. That modularity is exactly what agent frameworks later inherited.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Results — When to <em>Reason</em>, When to Act</h2>
+  <p class="section-desc">The honest story: acting grounds the model but can cap recall; reasoning recalls more but hallucinates. The best agent knows when to do which.</p>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">HOTPOTQA (EM)</div>
+      <div class="result-score" style="color:var(--amber);">~34.2</div>
+      <div class="result-label">ReAct + CoT-SC, PaLM-540B — best of both</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">self-consistency decides when to re-act</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">ALFWORLD (SUCCESS)</div>
+      <div class="result-score" style="color:var(--blue);">~71%</div>
+      <div class="result-label">ReAct vs ~45% for imitation / RL baselines</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:71%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">tens of points of absolute gain</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">HALLUCINATIONS</div>
+      <div class="result-score" style="color:var(--teal);font-size:1.45rem;">Far fewer</div>
+      <div class="result-label">than CoT on HotpotQA &amp; FEVER — every claim backed by an observation</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:38%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">qualitative finding — illustrative bar</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">WEBSHOP</div>
+      <div class="result-score" style="color:var(--green);font-size:1.45rem;">Strong</div>
+      <div class="result-label">task-completion gains over IL / RL baselines</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:78%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">the same loop, shopping edition</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Four Benchmarks, One Loop (PaLM-540B — "~" marks approximate / qualitative values)</div>
+    <table class="comp-table">
+      <thead><tr><th>Benchmark</th><th>Baselines</th><th>CoT (reason-only)</th><th>ReAct</th><th>ReAct + CoT-SC</th></tr></thead>
+      <tbody>
+        <tr><td>HotpotQA — multi-hop QA (EM)</td><td>standard prompting</td><td>slightly higher EM, more confident errors</td><td>comparable EM, far fewer hallucinations</td><td class="comp-best">~34.2 EM — best of both</td></tr>
+        <tr><td>FEVER — fact verification</td><td>standard prompting</td><td>verdicts reasoned from (stale) memory</td><td>claims checked against retrieved passages</td><td class="comp-best">best of both — accurate &amp; faithful</td></tr>
+        <tr><td>ALFWorld — household tasks</td><td>~45% success (imitation / RL)</td><td>—</td><td class="comp-best">~71% success — tens of points up</td><td>—</td></tr>
+        <tr><td>WebShop — shopping instructions</td><td>IL / RL agents</td><td>—</td><td>strong task-completion gains</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">HotpotQA &amp; FEVER query a Wikipedia API; ALFWorld &amp; WebShop are interactive environments, where the paper's comparison points were imitation / RL agents (hence "—" in the CoT column). ReAct alone can slightly trail CoT on exact match when the answer lives inside the model — but it hallucinates far less, and the combination wins overall.</p>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Hallucination Showdown</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same claim, two strategies. Chain-of-Thought never leaves the model's head; ReAct checks the world. Press <strong>Run both</strong> and read the verdict.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:0.9rem 1rem;font-family:var(--mono);font-size:12.5px;color:var(--text2);margin-bottom:1rem;">
+      <span style="color:var(--amber);font-weight:600;">CLAIM:</span> "The Apex Mountains were first mapped in 1853." — SUPPORTED or REFUTED?
+    </div>
+    <div class="two-col">
+      <div>
+        <div style="margin-bottom:8px;"><span class="pill pill-red">🧠 CoT — reasoning only</span></div>
+        <div id="cotSteps" style="min-height:120px;"></div>
+      </div>
+      <div>
+        <div style="margin-bottom:8px;"><span class="pill pill-green">🔁 ReAct — reasoning + acting</span></div>
+        <div id="raSteps" style="min-height:120px;"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:1rem;">
+      <button class="btn-primary" id="showdownRunBtn" type="button" style="font-size:13px;padding:8px 18px;">Run both ▸</button>
+      <button class="btn-outline" id="showdownResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset ↺</button>
+    </div>
+    <div id="showdownVerdict" style="margin-top:1rem;"></div>
+  </div>
+  <p style="font-size:12px;color:var(--text3);margin-top:0.75rem;">Illustrative trace in the style of the paper's qualitative case studies — the pattern the authors report: CoT confidently wrong, ReAct grounded right.</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- WHY IT WORKS -->
+<section id="why-it-works">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Why <em>ReAct</em> Works</h2>
+  <p class="section-desc">Four mechanics make the loop more than the sum of its parts — plus one property nobody expected: legibility.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🧠 Reasoning decomposes &amp; tracks</div><div class="notice-text">Thoughts break a goal into sub-goals and keep the agent oriented across long episodes — nothing gets silently lost.</div></div>
+    <div class="notice-card"><div class="notice-title">🔎 Acting injects fresh evidence</div><div class="notice-text">Observations carry information the model never memorized — or that changed since pre-training — straight into the context.</div></div>
+    <div class="notice-card"><div class="notice-title">📜 Traces are interpretable</div><div class="notice-text">You can read the agent's diary. When it fails, the failure localizes to a step you can inspect, discuss, and fix.</div></div>
+    <div class="notice-card"><div class="notice-title">🪄 Few-shot is enough</div><div class="notice-text">A handful of demonstration traces teaches the format — no fine-tuning, no reward engineering, no environment-specific code.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 Errors are recoverable</div><div class="notice-text">A wrong turn becomes an observation the next thought can react to — re-search, re-plan, continue. Failure is a step, not a wall.</div></div>
+  </div>
+  <div class="card">
+    <div class="card-label">The Agent's Diary — failures localize</div>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:12.5px;line-height:2.1;color:var(--text2);">
+      <span style="color:var(--amber);font-weight:600;">Thought 2</span>&nbsp;&nbsp;The article will mention the range.<br>
+      <span style="color:var(--blue);font-weight:600;">Action 2</span>&nbsp;&nbsp;Lookup[range]<br>
+      <span style="color:var(--red);">Observation 2&nbsp;&nbsp;(no matching sentences found)</span>&nbsp;<span class="pill pill-red">failure — visible &amp; local</span><br>
+      <span style="color:var(--amber);font-weight:600;">Thought 3</span>&nbsp;&nbsp;Nothing here. Let me search a related entity instead.&nbsp;<span class="pill pill-green">recovery</span>
+    </div>
+    <p style="font-size:12.5px;color:var(--text2);line-height:1.7;margin-top:0.75rem;">No stack trace, no reward curve — the debug log is the same text the model reasons over. That single design choice is a big reason agent traces became the industry standard for observability.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>The Agent Template</em></h2>
+  <p class="section-desc">ReAct didn't just win benchmarks. It named the pattern the industry would build on.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🦜 LangChain &amp; LlamaIndex</div><div class="notice-text">The "ReAct agent" became a stock component of the two biggest LLM application frameworks — often the default meaning of the word "agent".</div></div>
+    <div class="notice-card"><div class="notice-title">🛠️ Function calling</div><div class="notice-text">Modern tool-use APIs — models calling functions and reading results back — descend directly from Thought → Action → Observation traces.</div></div>
+    <div class="notice-card"><div class="notice-title">🤖 AutoGPT era</div><div class="notice-text">The 2023 autonomous-agent boom standardized on ReAct-style loops — ambitions scaled faster than reliability did.</div></div>
+    <div class="notice-card"><div class="notice-title">📊 Agent benchmarks</div><div class="notice-text">Eval suites like AgentBench and its successors grade models inside ReAct-style loops — the paper's format became the test harness.</div></div>
+    <div class="notice-card"><div class="notice-title">💬 "Agentic AI"</div><div class="notice-text">The vocabulary of the agentic-AI era — traces, tools, loops, observations — descends from this paper's framing.</div></div>
+    <div class="notice-card"><div class="notice-title">🔗 Next: Toolformer</div><div class="notice-text">Where ReAct is prompted, Toolformer is self-taught: models learn when to call which tool. <a href="./Toolformer.html" style="color:var(--amber);">Toolformer Guide ↗</a></div></div>
+  </div>
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-label">Follow the Thread</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;"><a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber);">Chain-of-Thought</a> showed that reasoning in text is powerful but ungrounded → <strong>ReAct</strong> closed the loop with actions → <a href="./Toolformer.html" style="color:var(--amber);">Toolformer</a> taught models to call tools themselves. Three papers, one track: the making of the modern agent.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the ReAct paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ One loop: Thought → Action → Observation, repeated until the agent emits Finish[answer].</div>
+    <div class="card-sm">✅ Every step is plain text — the model learns the format from a handful of demonstration traces (few-shot prompting, zero training).</div>
+    <div class="card-sm">✅ QA action space: Search[entity], Lookup[term], Finish[answer] over a Wikipedia API.</div>
+    <div class="card-sm">✅ The same loop drives ALFWorld (household tasks) and WebShop (shopping) — only the verbs change.</div>
+    <div class="card-sm">✅ Grounded observations ⇒ far fewer hallucinations than CoT; combined with CoT self-consistency, ~34.2 EM on HotpotQA (PaLM-540B).</div>
+    <div class="card-sm">✅ ~71% vs ~45% success on ALFWorld over imitation / RL baselines — and the trace format became the template for modern agents and function calling.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener noreferrer">"ReAct: Synergizing Reasoning and Acting in Language Models"</a> (Yao et al., 2022)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Toolformer.html">Toolformer Guide</a>
+    <a class="footer-link" href="./Chain_Of_Thought_Prompting.html">Chain-of-Thought Guide</a>
+    <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','core-idea','action-space','results','why-it-works','impact','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === TRACE PLAYER DEMO ===
+(function(){
+  const consoleEl=document.getElementById('reactConsole');
+  const counterEl=document.getElementById('traceStepCounter');
+  const nextBtn=document.getElementById('traceNextBtn');
+  const autoBtn=document.getElementById('traceAutoBtn');
+  const resetBtn=document.getElementById('traceResetBtn');
+  if(!consoleEl||!counterEl||!nextBtn||!resetBtn)return;
+  const steps=[
+    {t:'thought',n:1,text:'I need to find the elevation range of the Apex Mountains. Let me search for the entity first.'},
+    {t:'action',n:1,text:'Search[Apex Mountains]'},
+    {t:'obs',n:1,text:'The Apex Mountains are a small mountain range in the southern interior region. The range is a popular alpine hiking destination and includes several named peaks.'},
+    {t:'thought',n:2,text:'The intro does not mention elevations. I should look up more details about the range itself.'},
+    {t:'action',n:2,text:'Lookup[range]'},
+    {t:'obs',n:2,text:"Sentences in 'Apex Mountains' containing 'range': The range rises from a base elevation of about 1,200 m, and its highest summit, Blue Peak, reaches 2,278 m (7,474 ft)."},
+    {t:'thought',n:3,text:'The elevation spans roughly 1,200 m at the base to 2,278 m at the highest summit. I have the answer.'},
+    {t:'action',n:3,text:'Finish[The Apex Mountains cover an elevation range of approximately 1,200–2,278 m (3,900–7,474 ft).]'}
+  ];
+  const styles={
+    thought:{border:'var(--amber)',tag:'THOUGHT',tagColor:'#fbbf24',bg:'rgba(251,191,36,0.07)',color:'#e2e8f0'},
+    action:{border:'#60a5fa',tag:'ACTION',tagColor:'#60a5fa',bg:'rgba(96,165,250,0.09)',color:'#bfdbfe'},
+    obs:{border:'#475569',tag:'OBSERVATION',tagColor:'#94a3b8',bg:'rgba(148,163,184,0.06)',color:'#cbd5e1'}
+  };
+  let idx=0,timer=null;
+  function idle(){
+    consoleEl.innerHTML='<div style="font-family:var(--mono);font-size:12px;color:#64748b;line-height:1.9;">▸ agent idle — press <span style="color:#fbbf24;">Next step</span> to run. '+steps.length+' steps queued.<br>▸ every card below is text the model writes, or text a tool writes back.</div>';
+  }
+  function card(s){
+    const st=styles[s.t];
+    const d=document.createElement('div');
+    d.style.cssText='margin-bottom:8px;padding:9px 12px;border-radius:6px;border-left:3px solid '+st.border+';background:'+st.bg+';animation:fadeUp .4s ease;';
+    const tag=document.createElement('div');
+    tag.style.cssText='font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:'+st.tagColor+';margin-bottom:3px;';
+    tag.textContent=st.tag+' '+s.n;
+    const tx=document.createElement('div');
+    tx.style.cssText='font-family:var(--mono);font-size:12.5px;line-height:1.7;color:'+st.color+';';
+    tx.textContent=s.text;
+    d.appendChild(tag);d.appendChild(tx);
+    return d;
+  }
+  function summary(){
+    const d=document.createElement('div');
+    d.style.cssText='margin-top:10px;font-family:var(--mono);font-size:11.5px;color:#4ade80;animation:fadeUp .4s ease;';
+    d.textContent='✓ finished — 3 thoughts · 3 actions · 2 observations · 1 answer';
+    consoleEl.appendChild(d);
+  }
+  function updateUI(){
+    counterEl.textContent='step '+idx+' / '+steps.length;
+    const done=idx>=steps.length;
+    nextBtn.disabled=done;autoBtn.disabled=done;
+    nextBtn.style.opacity=done?'0.5':'1';autoBtn.style.opacity=done?'0.5':'1';
+  }
+  function advance(){
+    if(idx>=steps.length)return;
+    if(idx===0)consoleEl.innerHTML='';
+    consoleEl.appendChild(card(steps[idx]));
+    idx++;
+    if(idx>=steps.length)summary();
+    updateUI();
+  }
+  function reset(){
+    if(timer){clearInterval(timer);timer=null;}
+    idx=0;idle();updateUI();
+  }
+  nextBtn.addEventListener('click',advance);
+  autoBtn.addEventListener('click',()=>{
+    if(timer)return;
+    advance();
+    timer=setInterval(()=>{
+      advance();
+      if(idx>=steps.length){clearInterval(timer);timer=null;}
+    },800);
+  });
+  resetBtn.addEventListener('click',reset);
+  idle();updateUI();
+})();
+
+// === SHOWDOWN DEMO (CoT vs ReAct) ===
+(function(){
+  const runBtn=document.getElementById('showdownRunBtn');
+  const resetBtn=document.getElementById('showdownResetBtn');
+  const cotEl=document.getElementById('cotSteps');
+  const raEl=document.getElementById('raSteps');
+  const verdictEl=document.getElementById('showdownVerdict');
+  if(!runBtn||!resetBtn||!cotEl||!raEl||!verdictEl)return;
+  const cot=[
+    {kind:'cot',tag:'THINK',text:'The claim says the Apex Mountains were first mapped in 1853.'},
+    {kind:'cot',tag:'ASSUME',text:'Mid-19th-century surveys were common, so the claim sounds consistent with that era.',note:'fabricated corroboration — nothing was retrieved'},
+    {kind:'bad',tag:'ANSWER',text:'The claim is SUPPORTED.'}
+  ];
+  const ra=[
+    {kind:'thought',tag:'THOUGHT 1',text:'I cannot verify a date from memory — search for the entity.'},
+    {kind:'action',tag:'ACTION 1',text:'Search[Apex Mountains]'},
+    {kind:'obs',tag:'OBSERVATION 1',text:'The Apex Mountains were first surveyed and mapped by the Northern Geological Survey in 1912.'},
+    {kind:'thought',tag:'THOUGHT 2',text:'The article says 1912 — the claim of 1853 is contradicted.'},
+    {kind:'good',tag:'FINISH',text:'Refuted — mapping happened in 1912, not 1853.'}
+  ];
+  const palette={
+    cot:{b:'var(--red)',t:'var(--red)',bg:'rgba(239,68,68,0.05)',c:'var(--text2)',mono:false},
+    bad:{b:'var(--red)',t:'var(--red)',bg:'rgba(239,68,68,0.10)',c:'var(--red)',mono:false},
+    thought:{b:'var(--amber)',t:'var(--amber)',bg:'rgba(245,158,11,0.06)',c:'var(--text2)',mono:false},
+    action:{b:'var(--blue)',t:'var(--blue)',bg:'rgba(59,130,246,0.07)',c:'var(--text2)',mono:true},
+    obs:{b:'#94a3b8',t:'var(--text3)',bg:'rgba(148,163,184,0.10)',c:'var(--text2)',mono:false},
+    good:{b:'var(--green)',t:'var(--green)',bg:'rgba(34,197,94,0.06)',c:'var(--text2)',mono:false}
+  };
+  function mkStep(step){
+    const s=palette[step.kind];
+    const d=document.createElement('div');
+    d.style.cssText='margin-bottom:8px;padding:8px 11px;border-radius:6px;border-left:3px solid '+s.b+';background:'+s.bg+';animation:fadeUp .4s ease;';
+    const tg=document.createElement('div');
+    tg.style.cssText='font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:'+s.t+';margin-bottom:3px;';
+    tg.textContent=step.tag;
+    const tx=document.createElement('div');
+    tx.style.cssText=(s.mono?'font-family:var(--mono);':'')+'font-size:12.5px;line-height:1.65;color:'+s.c+';';
+    tx.textContent=step.text;
+    d.appendChild(tg);d.appendChild(tx);
+    if(step.note){
+      const nt=document.createElement('div');
+      nt.style.cssText='font-size:11px;color:var(--red);margin-top:4px;';
+      nt.textContent='✗ '+step.note;
+      d.appendChild(nt);
+    }
+    return d;
+  }
+  let timers=[];
+  function showVerdict(){
+    verdictEl.innerHTML='<div style="border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.05);border-radius:var(--radius);padding:1rem 1.2rem;animation:fadeUp .5s ease;">'
+      +'<div style="font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:0.08em;margin-bottom:6px;">VERDICT</div>'
+      +'<div style="font-size:13px;color:var(--text2);line-height:1.8;"><span class="pill pill-red">CoT: SUPPORTED ✗</span>&nbsp;<span class="pill pill-green">ReAct: REFUTED ✓</span><br>CoT dressed a prior up as evidence and never noticed. ReAct settled the question with one observation. That is the paper\'s qualitative story: trade a little recall for a lot of faithfulness.</div></div>';
+    runBtn.disabled=false;runBtn.style.opacity='1';
+  }
+  function reset(){
+    timers.forEach(clearTimeout);timers=[];
+    cotEl.innerHTML='';raEl.innerHTML='';verdictEl.innerHTML='';
+    runBtn.disabled=false;runBtn.style.opacity='1';
+  }
+  runBtn.addEventListener('click',()=>{
+    reset();
+    runBtn.disabled=true;runBtn.style.opacity='0.5';
+    const seq=[
+      [300,'cot',0],[600,'ra',0],[900,'cot',1],[1200,'ra',1],[1500,'cot',2],
+      [1800,'ra',2],[2200,'ra',3],[2600,'ra',4],[3300,'verdict',0]
+    ];
+    seq.forEach(function(it){
+      timers.push(setTimeout(function(){
+        if(it[1]==='verdict'){showVerdict();return;}
+        const step=(it[1]==='cot'?cot:ra)[it[2]];
+        (it[1]==='cot'?cotEl:raEl).appendChild(mkStep(step));
+      },it[0]));
+    });
+  });
+  resetBtn.addEventListener('click',reset);
+})();
+
+// === ACTION VERBS DEMO ===
+(function(){
+  const cardsEl=document.getElementById('verbCards');
+  const detailEl=document.getElementById('verbDetail');
+  if(!cardsEl||!detailEl)return;
+  const verbs=[
+    {icon:'🔍',name:'Search',sig:'Search[entity]',
+     purpose:'Find an article — retrieve the opening paragraphs of the Wikipedia page for an entity; that page becomes the current article.',
+     inp:'Search[Apex Mountains]',
+     out:'→ The Apex Mountains are a small mountain range in the southern interior region … (the article is now the current context for Lookup)'},
+    {icon:'📑',name:'Lookup',sig:'Lookup[term]',
+     purpose:'Drill down — return the sentences of the current article that contain a term, one window at a time.',
+     inp:'Lookup[range]',
+     out:"→ Sentences in 'Apex Mountains' containing 'range': The range rises from a base elevation of about 1,200 m …"},
+    {icon:'🏁',name:'Finish',sig:'Finish[answer]',
+     purpose:'Stop and answer — end the episode; the string inside the brackets is scored as the final answer.',
+     inp:'Finish[1,200–2,278 m]',
+     out:'→ (episode ends — "1,200–2,278 m" is submitted for scoring)'}
+  ];
+  let sel=0;
+  function render(){
+    cardsEl.innerHTML=verbs.map(function(v,i){
+      return '<div class="card-sm" style="cursor:pointer;text-align:center;'+(i===sel?'border-color:rgba(245,158,11,0.45);background:var(--amber-dim);':'')+'">'
+        +'<div style="font-size:1.6rem;">'+v.icon+'</div>'
+        +'<div style="font-weight:600;font-size:14px;">'+v.name+'</div>'
+        +'<div style="font-family:var(--mono);font-size:11.5px;color:'+(i===sel?'var(--amber)':'var(--text3)')+';">'+v.sig+'</div></div>';
+    }).join('');
+    Array.from(cardsEl.children).forEach(function(c,i){
+      c.addEventListener('click',function(){sel=i;render();});
+    });
+    const v=verbs[sel];
+    detailEl.innerHTML='<div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;animation:fadeUp .4s ease;">'
+      +'<div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.08em;margin-bottom:5px;">PURPOSE</div>'
+      +'<div style="font-size:13px;color:var(--text2);margin-bottom:12px;">'+v.purpose+'</div>'
+      +'<div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.08em;margin-bottom:4px;">INPUT — MODEL WRITES</div>'
+      +'<div style="font-family:var(--mono);font-size:13px;color:var(--blue);margin-bottom:12px;">'+v.inp+'</div>'
+      +'<div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.08em;margin-bottom:4px;">OUTPUT — API RETURNS</div>'
+      +'<div style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.7;">'+v.out+'</div></div>';
+  }
+  render();
+})();
+
+// === QUIZ DATA ===
+const QUIZ_DATA=[
+  {q:'Which three steps make up one round of the ReAct loop?',opts:['Search, Lookup, Finish','Thought, Action, Observation','Plan, Execute, Reward','Prompt, Generate, Fine-tune'],correct:1,explain:'Each round is a Thought (reason about the current state), an Action (call a tool or environment command), and an Observation (what comes back). The loop repeats until the agent emits Finish.'},
+  {q:'In ReAct\'s QA setting, what does the action space consist of?',opts:['Arbitrary Python code the model writes','Search[entity], Lookup[term], Finish[answer]','Fine-tuning on HotpotQA and FEVER','Scraping the live web with a browser'],correct:1,explain:'Three verbs over a preprocessed Wikipedia API: Search returns an article\'s opening paragraphs, Lookup scans the current article for a term, and Finish submits the answer.'},
+  {q:'What is ReAct\'s hallmark benefit over pure chain-of-thought?',opts:['It skips reasoning to save tokens','It removes the need for a prompt','Far fewer hallucinations — claims are grounded in retrieved observations','It guarantees higher exact-match scores on every benchmark'],correct:2,explain:'CoT can be confidently wrong because it never checks the world. ReAct\'s observations ground every step, sharply reducing hallucination — at the cost of occasionally under-using what the model already knows.'},
+  {q:'Which combination produced the best HotpotQA result (~34.2 EM with PaLM-540B)?',opts:['ReAct alone','CoT alone','ReAct + CoT-SC — self-consistency decides when to re-act','Standard prompting with more demonstrations'],correct:2,explain:'The strongest system knew when to reason and when to act: when self-consistent CoT and the ReAct trace disagreed, the agent re-acted — combining CoT\'s recall with ReAct\'s groundedness.'},
+  {q:'What is ReAct\'s lasting legacy?',opts:['A new pre-training objective for LLMs','The Thought → Action → Observation trace became the template for modern agents and function calling','Proof that RL is never needed for agents','A larger backbone model than PaLM'],correct:1,explain:'From LangChain\'s ReAct agent class to function-calling APIs and AutoGPT-style loops, the paper\'s trace format became the de-facto template for agentic AI.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+
+</script>
+
+</body>
+</html>
