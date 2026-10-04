@@ -14,6 +14,7 @@ Current status: **61 live interactive paper explainers**, organized into an **11
 ## Live Library
 
 - [Homepage](https://papermap.vercel.app/)
+- [Homepage (Deployed on GitHub)](https://adilshamim8.github.io/PaperMap/)
 
 ### Category I — Foundation: LLMs
 - [Attention Is All You Need](https://papermap.vercel.app/paper/Attention_Is_All_You_Need.html) · 2017
