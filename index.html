@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PaperMap — Interactive AI Research Paper Library</title>
-<meta name="description" content="PaperMap turns landmark AI research papers into interactive learning products. Explore 44 visual explainers across 7 core categories: LLM Foundations, Reasoning & Adaptation, Hallucination, Evaluation, Agent Safety, Agent Memory, and Multi-Agent Systems.">
-<meta name="keywords" content="PaperMap, interactive papers, Transformer, BERT, GPT-2, GPT-3, T5, scaling laws, Chinchilla, RAG, LoRA, ColBERT, DPO, RLHF, chain-of-thought, self-consistency, ReAct, MemGPT, CAMEL, MetaGPT, deep learning, AI education">
+<title>PaperMap — Interactive Research Paper Library</title>
+<meta name="description" content="PaperMap turns landmark AI research papers into interactive learning products. Explore 61 visual explainers across 11 categories: LLM foundations, retrieval and reasoning, post-training, hallucination, evaluation, agent reliability and software engineering, agent safety, agent memory, multi-agent systems, efficient training and inference, and LM programming.">
+<meta name="keywords" content="PaperMap, interactive papers, Transformer, BERT, GPT-2, GPT-3, GPT-4, T5, scaling laws, Chinchilla, Switch Transformers, FLAN, instruction tuning, RAG, ColBERTv2, late interaction, LoRA, InstructGPT, induction heads, chain-of-thought, self-consistency, ReAct, Toolformer, DPO, Constitutional AI, DeepSeek-R1, hallucination, TruthfulQA, SelfCheckGPT, FActScore, HaluEval, RAGTruth, MMLU, HELM, LLM-as-a-judge, JudgeBench, AgentBench, SWE-bench, tau-bench, Terminal-Bench, agent safety, prompt injection, InjecAgent, AgentDojo, agent memory, MemGPT, LongMemEval, Mem0, A-MEM, LoCoMo-Plus, multi-agent systems, CAMEL, MetaGPT, Magentic-One, FlashAttention, PagedAttention, vLLM, speculative decoding, QLoRA, Mixtral, DSPy, deep learning, AI education">
 <meta name="author" content="Adil Shamim">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#f59e0b">
@@ -13,15 +13,15 @@
 <link rel="canonical" href="https://papermap.vercel.app/">
 <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg">
 <link rel="shortcut icon" href="./assets/favicon.svg">
-<meta property="og:title" content="PaperMap — Interactive AI Research Paper Library">
-<meta property="og:description" content="Visual, interactive explainers and playable deep dive labs for landmark AI research papers.">
+<meta property="og:title" content="PaperMap — Interactive Research Paper Library">
+<meta property="og:description" content="Visual, interactive explainers for landmark AI research papers.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://papermap.vercel.app/">
 <meta property="og:site_name" content="PaperMap">
 <meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="PaperMap — Interactive Paper Library">
-<meta name="twitter:description" content="Explore AI research papers as interactive learning products with 100+ playable simulations.">
+<meta name="twitter:description" content="Explore AI research papers as interactive learning products.">
 <meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,13 +38,18 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
   --teal: #14b8a6;
   --teal-dim: rgba(20,184,166,0.12);
   --red: #ef4444;
-  --red-dim: rgba(239,68,68,0.12);
   --green: #22c55e;
   --green-dim: rgba(34,197,94,0.12);
   --purple: #a855f7;
@@ -61,9 +66,10 @@ html { scroll-behavior: smooth; }
 
 body {
   background:
-    radial-gradient(circle at 10% 0%, rgba(245,158,11,0.08), transparent 30%),
-    radial-gradient(circle at 90% 12%, rgba(20,184,166,0.07), transparent 28%),
-    linear-gradient(180deg, #fffefb 0%, #ffffff 40%, #fcfdff 100%),
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    radial-gradient(circle at 50% 90%, rgba(59,130,246,0.06), transparent 40%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
     var(--bg);
   color: var(--text);
   font-family: var(--sans);
@@ -81,42 +87,44 @@ body {
   position: absolute; left: 12px; top: -44px;
   background: #0f172a; color: #fff;
   font-family: var(--mono); font-size: 12px;
-  text-decoration: none; padding: 8px 12px; border-radius: 8px;
-  z-index: 300; transition: top .2s;
+  text-decoration: none; padding: 8px 12px;
+  border-radius: 8px; z-index: 300;
+  transition: top .2s;
 }
 .skip-link:focus { top: 10px; }
 
 /* NAV */
 nav {
-  position: fixed; top: 0; left: 0; right: 0;
-  z-index: 100;
-  background: rgba(255, 255, 255, 0.88);
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,0.86);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 4px 20px rgba(15,23,42,0.04);
+  box-shadow: 0 6px 28px rgba(15,23,42,0.06);
   padding: 0 2rem;
   display: flex; align-items: center; justify-content: space-between;
-  height: 56px;
+  height: 54px;
 }
 .nav-logo {
-  font-family: var(--mono); font-size: 14px; font-weight: 600;
-  color: var(--amber); text-decoration: none;
-  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 13px;
+  color: var(--amber-text); letter-spacing: -0.02em;
+  text-decoration: none; display: inline-flex;
+  align-items: center;
 }
-.nav-links { display: flex; gap: 6px; }
+.nav-links { display: flex; gap: 4px; }
+.nav-actions { display: flex; gap: 10px; align-items: center; }
 .nav-link {
-  font-size: 12.5px; color: var(--text2);
-  padding: 6px 12px; border-radius: 6px;
-  text-decoration: none; font-family: var(--mono);
-  transition: all .2s;
+  font-size: 12px; color: var(--text2);
+  padding: 5px 10px; border-radius: 6px;
+  text-decoration: none; cursor: pointer;
+  transition: all .2s; font-family: var(--mono);
 }
 .nav-link:hover { background: var(--bg3); color: var(--text); }
-.nav-actions { display: flex; gap: 10px; align-items: center; }
+.nav-link.active { background: var(--amber-dim); color: var(--amber-text); }
 .nav-badge {
-  background: var(--amber-dim); color: var(--amber);
-  font-family: var(--mono); font-size: 11px; font-weight: 500;
-  padding: 4px 10px; border-radius: 20px;
-  border: 1px solid rgba(245,158,11,0.25);
+  background: var(--amber-dim); color: var(--amber-text);
+  font-family: var(--mono); font-size: 11px;
+  padding: 3px 8px; border-radius: 20px;
+  border: 1px solid rgba(245,158,11,0.2);
 }
 .nav-toggle {
   display: none; width: 34px; height: 34px;
@@ -125,11 +133,11 @@ nav {
   font-family: var(--mono); font-size: 14px; cursor: pointer;
 }
 .mobile-menu {
-  position: fixed; top: 56px; left: 0; right: 0; z-index: 99;
-  display: none; padding: 12px;
-  background: rgba(255,255,255,0.96);
+  position: fixed; top: 54px; left: 0; right: 0; z-index: 99;
+  display: none; padding: 10px;
+  background: rgba(255,255,255,0.95);
   border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(10px);
 }
 .mobile-menu.open { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .mobile-menu a {
@@ -137,977 +145,1868 @@ nav {
   color: var(--text2); border: 1px solid var(--border);
   border-radius: 8px; background: #fff; padding: 8px 10px;
 }
+.mobile-menu a:hover { border-color: rgba(245,158,11,0.35); color: var(--amber-text); }
 
 /* HERO */
 .hero {
-  min-height: 80vh; display: flex; flex-direction: column;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  text-align: center; padding: 7rem 2rem 3rem;
+  text-align: center;
+  padding: 6rem 2rem 4rem;
   position: relative; overflow: hidden;
+}
+.hero > * { position: relative; z-index: 1; }
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+  pointer-events: none; z-index: 0;
 }
 .hero-glow {
   position: absolute; top: 40%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 650px; height: 420px;
+  transform: translate(-50%,-50%);
+  width: 700px; height: 500px;
   background: radial-gradient(ellipse, rgba(245,158,11,0.12) 0%, transparent 70%);
   pointer-events: none; z-index: 0;
+  animation: driftGlow 10s ease-in-out infinite;
 }
 .hero-eyebrow {
-  font-family: var(--mono); font-size: 11px; color: var(--amber);
-  letter-spacing: 0.12em; text-transform: uppercase;
-  padding: 6px 16px; border: 1px solid rgba(245,158,11,0.25);
-  border-radius: 20px; margin-bottom: 1.5rem;
+  font-family: var(--mono); font-size: 11px;
+  color: var(--amber-text); letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 14px; border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 20px; margin-bottom: 2rem;
   background: var(--amber-dim);
 }
 .hero-title {
-  font-family: var(--serif); font-size: clamp(2.5rem, 6vw, 4.4rem);
-  line-height: 1.12; letter-spacing: -0.02em; margin-bottom: 1.3rem;
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  line-height: 1.1; letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
 }
-.hero-title em { color: var(--amber); font-style: italic; }
+.hero-title em { color: var(--amber-text); font-style: italic; }
 .hero-subtitle {
-  max-width: 640px; color: var(--text2); font-size: 16px;
-  margin-bottom: 2rem; line-height: 1.8;
+  max-width: 620px; color: var(--text2);
+  font-size: 16px; margin-bottom: 2.5rem; line-height: 1.8;
 }
 .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 .btn-primary {
-  background: var(--amber); color: #000; font-weight: 600; font-size: 14px;
-  padding: 10px 24px; border-radius: 8px; border: none; cursor: pointer;
-  text-decoration: none; transition: all .2s; display: inline-block;
+  background: var(--amber); color: #000;
+  font-weight: 600; font-size: 14px;
+  padding: 10px 24px; border-radius: 8px;
+  border: none; cursor: pointer; text-decoration: none;
+  transition: all .2s; display: inline-block;
 }
-.btn-primary:hover { background: #fbbf24; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(245,158,11,0.3); }
+.btn-primary:hover { background: #fbbf24; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(245,158,11,0.35); }
 .btn-outline {
-  background: transparent; color: var(--text); font-size: 14px;
-  padding: 10px 24px; border-radius: 8px; border: 1px solid var(--border2);
-  cursor: pointer; text-decoration: none; display: inline-block; transition: all .2s;
+  background: transparent; color: var(--text);
+  font-size: 14px; padding: 10px 24px; border-radius: 8px;
+  border: 1px solid var(--border2); cursor: pointer;
+  text-decoration: none; display: inline-block;
+  transition: all .2s;
 }
 .btn-outline:hover { background: #ffffff; border-color: rgba(245,158,11,0.35); }
-
 .hero-stats {
-  display: flex; gap: 2.5rem; margin-top: 3.5rem;
-  padding-top: 2.5rem; border-top: 1px solid var(--border);
-  flex-wrap: wrap; justify-content: center;
+  display: flex; gap: 3rem; margin-top: 4rem;
+  padding-top: 3rem; border-top: 1px solid var(--border);
 }
 .stat { text-align: center; }
-.stat-num { font-family: var(--mono); font-size: 1.6rem; font-weight: 600; color: var(--amber); }
+.stat-num { font-family: var(--mono); font-size: 1.6rem; font-weight: 600; color: var(--amber-text); }
 .stat-label { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
 /* SECTIONS */
-.page-section { max-width: 1160px; margin: 0 auto; padding: 4.5rem 2rem; }
+.page-section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 5rem 2rem;
+}
 .section-tag {
-  font-family: var(--mono); font-size: 11px; color: var(--amber);
-  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.75rem;
+  font-family: var(--mono); font-size: 11px;
+  color: var(--amber-text); letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 0.75rem;
   display: flex; align-items: center; gap: 8px;
 }
-.section-tag::before { content: ''; display: block; width: 20px; height: 1px; background: var(--amber); }
-.section-title { font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.2; margin-bottom: 1rem; }
-.section-title em { color: var(--amber); font-style: italic; }
-.section-desc { color: var(--text2); max-width: 620px; font-size: 15px; margin-bottom: 2rem; }
-
-/* SEARCH & FILTERS */
-.filter-bar {
-  display: flex; flex-direction: column; gap: 14px; margin-bottom: 3rem;
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 1.4rem;
+.section-tag::before {
+  content: ''; display: block;
+  width: 20px; height: 1px;
+  background: var(--amber);
 }
-.search-wrapper { position: relative; width: 100%; }
-.search-input {
-  width: 100%; padding: 12px 16px 12px 42px; border-radius: 8px;
-  border: 1px solid var(--border2); font-family: var(--sans); font-size: 14px;
-  background: #fff; color: var(--text); outline: none; transition: border-color .2s;
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  line-height: 1.2; margin-bottom: 1rem;
 }
-.search-input:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(245,158,11,0.15); }
-.search-icon { position: absolute; left: 14px; top: 12px; color: var(--text3); font-size: 16px; }
+.section-title em { color: var(--amber-text); font-style: italic; }
+.section-desc { color: var(--text2); max-width: 580px; font-size: 15px; margin-bottom: 2.5rem; }
 
-.category-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
-.category-btn {
-  font-family: var(--mono); font-size: 11px; padding: 6px 12px;
-  border-radius: 20px; border: 1px solid var(--border2); background: #fff;
-  color: var(--text2); cursor: pointer; transition: all .2s;
-}
-.category-btn:hover { border-color: rgba(245,158,11,0.4); color: var(--amber); }
-.category-btn.active { background: var(--amber); color: #000; border-color: var(--amber); font-weight: 600; }
-
-/* CATEGORY GROUPS & CARDS */
-.category-group { margin-bottom: 4rem; scroll-margin-top: 70px; }
-.category-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
-.category-tag {
-  font-family: var(--mono); font-size: 11px; font-weight: 600;
-  text-transform: uppercase; padding: 4px 10px; border-radius: 6px;
-  background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.25);
-}
-.category-name { font-family: var(--serif); font-size: 1.6rem; color: var(--text); }
-.category-count { font-family: var(--mono); font-size: 12px; color: var(--text3); }
-
-.paper-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 18px; }
-.paper-card {
-  background: #fff; border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 1.5rem;
-  box-shadow: 0 6px 20px rgba(15,23,42,0.03);
-  display: flex; flex-direction: column; justify-content: space-between;
+/* CARDS */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px rgba(15,23,42,0.04);
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(15,23,42,0.08);
+  border-color: rgba(245,158,11,0.22);
+}
+.card-label {
+  font-family: var(--mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text3); margin-bottom: 6px;
+}
+.card-sm {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+}
+
+/* PAPER CARDS */
+.paper-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.paper-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px rgba(15,23,42,0.04);
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.paper-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.paper-card.amber::before { background: var(--amber); }
+.paper-card.blue::before { background: var(--blue); }
+.paper-card.teal::before { background: var(--teal); }
+.paper-card.purple::before { background: var(--purple); }
+.paper-card.green::before { background: var(--green); }
 .paper-card:hover {
-  transform: translateY(-3px); box-shadow: 0 14px 30px rgba(15,23,42,0.08);
-  border-color: rgba(245,158,11,0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(15,23,42,0.10);
+  border-color: rgba(245,158,11,0.25);
 }
-.card-top { margin-bottom: 1rem; }
-.card-badges { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; align-items: center; }
-.badge-year { font-family: var(--mono); font-size: 10px; padding: 2px 7px; border-radius: 4px; background: var(--bg3); color: var(--text3); border: 1px solid var(--border); }
-.badge-deep { font-family: var(--mono); font-size: 10px; padding: 2px 7px; border-radius: 4px; background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); font-weight: 600; }
-.paper-card h3 { font-family: var(--serif); font-size: 1.25rem; line-height: 1.3; margin-bottom: 8px; }
-.paper-card h3 a { color: var(--text); text-decoration: none; transition: color .2s; }
-.paper-card h3 a:hover { color: var(--amber); }
-.paper-desc { color: var(--text2); font-size: 13px; line-height: 1.6; margin-bottom: 12px; }
-.card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 1rem; }
-.tag-pill { font-family: var(--mono); font-size: 10px; color: var(--text3); background: var(--bg3); padding: 2px 7px; border-radius: 4px; border: 1px solid var(--border); }
-
-.card-action {
-  font-family: var(--mono); font-size: 12px; font-weight: 600;
-  color: var(--amber); text-decoration: none; display: inline-flex;
-  align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px;
-  background: var(--amber-dim); border: 1px solid rgba(245,158,11,0.2);
-  align-self: flex-start; transition: all .2s;
+.paper-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  border-radius: 20px;
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 4px 10px; margin-bottom: 12px;
+  width: fit-content;
 }
-.card-action:hover { background: var(--amber); color: #000; }
-
-.divider { height: 1px; background: var(--border); max-width: 1160px; margin: 0 auto; }
+.paper-tag.live {
+  border: 1px solid rgba(34,197,94,0.3);
+  color: #0b7a58;
+  background: rgba(34,197,94,0.10);
+}
+.paper-tag.live::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+.paper-year {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.paper-card h3 {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  line-height: 1.3;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.paper-card p {
+  color: var(--text2);
+  font-size: 13px;
+  line-height: 1.65;
+  flex: 1;
+}
+.paper-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.paper-meta-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: var(--bg3);
+  color: var(--text3);
+  border: 1px solid var(--border);
+}
+.paper-link {
+  margin-top: 14px;
+  display: inline-flex; align-items: center; gap: 6px;
+  text-decoration: none;
+  color: var(--amber-text); font-weight: 600;
+  font-size: 13px; font-family: var(--mono);
+  transition: all .2s;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(245,158,11,0.25);
+  background: var(--amber-dim);
+}
+.paper-link:hover {
+  background: var(--amber);
+  color: #000;
+  border-color: var(--amber);
+  transform: translateY(-1px);
+}
 
 /* FEATURES */
-.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 2rem; }
-.feature-card {
-  background: var(--bg2); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); padding: 1.5rem;
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 2rem;
 }
-.feature-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
-.feature-card p { color: var(--text2); font-size: 13px; line-height: 1.65; }
+.feature-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(15,23,42,0.08);
+}
+.feature-icon {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+.feature-card h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.feature-card p {
+  color: var(--text2);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* HIGHLIGHT STRIP */
+.highlight-strip {
+  color: var(--amber-text);
+  font-weight: 500;
+}
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--border); max-width: 1100px; margin: 0 auto; }
+
+/* PILL */
+.pill {
+  display: inline-block; padding: 2px 8px; border-radius: 20px;
+  font-size: 11px; font-family: var(--mono);
+}
+.pill-amber { background: var(--amber-dim); color: var(--amber-text); border: 1px solid rgba(245,158,11,0.2); }
+.pill-blue { background: var(--blue-dim); color: var(--blue-text); border: 1px solid rgba(59,130,246,0.2); }
+.pill-teal { background: var(--teal-dim); color: var(--teal-text); border: 1px solid rgba(20,184,166,0.2); }
 
 /* FOOTER */
 footer {
-  max-width: 1160px; margin: 0 auto; padding: 4rem 2rem 3rem;
+  max-width: 1100px; margin: 0 auto;
+  padding: 3rem 2rem;
   border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap;
 }
-.footer-top { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2rem; }
-.footer-logo { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--amber); text-decoration: none; }
-.footer-directory { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; padding-top: 2rem; border-top: 1px dashed var(--border); }
-.directory-col h4 { font-family: var(--mono); font-size: 11px; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
-.directory-col a { display: block; font-size: 12px; color: var(--text2); text-decoration: none; margin-bottom: 6px; transition: color .2s; }
-.directory-col a:hover { color: var(--amber); }
-.footer-bottom { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 12px; color: var(--text3); flex-wrap: wrap; gap: 10px; font-family: var(--mono); }
-.footer-bottom a { color: var(--amber); text-decoration: none; }
+.footer-left { font-size: 13px; color: var(--text3); }
+.footer-left a { color: var(--amber-text); text-decoration: none; }
+.footer-links { display: flex; gap: 16px; flex-wrap: wrap; }
+.footer-link {
+  font-size: 12px; color: var(--text3); text-decoration: none;
+  font-family: var(--mono); transition: color .2s;
+}
+.footer-link:hover { color: var(--text); }
+.footer-contact {
+  width: 100%; margin-top: 10px; padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px; color: var(--text2); line-height: 1.8;
+}
+.footer-contact strong { color: var(--text); font-family: var(--mono); font-size: 11px; }
+.footer-contact a { color: var(--amber-text); text-decoration: none; white-space: nowrap; }
+.footer-contact a:hover { text-decoration: underline; }
+.social-strip {
+  margin-top: 8px; display: inline-flex; align-items: center;
+  gap: 10px; padding: 8px 12px; border-radius: 10px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));
+  border: 1px solid var(--border2);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.45);
+}
+.social-icon {
+  width: 22px; height: 22px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--text2); opacity: 0.85; border-radius: 7px;
+  transition: transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease;
+}
+.social-icon svg { width: 16px; height: 16px; fill: currentColor; }
+.social-icon.kg, .social-icon.md {
+  border: 1px solid var(--border2); border-radius: 999px;
+  font-family: var(--mono); font-size: 10px; line-height: 1;
+  font-weight: 600; background: rgba(255,255,255,0.5);
+}
+.social-icon:hover {
+  opacity: 1; transform: translateY(-1px);
+  background: rgba(255,255,255,0.58); text-decoration: none;
+}
+.social-icon.gh:hover { color: var(--text); }
+.social-icon.li:hover { color: #0a66c2; }
+.social-icon.kg:hover { color: #0891b2; border-color: rgba(8,145,178,0.45); }
+.social-icon.x:hover { color: var(--text); }
+.social-icon.md:hover { color: var(--amber-text); border-color: rgba(245,158,11,0.45); }
 
-@media (max-width: 850px) {
-  .features-grid, .footer-directory { grid-template-columns: 1fr 1fr; }
-  .nav-links, .nav-badge { display: none; }
-  .nav-toggle { display: block; }
+/* ROADMAP */
+.roadmap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 1rem;
 }
-@media (max-width: 550px) {
-  .features-grid, .footer-directory, .paper-grid { grid-template-columns: 1fr; }
+.roadmap-item {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  border-left: 3px solid var(--border2);
+}
+.roadmap-item.done { border-left-color: var(--green); }
+.roadmap-item.next { border-left-color: var(--amber); }
+.roadmap-item h4 {
+  font-size: 13px; font-weight: 600; margin-bottom: 4px;
+}
+.roadmap-item.done h4 { color: var(--green-text); }
+.roadmap-item.next h4 { color: var(--amber-text); }
+.roadmap-item p {
+  font-size: 12px; color: var(--text2); line-height: 1.6;
+}
+
+/* ANIMATIONS */
+.reveal { opacity: 0; transform: translateY(16px) scale(0.995); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%,100% { opacity: .5; } 50% { opacity: 1; } }
+@keyframes driftGlow { 0%,100% { transform: translate(-50%,-50%) scale(1); } 50% { transform: translate(-49%,-52%) scale(1.05); } }
+
+/* LIBRARY SEARCH */
+.library-search { margin: 0 0 2rem; }
+.search-wrap { position: relative; max-width: 560px; }
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 13px; pointer-events: none; opacity: .65; }
+.search-input {
+  width: 100%; font-family: var(--mono); font-size: 13px; color: var(--text);
+  background: #fff; border: 1px solid var(--border2); border-radius: 12px;
+  padding: 12px 44px 12px 38px; outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.search-input:focus { border-color: rgba(245,158,11,0.5); box-shadow: 0 0 0 3px rgba(245,158,11,0.12); }
+.search-input::placeholder { color: var(--text3); }
+.search-input::-webkit-search-cancel-button { display: none; }
+.search-clear {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono); font-size: 11px; color: var(--text2);
+  background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+  width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; line-height: 1;
+}
+.search-clear:hover { color: var(--red-text); border-color: rgba(239,68,68,0.4); }
+.search-status { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-top: 8px; min-height: 14px; }
+.search-status.has-results { color: var(--amber-text); }
+.no-results { border: 1px dashed var(--border2); border-radius: var(--radius-lg); padding: 2rem; text-align: center; margin-top: 1rem; background: var(--bg2); }
+.no-results-title { font-family: var(--serif); font-size: 1.3rem; margin-bottom: 6px; }
+.no-results-text { font-size: 13px; color: var(--text2); }
+[data-search-hidden] { display: none !important; }
+
+/* CURRICULUM TRACKS */
+.track-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 2rem; }
+.track-chip {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--text2); text-decoration: none;
+  padding: 6px 12px; border-radius: 20px;
+  border: 1px solid var(--border2); background: #fff;
+  transition: all .2s; display: inline-flex; align-items: center; gap: 6px;
+}
+.track-chip:hover { border-color: rgba(245,158,11,0.4); color: var(--amber-text); background: var(--amber-dim); transform: translateY(-1px); }
+.track-chip .num { color: var(--amber-text); font-weight: 600; }
+.track-section { margin-top: 3.25rem; }
+.track-head { display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.track-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--amber-text); background: var(--amber-dim);
+  border: 1px solid rgba(245,158,11,0.2); padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+}
+.track-title { font-family: var(--serif); font-size: 1.55rem; line-height: 1.25; }
+.track-desc { color: var(--text2); font-size: 13.5px; max-width: 660px; margin: 0.35rem 0 1.25rem; }
+.study-pair {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 11px; color: var(--amber-text);
+  background: var(--amber-dim); border: 1px dashed rgba(245,158,11,0.35);
+  padding: 5px 12px; border-radius: 20px; margin-top: 1.25rem;
+}
+
+/* RESPONSIVENESS */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .paper-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-links { gap: 8px; }
+}
+@media (max-width: 768px) {
+  nav { height: 50px; padding: 0 12px; }
+  .track-title { font-size: 1.3rem; }
+  .track-section { margin-top: 2.5rem; }
+  .mobile-menu { top: 50px; }
+  .mobile-menu.open { grid-template-columns: 1fr; }
+  .page-section { padding: 3rem 1rem; }
+  .hero { min-height: auto; padding: 5rem 1rem 2rem; }
+  .hero-title { font-size: clamp(2rem, 10vw, 3rem); margin-bottom: 1rem; }
+  .hero-subtitle { font-size: 14px; line-height: 1.7; margin-bottom: 1.5rem; }
+  .hero-actions { width: 100%; }
+  .btn-primary, .btn-outline { min-height: 44px; width: 100%; max-width: 320px; justify-content: center; text-align: center; }
+  .hero-stats { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 2rem; padding-top: 1.5rem; }
+  .stat { text-align: left; border: 1px solid var(--border); border-radius: 10px; background: #fff; padding: 8px 10px; }
+  .paper-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  nav .nav-links { display: none; }
+  .nav-badge { display: none; }
+  .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
+  .footer-links { gap: 10px; width: 100%; flex-wrap: wrap; }
+}
+
+@media (max-width: 430px) {
+  body { font-size: 14px; }
+  .hero-eyebrow { font-size: 10px; padding: 4px 10px; }
+  .hero-title { font-size: clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size: clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns: 1fr; }
+  .social-strip { width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 </style>
 </head>
 <body>
-
 <a class="skip-link" href="#library">Skip to paper library</a>
 
 <!-- NAV -->
 <nav>
-  <a class="nav-logo" href="./index.html">PaperMap</a>
+  <a class="nav-logo" href="./index.html" aria-label="PaperMap home">papermap</a>
   <div class="nav-links">
     <a class="nav-link" href="#library">Library</a>
-    <a class="nav-link" href="#curriculum">Curriculum</a>
-    <a class="nav-link" href="#why">Why PaperMap</a>
-    <a class="nav-link" href="#contribute">Contribute</a>
+    <a class="nav-link" href="#about">About</a>
+    <a class="nav-link" href="#roadmap">Roadmap</a>
   </div>
   <div class="nav-actions">
-    <div class="nav-badge">44 Explainers Live</div>
-    <a href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener" class="btn-primary" style="padding:6px 14px;font-size:12px;">GitHub ↗</a>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+    <div class="nav-badge">61 Papers Live</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
   </div>
 </nav>
 
 <div class="mobile-menu" id="mobileMenu">
   <a href="#library">Library</a>
-  <a href="#curriculum">Curriculum</a>
-  <a href="#cat-1">I · Foundations</a>
-  <a href="#cat-2">II · Retrieval & Reasoning</a>
-  <a href="#cat-3">III · Hallucination</a>
-  <a href="#cat-4">IV · Evaluation</a>
-  <a href="#cat-5">V · Agent Safety</a>
-  <a href="#cat-6">VI · Agent Memory</a>
-  <a href="#cat-7">VII · Multi-Agent</a>
+  <a href="#about">About</a>
+  <a href="#roadmap">Roadmap</a>
+  <a href="#library">Library</a>
+  <a href="#track-1">Track I · Foundation LLMs</a>
+  <a href="#track-2">Track II · Retrieval + Reasoning</a>
+  <a href="#track-3">Track III · Reasoning + Post-Training</a>
+  <a href="#track-4">Track IV · Hallucination</a>
+  <a href="#track-5">Track V · Evaluation</a>
+  <a href="#track-6">Track VI · Agent Reliability + SWE</a>
+  <a href="#track-7">Track VII · Agent Safety</a>
+  <a href="#track-8">Track VIII · Agent Memory</a>
+  <a href="#track-9">Track IX · Multi-Agent</a>
+  <a href="#track-10">Track X · Efficiency</a>
+  <a href="#track-11">Track XI · LM Programming</a>
 </div>
-
-<main id="content">
 
 <!-- HERO -->
-<div class="hero">
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
   <div class="hero-glow"></div>
-  <div class="hero-eyebrow">Interactive Learning Products for Landmark AI Papers</div>
-  <h1 class="hero-title">The Living Curriculum of<br><em>Modern AI Research</em></h1>
-  <p class="hero-subtitle">Dense papers turned into visually rich, research-accurate, and interactive learning products — from the Transformer to autonomous multi-agent societies.</p>
-  
+  <div class="hero-eyebrow">Interactive Research Library</div>
+  <h1 class="hero-title">
+    From research papers<br>to <em>interactive products</em>
+  </h1>
+  <p class="hero-subtitle">
+    PaperMap turns landmark AI research papers into visual, interactive learning experiences.
+    Follow the full curriculum — 61 explainers across 11 categories, from the original
+    Transformer through agent memory, multi-agent systems, and efficient inference —
+    each rebuilt as a production-grade interactive guide.
+  </p>
   <div class="hero-actions">
-    <a href="#library" class="btn-primary">Browse All 44 Explainers</a>
-    <a href="#why" class="btn-outline">Pedagogical Philosophy</a>
+    <a class="btn-primary" href="#library">Explore Paper Library →</a>
+    <a class="btn-outline" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">View on GitHub</a>
   </div>
-
   <div class="hero-stats">
-    <div class="stat"><div class="stat-num">37</div><div class="stat-label">Core Research Papers</div></div>
-    <div class="stat"><div class="stat-num">7</div><div class="stat-label">Curated Categories</div></div>
-    <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Interactive Labs & Demos</div></div>
-    <div class="stat"><div class="stat-num">7</div><div class="stat-label">Supplementary Guides</div></div>
-    <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Pure Vanilla HTML/CSS/JS</div></div>
+    <div class="stat">
+      <div class="stat-num">61</div>
+      <div class="stat-label">Papers Live</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">11</div>
+      <div class="stat-label">Learning Tracks</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">160+</div>
+      <div class="stat-label">Interactive Demos</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Static HTML</div>
+    </div>
   </div>
 </div>
 
 <div class="divider"></div>
 
-<!-- LIBRARY SECTION -->
-<section id="library" class="page-section">
-  <div class="section-tag">Interactive Catalog</div>
-  <h2 class="section-title">The Complete <em>Paper Library</em></h2>
-  <p class="section-desc">Search across 44 papers by model name, author, concept, or filter by category.</p>
+<!-- PAPER LIBRARY -->
+<div class="page-section" id="library">
+  <div class="section-tag">Paper Library</div>
+  <h2 class="section-title">The <em>Curriculum</em></h2>
+  <p class="section-desc">Sixty-one landmark papers organized into eleven categories — a guided path from the original Transformer to modern agent memory and efficient inference. Each paper is a self-contained interactive guide with visual demos, architecture breakdowns, quizzes, and research-accurate detail from the original publications.</p>
 
-  <!-- Filter & Search Bar -->
-  <div class="filter-bar">
-    <div class="search-wrapper">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="paperSearch" class="search-input" placeholder="Search papers by title, author, concept (e.g. 'LoRA', 'Memory', 'Attention', 'GPT-4')..." aria-label="Search papers">
+  <div class="library-search" role="search">
+    <div class="search-wrap">
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input type="search" id="librarySearch" class="search-input" placeholder="Search 61 papers — try &quot;memory&quot;, &quot;MoE&quot;, &quot;benchmark&quot;…" aria-label="Search the paper library" autocomplete="off" spellcheck="false">
+      <button class="search-clear" id="searchClear" type="button" aria-label="Clear search" hidden>✕</button>
     </div>
-    <div class="category-tabs" id="categoryTabs">
-      <button class="category-btn active" data-filter="all">All (44)</button>
-      <button class="category-btn" data-filter="cat-1">I · Foundations (7)</button>
-      <button class="category-btn" data-filter="cat-2">II · Retrieval & Reasoning (5)</button>
-      <button class="category-btn" data-filter="cat-3">III · Hallucination (6)</button>
-      <button class="category-btn" data-filter="cat-4">IV · Evaluation (4)</button>
-      <button class="category-btn" data-filter="cat-5">V · Agent Safety (4)</button>
-      <button class="category-btn" data-filter="cat-6">VI · Agent Memory (6)</button>
-      <button class="category-btn" data-filter="cat-7">VII · Multi-Agent (5)</button>
-      <button class="category-btn" data-filter="cat-supp">Beyond Core (7)</button>
+    <div class="search-status" id="searchStatus" aria-live="polite"></div>
+    <div class="no-results" id="noResults" hidden>
+      <div class="no-results-title">No papers match</div>
+      <div class="no-results-text">Try another keyword — titles, descriptions, authors, and tags are all searched. Press <span class="code-inline">/</span> anywhere to jump back to the search box.</div>
     </div>
   </div>
 
-  <!-- CATEGORY I: LLM FOUNDATIONS -->
-  <div class="category-group" id="cat-1">
-    <div class="category-header">
-      <span class="category-tag">Category I</span>
-      <h3 class="category-name">LLM Foundations</h3>
-      <span class="category-count">7 Papers · Transformers to Compute-Optimal Scaling</span>
+
+  <div class="track-chips">
+    <a class="track-chip" href="#track-1"><span class="num">I</span> Foundation LLMs</a>
+    <a class="track-chip" href="#track-2"><span class="num">II</span> Retrieval · Reasoning</a>
+    <a class="track-chip" href="#track-3"><span class="num">III</span> Reasoning · Post-Training</a>
+    <a class="track-chip" href="#track-4"><span class="num">IV</span> Hallucination</a>
+    <a class="track-chip" href="#track-5"><span class="num">V</span> Evaluation</a>
+    <a class="track-chip" href="#track-6"><span class="num">VI</span> Agent Reliability · SWE</a>
+    <a class="track-chip" href="#track-7"><span class="num">VII</span> Agent Safety</a>
+    <a class="track-chip" href="#track-8"><span class="num">VIII</span> Agent Memory</a>
+    <a class="track-chip" href="#track-9"><span class="num">IX</span> Multi-Agent</a>
+    <a class="track-chip" href="#track-10"><span class="num">X</span> Efficiency</a>
+    <a class="track-chip" href="#track-11"><span class="num">XI</span> LM Programming</a>
+  </div>
+
+  <div class="roadmap-grid" id="curriculum-map">
+    <div class="roadmap-item done">
+      <h4>✓ Track I — Foundation: LLMs</h4>
+      <p>10 papers · AIAYN, BERT, GPT-2, GPT-3, T5, Scaling Laws, Chinchilla, Switch, FLAN, GPT-4</p>
     </div>
-    <div class="paper-grid">
-      <!-- 1 -->
-      <div class="paper-card" data-category="cat-1">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2017</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/Attention_Is_All_You_Need.html">Attention Is All You Need</a></h3>
-          <p class="paper-desc">The architecture that replaced recurrent models with multi-head self-attention and sparked the LLM revolution.</p>
-          <div class="card-tags"><span class="tag-pill">Self-Attention</span><span class="tag-pill">Softmax</span><span class="tag-pill">Quadratic Bill</span></div>
-        </div>
-        <a href="./paper/Attention_Is_All_You_Need.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 2 -->
-      <div class="paper-card" data-category="cat-1">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2018</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/BERT.html">BERT: Deep Bidirectional Transformers</a></h3>
-          <p class="paper-desc">Bidirectional representations via Masked Language Modeling and Next Sentence Prediction.</p>
-          <div class="card-tags"><span class="tag-pill">MLM</span><span class="tag-pill">Bidirectional</span><span class="tag-pill">Fine-Tuning</span></div>
-        </div>
-        <a href="./paper/BERT.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 3 -->
-      <div class="paper-card" data-category="cat-1">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2019</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/GPT_2.html">Language Models are Unsupervised Multitask Learners</a></h3>
-          <p class="paper-desc">Proving that causal autoregressive language models learn multi-task zero-shot abilities purely from web text.</p>
-          <div class="card-tags"><span class="tag-pill">Autoregressive</span><span class="tag-pill">Zero-Shot</span><span class="tag-pill">WebText</span></div>
-        </div>
-        <a href="./paper/GPT_2.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 4 -->
-      <div class="paper-card" data-category="cat-1">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2020</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/Language_Models_are_Few_Shot_Learners.html">GPT-3: Few-Shot Learners</a></h3>
-          <p class="paper-desc">Scaling causal models to 175B parameters and proving in-context learning without gradient updates.</p>
-          <div class="card-tags"><span class="tag-pill">Few-Shot</span><span class="tag-pill">In-Context</span><span class="tag-pill">175B</span></div>
-        </div>
-        <a href="./paper/Language_Models_are_Few_Shot_Learners.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 5 -->
-      <div class="paper-card" data-category="cat-1">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2020</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/T5.html">T5: Unified Text-to-Text Transformer</a></h3>
-          <p class="paper-desc">Unifying every NLP task into a text-in text-out framework with systematic transfer learning ablations.</p>
-          <div class="card-tags"><span class="tag-pill">Text-to-Text</span><span class="tag-pill">Encoder-Decoder</span><span class="tag-pill">C4 Dataset</span></div>
-        </div>
-        <a href="./paper/T5.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 6 -->
-      <div class="paper-card" data-category="cat-1">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2020</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/Scaling_Laws.html">Scaling Laws for Neural LMs</a></h3>
-          <p class="paper-desc">Kaplan et al.'s power-law scaling across compute, parameters, and tokens (the parameters-heavy era).</p>
-          <div class="card-tags"><span class="tag-pill">Power Laws</span><span class="tag-pill">Compute</span><span class="tag-pill">Loss Prediction</span></div>
-        </div>
-        <a href="./paper/Scaling_Laws.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 7 -->
-      <div class="paper-card" data-category="cat-1">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2022</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/Chinchilla.html">Chinchilla: Compute-Optimal LMs</a></h3>
-          <p class="paper-desc">Correcting Kaplan: model size and training tokens should scale in equal proportion for optimal loss.</p>
-          <div class="card-tags"><span class="tag-pill">Optimal Tokens</span><span class="tag-pill">Chinchilla Rule</span><span class="tag-pill">GLaM</span></div>
-        </div>
-        <a href="./paper/Chinchilla.html" class="card-action">Read Guide →</a>
-      </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track II — Retrieval, Reasoning & Adaptation</h4>
+      <p>9 papers · RAG, ColBERTv2, LoRA, InstructGPT, Induction Heads, CoT, Self-Consistency, ReAct, Toolformer</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track III — Reasoning & Post-Training</h4>
+      <p>3 papers · DPO, Constitutional AI, DeepSeek-R1</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track IV — Hallucination & Factuality</h4>
+      <p>6 papers · TruthfulQA, survey, SelfCheckGPT, FActScore, HaluEval, RAGTruth</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track V — Evaluation & Benchmarks</h4>
+      <p>5 papers · MMLU, HELM, LLM-as-a-Judge, JudgeBench, AgentBench</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track VI — Agent Reliability & Software Engineering</h4>
+      <p>5 papers · SWE-bench, τ-bench, SWE-Bench Pro, τ²-Bench, Terminal-Bench</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track VII — Agent Safety & Security</h4>
+      <p>4 papers · InjecAgent, AgentDojo, ASB, Agent-SafetyBench</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track VIII — Agent Memory</h4>
+      <p>7 papers · Generative Agents, MemGPT, memory survey, LongMemEval, Mem0, A-MEM, LoCoMo-Plus</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track IX — Multi-Agent Systems</h4>
+      <p>5 papers · CAMEL, MetaGPT, Magentic-One, collaboration survey, MultiAgentBench</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track X — Efficient LLM Training & Inference</h4>
+      <p>5 papers · FlashAttention, PagedAttention, Speculative Decoding, QLoRA, Mixtral</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track XI — LM Programming & Reliability</h4>
+      <p>2 papers · DSPy, DSPy Assertions</p>
     </div>
   </div>
 
-  <!-- CATEGORY II: RETRIEVAL, REASONING & ADAPTATION -->
-  <div class="category-group" id="cat-2">
-    <div class="category-header">
-      <span class="category-tag">Category II</span>
-      <h3 class="category-name">Retrieval, Reasoning & Adaptation</h3>
-      <span class="category-count">5 Papers · Dynamic Knowledge, Efficient Tuning & Chain-of-Thought</span>
-    </div>
-    <div class="paper-grid">
-      <!-- 8 -->
-      <div class="paper-card" data-category="cat-2">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2020</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/RAG_Retrieval_Augmented_Generation.html">RAG: Retrieval-Augmented Generation</a></h3>
-          <p class="paper-desc">Grounding parametric language models in external non-parametric document indices.</p>
-          <div class="card-tags"><span class="tag-pill">Dense Retrieval</span><span class="tag-pill">DPR</span><span class="tag-pill">Knowledge Index</span></div>
-        </div>
-        <a href="./paper/RAG_Retrieval_Augmented_Generation.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 9 -->
-      <div class="paper-card" data-category="cat-2">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2021</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/LoRA_Low_Rank_Adaptation.html">LoRA: Low-Rank Adaptation</a></h3>
-          <p class="paper-desc">Freezing base model weights and injecting trainable low-rank decomposition matrices.</p>
-          <div class="card-tags"><span class="tag-pill">Parameter Efficient</span><span class="tag-pill">Rank R</span><span class="tag-pill">Zero Inference Latency</span></div>
-        </div>
-        <a href="./paper/LoRA_Low_Rank_Adaptation.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 10 -->
-      <div class="paper-card" data-category="cat-2">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2022</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/Chain_Of_Thought_Prompting.html">Chain-of-Thought Prompting</a></h3>
-          <p class="paper-desc">Eliciting multi-step reasoning in large models by demonstrating step-by-step intermediate thoughts.</p>
-          <div class="card-tags"><span class="tag-pill">Reasoning</span><span class="tag-pill">Step-by-Step</span><span class="tag-pill">Emergent Ability</span></div>
-        </div>
-        <a href="./paper/Chain_Of_Thought_Prompting.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 11 -->
-      <div class="paper-card" data-category="cat-2">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2022</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/Self_Consistency.html">Self-Consistency in Reasoning</a></h3>
-          <p class="paper-desc">Sampling multiple diverse reasoning paths and taking the marginal majority vote.</p>
-          <div class="card-tags"><span class="tag-pill">Majority Voting</span><span class="tag-pill">Sampling</span><span class="tag-pill">Ensemble</span></div>
-        </div>
-        <a href="./paper/Self_Consistency.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 12 -->
-      <div class="paper-card" data-category="cat-2">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2022</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/ReAct.html">ReAct: Synergizing Reasoning & Acting</a></h3>
-          <p class="paper-desc">Interleaving verbal reasoning traces with interactive tool actions and environmental observations.</p>
-          <div class="card-tags"><span class="tag-pill">Thought-Action-Obs</span><span class="tag-pill">Tool Use</span><span class="tag-pill">Agent Foundation</span></div>
-        </div>
-        <a href="./paper/ReAct.html" class="card-action">Read Guide →</a>
-      </div>
-    </div>
+<div class="track-section" id="track-1">
+  <div class="track-head">
+    <span class="track-label">Track I</span>
+    <h3 class="track-title">Foundation — LLMs</h3>
   </div>
+  <p class="track-desc">The architecture and training science behind every modern LLM: the original Transformer, BERT, GPT-2, GPT-3, T5, the scaling laws that turned size into a science — and the sparse, instruction-tuned, and multimodel steps that finished the foundation. <strong>10 papers.</strong></p>
+    <div class="study-pair">⭐ study together: Scaling Laws → Chinchilla → Switch Transformers</div>
+  <div class="paper-grid">
 
-  <!-- CATEGORY III: HALLUCINATION & FACTUALITY -->
-  <div class="category-group" id="cat-3">
-    <div class="category-header">
-      <span class="category-tag">Category III</span>
-      <h3 class="category-name">Hallucination & Factuality</h3>
-      <span class="category-count">6 Papers · Falsehoods, Precision Metrics & Detection</span>
-    </div>
-    <div class="paper-grid">
-      <!-- 13 -->
-      <div class="paper-card" data-category="cat-3">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2021</span></div>
-          <h3><a href="./paper/TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html">TruthfulQA</a></h3>
-          <p class="paper-desc">Measuring how large language models mimic human falsehoods, superstitions, and conspiracy theories.</p>
-          <div class="card-tags"><span class="tag-pill">Human Falsehoods</span><span class="tag-pill">Inverse Scaling</span><span class="tag-pill">Truthfulness</span></div>
-        </div>
-        <a href="./paper/TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html" class="card-action">Read Guide →</a>
+    <article class="paper-card amber" data-title="Attention Is All You Need">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Vaswani et al. · 2017</div>
+      <h3>Attention Is All You Need</h3>
+      <p>The paper that started it all. Interactive walkthrough of the Transformer architecture with tokenization, embeddings, self-attention, multi-head attention, positional encoding, and full encoder-decoder visualization.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Transformer</span>
+        <span class="paper-meta-tag">Self-Attention</span>
+        <span class="paper-meta-tag">NLP</span>
+        <span class="paper-meta-tag">Architecture</span>
       </div>
-      <!-- 14 -->
-      <div class="paper-card" data-category="cat-3">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span></div>
-          <h3><a href="./paper/SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html">SelfCheckGPT</a></h3>
-          <p class="paper-desc">Detecting hallucinations in black-box LLMs without external databases using stochastic self-consistency.</p>
-          <div class="card-tags"><span class="tag-pill">Black Box</span><span class="tag-pill">Information Consistency</span><span class="tag-pill">Zero Resource</span></div>
-        </div>
-        <a href="./paper/SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" class="card-action">Read Guide →</a>
+      <a class="paper-link" href="./paper/Attention_Is_All_You_Need.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="BERT: Pre-training of Deep Bidirectional Transformers">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Devlin et al. · 2018</div>
+      <h3>BERT: Pre-training of Deep Bidirectional Transformers</h3>
+      <p>Bidirectional pre-training with masked language modeling. Interactive demos for MLM, the 80/10/10 rule, architecture specs, and how one model conquered 11 NLP tasks with a single output layer.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">BERT</span>
+        <span class="paper-meta-tag">MLM</span>
+        <span class="paper-meta-tag">Bidirectional</span>
+        <span class="paper-meta-tag">Pre-training</span>
       </div>
-      <!-- 15 -->
-      <div class="paper-card" data-category="cat-3">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span></div>
-          <h3><a href="./paper/HaluEval_A_Large_Scale_Hallucination_Evaluation_Benchmark.html">HaluEval Benchmark</a></h3>
-          <p class="paper-desc">A large-scale benchmark of 35K hallucinated and verified generation pairs for LLMs.</p>
-          <div class="card-tags"><span class="tag-pill">35K Pairs</span><span class="tag-pill">Adversarial Evaluation</span><span class="tag-pill">QA & Dialogue</span></div>
-        </div>
-        <a href="./paper/HaluEval_A_Large_Scale_Hallucination_Evaluation_Benchmark.html" class="card-action">Read Guide →</a>
+      <a class="paper-link" href="./paper/BERT.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="Language Models are Unsupervised Multitask Learners">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Radford et al. · 2019</div>
+      <h3>Language Models are Unsupervised Multitask Learners</h3>
+      <p>GPT-2 and the zero-shot bet: a 1.5B decoder-only model trained on WebText learns tasks without supervision. Zero-shot prompt demos, byte-level BPE, and the staged release that started the AI safety debate.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">GPT-2</span>
+        <span class="paper-meta-tag">Zero-Shot</span>
+        <span class="paper-meta-tag">WebText</span>
+        <span class="paper-meta-tag">1.5B</span>
       </div>
-      <!-- 16 -->
-      <div class="paper-card" data-category="cat-3">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span></div>
-          <h3><a href="./paper/A_Survey_on_Hallucination_in_Large_Language_Models.html">Survey on Hallucination in LLMs</a></h3>
-          <p class="paper-desc">A foundational survey categorizing causes, detection metrics, and mitigation strategies for hallucinations.</p>
-          <div class="card-tags"><span class="tag-pill">Taxonomy</span><span class="tag-pill">Factuality</span><span class="tag-pill">Faithfulness</span></div>
-        </div>
-        <a href="./paper/A_Survey_on_Hallucination_in_Large_Language_Models.html" class="card-action">Read Guide →</a>
+      <a class="paper-link" href="./paper/GPT_2.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="Language Models are Few-Shot Learners">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Brown et al. · 2020</div>
+      <h3>Language Models are Few-Shot Learners</h3>
+      <p>How 175 billion parameters unlocked in-context learning. Interactive few-shot demos, scaling law visualizations, benchmark tables, data contamination analysis, and the full GPT-3 model family.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">GPT-3</span>
+        <span class="paper-meta-tag">Few-Shot</span>
+        <span class="paper-meta-tag">Scaling Laws</span>
+        <span class="paper-meta-tag">175B</span>
       </div>
-      <!-- 17 -->
-      <div class="paper-card" data-category="cat-3">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span></div>
-          <h3><a href="./paper/FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html">FActScore</a></h3>
-          <p class="paper-desc">Breaking free-form generation into atomic facts to evaluate precision rigorously against Wikipedia ground truth.</p>
-          <div class="card-tags"><span class="tag-pill">Atomic Facts</span><span class="tag-pill">Factual Precision</span><span class="tag-pill">Entity Generation</span></div>
-        </div>
-        <a href="./paper/FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" class="card-action">Read Guide →</a>
+      <a class="paper-link" href="./paper/Language_Models_are_Few_Shot_Learners.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="Exploring the Limits of Transfer Learning (T5)">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Raffel et al. · 2020</div>
+      <h3>Exploring the Limits of Transfer Learning (T5)</h3>
+      <p>Every NLP task as plain text in, plain text out. Interactive task-prefix demos, the C4 corpus pipeline, systematic architecture ablations, and T5-11B's SuperGLUE 88.9 benchmark record.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">T5</span>
+        <span class="paper-meta-tag">Text-to-Text</span>
+        <span class="paper-meta-tag">C4</span>
+        <span class="paper-meta-tag">Transfer</span>
       </div>
-      <!-- 18 -->
-      <div class="paper-card" data-category="cat-3">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2024</span></div>
-          <h3><a href="./paper/RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html">RAGTruth Corpus</a></h3>
-          <p class="paper-desc">A word-level hallucination corpus evaluating hallucination frequencies across diverse retrieval pipelines.</p>
-          <div class="card-tags"><span class="tag-pill">Word Level</span><span class="tag-pill">RAG Grounding</span><span class="tag-pill">Faithfulness Corpus</span></div>
-        </div>
-        <a href="./paper/RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html" class="card-action">Read Guide →</a>
+      <a class="paper-link" href="./paper/T5.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="Scaling Laws for Neural Language Models">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Kaplan et al. · 2020</div>
+      <h3>Scaling Laws for Neural Language Models</h3>
+      <p>Performance depends strongly on scale and weakly on shape. Interactive power-law loss explorer, compute-budget allocator, and the training-curve laws that turned model scale into a science.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Scaling Laws</span>
+        <span class="paper-meta-tag">Power Laws</span>
+        <span class="paper-meta-tag">Compute</span>
+        <span class="paper-meta-tag">Prediction</span>
       </div>
-    </div>
-  </div>
+      <a class="paper-link" href="./paper/Scaling_Laws.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="Training Compute-Optimal LLMs (Chinchilla)">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Hoffmann et al. · 2022</div>
+      <h3>Training Compute-Optimal LLMs (Chinchilla)</h3>
+      <p>The scaling correction: 70B parameters trained on 1.4T tokens beats Gopher at the same compute. Interactive budget allocator, tokens-per-param checker, and the ~20 tokens/param rule of thumb.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Chinchilla</span>
+        <span class="paper-meta-tag">70B</span>
+        <span class="paper-meta-tag">1.4T Tokens</span>
+        <span class="paper-meta-tag">Compute-Optimal</span>
+      </div>
+      <a class="paper-link" href="./paper/Chinchilla.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="Switch Transformers: Scaling to Trillion Parameter Models">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Fedus et al. · 2021</div>
+      <h3>Switch Transformers: Scaling to Trillion Parameter Models</h3>
+      <p>One expert per token. Interactive top-1 router playground, router z-loss stability gym, the 7× pre-training speedup race, and the parameter ledger that explains what 1.6T parameters really buy.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">MoE</span>
+        <span class="paper-meta-tag">Top-1 Routing</span>
+        <span class="paper-meta-tag">2048 Experts</span>
+        <span class="paper-meta-tag">1.6T</span>
+      </div>
+      <a class="paper-link" href="./paper/Switch_Transformers_Scaling_to_Trillion_Parameter_Models.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="FLAN: Finetuned Language Models Are Zero-Shot Learners">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Wei et al. · 2021</div>
+      <h3>FLAN: Finetuned Language Models Are Zero-Shot Learners</h3>
+      <p>Instruction tuning before it was cool: 137B parameters finetuned on 60+ tasks phrased as instructions beat zero-shot GPT-3 on 20 of 25 held-out datasets. Template flipper + cluster hold-out explorer.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Instruction Tuning</span>
+        <span class="paper-meta-tag">Zero-Shot</span>
+        <span class="paper-meta-tag">137B</span>
+        <span class="paper-meta-tag">Task Clusters</span>
+      </div>
+      <a class="paper-link" href="./paper/FLAN_Finetuned_Language_Models_Are_Zero_Shot_Learners.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="GPT-4 Technical Report">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">OpenAI · 2023</div>
+      <h3>GPT-4 Technical Report</h3>
+      <p>The frontier becomes infrastructure science: performance predicted from 1/1000th-compute runs, 86.4% MMLU, bar-exam top 10%, and the predictable-scaling discipline every lab now follows.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">GPT-4</span>
+        <span class="paper-meta-tag">Multimodal</span>
+        <span class="paper-meta-tag">Predictable Scaling</span>
+        <span class="paper-meta-tag">86.4% MMLU</span>
+      </div>
+      <a class="paper-link" href="./paper/GPT_4_Technical_Report.html">Open Explainer →</a>
+    </article>
 
-  <!-- CATEGORY IV: EVALUATION & BENCHMARKS -->
-  <div class="category-group" id="cat-4">
-    <div class="category-header">
-      <span class="category-tag">Category IV</span>
-      <h3 class="category-name">Evaluation & Benchmarks</h3>
-      <span class="category-count">4 Papers · Meta-Evaluation, Judges & Agent Benchmarking</span>
-    </div>
-    <div class="paper-grid">
-      <!-- 19 -->
-      <div class="paper-card" data-category="cat-4">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2022</span></div>
-          <h3><a href="./paper/HELM_Holistic_Evaluation_of_Language_Models.html">HELM: Holistic Evaluation</a></h3>
-          <p class="paper-desc">Stanford's holistic multi-metric taxonomy measuring accuracy, robustness, fairness, and toxicity.</p>
-          <div class="card-tags"><span class="tag-pill">Multi-Metric</span><span class="tag-pill">Holistic</span><span class="tag-pill">Standardization</span></div>
-        </div>
-        <a href="./paper/HELM_Holistic_Evaluation_of_Language_Models.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 20 -->
-      <div class="paper-card" data-category="cat-4">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span><span class="badge-deep">Deep Dive</span></div>
-          <h3><a href="./paper/LLM_as_a_Judge.html">Judging LLM-as-a-Judge</a></h3>
-          <p class="paper-desc">MT-Bench, Chatbot Arena, and quantifying position, verbosity, and self-enhancement judge biases.</p>
-          <div class="card-tags"><span class="tag-pill">MT-Bench</span><span class="tag-pill">Chatbot Arena</span><span class="tag-pill">Judge Biases</span></div>
-        </div>
-        <a href="./paper/LLM_as_a_Judge.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 21 -->
-      <div class="paper-card" data-category="cat-4">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2024</span></div>
-          <h3><a href="./paper/JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html">JudgeBench</a></h3>
-          <p class="paper-desc">Objective benchmark evaluating LLM judges on subtle, adversarial correctness pairs.</p>
-          <div class="card-tags"><span class="tag-pill">Objective Pairs</span><span class="tag-pill">Judge Accuracy</span><span class="tag-pill">Adversarial</span></div>
-        </div>
-        <a href="./paper/JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 22 -->
-      <div class="paper-card" data-category="cat-4">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2024</span></div>
-          <h3><a href="./paper/AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench</a></h3>
-          <p class="paper-desc">The first systematic multi-environment benchmark testing LLMs as autonomous agents in operating systems, DBs, and web.</p>
-          <div class="card-tags"><span class="tag-pill">Multi-Environment</span><span class="tag-pill">Terminal</span><span class="tag-pill">Success Rates</span></div>
-        </div>
-        <a href="./paper/AgentBench_Evaluating_LLMs_as_Agents.html" class="card-action">Read Guide →</a>
-      </div>
-    </div>
   </div>
+</div>
+<div class="track-section" id="track-2">
+  <div class="track-head">
+    <span class="track-label">Track II</span>
+    <h3 class="track-title">Retrieval, Reasoning & Adaptation</h3>
+  </div>
+  <p class="track-desc">The upgrades that turned raw LLMs into useful systems: retrieval-augmented knowledge, multi-vector late-interaction retrieval, instruction-following and RLHF, the attention circuits behind in-context learning, chain-of-thought reasoning, and models that act and use tools. <strong>9 papers.</strong></p>
+    <div class="study-pair">⭐ study together: Chain-of-Thought → Self-Consistency → ReAct</div>
+  <div class="paper-grid">
 
-  <!-- CATEGORY V: AGENT SAFETY & SECURITY -->
-  <div class="category-group" id="cat-5">
-    <div class="category-header">
-      <span class="category-tag">Category V</span>
-      <h3 class="category-name">Agent Safety & Security</h3>
-      <span class="category-count">4 Papers · Prompt Injections, Tool Exploits & Sandboxing</span>
-    </div>
-    <div class="paper-grid">
-      <!-- 23 -->
-      <div class="paper-card" data-category="cat-5">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2024</span></div>
-          <h3><a href="./paper/AgentDojo_A_Dynamic_Environment_to_Evaluate_Prompt_Injection_Attacks_and_Defenses.html">AgentDojo</a></h3>
-          <p class="paper-desc">Dynamic execution environment evaluating indirect prompt injection attacks and defenses on tool-calling agents.</p>
-          <div class="card-tags"><span class="tag-pill">Prompt Injection</span><span class="tag-pill">Tool Defense</span><span class="tag-pill">Sandboxed OS</span></div>
-        </div>
-        <a href="./paper/AgentDojo_A_Dynamic_Environment_to_Evaluate_Prompt_Injection_Attacks_and_Defenses.html" class="card-action">Read Guide →</a>
+    <article class="paper-card purple" data-title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (RAG)">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Lewis et al. · 2020</div>
+      <h3>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (RAG)</h3>
+      <p>An interactive deep dive into the original RAG paper: dense retrieval with DPR, BART generation, non-parametric memory with Wikipedia, and benchmark gains on knowledge-intensive QA.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">RAG</span>
+        <span class="paper-meta-tag">Dense Retrieval</span>
+        <span class="paper-meta-tag">BART</span>
+        <span class="paper-meta-tag">Knowledge QA</span>
       </div>
-      <!-- 24 -->
-      <div class="paper-card" data-category="cat-5">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2024</span></div>
-          <h3><a href="./paper/InjecAgent_Benchmarking_Indirect_Prompt_Injections.html">InjecAgent</a></h3>
-          <p class="paper-desc">Systematic benchmark for indirect prompt injections targeting tool-integrated LLM agent workflows.</p>
-          <div class="card-tags"><span class="tag-pill">Indirect Injection</span><span class="tag-pill">Attack Vectors</span><span class="tag-pill">1K+ Test Cases</span></div>
-        </div>
-        <a href="./paper/InjecAgent_Benchmarking_Indirect_Prompt_Injections.html" class="card-action">Read Guide →</a>
+      <a class="paper-link" href="./paper/RAG_Retrieval_Augmented_Generation.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="LoRA: Low-Rank Adaptation of Large Language Models">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Hu et al. · 2021</div>
+      <h3>LoRA: Low-Rank Adaptation of Large Language Models</h3>
+      <p>An interactive walkthrough of LoRA covering low-rank updates, parameter-efficient fine-tuning, practical deployment tradeoffs, and why LoRA matches full fine-tuning at a fraction of the cost.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">LoRA</span>
+        <span class="paper-meta-tag">PEFT</span>
+        <span class="paper-meta-tag">Low-Rank</span>
+        <span class="paper-meta-tag">LLM Fine-Tuning</span>
       </div>
-      <!-- 25 -->
-      <div class="paper-card" data-category="cat-5">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2024</span></div>
-          <h3><a href="./paper/Agent_SafetyBench_Evaluating_the_Safety_of_LLM_Agents.html">Agent-SafetyBench</a></h3>
-          <p class="paper-desc">Comprehensive safety framework testing agent behavior across dangerous tool calls, financial loss, and unauthorized actions.</p>
-          <div class="card-tags"><span class="tag-pill">Harmful Actions</span><span class="tag-pill">Tool Safety</span><span class="tag-pill">Safety Boundaries</span></div>
-        </div>
-        <a href="./paper/Agent_SafetyBench_Evaluating_the_Safety_of_LLM_Agents.html" class="card-action">Read Guide →</a>
+      <a class="paper-link" href="./paper/LoRA_Low_Rank_Adaptation.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="InstructGPT: Training Models to Follow Instructions">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Ouyang et al. · 2022</div>
+      <h3>InstructGPT: Training Models to Follow Instructions</h3>
+      <p>The RLHF paper that paved the way for ChatGPT. Interactive 3-step pipeline (SFT → Reward Model → PPO), human evaluation results, bias analysis, and qualitative examples.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">InstructGPT</span>
+        <span class="paper-meta-tag">RLHF</span>
+        <span class="paper-meta-tag">PPO</span>
+        <span class="paper-meta-tag">Alignment</span>
       </div>
-      <!-- 26 -->
-      <div class="paper-card" data-category="cat-5">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2024</span></div>
-          <h3><a href="./paper/Agent_Security_Bench_Formalizing_and_Benchmarking_Attacks_and_Defenses.html">Agent Security Bench</a></h3>
-          <p class="paper-desc">Formalizing threat models, attack surfaces, privilege escalation, and security guarantees in agentic systems.</p>
-          <div class="card-tags"><span class="tag-pill">Threat Models</span><span class="tag-pill">Privilege Escalation</span><span class="tag-pill">Defense Metrics</span></div>
-        </div>
-        <a href="./paper/Agent_Security_Bench_Formalizing_and_Benchmarking_Attacks_and_Defenses.html" class="card-action">Read Guide →</a>
+      <a class="paper-link" href="./paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="In-context Learning and Induction Heads">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Olsson et al. · 2022</div>
+      <h3>In-context Learning and Induction Heads</h3>
+      <p>The two-head attention circuit behind in-context learning. Sequence-completion demos, K-composition steppers, and the training phase change that switched ICL on.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Induction Heads</span>
+        <span class="paper-meta-tag">Circuits</span>
+        <span class="paper-meta-tag">ICL</span>
+        <span class="paper-meta-tag">Interpretability</span>
       </div>
-    </div>
-  </div>
+      <a class="paper-link" href="./paper/Induction_Heads.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Chain-of-Thought Prompting">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Wei et al. · 2022</div>
+      <h3>Chain-of-Thought Prompting</h3>
+      <p>Reasoning steps in few-shot prompts unlock multi-step problems — but only at ~100B scale. A standard-vs-CoT race, emergence charts, and the ablations that proved the words matter.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">CoT</span>
+        <span class="paper-meta-tag">Reasoning</span>
+        <span class="paper-meta-tag">Prompting</span>
+        <span class="paper-meta-tag">Emergence</span>
+      </div>
+      <a class="paper-link" href="./paper/Chain_Of_Thought_Prompting.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="Self-Consistency Improves CoT Reasoning">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Wang et al. · 2022</div>
+      <h3>Self-Consistency Improves CoT Reasoning</h3>
+      <p>Sample 40 reasoning paths, take the vote. Interactive sampling-and-voting demos, convergence histograms, and +17.9 points on GSM8K with zero additional training.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Self-Consistency</span>
+        <span class="paper-meta-tag">Voting</span>
+        <span class="paper-meta-tag">Decoding</span>
+        <span class="paper-meta-tag">GSM8K</span>
+      </div>
+      <a class="paper-link" href="./paper/Self_Consistency.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="ReAct: Synergizing Reasoning and Acting">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Yao et al. · 2022</div>
+      <h3>ReAct: Synergizing Reasoning and Acting</h3>
+      <p>Thought, action, observation — one loop. A live agent-trace player, the hallucination showdown vs CoT, and the template behind every modern AI agent.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">ReAct</span>
+        <span class="paper-meta-tag">Agents</span>
+        <span class="paper-meta-tag">Tools</span>
+        <span class="paper-meta-tag">Reasoning</span>
+      </div>
+      <a class="paper-link" href="./paper/ReAct.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="Toolformer: Models Teach Themselves Tools">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Schick et al. · 2023</div>
+      <h3>Toolformer: Models Teach Themselves Tools</h3>
+      <p>A 6.7B model that inserts its own API calls, filters them by perplexity, and reads the results. Interactive perplexity-filter demos, five tools, and beating GPT-3 175B on LAMA.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Toolformer</span>
+        <span class="paper-meta-tag">Tools</span>
+        <span class="paper-meta-tag">APIs</span>
+        <span class="paper-meta-tag">Self-Taught</span>
+      </div>
+      <a class="paper-link" href="./paper/Toolformer.html">Open Explainer →</a>
+    </article>
 
-  <!-- CATEGORY VI: AGENT MEMORY -->
-  <div class="category-group" id="cat-6">
-    <div class="category-header">
-      <span class="category-tag">Category VI</span>
-      <h3 class="category-name">Agent Memory</h3>
-      <span class="category-count">6 Papers · Virtual Context, Long-Term Memory & Episodic Recall</span>
-    </div>
-    <div class="paper-grid">
-      <!-- 27 -->
-      <div class="paper-card" data-category="cat-6">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span></div>
-          <h3><a href="./paper/Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">Generative Agents (Smallville)</a></h3>
-          <p class="paper-desc">Believable human behavior in simulated sandbox societies via memory stream, reflection, and retrieval.</p>
-          <div class="card-tags"><span class="tag-pill">Memory Stream</span><span class="tag-pill">Reflection</span><span class="tag-pill">Simulacra</span></div>
-        </div>
-        <a href="./paper/Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html" class="card-action">Read Guide →</a>
+    <article class="paper-card amber" data-title="ColBERTv2: Effective and Efficient Retrieval via Lightweight Late Interaction">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Santhanam et al. · 2022</div>
+      <h3>ColBERTv2: Effective and Efficient Retrieval via Lightweight Late Interaction</h3>
+      <p>One vector per token, one MaxSim per query word, and 1–2-bit residual compression that shrinks the index ~6×. Interactive late-interaction scoring, compression visualizer, and BEIR wins.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">ColBERTv2</span>
+        <span class="paper-meta-tag">Late Interaction</span>
+        <span class="paper-meta-tag">MaxSim</span>
+        <span class="paper-meta-tag">Residual Compression</span>
       </div>
-      <!-- 28 -->
-      <div class="paper-card" data-category="cat-6">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span></div>
-          <h3><a href="./paper/MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT: LLMs as Operating Systems</a></h3>
-          <p class="paper-desc">Virtual memory management and paging mechanisms for LLMs to overcome bounded context windows.</p>
-          <div class="card-tags"><span class="tag-pill">Virtual Memory</span><span class="tag-pill">Context Paging</span><span class="tag-pill">Archival Storage</span></div>
-        </div>
-        <a href="./paper/MemGPT_Towards_LLMs_as_Operating_Systems.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 29 -->
-      <div class="paper-card" data-category="cat-6">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2024</span></div>
-          <h3><a href="./paper/A_Survey_on_the_Memory_Mechanism_of_LLM_Based_Agents.html">Survey on Memory Mechanisms</a></h3>
-          <p class="paper-desc">Comprehensive taxonomy of short-term, long-term, procedural, and episodic memory mechanisms in LLM agents.</p>
-          <div class="card-tags"><span class="tag-pill">Episodic Memory</span><span class="tag-pill">Procedural</span><span class="tag-pill">Survey</span></div>
-        </div>
-        <a href="./paper/A_Survey_on_the_Memory_Mechanism_of_LLM_Based_Agents.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 30 -->
-      <div class="paper-card" data-category="cat-6">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2024</span></div>
-          <h3><a href="./paper/LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html">LongMemEval</a></h3>
-          <p class="paper-desc">Benchmarking conversational assistants on long-term multi-session memory, persona drift, and factual updates.</p>
-          <div class="card-tags"><span class="tag-pill">Multi-Session</span><span class="tag-pill">Temporal Drift</span><span class="tag-pill">Persona Consistency</span></div>
-        </div>
-        <a href="./paper/LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 31 -->
-      <div class="paper-card" data-category="cat-6">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2025</span></div>
-          <h3><a href="./paper/A_MEM_Agentic_Memory_for_LLM_Agents.html">A-MEM: Agentic Memory</a></h3>
-          <p class="paper-desc">Dynamic self-evolving memory system enabling agents to autonomously index, compress, and update episodic nodes.</p>
-          <div class="card-tags"><span class="tag-pill">Self-Evolving</span><span class="tag-pill">Compression</span><span class="tag-pill">Dynamic Graph</span></div>
-        </div>
-        <a href="./paper/A_MEM_Agentic_Memory_for_LLM_Agents.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 32 -->
-      <div class="paper-card" data-category="cat-6">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2026</span></div>
-          <h3><a href="./paper/LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html">LoCoMo-Plus</a></h3>
-          <p class="paper-desc">Evaluating long-term memory beyond static factual recall: measuring contextual adaptation, preference tracking, and belief revision.</p>
-          <div class="card-tags"><span class="tag-pill">Belief Revision</span><span class="tag-pill">Preference Tracking</span><span class="tag-pill">Long Context</span></div>
-        </div>
-        <a href="./paper/LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html" class="card-action">Read Guide →</a>
-      </div>
-    </div>
-  </div>
+      <a class="paper-link" href="./paper/ColBERTv2_Effective_and_Efficient_Retrieval_via_Lightweight_Late_Interaction.html">Open Explainer →</a>
+    </article>
 
-  <!-- CATEGORY VII: MULTI-AGENT SYSTEMS -->
-  <div class="category-group" id="cat-7">
-    <div class="category-header">
-      <span class="category-tag">Category VII</span>
-      <h3 class="category-name">Multi-Agent Systems</h3>
-      <span class="category-count">5 Papers · Role-Playing, SOPs & Collective Intelligence</span>
-    </div>
-    <div class="paper-grid">
-      <!-- 33 -->
-      <div class="paper-card" data-category="cat-7">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span></div>
-          <h3><a href="./paper/CAMEL_Communicative_Agents_for_Mind_Exploration.html">CAMEL: Communicative Agents</a></h3>
-          <p class="paper-desc">Inception Prompting enabling autonomous role-playing cooperation between LLMs without human intervention.</p>
-          <div class="card-tags"><span class="tag-pill">Inception Prompting</span><span class="tag-pill">Role-Play</span><span class="tag-pill">AI Society</span></div>
-        </div>
-        <a href="./paper/CAMEL_Communicative_Agents_for_Mind_Exploration.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 34 -->
-      <div class="paper-card" data-category="cat-7">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span></div>
-          <h3><a href="./paper/MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">MetaGPT: Meta Programming</a></h3>
-          <p class="paper-desc">Encoding Standard Operating Procedures (SOPs) into multi-agent pipelines to engineer complete software from a one-line prompt.</p>
-          <div class="card-tags"><span class="tag-pill">SOP Assembly Line</span><span class="tag-pill">PRD Artifacts</span><span class="tag-pill">Pub-Sub Bus</span></div>
-        </div>
-        <a href="./paper/MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 35 -->
-      <div class="paper-card" data-category="cat-7">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2024</span></div>
-          <h3><a href="./paper/Magentic_One_A_Generalist_Multi_Agent_System.html">Magentic-One: Generalist Multi-Agent System</a></h3>
-          <p class="paper-desc">Central dual-loop Orchestrator routing between WebSurfer, FileSurfer, and Coder to solve open-ended multimodal web tasks.</p>
-          <div class="card-tags"><span class="tag-pill">Dual-Loop Ledger</span><span class="tag-pill">WebSurfer</span><span class="tag-pill">GAIA SOTA</span></div>
-        </div>
-        <a href="./paper/Magentic_One_A_Generalist_Multi_Agent_System.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 36 -->
-      <div class="paper-card" data-category="cat-7">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2025</span></div>
-          <h3><a href="./paper/Multi_Agent_Collaboration_Mechanisms_A_Survey_of_LLMs.html">Multi-Agent Collaboration Survey</a></h3>
-          <p class="paper-desc">A comprehensive survey of interaction topologies, debate consensus mechanisms, and emergent coordination failures.</p>
-          <div class="card-tags"><span class="tag-pill">Topologies</span><span class="tag-pill">Debate & Voting</span><span class="tag-pill">Sycophancy</span></div>
-        </div>
-        <a href="./paper/Multi_Agent_Collaboration_Mechanisms_A_Survey_of_LLMs.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 37 -->
-      <div class="paper-card" data-category="cat-7">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2025</span></div>
-          <h3><a href="./paper/MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html">MultiAgentBench</a></h3>
-          <p class="paper-desc">Rigorous benchmark evaluating both collaborative teamwork and competitive game-theoretic behaviors like bargaining and bluffing.</p>
-          <div class="card-tags"><span class="tag-pill">Game Theory</span><span class="tag-pill">Negotiation</span><span class="tag-pill">Werewolf Deception</span></div>
-        </div>
-        <a href="./paper/MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html" class="card-action">Read Guide →</a>
-      </div>
-    </div>
   </div>
+</div>
+<div class="track-section" id="track-3">
+  <div class="track-head">
+    <span class="track-label">Track III</span>
+    <h3 class="track-title">Reasoning & Post-Training</h3>
+  </div>
+  <p class="track-desc">How raw models become aligned reasoners: direct preference optimization without RL, constitutional training from AI feedback, and reasoning capability emerging from pure reinforcement learning. <strong>3 papers.</strong></p>
+    <div class="study-pair">⭐ study together: DPO → Constitutional AI → DeepSeek-R1</div>
+  <div class="paper-grid">
 
-  <!-- BEYOND CORE: SUPPLEMENTARY EXPLAINERS -->
-  <div class="category-group" id="cat-supp">
-    <div class="category-header">
-      <span class="category-tag" style="background:var(--blue-dim);color:var(--blue);border-color:rgba(59,130,246,0.25);">Beyond the Core</span>
-      <h3 class="category-name">Supplementary Explainer Guides</h3>
-      <span class="category-count">7 Additional Guides · Alignment, Open Models & Mechanisms</span>
-    </div>
-    <div class="paper-grid">
-      <!-- 38 -->
-      <div class="paper-card" data-category="cat-supp">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2022</span></div>
-          <h3><a href="./paper/ColBERTv2.html">ColBERTv2: Efficient Retrieval</a></h3>
-          <p class="paper-desc">Token-level late interaction retrieval with aggressive residual compression.</p>
-          <div class="card-tags"><span class="tag-pill">Late Interaction</span><span class="tag-pill">Residuals</span></div>
-        </div>
-        <a href="./paper/ColBERTv2.html" class="card-action">Read Guide →</a>
+    <article class="paper-card amber" data-title="Direct Preference Optimization (DPO)">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Rafailov et al. · 2023</div>
+      <h3>Direct Preference Optimization (DPO)</h3>
+      <p>RLHF without RL: a closed-form preference loss derived from Bradley-Terry theory. Interactive derivation, pairwise training demo, and why the open-model world adopted it over PPO.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">DPO</span>
+        <span class="paper-meta-tag">Alignment</span>
+        <span class="paper-meta-tag">Preference</span>
+        <span class="paper-meta-tag">No-RL</span>
       </div>
-      <!-- 39 -->
-      <div class="paper-card" data-category="cat-supp">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2022</span></div>
-          <h3><a href="./paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT: RLHF Alignment</a></h3>
-          <p class="paper-desc">Aligning language models to follow user intent with Reinforcement Learning from Human Feedback.</p>
-          <div class="card-tags"><span class="tag-pill">RLHF</span><span class="tag-pill">Reward Model</span><span class="tag-pill">PPO</span></div>
-        </div>
-        <a href="./paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html" class="card-action">Read Guide →</a>
+      <a class="paper-link" href="./paper/DPO.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Constitutional AI: Harmlessness from AI Feedback">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Bai et al. · 2022</div>
+      <h3>Constitutional AI: Harmlessness from AI Feedback</h3>
+      <p>Alignment from a written document: self-critique steppers, the RLAIF preference labeler, 16 principles, and the harmlessness-helpfulness frontier — the recipe behind Claude.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Constitutional AI</span>
+        <span class="paper-meta-tag">RLAIF</span>
+        <span class="paper-meta-tag">Self-Critique</span>
+        <span class="paper-meta-tag">Alignment</span>
       </div>
-      <!-- 40 -->
-      <div class="paper-card" data-category="cat-supp">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span></div>
-          <h3><a href="./paper/DPO.html">Direct Preference Optimization (DPO)</a></h3>
-          <p class="paper-desc">Deriving an exact closed-form objective to align LLMs directly on preferences without training a separate reward model.</p>
-          <div class="card-tags"><span class="tag-pill">No Reward Model</span><span class="tag-pill">Implicit Loss</span></div>
-        </div>
-        <a href="./paper/DPO.html" class="card-action">Read Guide →</a>
+      <a class="paper-link" href="./paper/Constitutional_AI_Harmlessness_from_AI_Feedback.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="DeepSeek-R1: Reasoning via RL">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">DeepSeek-AI · 2025</div>
+      <h3>DeepSeek-R1: Reasoning via RL</h3>
+      <p>Reasoning capability from pure reinforcement learning. GRPO visualizer, the emergent "aha moment" trace player, the 4-stage training pipeline, and distilled open models matching o1.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">DeepSeek-R1</span>
+        <span class="paper-meta-tag">RL</span>
+        <span class="paper-meta-tag">GRPO</span>
+        <span class="paper-meta-tag">Reasoning</span>
       </div>
-      <!-- 41 -->
-      <div class="paper-card" data-category="cat-supp">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2022</span></div>
-          <h3><a href="./paper/Induction_Heads.html">Induction Heads</a></h3>
-          <p class="paper-desc">Mechanistic interpretability uncovering the two-attention-head circuit responsible for in-context learning.</p>
-          <div class="card-tags"><span class="tag-pill">Mechanistic</span><span class="tag-pill">Two-Head Circuit</span></div>
-        </div>
-        <a href="./paper/Induction_Heads.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 42 -->
-      <div class="paper-card" data-category="cat-supp">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span></div>
-          <h3><a href="./paper/Toolformer.html">Toolformer</a></h3>
-          <p class="paper-desc">Self-supervised learning enabling models to teach themselves when and how to call external calculators and search APIs.</p>
-          <div class="card-tags"><span class="tag-pill">Self-Supervised</span><span class="tag-pill">Tool Calls</span></div>
-        </div>
-        <a href="./paper/Toolformer.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 43 -->
-      <div class="paper-card" data-category="cat-supp">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2023</span></div>
-          <h3><a href="./paper/LLaMA.html">LLaMA: Open Foundation LMs</a></h3>
-          <p class="paper-desc">Meta's open, high-performance foundation models trained exclusively on publicly available datasets.</p>
-          <div class="card-tags"><span class="tag-pill">Open Weights</span><span class="tag-pill">RoPE</span><span class="tag-pill">SwiGLU</span></div>
-        </div>
-        <a href="./paper/LLaMA.html" class="card-action">Read Guide →</a>
-      </div>
-      <!-- 44 -->
-      <div class="paper-card" data-category="cat-supp">
-        <div class="card-top">
-          <div class="card-badges"><span class="badge-year">2025</span></div>
-          <h3><a href="./paper/DeepSeek_R1.html">DeepSeek-R1: Reasoning via RL</a></h3>
-          <p class="paper-desc">Incentivizing chain-of-thought reasoning capabilities in LLMs purely through pure reinforcement learning.</p>
-          <div class="card-tags"><span class="tag-pill">Reasoning RL</span><span class="tag-pill">GRPO</span><span class="tag-pill">Distillation</span></div>
-        </div>
-        <a href="./paper/DeepSeek_R1.html" class="card-action">Read Guide →</a>
-      </div>
-    </div>
+      <a class="paper-link" href="./paper/DeepSeek_R1.html">Open Explainer →</a>
+    </article>
+
   </div>
-</section>
+</div>
+<div class="track-section" id="track-4">
+  <div class="track-head">
+    <span class="track-label">Track IV</span>
+    <h3 class="track-title">Hallucination & Factuality</h3>
+  </div>
+  <p class="track-desc">Why models make things up — and how to measure it: from TruthfulQA's imitative falsehoods, through the field's shared taxonomy and black-box self-checking, to fine-grained atomic fact verification and RAG-specific hallucination corpora. <strong>6 papers.</strong></p>
+    <div class="study-pair">⭐ study together: SelfCheckGPT → FActScore → RAGTruth</div>
+  <div class="paper-grid">
+
+    <article class="paper-card blue" data-title="TruthfulQA: Measuring How Models Mimic Human Falsehoods">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Lin et al. · 2021</div>
+      <h3>TruthfulQA: Measuring How Models Mimic Human Falsehoods</h3>
+      <p>817 adversarial questions that catch models repeating human falsehoods. Imitative-falsehood demos, MC1 vs MC2 scoring formats, and the 36-point truthfulness gap between GPT-3 and people.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">TruthfulQA</span>
+        <span class="paper-meta-tag">Imitation</span>
+        <span class="paper-meta-tag">MC1/MC2</span>
+        <span class="paper-meta-tag">Honesty</span>
+      </div>
+      <a class="paper-link" href="./paper/TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="A Survey on Hallucination in Large Language Models">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Huang et al. · 2023</div>
+      <h3>A Survey on Hallucination in Large Language Models</h3>
+      <p>The field's shared vocabulary: what hallucination is, its intrinsic and extrinsic types, where it enters the data → training → inference pipeline, and how to detect and mitigate it.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Survey</span>
+        <span class="paper-meta-tag">Taxonomy</span>
+        <span class="paper-meta-tag">Detection</span>
+        <span class="paper-meta-tag">Mitigation</span>
+      </div>
+      <a class="paper-link" href="./paper/A_Survey_on_Hallucination_in_Large_Language_Models.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Manakul et al. · 2023</div>
+      <h3>SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection</h3>
+      <p>Sample the same model N times and watch hallucinations contradict their own alternatives — no external database, no token probabilities, no extra annotators. Black-box only.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Self-Check</span>
+        <span class="paper-meta-tag">Sampling</span>
+        <span class="paper-meta-tag">Black-Box</span>
+        <span class="paper-meta-tag">Consistency</span>
+      </div>
+      <a class="paper-link" href="./paper/SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="FActScore: Fine-Grained Atomic Evaluation of Factual Precision">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Min et al. · 2023</div>
+      <h3>FActScore: Fine-Grained Atomic Evaluation of Factual Precision</h3>
+      <p>Break long-form generations into atomic facts, verify each one against a knowledge source like Wikipedia, and turn "is this model factual?" into a number you can audit.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Atomic Facts</span>
+        <span class="paper-meta-tag">Precision</span>
+        <span class="paper-meta-tag">Verification</span>
+        <span class="paper-meta-tag">Wikipedia</span>
+      </div>
+      <a class="paper-link" href="./paper/FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="HaluEval: A Large-Scale Hallucination Evaluation Benchmark">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Li et al. · 2023</div>
+      <h3>HaluEval: A Large-Scale Hallucination Evaluation Benchmark</h3>
+      <p>35,000 truthful answers paired with plausible-but-wrong twins built by ChatGPT itself — then ten leading LLMs try to tell them apart, and most barely beat a coin flip.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Benchmark</span>
+        <span class="paper-meta-tag">Dataset</span>
+        <span class="paper-meta-tag">Hallucinated Twins</span>
+        <span class="paper-meta-tag">QA</span>
+      </div>
+      <a class="paper-link" href="./paper/HaluEval_A_Large_Scale_Hallucination_Evaluation_Benchmark.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="RAGTruth: A Hallucination Corpus for Trustworthy RAG">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Niu et al. · 2024</div>
+      <h3>RAGTruth: A Hallucination Corpus for Trustworthy RAG</h3>
+      <p>17,790 real RAG responses with word-level hallucination spans — and the uncomfortable finding that even gold retrieved context still yields fabricated claims.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">RAG</span>
+        <span class="paper-meta-tag">Word-Level Spans</span>
+        <span class="paper-meta-tag">Corpus</span>
+        <span class="paper-meta-tag">43.1%</span>
+      </div>
+      <a class="paper-link" href="./paper/RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+<div class="track-section" id="track-5">
+  <div class="track-head">
+    <span class="track-label">Track V</span>
+    <h3 class="track-title">Evaluation & Benchmarks</h3>
+  </div>
+  <p class="track-desc">The science of measuring LLMs: MMLU's 57-subject knowledge exam, HELM's holistic scenario × metric matrix, LLM-as-a-judge methodology, adversarial stress-tests for judges, and the first systematic benchmark for LLMs as agents. <strong>5 papers.</strong></p>
+    <div class="study-pair">⭐ study together: MMLU → HELM → LLM-as-a-Judge → JudgeBench</div>
+  <div class="paper-grid">
+
+    <article class="paper-card amber" data-title="MMLU: Measuring Massive Multitask Language Understanding">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Hendrycks et al. · 2021</div>
+      <h3>MMLU: Measuring Massive Multitask Language Understanding</h3>
+      <p>57 subjects, 15,908 expert-designed questions. The subject-grid difficulty explorer, confidence-vs-correctness calibration demo, and the benchmark that became the field's default knowledge test.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">MMLU</span>
+        <span class="paper-meta-tag">57 Subjects</span>
+        <span class="paper-meta-tag">Knowledge</span>
+        <span class="paper-meta-tag">Calibration</span>
+      </div>
+      <a class="paper-link" href="./paper/MMLU_Measuring_Massive_Multitask_Language_Understanding.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="HELM: Holistic Evaluation of Language Models">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Liang et al. · 2022</div>
+      <h3>HELM: Holistic Evaluation of Language Models</h3>
+      <p>30 models × 42 scenarios × 7 metrics. The Stanford framework that replaced one-number leaderboards with a transparent scenario–metric matrix spanning accuracy, robustness, fairness, and beyond.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">HELM</span>
+        <span class="paper-meta-tag">Holistic</span>
+        <span class="paper-meta-tag">Transparency</span>
+        <span class="paper-meta-tag">Metrics</span>
+      </div>
+      <a class="paper-link" href="./paper/HELM_Holistic_Evaluation_of_Language_Models.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="Judging LLM-as-a-Judge (MT-Bench & Arena)">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Zheng et al. · 2023</div>
+      <h3>Judging LLM-as-a-Judge (MT-Bench & Arena)</h3>
+      <p>Can models grade other models? MT-Bench category explorer, Chatbot Arena voting, judge-bias simulators for position and verbosity, and 85% agreement with human raters.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Evaluation</span>
+        <span class="paper-meta-tag">MT-Bench</span>
+        <span class="paper-meta-tag">Arena</span>
+        <span class="paper-meta-tag">Biases</span>
+      </div>
+      <a class="paper-link" href="./paper/LLM_as_a_Judge.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="JudgeBench: A Benchmark for Evaluating LLM-based Judges">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Tan et al. · 2024</div>
+      <h3>JudgeBench: A Benchmark for Evaluating LLM-based Judges</h3>
+      <p>350 adversarial response pairs where one answer is subtly, objectively wrong — and even GPT-4o judges only slightly better than random guessing. The stress-test for LLM judges.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Judges</span>
+        <span class="paper-meta-tag">Adversarial</span>
+        <span class="paper-meta-tag">Subtle Errors</span>
+        <span class="paper-meta-tag">Stress-Test</span>
+      </div>
+      <a class="paper-link" href="./paper/JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="AgentBench: Evaluating LLMs as Agents">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Liu et al. · 2023</div>
+      <h3>AgentBench: Evaluating LLMs as Agents</h3>
+      <p>8 live environments — terminals, databases, web browsing, games — where models must act, not just answer, with every action checked. The first systematic multi-environment agent benchmark.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Agents</span>
+        <span class="paper-meta-tag">Environments</span>
+        <span class="paper-meta-tag">ICLR 2024</span>
+        <span class="paper-meta-tag">Benchmark</span>
+      </div>
+      <a class="paper-link" href="./paper/AgentBench_Evaluating_LLMs_as_Agents.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+<div class="track-section" id="track-6">
+  <div class="track-head">
+    <span class="track-label">Track VI</span>
+    <h3 class="track-title">Agent Reliability & Software Engineering</h3>
+  </div>
+  <p class="track-desc">Can agents do real work? Real GitHub issues, tool-agent-user interaction with simulated customers, long-horizon enterprise problems, dual-control conversations, and the command-line final exam. <strong>5 papers.</strong></p>
+    <div class="study-pair">⭐ study together: SWE-bench → τ-bench → SWE-Bench Pro → Terminal-Bench</div>
+  <div class="paper-grid">
+
+    <article class="paper-card amber" data-title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues?">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Jimenez et al. · 2024</div>
+      <h3>SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</h3>
+      <p>2,294 real GitHub issues across 12 Python repos, graded by the repositories' own tests. Instance-mining pipeline, resolution machine across agent eras, and the 1.96% humbling of 2023's best.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">SWE-bench</span>
+        <span class="paper-meta-tag">GitHub Issues</span>
+        <span class="paper-meta-tag">Coding Agents</span>
+        <span class="paper-meta-tag">2,294 Tasks</span>
+      </div>
+      <a class="paper-link" href="./paper/SWE_bench_Can_Language_Models_Resolve_Real_World_GitHub_Issues.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="τ-bench: Tool-Agent-User Interaction in Real-World Domains">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Yao et al. · 2024</div>
+      <h3>τ-bench: Tool-Agent-User Interaction in Real-World Domains</h3>
+      <p>Simulated users with hidden goals, writable APIs, and database-state grading. The τ-bench loop stepper, pass^k reliability cliff, and failure autopsies of agents that fold under pressure.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">τ-bench</span>
+        <span class="paper-meta-tag">User Simulation</span>
+        <span class="paper-meta-tag">pass^k</span>
+        <span class="paper-meta-tag">Reliability</span>
+      </div>
+      <a class="paper-link" href="./paper/Tau_bench_A_Benchmark_for_Tool_Agent_User_Interaction_in_Real_World_Domains.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="SWE-Bench Pro: Can AI Agents Solve Long-Horizon SWE Tasks?">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Deng et al. · 2025</div>
+      <h3>SWE-Bench Pro: Can AI Agents Solve Long-Horizon SWE Tasks?</h3>
+      <p>1,865 enterprise-scale problems across 41 repositories — hours-to-days tasks, split public/held-out/commercial for contamination-proof evaluation. The three-bowl design and the long-horizon wall.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">SWE-Bench Pro</span>
+        <span class="paper-meta-tag">Long-Horizon</span>
+        <span class="paper-meta-tag">Held-out</span>
+        <span class="paper-meta-tag">Enterprise</span>
+      </div>
+      <a class="paper-link" href="./paper/SWE_Bench_Pro_Can_AI_Agents_Solve_Long_Horizon_Software_Engineering_Tasks.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="τ²-Bench: Evaluating Conversational Agents in Dual-Control">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Barres et al. · 2025</div>
+      <h3>τ²-Bench: Evaluating Conversational Agents in Dual-Control</h3>
+      <p>The user gets tools too: a Dec-POMDP telecom domain where agent and user both act on shared state. Dual-control walkthrough, compositional task generator, and the guiding penalty.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">τ²-bench</span>
+        <span class="paper-meta-tag">Dual-Control</span>
+        <span class="paper-meta-tag">Dec-POMDP</span>
+        <span class="paper-meta-tag">Telecom</span>
+      </div>
+      <a class="paper-link" href="./paper/Tau2_bench_Evaluating_Conversational_Agents_in_a_Dual_Control_Environment.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Merrill et al. · 2026</div>
+      <h3>Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces</h3>
+      <p>89 hard, realistic command-line tasks in containerized environments with hidden tests and human-written solutions. Agent terminal session, outcome probes, and the model × harness grid.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Terminal-Bench</span>
+        <span class="paper-meta-tag">CLI</span>
+        <span class="paper-meta-tag">Hidden Tests</span>
+        <span class="paper-meta-tag">89 Tasks</span>
+      </div>
+      <a class="paper-link" href="./paper/Terminal_Bench_2.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+<div class="track-section" id="track-7">
+  <div class="track-head">
+    <span class="track-label">Track VII</span>
+    <h3 class="track-title">Agent Safety & Security</h3>
+  </div>
+  <p class="track-desc">The attack surface of LLM agents: indirect prompt injections buried in tool outputs, dynamic environments that co-evaluate attacks and defenses, and formal benchmarks covering the whole agent stack. <strong>4 papers.</strong></p>
+    <div class="study-pair">⭐ study together: InjecAgent → AgentDojo → ASB</div>
+  <div class="paper-grid">
+
+    <article class="paper-card teal" data-title="InjecAgent: Benchmarking Indirect Prompt Injections">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Zhan et al. · 2024</div>
+      <h3>InjecAgent: Benchmarking Indirect Prompt Injections</h3>
+      <p>1,054 test cases where a single hidden sentence, buried in a tool response, hijacks tool-integrated agents — wiring money, unlocking doors, and leaking private data.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Injection</span>
+        <span class="paper-meta-tag">Indirect Attacks</span>
+        <span class="paper-meta-tag">Tools</span>
+        <span class="paper-meta-tag">ASR</span>
+      </div>
+      <a class="paper-link" href="./paper/InjecAgent_Benchmarking_Indirect_Prompt_Injections.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="AgentDojo: Evaluating Prompt Injection Attacks & Defenses">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Debenedetti et al. · 2024</div>
+      <h3>AgentDojo: Evaluating Prompt Injection Attacks & Defenses</h3>
+      <p>A dynamic, open environment where LLM agents solve realistic tasks while researchers throw prompt-injection attacks at them and evaluate defenses in the same loop.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">AgentDojo</span>
+        <span class="paper-meta-tag">Dynamic Eval</span>
+        <span class="paper-meta-tag">Defenses</span>
+        <span class="paper-meta-tag">Attacks</span>
+      </div>
+      <a class="paper-link" href="./paper/AgentDojo_A_Dynamic_Environment_to_Evaluate_Prompt_Injection_Attacks_and_Defenses.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="Agent Security Bench (ASB): Formalizing Attacks & Defenses">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Zhang et al. · 2024</div>
+      <h3>Agent Security Bench (ASB): Formalizing Attacks & Defenses</h3>
+      <p>16 attacks and 11 defenses formalized across the whole agent stack — system prompt, user prompt, memory, tools, and actions — behind one unified risk metric.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">ASB</span>
+        <span class="paper-meta-tag">Attack Surface</span>
+        <span class="paper-meta-tag">16 Attacks</span>
+        <span class="paper-meta-tag">Defense Matrix</span>
+      </div>
+      <a class="paper-link" href="./paper/Agent_Security_Bench_Formalizing_and_Benchmarking_Attacks_and_Defenses.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="Agent-SafetyBench: Evaluating the Safety of LLM Agents">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Zhang et al. · 2024</div>
+      <h3>Agent-SafetyBench: Evaluating the Safety of LLM Agents</h3>
+      <p>349 interactive tool-using environments and 2,000 test cases that measure whether agents take unsafe actions — not just say unsafe words. None of the 16 agents evaluated scored 80%.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Safety</span>
+        <span class="paper-meta-tag">Unsafe Actions</span>
+        <span class="paper-meta-tag">349 Envs</span>
+        <span class="paper-meta-tag">Hazards</span>
+      </div>
+      <a class="paper-link" href="./paper/Agent_SafetyBench_Evaluating_the_Safety_of_LLM_Agents.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+<div class="track-section" id="track-8">
+  <div class="track-head">
+    <span class="track-label">Track VIII</span>
+    <h3 class="track-title">Agent Memory</h3>
+  </div>
+  <p class="track-desc">How agents remember: memory streams with reflection, OS-style context paging, the field's memory taxonomy, long-term benchmarks, production memory layers, self-organizing notes, and evaluation beyond factual recall. <strong>7 papers.</strong></p>
+    <div class="study-pair">⭐ study together: MemGPT → Mem0 → LongMemEval → LoCoMo-Plus</div>
+  <div class="paper-grid">
+
+    <article class="paper-card blue" data-title="Generative Agents: Interactive Simulacra of Human Behavior">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Park et al. · 2023</div>
+      <h3>Generative Agents: Interactive Simulacra of Human Behavior</h3>
+      <p>25 LLM-powered residents of a Sims-like town with a memory stream, reflections, and daily plans — and a Valentine's Day party that emerged from a single seed of intent.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Memory Stream</span>
+        <span class="paper-meta-tag">Reflection</span>
+        <span class="paper-meta-tag">Emergence</span>
+        <span class="paper-meta-tag">Simulation</span>
+      </div>
+      <a class="paper-link" href="./paper/Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="MemGPT: Towards LLMs as Operating Systems">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Packer et al. · 2023</div>
+      <h3>MemGPT: Towards LLMs as Operating Systems</h3>
+      <p>The context window as RAM: self-generated function calls page facts between a small live window and unlimited "disk" — operating-system-style virtual memory for LLMs.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">MemGPT</span>
+        <span class="paper-meta-tag">Paging</span>
+        <span class="paper-meta-tag">Context Window</span>
+        <span class="paper-meta-tag">Function Calls</span>
+      </div>
+      <a class="paper-link" href="./paper/MemGPT_Towards_LLMs_as_Operating_Systems.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="A Survey on the Memory Mechanism of LLM-based Agents">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Zhang et al. · 2024</div>
+      <h3>A Survey on the Memory Mechanism of LLM-based Agents</h3>
+      <p>The field map of agent memory: where it lives, what it stores, and the write, read, and reflect operations that keep it useful as conversations and tasks accumulate.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Survey</span>
+        <span class="paper-meta-tag">Taxonomy</span>
+        <span class="paper-meta-tag">Operations</span>
+        <span class="paper-meta-tag">Memory</span>
+      </div>
+      <a class="paper-link" href="./paper/A_Survey_on_the_Memory_Mechanism_of_LLM_Based_Agents.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="LongMemEval: Benchmarking Long-Term Interactive Memory">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Wu et al. · 2024</div>
+      <h3>LongMemEval: Benchmarking Long-Term Interactive Memory</h3>
+      <p>500 questions embedded in ~115K-token multi-session chat histories. Long-context LLMs drop 30–60% — the benchmark that separates real memory from long windows.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Long-Term</span>
+        <span class="paper-meta-tag">Multi-Session</span>
+        <span class="paper-meta-tag">Knowledge Updates</span>
+        <span class="paper-meta-tag">ICLR 2025</span>
+      </div>
+      <a class="paper-link" href="./paper/LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Mem0: Building Production-Ready AI Agents with Scalable Memory">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Chhikara et al. · 2025</div>
+      <h3>Mem0: Building Production-Ready AI Agents with Scalable Memory</h3>
+      <p>The production memory layer: two-phase extraction, ADD/UPDATE/DELETE/NOOP operations, graph memory, and 26% accuracy over full-context at 91% lower p95 latency on LoCoMo.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Mem0</span>
+        <span class="paper-meta-tag">Memory Ops</span>
+        <span class="paper-meta-tag">Graph Memory</span>
+        <span class="paper-meta-tag">Latency</span>
+      </div>
+      <a class="paper-link" href="./paper/Mem0_Building_Production_Ready_AI_Agents_with_Scalable_Long_Term_Memory.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="A-MEM: Agentic Memory for LLM Agents">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Xu et al. · 2025</div>
+      <h3>A-MEM: Agentic Memory for LLM Agents</h3>
+      <p>A Zettelkasten for agents: memory that writes structured notes, links them into a growing knowledge network, and rewrites older notes when new experience arrives.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Zettelkasten</span>
+        <span class="paper-meta-tag">Note Network</span>
+        <span class="paper-meta-tag">Memory Evolution</span>
+        <span class="paper-meta-tag">NeurIPS</span>
+      </div>
+      <a class="paper-link" href="./paper/A_MEM_Agentic_Memory_for_LLM_Agents.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="LoCoMo-Plus: Long-Term Memory Beyond Factual Recall">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Li et al. · 2026</div>
+      <h3>LoCoMo-Plus: Long-Term Memory Beyond Factual Recall</h3>
+      <p>Not "can you recall what I said?" but "can you remember my goals, states, and values — and let those latent constraints steer your advice hundreds of turns later?"</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Cognitive Memory</span>
+        <span class="paper-meta-tag">Goals</span>
+        <span class="paper-meta-tag">Values</span>
+        <span class="paper-meta-tag">Latent Constraints</span>
+      </div>
+      <a class="paper-link" href="./paper/LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+<div class="track-section" id="track-9">
+  <div class="track-head">
+    <span class="track-label">Track IX</span>
+    <h3 class="track-title">Multi-Agent Systems</h3>
+  </div>
+  <p class="track-desc">When LLMs work together: role-playing cooperation without humans, SOP-encoded software firms, orchestrator-led generalist teams, the collaboration-mechanism landscape, and benchmarks that score coordination itself. <strong>5 papers.</strong></p>
+    <div class="study-pair">⭐ study together: CAMEL → MetaGPT → Magentic-One</div>
+  <div class="paper-grid">
+
+    <article class="paper-card green" data-title="CAMEL: Communicative Agents for Mind Exploration">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Li et al. · 2023</div>
+      <h3>CAMEL: Communicative Agents for Mind Exploration</h3>
+      <p>An AI user gives instructions, an AI assistant executes them, and one carefully engineered inception prompt keeps both on-script — cooperation with no human in the loop.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Role-Play</span>
+        <span class="paper-meta-tag">Inception Prompt</span>
+        <span class="paper-meta-tag">Cooperation</span>
+        <span class="paper-meta-tag">Scaling</span>
+      </div>
+      <a class="paper-link" href="./paper/CAMEL_Communicative_Agents_for_Mind_Exploration.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="MetaGPT: Meta Programming for Multi-Agent Collaboration">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Hong et al. · 2023</div>
+      <h3>MetaGPT: Meta Programming for Multi-Agent Collaboration</h3>
+      <p>A software firm encoded as SOPs: five specialized roles pass structured documents down an assembly line that ships working code from a one-line requirement.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">SOPs</span>
+        <span class="paper-meta-tag">Roles</span>
+        <span class="paper-meta-tag">Structured Artifacts</span>
+        <span class="paper-meta-tag">Software</span>
+      </div>
+      <a class="paper-link" href="./paper/MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Magentic-One: A Generalist Multi-Agent System">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Fourney et al. · 2024</div>
+      <h3>Magentic-One: A Generalist Multi-Agent System</h3>
+      <p>Microsoft's open-source generalist team: a lead Orchestrator that plans, tracks progress, and re-plans while directing web, file, and code specialists.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Orchestrator</span>
+        <span class="paper-meta-tag">Re-Planning</span>
+        <span class="paper-meta-tag">Specialists</span>
+        <span class="paper-meta-tag">Generalist</span>
+      </div>
+      <a class="paper-link" href="./paper/Magentic_One_A_Generalist_Multi_Agent_System.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="Multi-Agent Collaboration Mechanisms: A Survey of LLMs">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Tran et al. · 2025</div>
+      <h3>Multi-Agent Collaboration Mechanisms: A Survey of LLMs</h3>
+      <p>The landscape of LLM teamwork: who talks to whom, why agents compete, and when a team actually beats a single model — communication topologies and interaction protocols mapped.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Survey</span>
+        <span class="paper-meta-tag">Topology</span>
+        <span class="paper-meta-tag">Debate</span>
+        <span class="paper-meta-tag">Cooperation</span>
+      </div>
+      <a class="paper-link" href="./paper/Multi_Agent_Collaboration_Mechanisms_A_Survey_of_LLMs.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="MultiAgentBench: Evaluating Collaboration and Competition">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Zhu et al. · 2025</div>
+      <h3>MultiAgentBench: Evaluating Collaboration and Competition</h3>
+      <p>The MARBLE framework scores agent teams on what they achieve together AND on how well they coordinate, communicate, and compete along the way — milestones, not just final answers.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">MARBLE</span>
+        <span class="paper-meta-tag">Coordination</span>
+        <span class="paper-meta-tag">Milestones</span>
+        <span class="paper-meta-tag">Mixed-Motive</span>
+      </div>
+      <a class="paper-link" href="./paper/MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+<div class="track-section" id="track-10">
+  <div class="track-head">
+    <span class="track-label">Track X</span>
+    <h3 class="track-title">Efficient LLM Training & Inference</h3>
+  </div>
+  <p class="track-desc">The systems science of making LLMs fast and cheap: IO-aware exact attention, virtual memory for the KV cache, speculative decoding with identical outputs, 4-bit finetuning on one GPU, and open sparse experts. <strong>5 papers.</strong></p>
+    <div class="study-pair">⭐ study together: FlashAttention → PagedAttention → Speculative Decoding</div>
+  <div class="paper-grid">
+
+    <article class="paper-card amber" data-title="FlashAttention: Fast and Memory-Efficient Exact Attention">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Dao et al. · 2022</div>
+      <h3>FlashAttention: Fast and Memory-Efficient Exact Attention</h3>
+      <p>Attention is memory-bound, not compute-bound. Memory-trip counters, the online-softmax tiling stepper, bandwidth simulators, and the IO-aware exact kernel that enabled long context.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">FlashAttention</span>
+        <span class="paper-meta-tag">IO-Aware</span>
+        <span class="paper-meta-tag">Tiling</span>
+        <span class="paper-meta-tag">Exact</span>
+      </div>
+      <a class="paper-link" href="./paper/FlashAttention_Fast_and_Memory_Efficient_Exact_Attention.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="PagedAttention: Efficient Memory Management for LLM Serving">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Kwon et al. · 2023</div>
+      <h3>PagedAttention: Efficient Memory Management for LLM Serving</h3>
+      <p>Virtual memory for the KV cache: fragmentation visualizers, block-table generation, copy-on-write prefix sharing, and vLLM's 2-4× throughput breakthrough.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">PagedAttention</span>
+        <span class="paper-meta-tag">vLLM</span>
+        <span class="paper-meta-tag">KV Cache</span>
+        <span class="paper-meta-tag">2-4× Throughput</span>
+      </div>
+      <a class="paper-link" href="./paper/PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Speculative Decoding: Fast Inference from Transformers">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Leviathan et al. · 2023</div>
+      <h3>Speculative Decoding: Fast Inference from Transformers</h3>
+      <p>Small models draft, big models verify in parallel. The speculative round stepper, α-yield explorer, and 2-3× acceleration with provably identical outputs.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Speculative</span>
+        <span class="paper-meta-tag">Draft Model</span>
+        <span class="paper-meta-tag">Verification</span>
+        <span class="paper-meta-tag">2-3×</span>
+      </div>
+      <a class="paper-link" href="./paper/Speculative_Decoding_Fast_Inference_from_Transformers.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="QLoRA: Efficient Finetuning of Quantized LLMs">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Dettmers et al. · 2023</div>
+      <h3>QLoRA: Efficient Finetuning of Quantized LLMs</h3>
+      <p>65B finetuning on one 48GB GPU: NF4 quantization grids, double quantization, paged optimizers, and Guanaco reaching 99.3% of ChatGPT on the Vicuna benchmark.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">QLoRA</span>
+        <span class="paper-meta-tag">NF4</span>
+        <span class="paper-meta-tag">4-Bit</span>
+        <span class="paper-meta-tag">65B on 48GB</span>
+      </div>
+      <a class="paper-link" href="./paper/QLoRA_Efficient_Finetuning_of_Quantized_LLMs.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="Mixtral of Experts">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Jiang et al. · 2024</div>
+      <h3>Mixtral of Experts</h3>
+      <p>The open sparse MoE that matched Llama 2 70B with 13B active parameters: top-2 routing live, quality-per-FLOP accounting, and the Apache 2.0 release that changed the market.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Mixtral</span>
+        <span class="paper-meta-tag">MoE</span>
+        <span class="paper-meta-tag">Open Weights</span>
+        <span class="paper-meta-tag">32K Context</span>
+      </div>
+      <a class="paper-link" href="./paper/Mixtral_of_Experts.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+<div class="track-section" id="track-11">
+  <div class="track-head">
+    <span class="track-label">Track XI</span>
+    <h3 class="track-title">LM Programming & Reliability</h3>
+  </div>
+  <p class="track-desc">Programming models instead of prompting them: declarative signatures and compilers that optimize prompts against your metric — and the constraint constructs that let pipelines check and refine themselves. <strong>2 papers.</strong></p>
+    <div class="study-pair">⭐ study together: DSPy → DSPy Assertions</div>
+  <div class="paper-grid">
+
+    <article class="paper-card blue" data-title="DSPy: Compiling Declarative LM Calls into Pipelines">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Khattab et al. · 2023</div>
+      <h3>DSPy: Compiling Declarative LM Calls into Pipelines</h3>
+      <p>Stop writing prompts — program them. Signature splitter, bootstrap compilation stepper, and pipelines that compile in minutes to beat expert-written prompts by 25-65%.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">DSPy</span>
+        <span class="paper-meta-tag">Signatures</span>
+        <span class="paper-meta-tag">Teleprompters</span>
+        <span class="paper-meta-tag">Compilers</span>
+      </div>
+      <a class="paper-link" href="./paper/DSPy_Compiling_Declarative_Language_Model_Calls_into_Self_Improving_Pipelines.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="DSPy Assertions: Computational Constraints for Pipelines">
+      <span class="paper-tag live">Live</span>
+      <div class="paper-year">Singhvi et al. · 2023</div>
+      <h3>DSPy Assertions: Computational Constraints for Pipelines</h3>
+      <p>Pipelines that check themselves: hard Asserts vs soft Suggestions, backtracking self-refinement, and up to 164% more constraint passing with 37% more quality responses.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Assertions</span>
+        <span class="paper-meta-tag">Constraints</span>
+        <span class="paper-meta-tag">Self-Refinement</span>
+        <span class="paper-meta-tag">Reliability</span>
+      </div>
+      <a class="paper-link" href="./paper/DSPy_Assertions_Computational_Constraints_for_Self_Refining_Pipelines.html">Open Explainer →</a>
+    </article>
+
+  </div>
+</div>
+</div>
 
 <div class="divider"></div>
 
-<!-- WHY SECTION -->
-<section id="why" class="page-section">
-  <div class="section-tag">Pedagogical Philosophy</div>
-  <h2 class="section-title">Why <em>PaperMap?</em></h2>
-  <p class="section-desc">Traditional research papers are written for reviewers, not learners. PaperMap redesigns them for human intuition.</p>
+<!-- ABOUT -->
+<div class="page-section" id="about">
+  <div class="section-tag">About</div>
+  <h2 class="section-title">What is <em>PaperMap</em>?</h2>
+  <p class="section-desc">A scalable, static-first platform that transforms dense research papers into interactive learning products — no frameworks, no build tools, no dependencies.</p>
 
   <div class="features-grid">
     <div class="feature-card">
-      <div style="font-size:1.8rem;margin-bottom:8px;">🕹️</div>
-      <h3>Playable Simulations</h3>
-      <p>Every paper comes with interactive calculators, architecture simulators, and visual matrix sandboxes.</p>
+      <div class="feature-icon">🎯</div>
+      <h3>Research-Accurate</h3>
+      <p>Every number, formula, and architectural detail is sourced directly from the original paper. Section references included throughout.</p>
     </div>
     <div class="feature-card">
-      <div style="font-size:1.8rem;margin-bottom:8px;">🔬</div>
-      <h3>Deep Dive Labs</h3>
-      <p>Expert sections that scrutinize the hidden math, engineering edge-cases, and empirical trade-offs.</p>
+      <div class="feature-icon">⚡</div>
+      <h3>Interactive Demos</h3>
+      <p>Tokenizers, attention maps, few-shot playgrounds, scaling charts, and quiz blocks — learn by building intuition, not just reading.</p>
     </div>
     <div class="feature-card">
-      <div style="font-size:1.8rem;margin-bottom:8px;">🗺️</div>
-      <h3>Structured Curriculum</h3>
-      <p>Papers are organized sequentially so that each milestone answers the open problems left by the preceding one.</p>
+      <div class="feature-icon">📱</div>
+      <h3>Mobile-First Design</h3>
+      <p>Responsive layouts, touch targets, and reduced-motion support. Works perfectly on phones, tablets, and desktops.</p>
     </div>
     <div class="feature-card">
-      <div style="font-size:1.8rem;margin-bottom:8px;">⚡</div>
-      <h3>Pure Vanilla Web</h3>
-      <p>Zero node modules, zero build pipelines, and zero framework overhead. Instant load times and guaranteed longevity.</p>
+      <div class="feature-icon">🚀</div>
+      <h3>Zero Build Step</h3>
+      <p>Pure HTML, CSS, and vanilla JavaScript. Deploy anywhere — GitHub Pages, Netlify, Vercel, or any static host.</p>
     </div>
     <div class="feature-card">
-      <div style="font-size:1.8rem;margin-bottom:8px;">📝</div>
-      <h3>Mastery Quizzes</h3>
-      <p>5-question interactive quizzes with instant explanatory feedback to test your conceptual retention.</p>
+      <div class="feature-icon">♿</div>
+      <h3>Accessible by Default</h3>
+      <p>Semantic HTML, ARIA labels, keyboard navigation, skip links, focus styles, and prefers-reduced-motion support.</p>
     </div>
     <div class="feature-card">
-      <div style="font-size:1.8rem;margin-bottom:8px;">🤝</div>
-      <h3>Open Contribution</h3>
-      <p>Rigorous, standardized style guidelines that enable any AI researcher to add new interactive guides.</p>
+      <div class="feature-icon">🎨</div>
+      <h3>Consistent Design System</h3>
+      <p>Shared typography, color palette, components, and interaction patterns across all paper explainers.</p>
     </div>
   </div>
-</section>
+</div>
 
 <div class="divider"></div>
 
-<!-- CONTRIBUTE SECTION -->
-<section id="contribute" class="page-section">
-  <div class="section-tag">Community & Growth</div>
-  <h2 class="section-title">Contribute an <em>Interactive Explainer</em></h2>
-  <p class="section-desc">PaperMap is completely open-source. Help us map the frontiers of AI research.</p>
+<!-- ROADMAP -->
+<div class="page-section" id="roadmap">
+  <div class="section-tag">Roadmap</div>
+  <h2 class="section-title">Building the <em>Library</em></h2>
+  <p class="section-desc">The core curriculum — 61 papers across 11 categories — is complete. PaperMap keeps growing one handcrafted explainer at a time.</p>
 
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;">
-    <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1.5rem;">
-      Ready to turn your favorite paper into an interactive product? Review our contributor guide in <a href="https://github.com/AdilShamim8/PaperMap/blob/main/PROMPT.md" style="color:var(--amber);font-weight:600;text-decoration:none;">PROMPT.md</a>. It specifies our canonical design system, required interactive demos, quiz structure, and verification checklist.
-    </p>
-    <a href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener" class="btn-primary">View GitHub Repository ↗</a>
+  <div class="roadmap-grid">
+    <div class="roadmap-item done">
+      <h4>✓ Track I — Foundation: LLMs</h4>
+      <p>Attention, BERT, GPT-2/3/4, T5, scaling laws, Chinchilla, Switch, and FLAN — the architecture and science of modern LLMs.</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track II — Retrieval, Reasoning & Adaptation</h4>
+      <p>RAG, LoRA, InstructGPT, induction heads, CoT, self-consistency, ReAct, Toolformer — knowledge, alignment, reasoning, and tools.</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track III — Reasoning & Post-Training</h4>
+      <p>DPO, Constitutional AI, and DeepSeek-R1 — preference optimization, principles, and reasoning from RL.</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track IV — Hallucination & Factuality</h4>
+      <p>From TruthfulQA's imitative falsehoods to RAGTruth's span corpus — why models fabricate, and how to measure it.</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track V — Evaluation & Benchmarks</h4>
+      <p>MMLU, HELM, judges and their stress-tests, and AgentBench — the science of measuring LLMs.</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track VI — Agent Reliability & Software Engineering</h4>
+      <p>SWE-bench, τ-bench, Pro, τ²-bench, Terminal-Bench — can agents do real, reliable work?</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track VII — Agent Safety & Security</h4>
+      <p>InjecAgent, AgentDojo, ASB, Agent-SafetyBench — the agent attack surface, formalized and benchmarked.</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track VIII — Agent Memory</h4>
+      <p>Memory streams, paging, production layers, benchmarks, and self-organizing notes — how agents remember.</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track IX — Multi-Agent Systems</h4>
+      <p>CAMEL, MetaGPT, Magentic-One, surveys, and MultiAgentBench — when LLMs work together.</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track X — Efficient LLM Training & Inference</h4>
+      <p>FlashAttention, PagedAttention, speculative decoding, QLoRA, Mixtral — the systems science of fast and cheap.</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Track XI — LM Programming & Reliability</h4>
+      <p>DSPy and its Assertions — programming language models instead of prompting them.</p>
+    </div>
+    <div class="roadmap-item next">
+      <h4>→ Next: Extending the Map</h4>
+      <p>Multimodal systems, diffusion research, interpretability deep cuts, and more landmark papers — contributions welcome via PROMPT.md.</p>
+    </div>
   </div>
-</section>
 
-</main>
+
+</div>
+
+<div class="divider"></div>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-top">
-    <div>
-      <a href="./index.html" class="footer-logo">PaperMap</a>
-      <p style="font-size:13px;color:var(--text3);margin-top:6px;max-width:380px;">The open-source interactive research paper library turning dense AI breakthroughs into visual products.</p>
-    </div>
-    <div style="font-family:var(--mono);font-size:12px;color:var(--text2);text-align:right;">
-      <div>Created & Maintained by <strong>Adil Shamim</strong></div>
-      <div style="margin-top:4px;"><a href="https://github.com/AdilShamim8" target="_blank" rel="noopener" style="color:var(--amber);text-decoration:none;">GitHub Profile ↗</a></div>
-    </div>
+  <div class="footer-left">
+    Built by <a href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer">Adil Shamim</a> · Source on <a href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">GitHub</a>
   </div>
-
-  <div class="footer-directory">
-    <div class="directory-col">
-      <h4>I · Foundations</h4>
-      <a href="./paper/Attention_Is_All_You_Need.html">Attention Is All You Need</a>
-      <a href="./paper/BERT.html">BERT</a>
-      <a href="./paper/GPT_2.html">GPT-2</a>
-      <a href="./paper/Language_Models_are_Few_Shot_Learners.html">GPT-3</a>
-      <a href="./paper/T5.html">T5</a>
-      <a href="./paper/Scaling_Laws.html">Scaling Laws</a>
-      <a href="./paper/Chinchilla.html">Chinchilla</a>
-    </div>
-    <div class="directory-col">
-      <h4>II · Retrieval & Reasoning</h4>
-      <a href="./paper/RAG_Retrieval_Augmented_Generation.html">RAG</a>
-      <a href="./paper/LoRA_Low_Rank_Adaptation.html">LoRA</a>
-      <a href="./paper/Chain_Of_Thought_Prompting.html">Chain-of-Thought</a>
-      <a href="./paper/Self_Consistency.html">Self-Consistency</a>
-      <a href="./paper/ReAct.html">ReAct</a>
-      <h4 style="margin-top:14px;">III · Hallucination</h4>
-      <a href="./paper/TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html">TruthfulQA</a>
-      <a href="./paper/SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html">SelfCheckGPT</a>
-      <a href="./paper/HaluEval_A_Large_Scale_Hallucination_Evaluation_Benchmark.html">HaluEval</a>
-    </div>
-    <div class="directory-col">
-      <h4>IV · Evaluation</h4>
-      <a href="./paper/HELM_Holistic_Evaluation_of_Language_Models.html">HELM</a>
-      <a href="./paper/LLM_as_a_Judge.html">LLM-as-a-Judge</a>
-      <a href="./paper/JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html">JudgeBench</a>
-      <a href="./paper/AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench</a>
-      <h4 style="margin-top:14px;">V · Agent Safety</h4>
-      <a href="./paper/AgentDojo_A_Dynamic_Environment_to_Evaluate_Prompt_Injection_Attacks_and_Defenses.html">AgentDojo</a>
-      <a href="./paper/InjecAgent_Benchmarking_Indirect_Prompt_Injections.html">InjecAgent</a>
-      <a href="./paper/Agent_SafetyBench_Evaluating_the_Safety_of_LLM_Agents.html">Agent SafetyBench</a>
-    </div>
-    <div class="directory-col">
-      <h4>VI · Agent Memory</h4>
-      <a href="./paper/Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">Generative Agents</a>
-      <a href="./paper/MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT</a>
-      <a href="./paper/A_MEM_Agentic_Memory_for_LLM_Agents.html">A-MEM</a>
-      <h4 style="margin-top:14px;">VII · Multi-Agent</h4>
-      <a href="./paper/CAMEL_Communicative_Agents_for_Mind_Exploration.html">CAMEL</a>
-      <a href="./paper/MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">MetaGPT</a>
-      <a href="./paper/Magentic_One_A_Generalist_Multi_Agent_System.html">Magentic-One</a>
-      <a href="./paper/MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html">MultiAgentBench</a>
-    </div>
+  <div class="footer-links">
+    <a class="footer-link" href="./paper/Attention_Is_All_You_Need.html">Transformer</a>
+    <a class="footer-link" href="./paper/BERT.html">BERT</a>
+    <a class="footer-link" href="./paper/GPT_2.html">GPT-2</a>
+    <a class="footer-link" href="./paper/Language_Models_are_Few_Shot_Learners.html">GPT-3</a>
+    <a class="footer-link" href="./paper/T5.html">T5</a>
+    <a class="footer-link" href="./paper/Scaling_Laws.html">Scaling Laws</a>
+    <a class="footer-link" href="./paper/Chinchilla.html">Chinchilla</a>
+    <a class="footer-link" href="./paper/Switch_Transformers_Scaling_to_Trillion_Parameter_Models.html">Switch Transformers</a>
+    <a class="footer-link" href="./paper/FLAN_Finetuned_Language_Models_Are_Zero_Shot_Learners.html">FLAN</a>
+    <a class="footer-link" href="./paper/GPT_4_Technical_Report.html">GPT-4</a>
+    <a class="footer-link" href="./paper/RAG_Retrieval_Augmented_Generation.html">RAG</a>
+    <a class="footer-link" href="./paper/LoRA_Low_Rank_Adaptation.html">LoRA</a>
+    <a class="footer-link" href="./paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT</a>
+    <a class="footer-link" href="./paper/Induction_Heads.html">Induction Heads</a>
+    <a class="footer-link" href="./paper/Chain_Of_Thought_Prompting.html">CoT</a>
+    <a class="footer-link" href="./paper/Self_Consistency.html">Self-Consistency</a>
+    <a class="footer-link" href="./paper/ReAct.html">ReAct</a>
+    <a class="footer-link" href="./paper/Toolformer.html">Toolformer</a>
+    <a class="footer-link" href="./paper/DPO.html">DPO</a>
+    <a class="footer-link" href="./paper/Constitutional_AI_Harmlessness_from_AI_Feedback.html">Constitutional AI</a>
+    <a class="footer-link" href="./paper/DeepSeek_R1.html">DeepSeek-R1</a>
+    <a class="footer-link" href="./paper/TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html">TruthfulQA</a>
+    <a class="footer-link" href="./paper/A_Survey_on_Hallucination_in_Large_Language_Models.html">Hallucination Survey</a>
+    <a class="footer-link" href="./paper/SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html">SelfCheckGPT</a>
+    <a class="footer-link" href="./paper/FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html">FActScore</a>
+    <a class="footer-link" href="./paper/HaluEval_A_Large_Scale_Hallucination_Evaluation_Benchmark.html">HaluEval</a>
+    <a class="footer-link" href="./paper/RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html">RAGTruth</a>
+    <a class="footer-link" href="./paper/MMLU_Measuring_Massive_Multitask_Language_Understanding.html">MMLU</a>
+    <a class="footer-link" href="./paper/HELM_Holistic_Evaluation_of_Language_Models.html">HELM</a>
+    <a class="footer-link" href="./paper/LLM_as_a_Judge.html">LLM-as-a-Judge</a>
+    <a class="footer-link" href="./paper/JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html">JudgeBench</a>
+    <a class="footer-link" href="./paper/AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench</a>
+    <a class="footer-link" href="./paper/SWE_bench_Can_Language_Models_Resolve_Real_World_GitHub_Issues.html">SWE-bench</a>
+    <a class="footer-link" href="./paper/Tau_bench_A_Benchmark_for_Tool_Agent_User_Interaction_in_Real_World_Domains.html">τ-bench</a>
+    <a class="footer-link" href="./paper/SWE_Bench_Pro_Can_AI_Agents_Solve_Long_Horizon_Software_Engineering_Tasks.html">SWE-Bench Pro</a>
+    <a class="footer-link" href="./paper/Tau2_bench_Evaluating_Conversational_Agents_in_a_Dual_Control_Environment.html">τ²-Bench</a>
+    <a class="footer-link" href="./paper/Terminal_Bench_2.html">Terminal-Bench 2.0</a>
+    <a class="footer-link" href="./paper/InjecAgent_Benchmarking_Indirect_Prompt_Injections.html">InjecAgent</a>
+    <a class="footer-link" href="./paper/AgentDojo_A_Dynamic_Environment_to_Evaluate_Prompt_Injection_Attacks_and_Defenses.html">AgentDojo</a>
+    <a class="footer-link" href="./paper/Agent_Security_Bench_Formalizing_and_Benchmarking_Attacks_and_Defenses.html">ASB</a>
+    <a class="footer-link" href="./paper/Agent_SafetyBench_Evaluating_the_Safety_of_LLM_Agents.html">Agent-SafetyBench</a>
+    <a class="footer-link" href="./paper/Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">Generative Agents</a>
+    <a class="footer-link" href="./paper/MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT</a>
+    <a class="footer-link" href="./paper/A_Survey_on_the_Memory_Mechanism_of_LLM_Based_Agents.html">Memory Survey</a>
+    <a class="footer-link" href="./paper/LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html">LongMemEval</a>
+    <a class="footer-link" href="./paper/Mem0_Building_Production_Ready_AI_Agents_with_Scalable_Long_Term_Memory.html">Mem0</a>
+    <a class="footer-link" href="./paper/A_MEM_Agentic_Memory_for_LLM_Agents.html">A-MEM</a>
+    <a class="footer-link" href="./paper/LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html">LoCoMo-Plus</a>
+    <a class="footer-link" href="./paper/CAMEL_Communicative_Agents_for_Mind_Exploration.html">CAMEL</a>
+    <a class="footer-link" href="./paper/MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">MetaGPT</a>
+    <a class="footer-link" href="./paper/Magentic_One_A_Generalist_Multi_Agent_System.html">Magentic-One</a>
+    <a class="footer-link" href="./paper/Multi_Agent_Collaboration_Mechanisms_A_Survey_of_LLMs.html">Collab Survey</a>
+    <a class="footer-link" href="./paper/MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html">MultiAgentBench</a>
+    <a class="footer-link" href="./paper/FlashAttention_Fast_and_Memory_Efficient_Exact_Attention.html">FlashAttention</a>
+    <a class="footer-link" href="./paper/PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html">PagedAttention</a>
+    <a class="footer-link" href="./paper/Speculative_Decoding_Fast_Inference_from_Transformers.html">Speculative Decoding</a>
+    <a class="footer-link" href="./paper/QLoRA_Efficient_Finetuning_of_Quantized_LLMs.html">QLoRA</a>
+    <a class="footer-link" href="./paper/Mixtral_of_Experts.html">Mixtral</a>
+    <a class="footer-link" href="./paper/DSPy_Compiling_Declarative_Language_Model_Calls_into_Self_Improving_Pipelines.html">DSPy</a>
+    <a class="footer-link" href="./paper/DSPy_Assertions_Computational_Constraints_for_Self_Refining_Pipelines.html">DSPy Assertions</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">GitHub</a>
   </div>
-
-  <div class="footer-bottom">
-    <div>&copy; 2026 PaperMap. Open source under MIT License.</div>
-    <div>Hosted on Vercel · Built by <a href="https://github.com/AdilShamim8" target="_blank" rel="noopener">Adil Shamim</a></div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
   </div>
 </footer>
 
 <script>
-// Search and Filter logic
-const searchInput = document.getElementById('paperSearch');
-const tabs = document.querySelectorAll('.category-btn');
-const cards = document.querySelectorAll('.paper-card');
-const groups = document.querySelectorAll('.category-group');
-
-let currentFilter = 'all';
-
-function filterPapers() {
-  const query = searchInput.value.toLowerCase().trim();
-
-  cards.forEach(card => {
-    const text = card.textContent.toLowerCase();
-    const cat = card.getAttribute('data-category');
-    
-    const matchesQuery = !query || text.includes(query);
-    const matchesCategory = currentFilter === 'all' || cat === currentFilter;
-
-    if (matchesQuery && matchesCategory) {
-      card.style.display = 'flex';
-    } else {
-      card.style.display = 'none';
+// === MOBILE MENU ===
+(function(){
+  const t = document.getElementById('navToggle');
+  const m = document.getElementById('mobileMenu');
+  if (!t || !m) return;
+  t.addEventListener('click', () => {
+    const o = !m.classList.contains('open');
+    m.classList.toggle('open', o);
+    t.setAttribute('aria-expanded', o ? 'true' : 'false');
+  });
+  m.addEventListener('click', e => {
+    if (e.target.closest('a')) {
+      m.classList.remove('open');
+      t.setAttribute('aria-expanded', 'false');
     }
   });
+})();
 
-  // Hide empty category groups
-  groups.forEach(group => {
-    const visibleCards = group.querySelectorAll('.paper-card[style="display: flex;"]');
-    const allCards = group.querySelectorAll('.paper-card');
-    let hasVisible = false;
-    allCards.forEach(c => {
-      if (c.style.display !== 'none') hasVisible = true;
+// === NAV ACTIVE ===
+(function(){
+  const ids = ['library', 'about', 'roadmap'];
+  const links = Array.from(document.querySelectorAll('.nav-link'));
+  window.addEventListener('scroll', () => {
+    let cur = ids[0];
+    ids.forEach(id => {
+      const s = document.getElementById(id);
+      if (s && window.scrollY + 90 >= s.offsetTop) cur = id;
     });
-    group.style.display = hasVisible ? 'block' : 'none';
+    links.forEach(l => l.classList.toggle('active', (l.getAttribute('href') || '') === '#' + cur));
   });
-}
+})();
 
-searchInput.addEventListener('input', filterPapers);
+// === SMOOTH SCROLL ===
+document.addEventListener('click', e => {
+  const l = e.target.closest('a[href^="#"]');
+  if (!l) return;
+  const h = l.getAttribute('href');
+  if (!h || h === '#') return;
+  const t = document.querySelector(h);
+  if (!t) return;
+  e.preventDefault();
+  window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 64, behavior: 'smooth' });
+});
 
-// Hotkey '/' to focus search
-window.addEventListener('keydown', (e) => {
-  if (e.key === '/' && document.activeElement !== searchInput) {
-    e.preventDefault();
-    searchInput.focus();
+// === SCROLL REVEAL ===
+(function(){
+  const targets = document.querySelectorAll('.paper-card, .feature-card, .card, .card-sm, .roadmap-item');
+  if (window.matchMedia('(prefers-reduced-motion:reduce)').matches || !('IntersectionObserver' in window)) {
+    targets.forEach(t => t.classList.add('visible'));
+    return;
   }
-});
+  targets.forEach(t => t.classList.add('reveal'));
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+  targets.forEach(t => obs.observe(t));
+})();
 
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    currentFilter = tab.getAttribute('data-filter');
-    filterPapers();
+// === LIBRARY SEARCH ===
+(function(){
+  const input = document.getElementById('librarySearch');
+  const clearBtn = document.getElementById('searchClear');
+  const status = document.getElementById('searchStatus');
+  const noResults = document.getElementById('noResults');
+  if (!input || !clearBtn || !status || !noResults) return;
+  const cards = Array.from(document.querySelectorAll('.paper-card'));
+  cards.forEach(c => {
+    c.setAttribute('data-search-text', (c.getAttribute('data-title') || '') + ' ' + (c.textContent || ''));
   });
-});
-
-// Mobile menu toggle
-const navToggle = document.getElementById('navToggle');
-const mobileMenu = document.getElementById('mobileMenu');
-navToggle.addEventListener('click', () => {
-  mobileMenu.classList.toggle('open');
-});
-mobileMenu.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', () => mobileMenu.classList.remove('open'));
-});
+  const tracks = Array.from(document.querySelectorAll('.track-section'));
+  const chips = document.querySelector('.track-chips');
+  const map = document.getElementById('curriculum-map');
+  const searchables = [];
+  cards.forEach(c => {
+    const raw = (c.getAttribute('data-search-text') || '').toLowerCase().replace(/\s+/g, ' ');
+    c.setAttribute('data-search-text', raw);
+    searchables.push(raw);
+  });
+  function apply(q) {
+    const query = q.trim().toLowerCase();
+    clearBtn.hidden = !query;
+    if (!query) {
+      cards.forEach(c => c.removeAttribute('data-search-hidden'));
+      tracks.forEach(t => t.removeAttribute('data-search-hidden'));
+      if (chips) chips.removeAttribute('data-search-hidden');
+      if (map) map.removeAttribute('data-search-hidden');
+      status.textContent = ''; status.classList.remove('has-results');
+      noResults.hidden = true;
+      return;
+    }
+    let visible = 0;
+    cards.forEach((c, i) => {
+      if (searchables[i].indexOf(query) !== -1) { visible++; c.removeAttribute('data-search-hidden'); }
+      else c.setAttribute('data-search-hidden', '');
+    });
+    tracks.forEach(t => {
+      const any = t.querySelectorAll('.paper-card:not([data-search-hidden])').length > 0;
+      if (any) t.removeAttribute('data-search-hidden');
+      else t.setAttribute('data-search-hidden', '');
+    });
+    if (chips) chips.setAttribute('data-search-hidden', '');
+    if (map) map.setAttribute('data-search-hidden', '');
+    status.textContent = visible + ' of ' + cards.length + ' papers match "' + query + '"';
+    status.classList.add('has-results');
+    noResults.hidden = visible > 0;
+  }
+  input.addEventListener('input', () => apply(input.value));
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { input.value = ''; apply(''); }
+  });
+  clearBtn.addEventListener('click', () => { input.value = ''; apply(''); input.focus(); });
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement !== input) {
+      const tag = (document.activeElement && document.activeElement.tagName) || '';
+      if (!/INPUT|TEXTAREA|SELECT/.test(tag)) { e.preventDefault(); input.focus(); }
+    }
+  });
+})();
 </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 # PaperMap — Paper Section Guide & Contribution System
 
-This document explains everything about PaperMap's **Paper Section**: what it is, how the 20 papers are organized into a curriculum, and exactly how to add or update a paper explainer so it stays consistent with the library. Read it once, top to bottom, before opening your first pull request.
+This document explains everything about PaperMap's **Paper Section**: what it is, how the 61 papers are organized into a curriculum, and exactly how to add or update a paper explainer so it stays consistent with the library. Read it once, top to bottom, before opening your first pull request.
 
 ---
 
@@ -9,32 +9,38 @@ This document explains everything about PaperMap's **Paper Section**: what it is
 The Paper Section is the heart of PaperMap: a growing collection of **interactive, research-accurate explainers for landmark AI papers**. Each paper is a single, self-contained HTML file (no frameworks, no build step, no dependencies) that turns a dense research paper into a visual learning experience with:
 
 - **Interactive demos** you can click, toggle, and step through
+- **Animated visualizations** — architecture diagrams, animated result bars, step-by-step process players
 - **Architecture breakdowns** grounded in the original paper
 - **Formula cards** with plain-language piece-by-piece explanations
 - **Benchmark tables and animated result charts**
+- **Deep Dive sections** on the core papers — expert-level analysis beyond the summary
 - A **5-question quiz** with explanations
 - A **Key Takeaways** reference section
 
-The library currently contains **37 core papers organized into 7 categories** — plus **7 supplementary guides** — a comprehensive path from foundational self-attention to autonomous multi-agent systems.
+The library currently contains **61 papers organized into 11 categories** — a guided path from the original 2017 Transformer to modern agent memory, multi-agent systems, and efficient inference. The homepage also ships a **live search box** (top of the Paper Library) that filters all 61 explainers by title, author, topic, and tag.
 
 ## 2. How Papers Are Organized
 
-The curriculum is structured into 7 core thematic categories plus supplementary explainers:
+The curriculum is ordered so each category builds on the last. Papers are grouped by theme, and within a category they follow a rough chronology.
 
-| Category | Theme | Core Papers |
+| Category | Theme | Papers |
 |---|---|---|
-| **I** | LLM Foundations | Attention Is All You Need (2017) · BERT (2018) · GPT-2 (2019) · GPT-3 (2020) · T5 (2020) · Scaling Laws (2020) · Chinchilla (2022) |
-| **II** | Retrieval, Reasoning & Adaptation | RAG (2020) · LoRA (2021) · Chain-of-Thought (2022) · Self-Consistency (2022) · ReAct (2022) |
-| **III** | Hallucination & Factuality | TruthfulQA (2021) · SelfCheckGPT (2023) · HaluEval (2023) · Survey on Hallucination (2023) · FActScore (2023) · RAGTruth (2024) |
-| **IV** | Evaluation & Benchmarks | HELM (2022) · LLM-as-a-Judge (2023) · JudgeBench (2024) · AgentBench (2024) |
-| **V** | Agent Safety & Security | AgentDojo (2024) · InjecAgent (2024) · Agent-SafetyBench (2024) · Agent Security Bench (2024) |
-| **VI** | Agent Memory | Generative Agents (2023) · MemGPT (2023) · Survey on Memory (2024) · LongMemEval (2024) · A-MEM (2025) · LoCoMo-Plus (2026) |
-| **VII** | Multi-Agent Systems | CAMEL (2023) · MetaGPT (2023) · Magentic-One (2024) · Multi-Agent Collaboration Survey (2025) · MultiAgentBench (2025) |
-| **+** | Supplementary Beyond Core | ColBERTv2 (2022) · InstructGPT (2022) · DPO (2023) · Induction Heads (2022) · Toolformer (2023) · LLaMA (2023) · DeepSeek-R1 (2025) |
+| **I** | Foundation — LLMs | Attention Is All You Need (2017) · BERT (2018) · GPT-2 (2019) · GPT-3 (2020) · T5 (2020) · Scaling Laws (2020) · Chinchilla (2022) · Switch Transformers (2021) · FLAN (2021) · GPT-4 (2023)
+| **II** | Retrieval, Reasoning & Adaptation | RAG (2020) · LoRA (2021) · InstructGPT (2022) · Induction Heads (2022) · Chain-of-Thought (2022) · Self-Consistency (2022) · ReAct (2022) · Toolformer (2023)
+| **III** | Reasoning & Post-Training | DPO (2023) · Constitutional AI (2022) · DeepSeek-R1 (2025)
+| **IV** | Hallucination & Factuality | TruthfulQA (2021) · Hallucination Survey (2023) · SelfCheckGPT (2023) · FActScore (2023) · HaluEval (2023) · RAGTruth (2024)
+| **V** | Evaluation & Benchmarks | MMLU (2021) · HELM (2022) · LLM-as-a-Judge (2023) · JudgeBench (2024) · AgentBench (2023)
+| **VI** | Agent Reliability & Software Engineering | SWE-bench (2024) · τ-bench (2024) · SWE-Bench Pro (2025) · τ²-Bench (2025) · Terminal-Bench 2.0 (2025)
+| **VII** | Agent Safety & Security | InjecAgent (2024) · AgentDojo (2024) · Agent Security Bench (2024) · Agent-SafetyBench (2024)
+| **VIII** | Agent Memory | Generative Agents (2023) · MemGPT (2023) · Memory Survey (2024) · LongMemEval (2024) · Mem0 (2025) · A-MEM (2025) · LoCoMo-Plus (2026)
+| **IX** | Multi-Agent Systems | CAMEL (2023) · MetaGPT (2023) · Magentic-One (2024) · Collaboration Survey (2025) · MultiAgentBench (2025)
+| **X** | Efficient LLM Training & Inference | FlashAttention (2022) · PagedAttention (2023) · Speculative Decoding (2022) · QLoRA (2023) · Mixtral (2024)
+| **XI** | LM Programming & Reliability | DSPy (2023) · DSPy Assertions (2023)
 
-**On the homepage**, the Paper Library section renders: quick-navigation category buttons, live real-time search, stats counter, and category sections containing interactive paper cards. When you add a paper, place it in the correct category.
 
-**Study-pair rule.** Some papers are explicitly designed to be read together (Scaling Laws → Chinchilla). If your paper corrects, extends, or directly follows another paper, cross-link both explainers in the body and footer.
+**On the homepage**, the Paper Library section renders: a **live search box** (filters every paper card by title, author, description, and tags; `/` focuses it, `Esc` clears it), a quick-navigation chip row for the 11 categories, a curriculum overview map, and one subsection per category containing its paper cards. When you add a paper, it must be placed in the correct category — never appended to the end of the grid. If you add a paper, also update the search placeholder's paper count.
+
+**Study-pair rule.** Some papers are explicitly designed to be read together (Scaling Laws → Chinchilla; SelfCheckGPT → FActScore; MemGPT → LongMemEval; CAMEL → MetaGPT → Magentic-One). If your paper corrects, extends, or directly follows another paper, cross-link both explainers in the body and footer — the homepage marks these pairs with the `study-pair` element.
 
 ## 3. The Standard Paper Page Structure
 
@@ -84,19 +90,27 @@ Every page ends with one `<script>` block containing: smooth-scroll utils, mobil
 ## 4. File Naming & Linking Conventions
 
 - **Filenames**: uppercase-friendly, underscore-separated, no spaces — e.g., `BERT.html`, `GPT_2.html`, `Scaling_Laws.html`, `Chain_Of_Thought_Prompting.html`. Spaces in filenames force `%20` URL encoding; never introduce them.
-- **Legacy redirects**: two older space-named URLs (RAG, LoRA) are preserved as HTML meta-refresh redirect stubs so old links don't break. Don't delete them; don't create new ones.
+- **Naming history**: older space-named URLs (RAG, LoRA) were removed when the library standardized on underscore naming. Always use underscore file names for new pages, and update any inbound links when a file is renamed.
 - **Internal links**: paper pages link to siblings with `./<Filename>.html`; the homepage and `404.html` use `./paper/<Filename>.html`.
 - **Every new paper must be linked from**: the homepage track grid, the homepage footer links, the paper pages it is most related to (2–3 "Related Guides"), and `sitemap.xml`.
 
-## 5. Interactive Demo Rules
+## 5. Interactive Demos, Visualizations & Animations
 
-Demos are what make a PaperMap page a PaperMap page.
+Demos and visualizations are what make a PaperMap page a PaperMap page.
 
 1. Every page needs **at least 2–3 interactive elements**, each with real controls (buttons, tabs, sliders) that change rendered content.
 2. Build them as **self-contained IIFEs** rendering into container `<div>`s — no external libraries, no frameworks, no network calls.
 3. Prefer the **flex-bar chart pattern** (see any existing page) over canvas; guard every demo with `if(!el)return;`.
-4. Data in demos may be precomputed/illustrative, but **numbers you present as paper results must be accurate** — mark approximations with `~`.
-5. Demos must work on mobile (test at 390px width) and respect `prefers-reduced-motion`.
+4. **Animation patterns that are already part of the design language** — reuse these, don't invent new ones:
+   - Staggered reveals with `setTimeout` (or `el.animate`) so items appear step-by-step as a process unfolds
+   - Animated width/height transitions on result bars (`transition: width .6s`)
+   - Slide-in cards (`transform: translateX(24px)` → 0) for retrieved documents, tool outputs, or memory notes
+   - Color-coded verdicts (red ✗ stale / green ✓ fresh / amber highlight for fabricated spans)
+   - One-shot demo buttons that lock after running (`pointerEvents: 'none'`)
+5. **SVG and HTML diagrams** for architecture flows (data → retrieval → generation; orchestrator → specialists): build them from the existing palette tokens, `--mono` labels, and `--radius` corners — never from new colors.
+6. Data in demos may be precomputed/illustrative, but **numbers you present as paper results must be accurate** — mark approximations with `~`.
+7. Every animation must degrade gracefully: check `prefers-reduced-motion` (or `!el.animate`) and fall back to instant, no-timeout rendering.
+8. Demos must work on mobile (test at 390px width) and respect `prefers-reduced-motion`.
 
 ## 6. Design / Style Rules (non-negotiable)
 
@@ -123,25 +137,41 @@ Component rules:
 1. **Research-accurate**: every number, model size, and benchmark score must come from the original paper (or be marked `~` approximate). When unsure, state it qualitatively — never invent a number.
 2. **Honest results sections**: say what the paper did NOT solve too (e.g., GPT-2 was far from SOTA on translation; ReAct alone underperforms CoT on some QA).
 3. **Beginner-friendly**: explain jargon on first use; use analogies in "Key Insight" cards.
-4. **English**, concise sentences, ~600–950 lines of HTML per page.
-5. Credit the original authors — explainers are educational derivatives; the footer always cites the paper and links to it.
+4. **Deep-knowledge standard**: the core 61 explainers carry an extra **Deep Dive** section (see §9) — expert-level analysis (mechanistic detail, honest limitations, follow-up literature) beyond the paper summary. New pages in the core curriculum should aim for the same depth: not "what the paper says" but "what an expert would tell you after reading it twice."
+5. **English**, concise sentences, ~600–950 lines of HTML per page.
+6. Credit the original authors — explainers are educational derivatives; the footer always cites the paper and links to it.
 
 ## 8. Step-by-Step: Adding a New Paper
 
-1. **Pick the paper and its track.** Check the homepage and this file to make sure it's not already covered.
+1. **Pick the paper and its category.** Check the homepage and this file to make sure it's not already covered.
 2. **Read the original paper** (arXiv link required). Note: core idea, key numbers, results tables, limitations.
 3. **Copy** `paper/BERT.html` as your starting template. Rename it to the underscore convention.
 4. **Rewrite** the head metadata, nav links + venue badge, hero (title + 4 stats), and all section content per §3. Keep the `<style>` block and utility scripts untouched.
 5. **Build 2–3 interactive demos** per §5 and **5 quiz questions**.
 6. **Register the page**:
-   - Homepage: add a paper card in the correct track's grid (matching card color cycle), and a footer link.
+   - Homepage: add a paper card in the correct category's grid (matching card color cycle), and a footer link.
    - `sitemap.xml`: add the URL.
    - Related paper pages: add a footer "Related Guide" link where natural.
    - Update the roadmap section if your paper starts a new theme.
    - Update the "Papers Live" count in the nav badge and hero stats.
-7. **Verify** (see §9), then open a pull request.
+7. **Verify** (see §10), then open a pull request.
 
-## 9. Verification Checklist (run before every PR)
+## 9. Updating & Deepening an Existing Paper
+
+Updates to an existing explainer must **improve in place** — never redesign the page, never rename the file, never break outbound or inbound links.
+
+1. **What counts as an update**: fixing an inaccurate number, adding a Deep Dive section, adding a new demo or visualization, refreshing the "Impact" section with follow-up work, improving quiz explanations, adding cross-links to newer papers.
+2. **Deep Dive section pattern** (used on all 61 core papers):
+   - One unnumbered section with `id="deepdive"`, placed late in the page (typically between the impact section and the quiz) and registered in the desktop nav, mobile menu, **and** the NAV ACTIVE ids array — in document order.
+   - Title format: `Deep Dive: <topic>` with the standard `section-tag` + `section-title` + `section-desc` opening.
+   - Content: expert-level analysis — the mechanistic "why", honest limitations, comparisons with follow-up literature — using the page's existing components (`problem-grid` bad/good, `two-col`, `notice-grid`, `card-sm`).
+   - One guarded, reduced-motion-aware demo that shows the deep-dive idea in motion (staggered reveals, slide-in cards, color-coded verdicts).
+   - No changes to the `<style>` block — new behavior is pure JS in the page's existing `<script>` block, inserted **before** `QUIZ_DATA`.
+3. **Byte-preservation rule**: when editing, keep everything outside your addition byte-identical (the only allowed line-level change is the NAV ACTIVE ids array, which must gain the new section id in document order).
+4. **Cross-links**: if a new paper supersedes or measures the one you're updating (e.g., RAGTruth measures RAG's hallucination problem), add a forward link from the old page to the new one.
+5. **Verification is the same as §10** — plus: diff the page against git and confirm your diff is only the intended insertion.
+
+## 10. Verification Checklist (run before every PR)
 
 ```bash
 # 1. Serve locally
@@ -164,25 +194,26 @@ open('/tmp/check.js','w').write(m[-1])
 
 Then in a browser: click every demo control, answer one quiz question, resize to 390px, and check the console for errors. Zero errors is the bar.
 
-## 10. Pull Request Checklist
+## 11. Pull Request / Contribution Workflow
 
 - [ ] Paper file added inside `paper/` with correct underscore naming
 - [ ] Full head metadata (title, description, canonical, OG, Twitter)
 - [ ] `<style>` block and utility scripts copied verbatim (only the NAV ACTIVE ids array changed)
 - [ ] 2–3 working interactive demos + 5-question quiz with explanations
-- [ ] Homepage card added **in the correct track**, footer link added, "Papers Live" count updated
+- [ ] Homepage card added **in the correct category**, footer link added, "Papers Live" count updated
 - [ ] `sitemap.xml` updated
 - [ ] Related-guide cross-links added on 2–3 sibling paper pages
 - [ ] All links tested locally (no 404s, no `%20` URLs)
 - [ ] Desktop (1440px) and mobile (390px) layout checked
 - [ ] Zero console errors; `node --check` passes
 - [ ] Numbers are research-accurate (or explicitly marked `~`)
+- [ ] For updates to existing papers: deep-dive section registered in nav + NAV ACTIVE array; `git diff` shows only the intended changes (§9)
 
-## 11. Using AI to Draft a Paper Page
+## 12. Using AI to Draft a Paper Page
 
 PaperMap pages can be drafted with an AI assistant, then reviewed and polished by a human. The original guided workflow lives in this Google Doc: https://docs.google.com/document/d/1PYVkWYqFDUZ6bY1hyAk7zOauGnyIIWjDh44S918wOCM/edit?usp=sharing
 
-When using AI (Claude, GPT, etc.), paste it this file plus your paper details (title, authors, venue, year, arXiv link, key results), and ask it to produce a page that follows **this** document's rules — BERT.html as the structural template, verbatim style block, the exact demo and quiz patterns. Then run the §9 checklist yourself: AI output must be verified line-by-line for number accuracy and link correctness before it can be merged.
+When using AI (Claude, GPT, etc.), paste it this file plus your paper details (title, authors, venue, year, arXiv link, key results), and ask it to produce a page that follows **this** document's rules — BERT.html as the structural template, verbatim style block, the exact demo and quiz patterns. Then run the §10 checklist yourself: AI output must be verified line-by-line for number accuracy and link correctness before it can be merged.
 
 ---
 
