@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -322,9 +328,9 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="timeline">
       <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2017</div><div class="tl-title">RL agents in text worlds</div><div class="tl-desc">Reinforcement-learning agents act in text-based environments, learning from reward signals alone — acting without reasoning, at huge sample cost.</div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2020–21</div><div class="tl-title">Language models become policies</div><div class="tl-desc">LMs start choosing actions in interactive environments — by 2022, SayCan grounds LM plans on real robots. The reasoning behind each action stays implicit.</div></div>
-      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">Chain-of-Thought prompting</div><div class="tl-desc">Pure reasoning in text — step-by-step traces unlock multi-step problems, but the model never touches the world, so confident hallucination persists. <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber);">CoT Guide ↗</a></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">Chain-of-Thought prompting</div><div class="tl-desc">Pure reasoning in text — step-by-step traces unlock multi-step problems, but the model never touches the world, so confident hallucination persists. <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber-text);">CoT Guide ↗</a></div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · Oct</div><div class="tl-title">🚀 ReAct (Yao et al.)</div><div class="tl-desc">Reasoning and acting in one loop: thoughts steer actions, actions fetch evidence, observations correct the plan — all taught with a handful of example traces.</div></div>
-      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023</div><div class="tl-title">Toolformer & function calling</div><div class="tl-desc">Models teach themselves to call tools (Toolformer) and APIs ship native function calling — tool traces go mainstream. <a href="./Toolformer.html" style="color:var(--amber);">Toolformer Guide ↗</a></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023</div><div class="tl-title">Toolformer & function calling</div><div class="tl-desc">Models teach themselves to call tools (Toolformer) and APIs ship native function calling — tool traces go mainstream. <a href="./Toolformer.html" style="color:var(--amber-text);">Toolformer Guide ↗</a></div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2024 →</div><div class="tl-title">The agent era</div><div class="tl-desc">AutoGPT-style autonomous loops and agent frameworks (LangChain, LlamaIndex, …) standardize on ReAct-style traces — "agentic AI" enters the vocabulary.</div></div>
     </div>
     <div class="card" style="padding:1.5rem;">
@@ -333,10 +339,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE LOOP IN ONE GLANCE</div>
         <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:var(--text2);">
-          <span style="color:var(--amber);font-weight:600;">Thought 1</span>&nbsp;&nbsp;I should search for the entity first.<br>
-          <span style="color:var(--blue);font-weight:600;">Action 1</span>&nbsp;&nbsp;Search[Apex Mountains]<br>
+          <span style="color:var(--amber-text);font-weight:600;">Thought 1</span>&nbsp;&nbsp;I should search for the entity first.<br>
+          <span style="color:var(--blue-text);font-weight:600;">Action 1</span>&nbsp;&nbsp;Search[Apex Mountains]<br>
           <span style="color:var(--text3);">Observation 1</span>&nbsp;&nbsp;(intro paragraphs of the article…)<br>
-          <span style="color:var(--amber);font-weight:600;">Thought 2</span>&nbsp;&nbsp;The range isn't mentioned — look it up…
+          <span style="color:var(--amber-text);font-weight:600;">Thought 2</span>&nbsp;&nbsp;The range isn't mentioned — look it up…
         </div>
         <div style="font-size:12px;color:var(--text3);margin-top:8px;">Thought (amber) plans · Action (blue) executes · Observation (gray) reports back.</div>
       </div>
@@ -390,15 +396,15 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-label">Analogy — Compass vs. Eyes</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:6px;">
       <div class="card-sm">
-        <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px;">🤖 Acting-only agent</div>
+        <div style="font-size:13px;font-weight:600;color:var(--red-text);margin-bottom:4px;">🤖 Acting-only agent</div>
         <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">A courier sprinting a route on pure muscle memory — fast, but it never reads a street sign, never notices the wrong turn, and cannot tell you why it turned left.</div>
       </div>
       <div class="card-sm">
-        <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:4px;">🧠 Reasoning-only agent</div>
+        <div style="font-size:13px;font-weight:600;color:var(--red-text);margin-bottom:4px;">🧠 Reasoning-only agent</div>
         <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">A navigator plotting the whole trip from a beautiful, decades-old map — the plan is impeccable, but the bridge it crosses was demolished years ago.</div>
       </div>
       <div class="card-sm">
-        <div style="font-size:13px;font-weight:600;color:var(--green);margin-bottom:4px;">🔁 ReAct agent</div>
+        <div style="font-size:13px;font-weight:600;color:var(--green-text);margin-bottom:4px;">🔁 ReAct agent</div>
         <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">Plan a few streets, look around, re-plan — compass in one hand, open eyes in the other. The map and the street signs finally agree.</div>
       </div>
     </div>
@@ -427,11 +433,11 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-label">Interactive Demo — Agent Trace Player</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A HotpotQA-style question, solved the ReAct way. Press <strong>Next step</strong> to advance the precomputed trace — watch thoughts plan, actions execute, and observations report back.</p>
     <div style="background:var(--bg3);border-radius:var(--radius);padding:0.9rem 1rem;font-family:var(--mono);font-size:13px;color:var(--text2);margin-bottom:1rem;">
-      <span style="color:var(--amber);font-weight:600;">Q:</span> What is the elevation range for the Apex Mountains?
+      <span style="color:var(--amber-text);font-weight:600;">Q:</span> What is the elevation range for the Apex Mountains?
     </div>
     <div style="background:#0f172a;border:1px solid #1e293b;border-radius:var(--radius-lg);overflow:hidden;">
       <div style="background:#1e293b;padding:8px 14px;font-family:var(--mono);font-size:10.5px;color:#94a3b8;display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
-        <span style="color:#ef4444;">●</span><span style="color:#fbbf24;">●</span><span style="color:#22c55e;">●</span>
+        <span style="color:#b91c1c;">●</span><span style="color:#fbbf24;">●</span><span style="color:#15803d;">●</span>
         <span style="margin-left:6px;">react-agent — wikipedia api · PaLM-540B</span>
         <span id="traceStepCounter" style="margin-left:auto;color:#cbd5e1;">step 0 / 8</span>
       </div>
@@ -489,28 +495,28 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="results-grid">
     <div class="result-card">
       <div class="result-model">HOTPOTQA (EM)</div>
-      <div class="result-score" style="color:var(--amber);">~34.2</div>
+      <div class="result-score" style="color:var(--amber-text);">~34.2</div>
       <div class="result-label">ReAct + CoT-SC, PaLM-540B — best of both</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">self-consistency decides when to re-act</div>
     </div>
     <div class="result-card">
       <div class="result-model">ALFWORLD (SUCCESS)</div>
-      <div class="result-score" style="color:var(--blue);">~71%</div>
+      <div class="result-score" style="color:var(--blue-text);">~71%</div>
       <div class="result-label">ReAct vs ~45% for imitation / RL baselines</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:71%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">tens of points of absolute gain</div>
     </div>
     <div class="result-card">
       <div class="result-model">HALLUCINATIONS</div>
-      <div class="result-score" style="color:var(--teal);font-size:1.45rem;">Far fewer</div>
+      <div class="result-score" style="color:var(--teal-text);font-size:1.45rem;">Far fewer</div>
       <div class="result-label">than CoT on HotpotQA &amp; FEVER — every claim backed by an observation</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:38%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">qualitative finding — illustrative bar</div>
     </div>
     <div class="result-card">
       <div class="result-model">WEBSHOP</div>
-      <div class="result-score" style="color:var(--green);font-size:1.45rem;">Strong</div>
+      <div class="result-score" style="color:var(--green-text);font-size:1.45rem;">Strong</div>
       <div class="result-label">task-completion gains over IL / RL baselines</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:78%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">the same loop, shopping edition</div>
@@ -535,7 +541,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-label">Interactive Demo — The Hallucination Showdown</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same claim, two strategies. Chain-of-Thought never leaves the model's head; ReAct checks the world. Press <strong>Run both</strong> and read the verdict.</p>
     <div style="background:var(--bg3);border-radius:var(--radius);padding:0.9rem 1rem;font-family:var(--mono);font-size:12.5px;color:var(--text2);margin-bottom:1rem;">
-      <span style="color:var(--amber);font-weight:600;">CLAIM:</span> "The Apex Mountains were first mapped in 1853." — SUPPORTED or REFUTED?
+      <span style="color:var(--amber-text);font-weight:600;">CLAIM:</span> "The Apex Mountains were first mapped in 1853." — SUPPORTED or REFUTED?
     </div>
     <div class="two-col">
       <div>
@@ -573,10 +579,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card">
     <div class="card-label">The Agent's Diary — failures localize</div>
     <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:12.5px;line-height:2.1;color:var(--text2);">
-      <span style="color:var(--amber);font-weight:600;">Thought 2</span>&nbsp;&nbsp;The article will mention the range.<br>
-      <span style="color:var(--blue);font-weight:600;">Action 2</span>&nbsp;&nbsp;Lookup[range]<br>
-      <span style="color:var(--red);">Observation 2&nbsp;&nbsp;(no matching sentences found)</span>&nbsp;<span class="pill pill-red">failure — visible &amp; local</span><br>
-      <span style="color:var(--amber);font-weight:600;">Thought 3</span>&nbsp;&nbsp;Nothing here. Let me search a related entity instead.&nbsp;<span class="pill pill-green">recovery</span>
+      <span style="color:var(--amber-text);font-weight:600;">Thought 2</span>&nbsp;&nbsp;The article will mention the range.<br>
+      <span style="color:var(--blue-text);font-weight:600;">Action 2</span>&nbsp;&nbsp;Lookup[range]<br>
+      <span style="color:var(--red-text);">Observation 2&nbsp;&nbsp;(no matching sentences found)</span>&nbsp;<span class="pill pill-red">failure — visible &amp; local</span><br>
+      <span style="color:var(--amber-text);font-weight:600;">Thought 3</span>&nbsp;&nbsp;Nothing here. Let me search a related entity instead.&nbsp;<span class="pill pill-green">recovery</span>
     </div>
     <p style="font-size:12.5px;color:var(--text2);line-height:1.7;margin-top:0.75rem;">No stack trace, no reward curve — the debug log is the same text the model reasons over. That single design choice is a big reason agent traces became the industry standard for observability.</p>
   </div>
@@ -595,11 +601,11 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="notice-card"><div class="notice-title">🤖 AutoGPT era</div><div class="notice-text">The 2023 autonomous-agent boom standardized on ReAct-style loops — ambitions scaled faster than reliability did.</div></div>
     <div class="notice-card"><div class="notice-title">📊 Agent benchmarks</div><div class="notice-text">Eval suites like AgentBench and its successors grade models inside ReAct-style loops — the paper's format became the test harness.</div></div>
     <div class="notice-card"><div class="notice-title">💬 "Agentic AI"</div><div class="notice-text">The vocabulary of the agentic-AI era — traces, tools, loops, observations — descends from this paper's framing.</div></div>
-    <div class="notice-card"><div class="notice-title">🔗 Next: Toolformer</div><div class="notice-text">Where ReAct is prompted, Toolformer is self-taught: models learn when to call which tool. <a href="./Toolformer.html" style="color:var(--amber);">Toolformer Guide ↗</a></div></div>
+    <div class="notice-card"><div class="notice-title">🔗 Next: Toolformer</div><div class="notice-text">Where ReAct is prompted, Toolformer is self-taught: models learn when to call which tool. <a href="./Toolformer.html" style="color:var(--amber-text);">Toolformer Guide ↗</a></div></div>
   </div>
   <div class="card" style="margin-top:1.5rem;">
     <div class="card-label">Follow the Thread</div>
-    <p style="font-size:13px;color:var(--text2);line-height:1.8;"><a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber);">Chain-of-Thought</a> showed that reasoning in text is powerful but ungrounded → <strong>ReAct</strong> closed the loop with actions → <a href="./Toolformer.html" style="color:var(--amber);">Toolformer</a> taught models to call tools themselves. Three papers, one track: the making of the modern agent.</p>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;"><a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber-text);">Chain-of-Thought</a> showed that reasoning in text is powerful but ungrounded → <strong>ReAct</strong> closed the loop with actions → <a href="./Toolformer.html" style="color:var(--amber-text);">Toolformer</a> taught models to call tools themselves. Three papers, one track: the making of the modern agent.</p>
   </div>
 </section>
 
@@ -615,7 +621,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-label">Interactive Demo — Grounding Showdown</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">One HotpotQA-style multi-hop question, three worlds. Press a strategy and watch where each one gets its "facts".</p>
     <div style="background:var(--bg3);border-radius:var(--radius);padding:0.9rem 1rem;font-family:var(--mono);font-size:12.5px;color:var(--text2);margin-bottom:1rem;">
-      <span style="color:var(--amber);font-weight:600;">Q:</span> Blue Peak, the highest summit of the Apex Mountains, is named after which person?
+      <span style="color:var(--amber-text);font-weight:600;">Q:</span> Blue Peak, the highest summit of the Apex Mountains, is named after which person?
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
       <button class="btn-primary" id="gsCotBtn" type="button" style="font-size:13px;padding:8px 18px;">🧠 CoT only ▸</button>
@@ -660,9 +666,9 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card" style="margin-top:1.5rem;">
     <div class="card-label">Bridge — the agentic line it opened</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;">
-      <div class="card-sm">🛠️ <a href="./Toolformer.html" style="color:var(--amber);">Toolformer ↗</a> — where ReAct is prompted, Toolformer self-learns its tool calls; the loop goes native.</div>
-      <div class="card-sm">📊 <a href="./AgentBench_Evaluating_LLMs_as_Agents.html" style="color:var(--amber);">AgentBench ↗</a> — the loop becomes the test harness: LLMs graded as agents across multi-environment tasks.</div>
-      <div class="card-sm">⚠️ <a href="./InjecAgent_Benchmarking_Indirect_Prompt_Injections.html" style="color:var(--amber);">InjecAgent ↗</a> — grounded agents inherit grounded risks: tool-integrated agents proved exposed to indirect prompt injection.</div>
+      <div class="card-sm">🛠️ <a href="./Toolformer.html" style="color:var(--amber-text);">Toolformer ↗</a> — where ReAct is prompted, Toolformer self-learns its tool calls; the loop goes native.</div>
+      <div class="card-sm">📊 <a href="./AgentBench_Evaluating_LLMs_as_Agents.html" style="color:var(--amber-text);">AgentBench ↗</a> — the loop becomes the test harness: LLMs graded as agents across multi-environment tasks.</div>
+      <div class="card-sm">⚠️ <a href="./InjecAgent_Benchmarking_Indirect_Prompt_Injections.html" style="color:var(--amber-text);">InjecAgent ↗</a> — grounded agents inherit grounded risks: tool-integrated agents proved exposed to indirect prompt injection.</div>
     </div>
     <p style="font-size:12.5px;color:var(--text2);line-height:1.7;margin-top:0.75rem;">Every tool-integrated agent since ReAct inherits both halves of the bargain — the grounding that cuts confabulation, and the attack surface that comes with trusting retrieved text.</p>
   </div>
@@ -707,6 +713,8 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
     <a class="footer-link" href="./AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench Guide</a>
     <a class="footer-link" href="./InjecAgent_Benchmarking_Indirect_Prompt_Injections.html">InjecAgent Guide</a>
+
+    <a class="footer-link" href="./Tau_bench_A_Benchmark_for_Tool_Agent_User_Interaction_in_Real_World_Domains.html">τ-bench Guide</a>
   </div>
   <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -761,7 +769,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   };
   let idx=0,timer=null;
   function idle(){
-    consoleEl.innerHTML='<div style="font-family:var(--mono);font-size:12px;color:#64748b;line-height:1.9;">▸ agent idle — press <span style="color:#fbbf24;">Next step</span> to run. '+steps.length+' steps queued.<br>▸ every card below is text the model writes, or text a tool writes back.</div>';
+    consoleEl.innerHTML='<div style="font-family:var(--mono);font-size:12px;color:#94a3b8;line-height:1.9;">▸ agent idle — press <span style="color:#fbbf24;">Next step</span> to run. '+steps.length+' steps queued.<br>▸ every card below is text the model writes, or text a tool writes back.</div>';
   }
   function card(s){
     const st=styles[s.t];
@@ -854,7 +862,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     d.appendChild(tg);d.appendChild(tx);
     if(step.note){
       const nt=document.createElement('div');
-      nt.style.cssText='font-size:11px;color:var(--red);margin-top:4px;';
+      nt.style.cssText='font-size:11px;color:var(--red-text);margin-top:4px;';
       nt.textContent='✗ '+step.note;
       d.appendChild(nt);
     }
@@ -863,7 +871,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   let timers=[];
   function showVerdict(){
     verdictEl.innerHTML='<div style="border:1px solid rgba(34,197,94,0.35);background:rgba(34,197,94,0.05);border-radius:var(--radius);padding:1rem 1.2rem;animation:fadeUp .5s ease;">'
-      +'<div style="font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:0.08em;margin-bottom:6px;">VERDICT</div>'
+      +'<div style="font-family:var(--mono);font-size:11px;color:var(--green-text);letter-spacing:0.08em;margin-bottom:6px;">VERDICT</div>'
       +'<div style="font-size:13px;color:var(--text2);line-height:1.8;"><span class="pill pill-red">CoT: SUPPORTED ✗</span>&nbsp;<span class="pill pill-green">ReAct: REFUTED ✓</span><br>CoT dressed a prior up as evidence and never noticed. ReAct settled the question with one observation. That is the paper\'s qualitative story: trade a little recall for a lot of faithfulness.</div></div>';
     runBtn.disabled=false;runBtn.style.opacity='1';
   }
@@ -925,7 +933,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       +'<div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.08em;margin-bottom:5px;">PURPOSE</div>'
       +'<div style="font-size:13px;color:var(--text2);margin-bottom:12px;">'+v.purpose+'</div>'
       +'<div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.08em;margin-bottom:4px;">INPUT — MODEL WRITES</div>'
-      +'<div style="font-family:var(--mono);font-size:13px;color:var(--blue);margin-bottom:12px;">'+v.inp+'</div>'
+      +'<div style="font-family:var(--mono);font-size:13px;color:var(--blue-text);margin-bottom:12px;">'+v.inp+'</div>'
       +'<div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.08em;margin-bottom:4px;">OUTPUT — API RETURNS</div>'
       +'<div style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.7;">'+v.out+'</div></div>';
   }
@@ -949,9 +957,9 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     thought:{b:'var(--amber)',t:'var(--amber)',bg:'rgba(245,158,11,0.06)',c:'var(--text2)'},
     action:{b:'var(--blue)',t:'var(--blue)',bg:'rgba(59,130,246,0.07)',c:'var(--text2)',mono:true},
     obs:{b:'#94a3b8',t:'var(--text3)',bg:'rgba(148,163,184,0.10)',c:'var(--text2)'},
-    noise:{b:'#f59e0b',t:'#b45309',bg:'rgba(245,158,11,0.12)',c:'#92400e'},
+    noise:{b:'#f59e0b',t:'#92400e',bg:'rgba(245,158,11,0.12)',c:'#92400e'},
     good:{b:'var(--green)',t:'var(--green)',bg:'rgba(34,197,94,0.06)',c:'var(--text2)'},
-    warn:{b:'#f59e0b',t:'#b45309',bg:'rgba(245,158,11,0.10)',c:'#92400e'}
+    warn:{b:'#f59e0b',t:'#92400e',bg:'rgba(245,158,11,0.10)',c:'#92400e'}
   };
   const cot=[
     {k:'cot',tag:'THINK 1',text:'Blue Peak is the highest summit of the Apex Mountains — the question wants the person the peak was named after.'},
@@ -976,7 +984,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   const verdicts={
     cot:{b:'rgba(239,68,68,0.35)',bg:'rgba(239,68,68,0.05)',c:'var(--red)',title:'VERDICT — HALLUCINATION',pill:'pill-red',pl:'CoT: James Whitfield ✗',txt:'CoT invented a surveyor, then cited its own invention as corroboration — the signature CoT failure in the paper\'s case studies: confident, plausible, never checked against the world.'},
     ra:{b:'rgba(34,197,94,0.35)',bg:'rgba(34,197,94,0.05)',c:'var(--green)',title:'VERDICT — GROUNDED',pill:'pill-green',pl:'ReAct: Marta Lindqvist ✓',txt:'Two hops, two observations — every claim in the trace maps to retrieved text. This is why the paper reports far fewer hallucinations than CoT on HotpotQA and FEVER.'},
-    noisy:{b:'rgba(245,158,11,0.45)',bg:'rgba(245,158,11,0.07)',c:'#b45309',title:'VERDICT — GROUNDED, BUT WRONG',pill:'pill-amber',pl:'ReAct: Elias Marsh ✗',txt:'The agent did nothing "wrong" — it followed a bad observation faithfully. Grounding trades imagination errors for retrieval errors: when evidence is noisy or irrelevant, ReAct inherits the noise. The paper\'s fix: know when to re-act (ReAct + CoT-SC).'}
+    noisy:{b:'rgba(245,158,11,0.45)',bg:'rgba(245,158,11,0.07)',c:'#92400e',title:'VERDICT — GROUNDED, BUT WRONG',pill:'pill-amber',pl:'ReAct: Elias Marsh ✗',txt:'The agent did nothing "wrong" — it followed a bad observation faithfully. Grounding trades imagination errors for retrieval errors: when evidence is noisy or irrelevant, ReAct inherits the noise. The paper\'s fix: know when to re-act (ReAct + CoT-SC).'}
   };
   let timers=[];
   function mkStep(s){
@@ -1030,7 +1038,7 @@ const QUIZ_DATA=[
   {q:'Which combination produced the best HotpotQA result (~34.2 EM with PaLM-540B)?',opts:['ReAct alone','CoT alone','ReAct + CoT-SC — self-consistency decides when to re-act','Standard prompting with more demonstrations'],correct:2,explain:'The strongest system knew when to reason and when to act: when self-consistent CoT and the ReAct trace disagreed, the agent re-acted — combining CoT\'s recall with ReAct\'s groundedness.'},
   {q:'What is ReAct\'s lasting legacy?',opts:['A new pre-training objective for LLMs','The Thought → Action → Observation trace became the template for modern agents and function calling','Proof that RL is never needed for agents','A larger backbone model than PaLM'],correct:1,explain:'From LangChain\'s ReAct agent class to function-calling APIs and AutoGPT-style loops, the paper\'s trace format became the de-facto template for agentic AI.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 

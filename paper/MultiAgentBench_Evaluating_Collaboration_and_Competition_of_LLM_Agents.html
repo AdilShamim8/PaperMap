@@ -3,25 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MultiAgentBench: Collaboration & Competition of LLM Agents — Interactive Guide</title>
-<meta name="description" content="An interactive explainer of MultiAgentBench, evaluating both collaborative teamwork and competitive game-theoretic behaviors among frontier LLM agents.">
-<meta name="keywords" content="MultiAgentBench, multi-agent evaluation, collaboration, competition, game theory, negotiation, social deception, werewolf, benchmark, interactive tutorial">
-<meta name="author" content="Adil Shamim">
+<title>MultiAgentBench: Evaluating the Collaboration and Competition of LLM Agents — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the MultiAgentBench paper and its MARBLE framework, with interactive demos for mixed-motive missions, milestone KPIs, coordination strategies, and real benchmark results.">
+<meta name="keywords" content="MultiAgentBench, MARBLE, LLM agents, multi-agent systems, collaboration, competition, mixed-motive, milestone KPI, coordination score, benchmark, Werewolf, bargaining, interactive tutorial">
+<meta name="author" content="PaperMap">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#f59e0b">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="canonical" href="https://papermap.vercel.app/paper/MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="shortcut icon" href="../assets/favicon.svg">
-<meta property="og:title" content="MultiAgentBench: Collaboration & Competition of LLM Agents — Interactive Guide">
-<meta property="og:description" content="Explore how frontier LLM agents negotiate, coordinate, compete, and deceive across rigorous multi-agent benchmark environments.">
+<meta property="og:title" content="MultiAgentBench: Evaluating the Collaboration and Competition of LLM Agents — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of MultiAgentBench and MARBLE, with demos for mixed-motive missions, milestone KPIs, and coordination scores.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://papermap.vercel.app/paper/MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html">
 <meta property="og:site_name" content="PaperMap">
 <meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MultiAgentBench — Interactive Guide">
-<meta name="twitter:description" content="Test agent negotiation dynamics, strategic bluffing, and cooperative coordination with playable simulations.">
+<meta name="twitter:description" content="Learn how LLM agent teams are scored on collaboration AND competition, with animations and interactive demos.">
 <meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,157 +84,266 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
-
-.hero { min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 3rem;position:relative;overflow:hidden; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
-.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:1.5rem;background:var(--amber-dim); }
-.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 5.5vw, 4.2rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.2rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
-.hero-subtitle { max-width:640px;color:var(--text2);font-size:16px;margin-bottom:2rem;line-height:1.8; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
 .btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
 .btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
-
-.meta-badges { display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:2.5rem; }
-.meta-chip { display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--text2); }
-
-section { max-width:1100px;margin:0 auto;padding:4.5rem 2rem; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
-.section-desc { color:var(--text2);max-width:620px;font-size:15px;margin-bottom:2.2rem; }
-
-.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 8px 24px rgba(15,23,42,0.04);transition:transform .2s ease, box-shadow .2s ease; }
-.card:hover { transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,0.07); }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
 .card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
-.card-label { font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px; }
-.two-col { display:grid;grid-template-columns:1fr 1fr;gap:1.5rem; }
-
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-
-/* Interactive Negotiation Game */
-.game-container { background:#0f172a;color:#f8fafc;border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 20px 40px rgba(0,0,0,0.25);margin-top:1.5rem;font-family:var(--mono);font-size:13px; }
-.game-header { display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:1rem;margin-bottom:1.2rem; }
-.dialogue-log { display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto;padding-right:8px; }
-.agent-bubble { padding:10px 14px;border-radius:8px;line-height:1.6;font-size:12px; }
-.bubble-buyer { background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);color:#bfdbfe;align-self:flex-start;max-width:85%; }
-.bubble-seller { background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:#fef08a;align-self:flex-end;max-width:85%; }
-
-/* Quiz styles */
-.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;margin-bottom:1.5rem; }
-.quiz-q { font-weight:600;font-size:15px;margin-bottom:1rem;color:var(--text); }
-.quiz-opt { display:block;width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;margin-bottom:8px;cursor:pointer;font-family:var(--sans);font-size:14px;color:var(--text);transition:all .2s; }
-.quiz-opt:hover { background:var(--bg3);border-color:rgba(245,158,11,0.4); }
-.quiz-opt.correct { background:rgba(34,197,94,0.15);border-color:var(--green);color:var(--green);font-weight:600; }
-.quiz-opt.wrong { background:rgba(239,68,68,0.15);border-color:var(--red);color:var(--red); }
-.quiz-explain { font-size:13px;color:var(--text2);margin-top:8px;padding:8px 12px;border-radius:6px;background:var(--bg3);display:none; }
-
-footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem; }
-.footer-links { display:flex;gap:1rem;flex-wrap:wrap; }
-.footer-link { font-family:var(--mono);font-size:12px;color:var(--text2);text-decoration:none; }
-.footer-link:hover { color:var(--amber); }
-
-@media(max-width:850px){
-  .two-col { grid-template-columns:1fr; }
-  .nav-links, .nav-actions { display:none; }
-  .nav-toggle { display:flex;align-items:center;justify-content:center; }
-  .hero-title { font-size:2.4rem; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
 }
 </style>
+
 </head>
 <body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
 
-<a href="#content" class="skip-link">Skip to main content</a>
-
+<!-- NAV -->
 <nav>
-  <a href="../index.html" class="nav-logo">PaperMap</a>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
   <div class="nav-links">
-    <a href="#dual" class="nav-link">Dual Axes</a>
-    <a href="#negotiation" class="nav-link">Negotiation Lab</a>
-    <a href="#leaderboard" class="nav-link">Benchmark Results</a>
-    <a href="#quiz" class="nav-link">Quiz</a>
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#framework">Framework</a>
+    <a class="nav-link" href="#missions">Missions</a>
+    <a class="nav-link" href="#metrics">Metrics</a>
+    <a class="nav-link" href="#findings">Findings</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
   </div>
   <div class="nav-actions">
-    <span class="nav-badge">Category VII · Multi-Agent</span>
-    <a href="https://arxiv.org/abs/2403.08249" target="_blank" rel="noopener" class="btn-primary" style="padding:6px 14px;font-size:12px;">Paper PDF ↗</a>
+    <div class="nav-badge">arXiv 2025</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
   </div>
-  <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
 </nav>
 
-<div id="mobileMenu" class="mobile-menu">
-  <a href="../index.html">← All Papers</a>
-  <a href="#dual">Dual Axes</a>
-  <a href="#negotiation">Negotiation Lab</a>
-  <a href="#leaderboard">Benchmark Results</a>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#framework">Framework</a>
+  <a href="#missions">Missions</a>
+  <a href="#metrics">Metrics</a>
+  <a href="#findings">Findings</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
 </div>
 
-<main id="content">
-
-<div class="hero">
+<!-- HERO -->
+<div class="hero" id="top">
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
-  <div class="hero-eyebrow">Benchmark · Game Theory & Cooperation</div>
-  <h1 class="hero-title">MultiAgentBench: Evaluating<br><em>Collaboration & Competition</em></h1>
-  <p class="hero-subtitle">Moving beyond static single-agent exams to evaluate LLM agents navigating complex social incentives, strategic deception, bargaining, and competitive game theory.</p>
-  
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Agents That <em>Cooperate</em> —<br>and Compete
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to MultiAgentBench and its MARBLE framework — the benchmark that
+    scores LLM agent teams on what they achieve together AND on how well they coordinate,
+    communicate, and compete along the way.
+  </p>
   <div class="hero-actions">
-    <a href="#negotiation" class="btn-primary">Play Negotiation Lab</a>
-    <a href="#dual" class="btn-outline">Understand Dual Axes</a>
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2503.01935" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
   </div>
-
-  <div class="meta-badges">
-    <div class="meta-chip"><span>Focus:</span> Game-Theoretic Multi-Agent Benchmark</div>
-    <div class="meta-chip"><span>Environments:</span> Werewolf, Bargaining, Auction, Collaborative Science</div>
-    <div class="meta-chip"><span>Key Metrics:</span> Surplus Extraction, Deception Detection, Pareto Efficiency</div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">6</div>
+      <div class="stat-label">Scenarios (4 Co-op + 2 Competitive)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100</div>
+      <div class="stat-label">Test Cases per Task</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Metrics Tracked</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2025</div>
+      <div class="stat-label">Year Published</div>
+    </div>
   </div>
 </div>
 
 <div class="divider"></div>
-
-<!-- SECTION 1: DUAL AXES -->
-<section id="dual">
-  <div class="section-tag">Evaluation Axes</div>
-  <h2 class="section-title">Collaboration vs Competition: <em>The Two Testing Arenas</em></h2>
-  <p class="section-desc">Single-agent benchmarks like MMLU only measure passive knowledge. Real-world autonomous agents must navigate divergent economic incentives and strategic game play.</p>
-
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Frameworks to a <em>Benchmark</em></h2>
+  <p class="section-desc">Multi-agent LLM systems exploded in 2023–2024 — but almost nobody was measuring them. Here is the road that led to the first benchmark built for both collaboration and competition.</p>
   <div class="two-col">
-    <div class="card">
-      <div class="card-label">Axis 1: Pure & Mixed Collaboration</div>
-      <h3 style="font-size:16px;color:var(--teal);margin-bottom:8px;">Shared Payoff Optimization</h3>
-      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px;">
-        Agents must pool disjoint partial observations, formulate joint plans, and synchronize actions toward a collective payoff without stepping on each other.
-      </p>
-      <div class="card-sm">
-        <strong>Environments:</strong> Minecraft Collaborative Building, Joint Software Debugging, Cross-Discipline Scientific Paper Synthesis.
-      </div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2023 · Mar</div><div class="tl-title">CAMEL (Li et al.)</div><div class="tl-desc">Role-playing "communicative agents" explore task cooperation — two LLMs chatting until a job is done. Evaluation stays ad hoc.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023 · Aug</div><div class="tl-title">MetaGPT (Hong et al.)</div><div class="tl-desc">Encodes human standard operating procedures into a role pipeline — product manager → architect → engineer. Impressive builds, no standard scores.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2024</div><div class="tl-title">Magentic-One & MAS surveys</div><div class="tl-desc">Microsoft's generalist multi-agent orchestrator arrives as surveys map the field — evaluation of coordination itself remains fragmented.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024</div><div class="tl-title">Single-agent benchmarks mature</div><div class="tl-desc">Benchmarks like AgentBench grade one LLM against one environment — team dynamics, competition, and credit assignment are out of scope.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2025 · Mar</div><div class="tl-title">🚀 MultiAgentBench (Zhu et al.)</div><div class="tl-desc">The comprehensive benchmark for LLM multi-agent systems: six interactive scenarios, mixed motives, milestone-based KPIs, plus the MARBLE framework.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2025 →</div><div class="tl-title">Mixed-motive MAS research</div><div class="tl-desc">Game-theoretic dynamics, emergent social behavior, and credit assignment become measurable study objects — not anecdotes.</div></div>
     </div>
-
-    <div class="card">
-      <div class="card-label">Axis 2: Strategic Competition & Deception</div>
-      <h3 style="font-size:16px;color:var(--amber);margin-bottom:8px;">Zero-Sum & Incomplete Information</h3>
-      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px;">
-        Agents must protect private reservation values, detect adversarial bluffing, negotiate surplus splits, and disguise intentions under social deduction games.
-      </p>
-      <div class="card-sm">
-        <strong>Environments:</strong> Multi-Round Double Auction, Bilateral Price Bargaining, Werewolf / Mafia (Social Deception).
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Multi-agent papers measured <span class="highlight">whether the team finished</span> — never <span class="highlight">how</span>. MultiAgentBench turns coordination itself into data: which milestones were hit, by whom, at which turn, and how well the agents talked and planned along the way.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">WHAT CHANGED IN EVALUATION</div>
+        <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);">
+          <span style="color:var(--red-text);">old: final_answer → score</span><br>
+          <span style="color:var(--green-text);">new: turn → action → milestone? → who? → KPI + C/P/CS</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">Task outcome AND coordination quality, per turn, per agent.</div>
       </div>
     </div>
   </div>
@@ -236,223 +351,707 @@ footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid
 
 <div class="divider"></div>
 
-<!-- SECTION 2: INTERACTIVE NEGOTIATION -->
-<section id="negotiation">
-  <div class="section-tag">Interactive Simulation</div>
-  <h2 class="section-title">Bilateral Bargaining <em>Simulation</em></h2>
-  <p class="section-desc">Observe Buyer and Seller agents negotiate a deal under private reservation values.</p>
-
-  <div class="game-container">
-    <div class="game-header">
-      <div>
-        <span style="color:#94a3b8;">BUYER CEILING: $100</span> | <span style="color:#94a3b8;">SELLER FLOOR: $60</span> | <span style="color:var(--amber);">BARGAINING SURPLUS: $40</span>
-      </div>
-      <button id="dealStepBtn" class="btn-primary" style="padding:6px 12px;font-size:12px;">Next Offer ▶</button>
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem: Scores Without <em>Coordination</em></h2>
+  <p class="section-desc">Before MultiAgentBench, "multi-agent evaluation" usually meant grading the final artifact of a team that was only ever supposed to cooperate. Two blind spots, one benchmark.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🧾</div>
+      <div class="problem-title">Team-Score-Only Evaluation</div>
+      <ul class="problem-list">
+        <li>Benchmarks grade the final output — or a single agent in isolation</li>
+        <li>Scenarios are cooperative-only; competition is ignored</li>
+        <li>No per-agent credit: who did the work stays invisible</li>
+        <li>A team that fails slowly looks identical to one that never started</li>
+        <li>Coordination quality is never scored — just assumed</li>
+      </ul>
     </div>
-
-    <div id="negotiationLog" class="dialogue-log">
-      <!-- Chat bubbles injected via JS -->
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- SECTION 3: LEADERBOARD -->
-<section id="leaderboard">
-  <div class="section-tag">Benchmark Insights</div>
-  <h2 class="section-title">Key Findings across <em>Frontier LLMs</em></h2>
-  <p class="section-desc">How state-of-the-art models perform when thrown into complex game-theoretic multi-agent environments.</p>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="card-label">Strategic Bluffing & Information Leakage</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:12px;">
-        Smaller and open-source models (Llama-3-8B, Mistral-7B) frequently leak their private reservation price directly in round 1 ("My budget is $100, but I offer $60"), collapsing their economic surplus to zero.
-      </p>
-      <div class="card-sm">
-        <strong>Frontier Superiority:</strong> Models like GPT-4 and Claude 3.5 consistently exploit revealed information, anchoring initial offers favorably and executing strategic concessions.
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-label">Werewolf Social Deception Rates</div>
-      <ul style="font-size:13px;color:var(--text2);line-height:1.8;padding-left:1.2rem;margin-top:6px;">
-        <li><strong>Deception Detection:</strong> GPT-4 detects werewolf imposters with 68% accuracy vs 24% for random guessing.</li>
-        <li><strong>Role Adherence:</strong> Open models often break character under pressure, apologizing or explicitly revealing their hidden card when directly challenged.</li>
-        <li><strong>Pareto Efficiency:</strong> Collaborative teams achieve >82% Pareto-optimal resource trades when communication protocols are structured.</li>
+    <div class="problem-card good">
+      <div class="problem-icon">🧭</div>
+      <div class="problem-title">MultiAgentBench's Solution</div>
+      <ul class="problem-list">
+        <li>Turn-level milestone detection logs hits AND contributing agents</li>
+        <li>Mixed motives: mutual-goal AND conflicting-goal scenarios</li>
+        <li>Milestone KPI measures each agent's share of the work</li>
+        <li>Communication and planning each get a 5-point LLM-judged score</li>
+        <li>Task scores via rule-based checkers or LLM rubrics — per scenario</li>
       </ul>
     </div>
   </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Analogy — Sports Analytics</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">A box score that only records the final result tells you who won, not how. Real analytics added passes, assists, and turnovers — and suddenly you could tell a coordinated win from a lucky one. MultiAgentBench is the stat sheet for agent teams: <span class="highlight">goals AND passes</span>, milestones AND coordination.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);">
+      <span style="color:var(--red-text);">old scoreboard:</span> &nbsp;final_score = 1&nbsp;…0 &nbsp;<span style="color:var(--text3);">(was it teamwork or luck?)</span><br>
+      <span style="color:var(--green-text);">new scoreboard:</span> &nbsp;milestones 4/4 · assists A=2 B=2 · passes 12 · turnovers 1
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FRAMEWORK -->
+<section id="framework">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">MARBLE — a Coordination <em>Backbone</em></h2>
+  <p class="section-desc">The benchmark runs on MARBLE: Multi-agent cooRdination Backbone with LLM Engine. Planners strategize, actors execute, and every turn flows through shared state.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">The Name, Decoded</div>
+    <div style="font-family:var(--mono);font-size:clamp(13px,2.4vw,18px);color:var(--text2);line-height:2;text-align:center;padding:0.5rem 0;">
+      <span style="color:var(--amber-text);font-weight:600;">M</span>ulti-agent coo<span style="color:var(--amber-text);font-weight:600;">R</span>dination <span style="color:var(--amber-text);font-weight:600;">B</span>ackbone with <span style="color:var(--amber-text);font-weight:600;">L</span>LM <span style="color:var(--amber-text);font-weight:600;">E</span>ngine
+    </div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-top:0.5rem;">MARBLE is both the benchmark harness and a reusable framework: it initializes agents with personas and roles, wires them into a communication graph, runs the environment turn by turn, and logs everything the metrics need.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:1.5rem;">
+    <div class="card-sm"><div class="card-label">Coordination Engine</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Orchestrates execution: initializes agents, tasks, and relationships via a Configuration Module, then keeps every module in sync.</div></div>
+    <div class="card-sm"><div class="card-label">Agent Graph</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">A structured graph of who may talk to whom — agents can only communicate through explicitly defined relationships.</div></div>
+    <div class="card-sm"><div class="card-label">Cognitive Module</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Maintains each agent's persona, inter-agent relationships, and reasoning strategy as the session evolves.</div></div>
+    <div class="card-sm"><div class="card-label">Environment Module</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">The simulated world: agents act through a function-calling interface, choosing an action a<sub>t</sub> ∈ F at each time step t.</div></div>
+    <div class="card-sm"><div class="card-label">Communication</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Structured dialogue between agents — negotiating roles, coordinating plans, balancing collaboration with competition.</div></div>
+    <div class="card-sm"><div class="card-label">Action + Memory</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Executes plans via function calls; outcomes feed straight back into individual and shared memory stores.</div></div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Two Kinds of Agent</div>
+      <ul class="problem-list" style="margin-top:6px;">
+        <li><strong>Planners</strong> devise task inputs, strategize, and manage task allocation</li>
+        <li><strong>Actors</strong> execute: they interact with the environment and other agents through available tools</li>
+        <li>How planners and actors are wired together defines the coordination protocol</li>
+      </ul>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:0.8rem 1rem;margin-top:1rem;font-family:var(--mono);font-size:11px;line-height:1.9;color:var(--text2);">
+        per turn t: agent → action a<sub>t</sub> ∈ F<br>
+        → environment updates shared state<br>
+        → observation → memory → next agent<br>
+        <span style="color:var(--text3);">(max iterations: 5 in research, 20 in Minecraft)</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Four Coordination Protocols</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+        <div class="card-sm" style="padding:0.7rem;"><div style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--amber-text);">star</div><div style="font-size:11px;color:var(--text2);line-height:1.5;">One central planner assigns tasks to all actors — strong oversight, limited scalability.</div></div>
+        <div class="card-sm" style="padding:0.7rem;"><div style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--blue-text);">tree</div><div style="font-size:11px;color:var(--text2);line-height:1.5;">Hierarchical: a top planner delegates to sub-planners, which coordinate actors.</div></div>
+        <div class="card-sm" style="padding:0.7rem;"><div style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--teal-text);">graph-mesh</div><div style="font-size:11px;color:var(--text2);line-height:1.5;">Interconnected actors communicate directly — concurrent, distributed decisions.</div></div>
+        <div class="card-sm" style="padding:0.7rem;"><div style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--purple-text);">chain</div><div style="font-size:11px;color:var(--text2);line-height:1.5;">Sequential handoff: each agent passes its decision to the next — good for dependent steps.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Mixed-Motive Mission: The Last Egg</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Two agents, one kitchen, one last egg. Advance the mission turn by turn and watch what a shared-resource world does to "cooperation" — and how MARBLE-style logging turns it into milestones, conflicts, and per-agent credit.</p>
+    <div id="mmDemo"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:10px;">Illustrative simulation of MARBLE's turn-based loop and shared-resource bargaining — not real paper transcripts.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- MISSIONS -->
+<section id="missions">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Six <em>Missions</em>, Two Motives</h2>
+  <p class="section-desc">Four task-oriented scenarios share a mutual goal. Two social-simulation scenarios set agents against each other. Every task ships with 100 test cases, built from adapted prior work plus LLM-generated tasks verified by humans.</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🔬 Research Co-Authoring</div><div style="margin-bottom:6px;"><span class="pill pill-green">mutual goal</span> <span class="pill pill-amber">LLM rubric</span></div><div class="notice-text">Agents with complementary research profiles co-author a proposal in the structured 5-question (5q) format, using tools like <span class="code-inline">get_related_papers</span>.</div></div>
+    <div class="notice-card"><div class="notice-title">⛏️ Minecraft Building</div><div style="margin-bottom:6px;"><span class="pill pill-green">mutual goal</span> <span class="pill pill-blue">rule-based</span></div><div class="notice-text">Agents collaboratively construct structures in a shared world — scored by block hit rate, mapped to a 5-point scale.</div></div>
+    <div class="notice-card"><div class="notice-title">🗄️ Database Error Analysis</div><div style="margin-bottom:6px;"><span class="pill pill-green">mutual goal</span> <span class="pill pill-blue">rule-based</span></div><div class="notice-text">Exactly five agents, each specializing in a distinct root cause, debug a live PostgreSQL running in Docker — talking over a graph structure while querying system views.</div></div>
+    <div class="notice-card"><div class="notice-title">💻 Coding Challenges</div><div style="margin-bottom:6px;"><span class="pill pill-green">mutual goal</span> <span class="pill pill-blue">rule-based</span></div><div class="notice-text">Agents with complementary skills — debugging, execution, test-writing — develop a complete, modular software solution.</div></div>
+    <div class="notice-card"><div class="notice-title">🐺 Werewolf</div><div style="margin-bottom:6px;"><span class="pill pill-red">conflicting goals</span> <span class="pill pill-blue">rule-based</span></div><div class="notice-text">The social-deduction game: hidden roles, deception, and voting. Score = surviving villagers − surviving werewolves. Roles include seer, witch, guard, and sheriff.</div></div>
+    <div class="notice-card"><div class="notice-title">🤝 Bargaining</div><div style="margin-bottom:6px;"><span class="pill pill-red">conflicting goals</span> <span class="pill pill-amber">LLM rubric</span></div><div class="notice-text">Negotiations over shared resources: agents strive to maximize individual gains through strategic concessions or alliances.</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">The Scenario Suite at a Glance</div>
+    <table class="comp-table">
+      <thead><tr><th>Scenario</th><th>Motive</th><th>Team Setup</th><th>Task Score</th></tr></thead>
+      <tbody>
+        <tr><td>Research</td><td>🤝 Collaborate</td><td>Complementary research profiles (1–7 agents tested)</td><td>LLM scoring rubric</td></tr>
+        <tr><td>Minecraft</td><td>🤝 Collaborate</td><td>Shared-world builders</td><td>Block hit rate</td></tr>
+        <tr><td>Database</td><td>🤝 Collaborate</td><td>Exactly 5 root-cause specialists</td><td>Rule-based accuracy</td></tr>
+        <tr><td>Coding</td><td>🤝 Collaborate</td><td>Complementary coding skills</td><td>Rule-based</td></tr>
+        <tr><td>Werewolf</td><td>⚔️ Compete</td><td>Villagers vs werewolves, hidden roles</td><td>Survivor margin</td></tr>
+        <tr><td>Bargaining</td><td>⚔️ Compete</td><td>Negotiators over shared resources</td><td>LLM scoring rubric</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Scenarios mix two provenance routes: tasks adapted from prior work or datasets (database, research) and LLM-generated tasks refined with human verification (Werewolf, Bargaining).</p>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Milestone Anatomy</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Missions are decomposed into flexible milestones — and each milestone is credited to the agents who contributed. Click through the research mission's milestone graph to see the sub-goals, the contributors, and the checker rule.</p>
+    <div id="maDemo"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:10px;">Simplified from the paper's research scenario. In MARBLE, an LLM-based detector monitors every iteration and logs which milestones were achieved and by whom — that log becomes the KPI.</p>
+  </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- SECTION 4: QUIZ -->
-<section id="quiz">
-  <div class="section-tag">Test Yourself</div>
-  <h2 class="section-title">MultiAgentBench <em>Quiz</em></h2>
-  <p class="section-desc">Assess your understanding of competitive game theory and collaborative benchmarking for LLM agents.</p>
+<!-- METRICS -->
+<section id="metrics">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Scoring <em>How</em>, Not Just What</h2>
+  <p class="section-desc">Two score families: task completion (milestone KPI + task score) and coordination (communication + planning). Together they grade the mission AND the teamwork.</p>
 
-  <div id="quizContainer">
-    <!-- Quiz injected by JS -->
+  <div class="formula-card">
+    <div class="formula-main">KPI<sub>overall</sub> = (1/N) Σ<sub>j</sub> KPI<sub>j</sub> = (1/(N·M)) Σ<sub>j</sub> n<sub>j</sub></div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">N</div><div class="fp-name">Agents</div><div class="fp-desc">Number of agents in the session — e.g., exactly 5 in database analysis; 1, 3, 5, 7 tested in research.</div></div>
+      <div class="formula-piece"><div class="fp-sym">M</div><div class="fp-name">Milestones</div><div class="fp-desc">Total milestones the task is segmented into — flexible, e.g., "five key queries (5q) drafted" or a previous 5q enhanced.</div></div>
+      <div class="formula-piece"><div class="fp-sym">n_j</div><div class="fp-name">Contributions</div><div class="fp-desc">How many milestones agent j actually contributed to — logged turn by turn by the LLM detector.</div></div>
+      <div class="formula-piece"><div class="fp-sym">KPI_j</div><div class="fp-name">Share of Work</div><div class="fp-desc">n_j / M — one agent's slice of the mission. The overall KPI averages it across the team.</div></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:1.5rem;">
+    <div class="card-sm"><div class="card-label">🎯 Milestone KPI</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Credit assignment from the milestone log: who hit what, and when. Averages each agent's contribution ratio.</div></div>
+    <div class="card-sm"><div class="card-label">📝 Task Score (TS)</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Final output quality — LLM rubric for research and bargaining; rule-based checkers for Minecraft, database, coding, Werewolf.</div></div>
+    <div class="card-sm"><div class="card-label">💬 Communication (C)</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">LLM-judged on a 5-point scale from profiles + aggregated chat. If no communication occurs, C = 0 by rule.</div></div>
+    <div class="card-sm"><div class="card-label">🗺️ Planning (P)</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">LLM-judged on a 5-point scale: organizing tasks, maintaining roles, adapting strategy from plan logs.</div></div>
+    <div class="card-sm"><div class="card-label">🤝 Coordination (CS)</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">The headline collaboration number: the average of C and P. The paper also ran human evaluation to check alignment with these metrics.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Why Milestones Instead of Checkpoints</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Milestones are deliberately <span class="highlight">broadly defined</span>, not rigid checkpoints: "completing five key queries (5q) for the research proposal" counts — and so does <em>enhancing</em> an earlier 5q set. A language model watches each MARBLE iteration, decides whether m<sub>1</sub>, m<sub>2</sub>, … have been achieved, and logs the contributing agents — combining human- or LLM-generated outlines with dynamic, execution-based assessment.</p>
   </div>
 </section>
 
-</main>
+<div class="divider"></div>
+<!-- FINDINGS -->
+<section id="findings">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">What the <em>Experiments</em> Found</h2>
+  <p class="section-desc">Five models — Llama-3.1-8B, Llama-3.1-70B, Llama-3.3-70B, gpt-3.5-turbo, gpt-4o-mini — ran the full benchmark. The surprises were not about raw task scores.</p>
 
-<footer>
-  <div class="footer-links">
-    <a href="../index.html" class="footer-link">← Homepage</a>
-    <a href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html" class="footer-link">CAMEL Guide</a>
-    <a href="./MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html" class="footer-link">MetaGPT Guide</a>
-    <a href="./Magentic_One_A_Generalist_Multi_Agent_System.html" class="footer-link">Magentic-One Guide</a>
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">GPT-4O-MINI</div>
+      <div class="result-score" style="color:var(--amber-text);">84.13</div>
+      <div class="result-label">Research TS — highest single-scenario score; best average TS overall</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">Not the largest model — model ability still drives task completion</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">MINECRAFT TS CEILING</div>
+      <div class="result-score" style="color:var(--blue-text);">33.60</div>
+      <div class="result-label">best Task Score ANY model achieved — collaborative building is brutally hard</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:34%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">5-point block-hit-rate scale (×20)</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">WEREWOLF TS CEILING</div>
+      <div class="result-score" style="color:var(--teal-text);">36.33</div>
+      <div class="result-label">best TS any model — by Meta-Llama-3.3-70B; deception stays hard</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:36%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">Social deduction punishes almost every team</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">COGNITIVE PLANNING</div>
+      <div class="result-score" style="color:var(--purple-text);">+3%</div>
+      <div class="result-label">milestone achievement rate from cognitive self-evolving planning</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:46%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px">Plus the best Coordination Score of any strategy</div>
+    </div>
   </div>
-  <div style="font-family:var(--mono);font-size:12px;color:var(--text3);">
-    PaperMap · Created by Adil Shamim
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Average Task Score (TS) per Scenario — Real Numbers, Table 1 of the Paper</div>
+    <table class="comp-table">
+      <thead><tr><th>Model</th><th>Research</th><th>Minecraft</th><th>Database</th><th>Coding</th><th>Bargaining</th><th>Werewolf</th></tr></thead>
+      <tbody>
+        <tr><td>Meta-Llama-3.1-8B</td><td>80.87</td><td>6.12</td><td>34.00</td><td>59.90</td><td>72.81</td><td>12.64</td></tr>
+        <tr><td>Meta-Llama-3.1-70B</td><td>80.80</td><td>0.21</td><td class="comp-best">53.00</td><td>62.10</td><td>72.13</td><td>19.82</td></tr>
+        <tr><td>Meta-Llama-3.3-70B</td><td>80.00</td><td>9.15</td><td>28.50</td><td>56.60</td><td>73.15</td><td class="comp-best">36.33</td></tr>
+        <tr><td>gpt-3.5-turbo</td><td>70.20</td><td>5.05</td><td>45.00</td><td>55.50</td><td>71.67</td><td>15.69</td></tr>
+        <tr><td class="comp-best">gpt-4o-mini</td><td class="comp-best">84.13</td><td class="comp-best">33.60</td><td>45.00</td><td class="comp-best">65.10</td><td class="comp-best">74.47</td><td>14.06</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">For Minecraft, Database, Coding, Bargaining, and Werewolf the paper reports its 5-point scales multiplied by 20; research TS comes from an LLM rubric. gpt-4o-mini takes the highest average TS — and in three scenario pairs the same model tops TS and CS, making CS a good indicator of task success.</p>
+  </div>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🕸️ Graph topology wins</div><div class="notice-text">In the research scenario, the graph protocol earned the best task performance, planning efficiency, and token usage; star matched it on task score. Tree was worst — highest tokens, lowest TS and CS.</div></div>
+    <div class="notice-card"><div class="notice-title">👥 The group-discussion paradox</div><div class="notice-text">Counterintuitive: group discussion scored the worst across all metrics — an overly large planning group hinders effectiveness, like oversized real-world organizations.</div></div>
+    <div class="notice-card"><div class="notice-title">🧠 Self-evolving planners</div><div class="notice-text">Cognitive evolving planning (Reflexion-style feedback) delivered the best CS with a task score comparable to CoT — and +3% milestone achievement.</div></div>
+    <div class="notice-card"><div class="notice-title">👥 More agents ≠ more KPI</div><div class="notice-text">Scaling the research team 1 → 3 → 5 → 7 agents lowered the overall KPI: coordination complexity grows faster than the work. CS jumped most from 1 to 3 agents.</div></div>
+    <div class="notice-card"><div class="notice-title">⏱️ Iteration sweet spot</div><div class="notice-text">In Minecraft, task and coordination scores climbed from 1 to 7 max iterations, then dropped sharply at 10 — coordination flatlined beyond 7.</div></div>
+    <div class="notice-card"><div class="notice-title">🎭 Emergent "aha-moments"</div><div class="notice-text">Roles evolved mid-game: a Seer turned leader, a Witch moved from hoarding to risk-taking — and one Seer identified the werewolf on night one but never said it publicly, dooming the villagers.</div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Coordination Strategy Lab</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a planning strategy for the team, run the mission, and compare milestone rate, communication, and planning scores. The ordering matches the paper's findings — the exact bar heights are illustrative.</p>
+    <div id="csDemo"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Mixed-Motive</em> Evaluation</h2>
+  <p class="section-desc">MultiAgentBench made coordination measurable and competition benchmarkable. Code and datasets are public — the field got shared infrastructure, not just a leaderboard.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🎭 Mixed-motive standard</div><div class="notice-text">One benchmark covering collaboration AND competition — cooperative teamwork and adversarial self-interest scored on the same scale.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Milestone-based KPIs</div><div class="notice-text">Per-agent credit assignment: which milestones were hit, by whom, at which turn. Coordination failures became visible, not hypothetical.</div></div>
+    <div class="notice-card"><div class="notice-title">🏗️ MARBLE infrastructure</div><div class="notice-text">An open-source coordination backbone — 4 topologies, 4 planning strategies, 6 environments — reusable well beyond the paper's experiments.</div></div>
+    <div class="notice-card"><div class="notice-title">💡 Strategy insights</div><div class="notice-text">The group-discussion paradox and cognitive-planning gains give practitioners evidence for how to structure agent teams, not just whether to build them.</div></div>
+    <div class="notice-card"><div class="notice-title">♟️ Game theory meets LLMs</div><div class="notice-text">Bargaining and Werewolf turn negotiation, deception, and alliance-formation into reproducible evaluations — a bridge from MAS research to LLM agents.</div></div>
+    <div class="notice-card"><div class="notice-title">🔭 Emergent-behavior observatory</div><div class="notice-text">Turn-level logs let researchers study "aha-moments": role shifts, trust polarization, and false consensus — with data instead of anecdotes.</div></div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;border-color:rgba(239,68,68,0.2);">
+    <div class="card-label" style="color:var(--red-text);">What It Did NOT Solve</div>
+    <ul class="problem-list" style="margin-top:6px;">
+      <li><strong>Coverage:</strong> five models, no DeepSeek family; scenarios lack open-world settings and richer social cognition</li>
+      <li><strong>Competition depth:</strong> no multi-party negotiations, repeated strategic play, or stochastic elements yet</li>
+      <li><strong>Finer ablations:</strong> memory mechanisms (long-term, short-term, shared) and alternative workflows left untested</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Grade the <em>Journey</em>, Not the Destination</h2>
+  <p class="section-desc">Binary task success tells you who finished; milestone-based scoring tells you how. MultiAgentBench's KPI framework assigns credit at intermediate checkpoints — so a team that got 80% of the way and a team that failed instantly stop looking identical. On hard scenarios (Minecraft 33.60, Werewolf 36.33), the milestone view is the only informative one.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">📏</div>
+      <div class="problem-title">What Milestones Buy</div>
+      <ul class="problem-list">
+        <li>Six scenarios: research, Minecraft, database, coding (mutual goal) + Werewolf, bargaining (conflicting goal) — 100 cases each</li>
+        <li>MARBLE backbone: planners vs actors, 4 topologies, 4 planning strategies — a controllable experiment grid</li>
+        <li>Milestone KPI for credit assignment + TS, plus 5-point Communication / Planning / Coordination scores</li>
+        <li>Turn-level logs expose emergent behavior — Seers turning leaders, Witches taking calculated risks</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">📉</div>
+      <div class="problem-title">The Strategy Ranking Nobody Expected</div>
+      <ul class="problem-list">
+        <li><span class="highlight">Group discussion scored worst across all metrics</span> — the default "let them talk it out" loses</li>
+        <li>Cognitive self-evolving planning won communication scores and lifted milestone achievement +3%</li>
+        <li>gpt-4o-mini topped research task score at 84.13 — but Minecraft (33.60) and Werewolf (36.33) stay brutally hard</li>
+        <li>Emergence has a cost: a Seer who never shared the werewolf's identity — information hoarding is emergent too</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Credit Ladder</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">One cooperative episode, graded two ways. Watch agents contribute turns; watch milestones unlock and credit land on the contributor. Then flip to binary scoring and watch all the signal vanish — the exact information milestone KPIs exist to preserve.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <button class="btn-primary" id="mbRun" type="button" style="font-size:12.5px;padding:8px 16px;">▶ Run episode</button>
+        <button class="btn-outline" id="mbBinary" type="button" style="font-size:12.5px;padding:8px 16px;">Toggle binary grading</button>
+      </div>
+      <div id="mbTimeline" style="display:grid;gap:8px;margin-bottom:12px;"></div>
+      <div id="mbScore"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Collaboration quality is measurable — and mostly bad</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The framework's finding cuts both ways: yes, you can now score coordination separately from task success; and no, current multi-agent systems do not coordinate well — group discussion, the field's default strategy, is its measured worst. The design grid it sits in comes straight from the <a href="./Multi_Agent_Collaboration_Mechanisms_A_Survey_of_LLMs.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">collaboration-mechanisms survey</a>; the competitive scenarios echo <a href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">CAMEL</a>'s role-locked dynamics; and the planning-vs-acting split is <a href="./Magentic_One_A_Generalist_Multi_Agent_System.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">Magentic-One</a>'s orchestrator pattern, factorized into an axis.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🪄 Emergent, and logged</div><div class="notice-text">Turn-level logs caught a Seer converting the village leader and a Witch saving her inspection potion for a critical vote — strategy nobody prompted, plus the hoarding failure nobody wanted.</div></div>
+    <div class="notice-card"><div class="notice-title">🗣️ Communication as a scored axis</div><div class="notice-text">Separate 5-point C/P/C scores mean a team can win the task while failing to communicate — and the benchmark can say so, which binary scores never could.</div></div>
+    <div class="notice-card"><div class="notice-title">🐺 Why Werewolf stays hard</div><div class="notice-text">Hidden roles require modeling other agents' beliefs <em>and</em> deception — Theory-of-Mind under adversarial uncertainty. The survey calls this model-based strategy; nobody implements it well yet.</div></div>
+    <div class="notice-card"><div class="notice-title">🏅 Small-model surprise</div><div class="notice-text">gpt-4o-mini taking the top research task score (84.13) is the benchmark's quiet warning: coordination mechanics can matter more than raw model strength — the survey's thesis, quantified.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the MultiAgentBench paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Six scenarios: four mutual-goal (research, Minecraft, database, coding) plus two conflicting-goal (Werewolf, bargaining) — 100 test cases each.</div>
+    <div class="card-sm">✅ MARBLE = Multi-agent cooRdination Backbone with LLM Engine — planners vs actors, 4 topologies (star/tree/graph/chain), 4 planning strategies.</div>
+    <div class="card-sm">✅ Metrics go beyond task success: milestone KPI for credit assignment, TS, and 5-point Communication, Planning, and Coordination scores.</div>
+    <div class="card-sm">✅ gpt-4o-mini averaged the highest Task Score (84.13 research TS); Minecraft (33.60) and Werewolf (36.33) remain brutally hard.</div>
+    <div class="card-sm">✅ Group discussion scored worst across all metrics; cognitive self-evolving planning won CS and lifted milestone achievement by 3%.</div>
+    <div class="card-sm">✅ Turn-level logs exposed emergent behavior — Seers turning leaders, Witches taking risks, and a Seer who never shared the werewolf's identity.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2503.01935" target="_blank" rel="noopener noreferrer">"MultiAgentBench: Evaluating the Collaboration and Competition of LLM agents"</a> (Zhu et al., 2025)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2503.01935" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Multi_Agent_Collaboration_Mechanisms_A_Survey_of_LLMs.html">Multi-Agent Collaboration Survey Guide</a>
+    <a class="footer-link" href="./MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">MetaGPT Guide</a>
+    <a class="footer-link" href="./AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
   </div>
 </footer>
 
 <script>
-const NEGOTIATION_STEPS = [
-  { role: 'buyer', text: 'Buyer: "Hello! I am interested in purchasing this GPU. Given market trends, I can offer $65."' },
-  { role: 'seller', text: 'Seller: "Thank you for the offer. However, this is an enterprise-grade card in pristine condition. My counteroffer is $95."' },
-  { role: 'buyer', text: 'Buyer: "I understand the condition is good, but competitor listings are available at $75. I am willing to meet you at $78 cash today."' },
-  { role: 'seller', text: 'Seller: "I can appreciate that comparison. I can come down to $82 if we close the transaction immediately."' },
-  { role: 'buyer', text: 'Buyer: "Deal accepted at $82. Both agents achieved positive economic surplus! (Buyer saved $18, Seller gained $22 above floor)."' }
-];
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
 
-let negIdx = 0;
-function renderNegotiation() {
-  const box = document.getElementById('negotiationLog');
-  box.innerHTML = '';
-  NEGOTIATION_STEPS.slice(0, negIdx + 1).forEach(step => {
-    const d = document.createElement('div');
-    d.className = `agent-bubble ${step.role === 'buyer' ? 'bubble-buyer' : 'bubble-seller'}`;
-    d.textContent = step.text;
-    box.appendChild(d);
-  });
-  box.scrollTop = box.scrollHeight;
-}
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
-document.getElementById('dealStepBtn').addEventListener('click', () => {
-  if (negIdx < NEGOTIATION_STEPS.length - 1) {
-    negIdx++;
-  } else {
-    negIdx = 0;
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','framework','missions','metrics','findings','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === DEMO 1: MIXED-MOTIVE MISSION — THE LAST EGG ===
+(function(){
+  const root=document.getElementById('mmDemo');
+  if(!root)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const KITCHEN=[['tomato','🍅'],['pasta','🍝'],['cheese','🧀'],['flour','🌾'],['sugar','🍬'],['egg','🥚']];
+  const MILES=[
+    {t:'Sauce base ready',who:'A',rule:"kitchen.has('tomato') && kitchen.has('cheese')"},
+    {t:'Dough mixed',who:'B',rule:"kitchen.has('flour') && kitchen.has('sugar')"},
+    {t:'Pasta plated',who:'A',rule:"dish('pasta') == plated"},
+    {t:'Cake baked',who:'B',rule:"oven('cake') == ready"}
+  ];
+  const TURNS=[
+    {a:{act:'📋 reads the mission brief',say:'"Tomato + cheese are mine; flour and sugar are yours — deal?"'},b:{act:'📋 reads the mission brief',say:'"Deal. Heads-up: I need the last egg for my cake."'}},
+    {a:{act:'🍅 grabs tomato',get:'tomato',da:25},b:{act:'🌾 grabs flour',get:'flour',db:25}},
+    {a:{act:'🧀 grabs cheese',get:'cheese',da:50,m:0},b:{act:'🍬 grabs sugar',get:'sugar'}},
+    {a:{act:'🍲 boils the pasta',da:75},b:{act:'🥣 mixes the dough',m:1,db:50}},
+    {a:{act:'🥚 grabs the LAST egg',get:'egg',conflict:true,say:'"…this egg would enrich my pasta."'},b:{act:'⚠️ notices the egg is gone',conflict:true,say:'"Hey — we agreed the egg was mine!"'}},
+    {a:{act:'🤝 hands the egg to Chef B',give:'egg',resolve:true},b:{act:'🥚 receives the egg',get:'egg',db:75,resolve:true}},
+    {a:{act:'🍝 plates the pasta',m:2,da:100},b:{act:'🎂 bakes the cake',m:3,db:100}},
+    {a:{act:'✨ final garnish'},b:{act:'✨ dusts with sugar'}},
+    {final:true}
+  ];
+  let step,dishA,dishB,hits,owner,conflict,chat,busy,over;
+  function reset(){
+    step=0;dishA=0;dishB=0;busy=false;over=false;
+    hits=[false,false,false,false];conflict=0; // 0 none, 1 active, 2 resolved
+    owner={};chat=[];
+    renderShell();refresh();
   }
-  renderNegotiation();
-});
-
-renderNegotiation();
-
-// Quiz Data
-const QUIZ_ITEMS = [
-  {
-    q: 'What makes MultiAgentBench distinct from conventional benchmarks like MMLU or GSM8k?',
-    options: [
-      'It tests multiple choice questions on chemistry',
-      'It evaluates agents in dynamic multi-party environments with conflicting game-theoretic incentives and strategic interactions',
-      'It only runs on 8-bit quantized models',
-      'It measures token generation speed'
-    ],
-    correct: 1,
-    explain: 'MultiAgentBench measures social, competitive, and cooperative capabilities (negotiation, bluffing, coordination) in interactive multi-agent games.'
-  },
-  {
-    q: 'What frequent strategic error do smaller or open models commit in price bargaining tasks?',
-    options: [
-      'They refuse to speak English',
-      'They inadvertently leak their private reservation limit in early turns, surrendering all bargaining power',
-      'They crash the web browser',
-      'They demand payment in gold coins'
-    ],
-    correct: 1,
-    explain: 'Open models often suffer from unintended information leakage, stating their secret ceiling or floor in early dialogue rounds.'
-  },
-  {
-    q: 'What is a Pareto-optimal outcome in a multi-agent collaborative exchange?',
-    options: [
-      'An outcome where one agent takes all resources and the other gets zero',
-      'An allocation where no agent can be made better off without making at least one other agent worse off',
-      'An outcome where all agents refuse to communicate',
-      'A coin toss'
-    ],
-    correct: 1,
-    explain: 'Pareto optimality represents maximum collective efficiency where all mutual gains from trade or cooperation have been fully realized.'
-  },
-  {
-    q: 'Why are games of social deduction (such as Werewolf / Mafia) effective benchmark environments for multi-agent LLMs?',
-    options: [
-      'They test high-precision floating point math',
-      'They stress-test strategic deception, private information concealment, consensus voting, and fallacy detection under asymmetric knowledge',
-      'They are easy to solve with simple regex',
-      'They do not require API calls'
-    ],
-    correct: 1,
-    explain: 'Social deduction games force models to reason about hidden roles, assess credibility, coordinate collective voting, and craft plausible alibis.'
-  },
-  {
-    q: 'How does competitive pressure impact multi-agent conversation compared to pure cooperative tasks?',
-    options: [
-      'It causes models to speak fewer words',
-      'It induces adversarial prompting, strategic omission of facts, and tests resistance to being misled',
-      'It disables temperature sampling',
-      'It prevents agents from executing code'
-    ],
-    correct: 1,
-    explain: 'Competition introduces strategic deception, counter-arguments, and game-theoretic payoffs that test robustness against manipulation.'
+  function renderShell(){
+    root.innerHTML=`
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div style="font-family:var(--mono);font-size:13px;font-weight:600;">🍳 Mission: Cook-Off — Shared Kitchen</div>
+        <div><span class="pill pill-amber">mixed motive</span> <span class="pill pill-blue">shared resources</span></div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-top:6px;">Chef A must finish <strong>Tomato Pasta</strong> · Chef B must finish an <strong>Egg Cake</strong> — each scores for their own dish.</div>
+    </div>
+    <div id="mmKitchen" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;"></div>
+    <div class="two-col" style="margin-bottom:10px;">
+      <div class="card-sm" id="mmPanelA" style="border-color:rgba(59,130,246,0.3);"></div>
+      <div class="card-sm" id="mmPanelB" style="border-color:rgba(20,184,166,0.3);"></div>
+    </div>
+    <div id="mmChat" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px;height:120px;overflow-y:auto;font-family:var(--mono);font-size:12px;line-height:1.7;margin-bottom:10px;"></div>
+    <div id="mmMiles" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px;margin-bottom:10px;"></div>
+    <div id="mmBanner"></div>
+    <div id="mmScore"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;">
+      <button class="btn-primary" id="mmNext" type="button" style="font-size:13px;padding:8px 18px;">Next Turn ▸</button>
+      <button class="btn-outline" id="mmReset" type="button" style="font-size:13px;padding:8px 18px;">Reset ⟲</button>
+      <div id="mmTurnLabel" style="font-family:var(--mono);font-size:12px;color:var(--text3);"></div>
+    </div>`;
+    document.getElementById('mmNext').addEventListener('click',next);
+    document.getElementById('mmReset').addEventListener('click',reset);
   }
-];
+  function chip(item,own){
+    const col=own==='A'?'var(--blue)':own==='B'?'var(--teal)':'var(--text3)';
+    const hot=(item[0]==='egg'&&conflict===1)?'border-color:var(--amber);box-shadow:0 0 0 2px rgba(245,158,11,0.18);':'';
+    return `<span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;background:#fff;border:1px solid ${col};color:${col};${hot}">${item[1]} ${item[0]}${own?' · '+own:''}</span>`;
+  }
+  function panel(side){
+    const A=side==='A';
+    const dish=A?dishA:dishB,col=A?'var(--blue)':'var(--teal)';
+    const act=A?mmActA:mmActB,inv=A?mmInvA:mmInvB;
+    return `<div style="font-family:var(--mono);font-size:12px;font-weight:600;color:${col};margin-bottom:6px;">CHEF ${side} · ${A?'Pasta Chef':'Baker'}</div>
+    <div id="mmAct${side}" style="font-size:12px;color:var(--text2);min-height:20px;margin-bottom:6px;">${act}</div>
+    <div id="mmInv${side}" style="margin-bottom:8px;">${inv.map(i=>chip(KITCHEN.find(k=>k[0]===i),side)).join('')||'<span style="font-size:11px;color:var(--text3);">no items yet</span>'}</div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">DISH · ${A?'TOMATO PASTA':'EGG CAKE'} ${dish}%</div>
+    <div style="height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:3px;"><div style="height:100%;width:${dish}%;background:${col};border-radius:3px;transition:width .4s ease;"></div></div>`;
+  }
+  let mmActA='',mmActB='',mmInvA=[],mmInvB=[];
+  function refresh(){
+    document.getElementById('mmKitchen').innerHTML=KITCHEN.map(k=>chip(k,owner[k[0]])).join('');
+    document.getElementById('mmPanelA').innerHTML=panel('A');
+    document.getElementById('mmPanelB').innerHTML=panel('B');
+    document.getElementById('mmMiles').innerHTML=MILES.map((m,i)=>`
+      <div class="card-sm" style="padding:8px 10px;display:flex;align-items:center;gap:8px;${hits[i]?'border-color:rgba(34,197,94,0.35);':''}">
+        <span style="font-family:var(--mono);color:${hits[i]?'var(--green)':'var(--text3)'};">${hits[i]?'☑':'☐'}</span>
+        <div style="flex:1;font-size:12px;color:${hits[i]?'var(--text)':'var(--text2)'};">${m.t}</div>
+        <span class="pill ${m.who==='A'?'pill-blue':'pill-green'}" style="font-size:10px;">chef ${m.who}</span>
+      </div>`).join('');
+    document.getElementById('mmBanner').innerHTML=conflict===1?`
+      <div style="background:var(--amber-dim);border:1px solid rgba(245,158,11,0.35);border-radius:var(--radius);padding:10px 12px;margin-bottom:10px;font-size:13px;color:var(--amber-text);font-weight:600;">⚡ CONFLICT — both chefs need the last egg. One grabbed it.</div>`
+      :conflict===2?`
+      <div style="background:var(--green-dim);border:1px solid rgba(34,197,94,0.35);border-radius:var(--radius);padding:10px 12px;margin-bottom:10px;font-size:13px;color:var(--green-text);font-weight:600;">✓ Conflict resolved through negotiation — the egg goes to the cake.</div>`:'';
+    const cl=document.getElementById('mmChat');
+    cl.innerHTML=chat.map(c=>`<div><span style="color:${c.f==='A'?'var(--blue)':'var(--teal)'};font-weight:600;">chef ${c.f}:</span> <span style="color:var(--text2);">${c.x}</span></div>`).join('')||'<span style="color:var(--text3);">no messages yet…</span>';
+    cl.scrollTop=cl.scrollHeight;
+    const lbl=document.getElementById('mmTurnLabel');
+    lbl.textContent=over?'mission complete':'turn '+step+' / '+(TURNS.length-1);
+    document.getElementById('mmNext').textContent=over?'Done ✓':(step===TURNS.length-1?'Show Result ▸':'Next Turn ▸');
+    document.getElementById('mmNext').disabled=over;
+    document.getElementById('mmNext').style.opacity=over?0.5:1;
+  }
+  function applySide(side,d){
+    if(!d)return;
+    if(d.get){owner[d.get]=side;(side==='A'?mmInvA:mmInvB).push(d.get);}
+    if(d.give){owner[d.give]='B';mmInvB.push(d.give);mmInvA=mmInvA.filter(x=>x!==d.give);}
+    if(side==='A'&&d.da!=null)dishA=d.da;
+    if(side==='B'&&d.db!=null)dishB=d.db;
+    if(d.m!=null)hits[d.m]=true;
+    if(d.conflict)conflict=1;
+    if(d.resolve)conflict=2;
+    if(d.say)chat.push({f:side,x:d.say});
+    if(side==='A')mmActA=d.act;else mmActB=d.act;
+    refresh();
+  }
+  function revealScore(){
+    over=true;
+    const na=hits.filter((h,i)=>h&&MILES[i].who==='A').length;
+    const nb=hits.filter((h,i)=>h&&MILES[i].who==='B').length;
+    document.getElementById('mmScore').innerHTML=`
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px;">
+      <div style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text3);margin-bottom:10px;">FINAL SCOREBOARD</div>
+      ${[['Chef A · Tomato Pasta',dishA,'var(--blue)'],['Chef B · Egg Cake',dishB,'var(--teal)']].map(r=>`
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:170px;">${r[0]}</div>
+        <div style="flex:1;height:16px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${r[1]}%;background:${r[2]};border-radius:4px;${RM?'':'animation:scaleIn .8s ease;'}transform-origin:left;"></div></div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:34px;">${r[1]}%</div>
+      </div>`).join('')}
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2);margin-top:8px;">milestones: ${hits.filter(Boolean).length}/4 · KPI<sub>A</sub>=${na}/4 · KPI<sub>B</sub>=${nb}/4 · conflicts resolved: 1/1</div>
+    </div>
+    <div style="background:var(--green-dim);border:1px solid rgba(34,197,94,0.35);border-radius:var(--radius);padding:12px;margin-top:10px;">
+      <div style="font-size:13px;font-weight:600;color:var(--green-text);margin-bottom:4px;">Verdict — high collaboration, mixed motives intact</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;">Both dishes complete; each chef still scores for their own dish, but the shared-resource conflict was settled in a single exchange. This is exactly what turn-level, milestone-based evaluation is for: the final score would say "2 dishes done" — the milestone log says <em>who</em> did <em>what</em>, <em>when</em>, and how the conflict was handled.</div>
+    </div>`;
+    refresh();
+  }
+  function next(){
+    if(busy||over)return;
+    const t=TURNS[step];
+    if(t.final){revealScore();return;}
+    step++;busy=true;
+    applySide('A',t.a);
+    setTimeout(()=>{applySide('B',t.b);setTimeout(()=>{busy=false;refresh();},RM?0:300);},RM?0:700);
+    setTimeout(refresh,10);
+  }
+  reset();
+  if(RM){ // reduced motion: jump to final state
+    while(step<TURNS.length-1){const t=TURNS[step];step++;applySide('A',t.a);applySide('B',t.b);}
+    revealScore();
+  }
+})();
 
-function renderQuiz() {
-  const container = document.getElementById('quizContainer');
-  container.innerHTML = '';
-  QUIZ_ITEMS.forEach((item, qIdx) => {
-    const card = document.createElement('div');
-    card.className = 'quiz-card';
-    const title = document.createElement('div');
-    title.className = 'quiz-q';
-    title.textContent = `${qIdx + 1}. ${item.q}`;
-    card.appendChild(title);
-
-    const optsDiv = document.createElement('div');
-    item.options.forEach((optText, optIdx) => {
-      const btn = document.createElement('button');
-      btn.className = 'quiz-opt';
-      btn.textContent = optText;
-      btn.addEventListener('click', () => {
-        const parent = btn.parentElement;
-        const all = parent.querySelectorAll('.quiz-opt');
-        all.forEach(b => b.disabled = true);
-        if (optIdx === item.correct) {
-          btn.classList.add('correct');
-        } else {
-          btn.classList.add('wrong');
-          all[item.correct].classList.add('correct');
-        }
-        explain.style.display = 'block';
-      });
-      optsDiv.appendChild(btn);
+// === DEMO 2: COORDINATION STRATEGY LAB ===
+(function(){
+  const root=document.getElementById('csDemo');
+  if(!root)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const STRATS={
+    silent:{label:'🤐 Silent',mr:62,c:0,p:3.0,
+      log:['turn 1 · chef A fetches ingredients','turn 2 · chef B runs steps alone','turn 3 · (no message sent)','turn 4 · A assembles blindly','turn 5 · B submits — sections misaligned'],
+      verdict:['red','By rule, C = 0 when no communication occurs. The mission may still finish — but coordination quality floors out, and the benchmark sees it.']},
+    vanilla:{label:'📢 Vanilla',mr:70,c:3.0,p:3.2,
+      log:['turn 1 · planner broadcasts a zero-shot plan','turn 2 · A fetches ingredients','turn 3 · B runs its steps','turn 4 · A assembles','turn 5 · B submits — mostly aligned'],
+      verdict:['','Vanilla prompting generates plans directly from a zero-shot instruction. A decent baseline — coordination lands mid-scale.']},
+    group:{label:'👥 Group discussion',mr:66,c:2.6,p:2.6,
+      log:['turn 1 · all agents join the discussion','turn 2 · …still discussing','turn 3 · …consensus forming slowly','turn 4 · plan v7 finally agreed','turn 5 · little budget left to execute'],
+      verdict:['red','The paper\'s counterintuitive result: group discussion scored the WORST across all metrics in the research scenario — an overly large planning group hinders effectiveness, like oversized real-world organizations.']},
+    cog:{label:'🧠 Cognitive self-evolving',mr:73,c:4.2,p:4.6,
+      log:['turn 1 · plan drafted','turn 2 · execute + observe results','turn 3 · reflect: "query 2 was weak"','turn 4 · refine the plan','turn 5 · submit — milestones hit'],
+      verdict:['green','Cognitive evolving planning (Reflexion-style) achieved the best Coordination Score, a task score comparable to CoT — and improved milestone achievement rates by 3%.']}
+  };
+  let cur='vanilla',logShown=false,timers=[];
+  function bar(label,val,max,color){
+    const pct=Math.round((val/max)*100);
+    const valTxt=max===5?(val).toFixed(1)+'/5':(val)+'%';
+    const cval=(val===0&&max===5)?'var(--red)':color;
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:110px;text-align:right;">${label}</div>
+      <div style="flex:1;height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${cval};border-radius:4px;${RM?'':'animation:scaleIn .9s ease;'}transform-origin:left;"></div></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:48px;">${valTxt}</div>
+    </div>`;
+  }
+  function render(){
+    const s=STRATS[cur];
+    const cs=(s.c+s.p)/2;
+    root.innerHTML=`
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+      ${Object.keys(STRATS).map(k=>`<button type="button" data-s="${k}" style="font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${STRATS[k].label}</button>`).join('')}
+      <button class="btn-primary" id="csRun" type="button" style="font-size:12px;padding:6px 16px;margin-left:auto;">Run Mission ▸</button>
+    </div>
+    <div id="csLog" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px;font-family:var(--mono);font-size:11px;line-height:1.9;color:var(--text2);min-height:60px;margin-bottom:12px;">${logShown?s.log.map(l=>`<div>${l}</div>`).join(''):'<span style="color:var(--text3);">select a strategy, then run the mission…</span>'}</div>
+    <div id="csBars">${logShown?bar('milestone rate',s.mr,100,'var(--amber)')+bar('communication C',s.c,5,'var(--blue)')+bar('planning P',s.p,5,'var(--teal)')+bar('coordination CS',cs,5,'var(--purple)'):''}</div>
+    <div id="csVerdict">${logShown?`<div style="background:${s.verdict[0]==='red'?'var(--red-dim)':s.verdict[0]==='green'?'var(--green-dim)':'var(--bg3)'};border:1px solid ${s.verdict[0]==='red'?'rgba(239,68,68,0.3)':s.verdict[0]==='green'?'rgba(34,197,94,0.3)':'var(--border)'};border-radius:var(--radius);padding:10px 12px;font-size:12px;color:var(--text2);line-height:1.7;">${s.verdict[1]}</div>`:''}</div>
+    <p style="font-size:11px;color:var(--text3);margin-top:8px;">~ Bar heights illustrative; the ORDERING is the paper's real finding: group discussion worst across all metrics, cognitive self-evolving best on coordination (+3% milestone rate), and C = 0 for silent teams.</p>`;
+    root.querySelectorAll('button[data-s]').forEach(b=>b.addEventListener('click',()=>{cur=b.getAttribute('data-s');logShown=false;clearTimers();render();}));
+    const run=document.getElementById('csRun');
+    if(run)run.addEventListener('click',runMission);
+  }
+  function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+  function runMission(){
+    clearTimers();logShown=true;
+    const s=STRATS[cur];
+    const logEl=document.getElementById('csLog');
+    logEl.innerHTML='';
+    const lines=s.log.map(l=>`<div class="${RM?'':'animate-in'}">${l}</div>`);
+    lines.forEach((html,i)=>{
+      timers.push(setTimeout(()=>{logEl.innerHTML+=html;logEl.scrollTop=logEl.scrollHeight;},RM?0:i*260));
     });
-    card.appendChild(optsDiv);
+    timers.push(setTimeout(()=>{render();},RM?0:s.log.length*260+150));
+  }
+  render();
+})();
 
-    const explain = document.createElement('div');
-    explain.className = 'quiz-explain';
-    explain.textContent = `Explanation: ${item.explain}`;
-    card.appendChild(explain);
+// === DEMO 3: MILESTONE ANATOMY ===
+(function(){
+  const root=document.getElementById('maDemo');
+  if(!root)return;
+  const AG=[
+    {id:'A',n:'Idea Generator',c:'var(--blue)',pill:'pill-blue'},
+    {id:'B',n:'Critical Reviewer',c:'var(--teal)',pill:'pill-green'},
+    {id:'C',n:'Experiment Sampler',c:'var(--purple)',pill:'pill-purple'}
+  ];
+  const MS=[
+    {t:'Topic & gap agreed',d:'The team settles on one research topic and states the gap it fills.',subs:['Browse the topic pool','Agree on the gap and the novelty claim'],who:['A','B','C'],rule:'outline.topic != null AND outline.gap != null'},
+    {t:'5 key queries drafted (5q)',d:'The proposal skeleton is written in the structured 5-question format — the paper\'s flagship milestone type.',subs:['Draft Q1–Q5: what, why, hard, why unsolved, approach','Split the questions by expertise'],who:['A','B'],rule:'count(proposal.questions.drafted) == 5'},
+    {t:'Literature mapped',d:'Related work is fetched with research tools and positioned.',subs:['get_related_papers(topic)','Cite and contrast the key prior work'],who:['B','C'],rule:'get_related_papers(topic).cited >= 5'},
+    {t:'5q enhanced (revision)',d:'A milestone can also be a REVISION — improving an earlier 5q set counts as progress.',subs:['Re-answer ≥ 3 questions better than v1','Fold in the reviewer critique'],who:['A','B','C'],rule:'count(q WHERE revised(q) > prev(q)) >= 3'},
+    {t:'Proposal submitted',d:'The final 5-question proposal is complete and submitted.',subs:['Polish the abstract','submit(proposal)'],who:['A','C'],rule:"submit(proposal) == '5q_complete'"}
+  ];
+  let cur=0;
+  function render(){
+    const m=MS[cur];
+    root.innerHTML=`
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+      <div style="font-family:var(--mono);font-size:13px;font-weight:600;">🔬 Mission: Research Co-Authoring (5q format)</div>
+      <div>${AG.map(a=>`<span class="pill ${a.pill}" style="margin-left:4px;${m.who.includes(a.id)?'font-weight:600;':'opacity:0.45;'}">${a.id} · ${a.n}</span>`).join('')}</div>
+    </div>
+    <div class="two-col">
+      <div>
+        ${MS.map((x,i)=>`
+        <button type="button" data-m="${i}" style="display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:${i===cur?'var(--amber-dim)':'var(--bg3)'};border:1px solid ${i===cur?'rgba(245,158,11,0.4)':'var(--border)'};border-radius:var(--radius);padding:9px 12px;margin-bottom:6px;cursor:pointer;font-family:var(--mono);font-size:12px;color:${i===cur?'var(--amber)':'var(--text2)'};font-weight:${i===cur?'600':'400'};">
+          <span style="color:${i===cur?'var(--amber)':'var(--text3)'};">M${i+1}</span>
+          <span style="flex:1;font-family:var(--sans);font-size:12.5px;color:var(--text);">${x.t}</span>
+          <span style="font-size:10px;color:var(--text3);">${x.who.map(w=>w).join('+')}</span>
+        </button>`).join('')}
+      </div>
+      <div class="card-sm">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;">MILESTONE M${cur+1}</div>
+        <div style="font-weight:600;font-size:14px;margin-bottom:6px;">${m.t}</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:10px;">${m.d}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px;">SUB-GOALS</div>
+        <ul class="problem-list" style="margin-bottom:10px;">${m.subs.map(s=>`<li style="font-size:12px;">${s}</li>`).join('')}</ul>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px;">CONTRIBUTORS — ${m.who.join(', ')}</div>
+        <div style="margin-bottom:10px;">${AG.map(a=>`<span class="pill ${a.pill}" style="margin-right:4px;${m.who.includes(a.id)?'font-weight:600;':'opacity:0.45;'}">${a.id} · ${a.n}</span>`).join('')}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px;">CHECKER RULE (LLM DETECTOR)</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--amber-text);background:var(--bg3);border:1px dashed var(--border2);border-radius:var(--radius);padding:8px 10px;">${m.rule}</div>
+      </div>
+    </div>`;
+    root.querySelectorAll('button[data-m]').forEach(b=>b.addEventListener('click',()=>{cur=parseInt(b.getAttribute('data-m'),10);render();}));
+  }
+  render();
+})();
 
-    container.appendChild(card);
+// === QUIZ DATA ===
+// === CREDIT LADDER (DEEP DIVE) ===
+(function(){
+  const tl=document.getElementById('mbTimeline'),run=document.getElementById('mbRun'),binary=document.getElementById('mbBinary'),score=document.getElementById('mbScore');
+  if(!tl||!run||!binary||!score)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const TURNS=[
+    {a:'PLANNER',t:'decomposes goal → 4 milestones: gather → smelt → craft → build',m:0},
+    {a:'MINER',t:'mines 8 iron ore (milestone 1: GATHER ✓)',m:1},
+    {a:'SMITH',t:'smelts ingots, crafts pickaxe (milestone 2: SMELT ✓)',m:2},
+    {a:'MINER',t:'idle turn — no coordinated target (wasted)',m:-1},
+    {a:'BUILDER',t:'lays structure (milestone 3: CRAFT ✓)',m:3},
+    {a:'BUILDER',t:'finishes the beacon (milestone 4: BUILD ✓)',m:4}
+  ];
+  const COLORS={PLANNER:'var(--purple)',MINER:'var(--blue)',SMITH:'var(--amber)',BUILDER:'var(--green)'};
+  let mode='milestone',ran=false;
+  function row(t,i){
+    const hit=t.m>0;
+    const anim=RM?'':'opacity:0;animation:fadeUp .4s ease '+(i*90)+'ms forwards;';
+    return '<div style="display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid '+(hit?'rgba(34,197,94,.4)':'var(--border)')+';border-radius:var(--radius);padding:8px 12px;'+anim+'">'
+      +'<span style="font-family:var(--mono);font-size:10px;font-weight:700;color:'+COLORS[t.a]+';width:70px;flex-shrink:0;">'+t.a+'</span>'
+      +'<span style="font-size:12px;color:var(--text2);flex:1;">'+t.t+'</span>'
+      +(mode==='milestone'&&hit?'<span style="font-family:var(--mono);font-size:9.5px;color:var(--green-text);font-weight:700;flex-shrink:0;">★ +credit</span>':'')
+      +(mode==='milestone'&&t.m===-1?'<span style="font-family:var(--mono);font-size:9.5px;color:var(--red-text);font-weight:700;flex-shrink:0;">✗ wasted</span>':'')
+      +'</div>';
+  }
+  function drawScore(){
+    if(mode==='milestone'){
+      score.innerHTML='<div class="card-sm" style="border-left:3px solid var(--green);"><div style="font-size:12px;font-weight:600;color:var(--green-text);margin-bottom:4px;">MILESTONE GRADING — 4 milestones reached, 1 wasted turn, credit assigned per contributor</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">The episode’s story survives: planner structured it, miner gathered, smith crafted, builder delivered — and one idle turn is visible as a coordination defect. This is the signal the paper’s KPI framework exists to keep.</div></div>';
+    }else{
+      score.innerHTML='<div class="card-sm" style="border-left:3px solid var(--red);"><div style="font-size:12px;font-weight:600;color:var(--red-text);margin-bottom:4px;">BINARY GRADING — task complete: 1</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">One bit. The 80%-there team, the instantly-failing team, and this team are now identical. Every difference the milestone view preserved is gone — which is why pre-milestone benchmarks could not see coordination quality at all.</div></div>';
+    }
+  }
+  function draw(){
+    tl.innerHTML=TURNS.map((t,i)=>row(t,i)).join('');
+    drawScore();
+  }
+  run.addEventListener('click',()=>{ran=true;draw();});
+  binary.addEventListener('click',()=>{
+    mode=mode==='milestone'?'binary':'milestone';
+    binary.textContent=mode==='milestone'?'Toggle binary grading':'Toggle milestone grading';
+    if(ran)draw();
   });
-}
-renderQuiz();
+  if(RM||!('IntersectionObserver' in window)){tl.innerHTML='<div style="font-size:12px;color:var(--text3);">Press run to play the episode.</div>';}
+  else{const io=new IntersectionObserver(en=>{if(en.some(e=>e.isIntersecting)){ran=true;draw();io.disconnect();}},{threshold:0.3});io.observe(tl);}
+})();
 
-// Nav toggle
-const navBtn = document.getElementById('navToggle');
-const mobMenu = document.getElementById('mobileMenu');
-navBtn.addEventListener('click', () => {
-  mobMenu.classList.toggle('open');
-});
+const QUIZ_DATA=[
+  {q:'What makes MultiAgentBench a mixed-motive benchmark?',opts:['It only tests cooperative agents helping each other','It includes both mutual-goal scenarios (research, Minecraft, database, coding) AND conflicting-goal scenarios (Werewolf, bargaining)','It mixes vision and language modalities','It rewards agents for refusing to cooperate'],correct:1,explain:'Four task-oriented scenarios share a mutual goal; Werewolf and Bargaining add competition — deception, concessions, and alliances. Both collaboration AND competition get scored.'},
+  {q:'Which milestone-based metric tracks each agent\'s individual contribution?',opts:['KPI — milestones contributed (n_j) divided by total milestones (M)','GLUE score','Perplexity per agent','Tokens consumed per turn'],correct:0,explain:'An LLM-based detector logs which agents contributed to each milestone. KPI_j = n_j / M, and the overall KPI averages this across all N agents.'},
+  {q:'Which coordination-strategy finding did the paper report?',opts:['Group discussion always wins','Silent teams score highest on communication','Group discussion scored the worst across all metrics — while cognitive self-evolving planning lifted milestone rates by 3%','Chain-of-thought eliminated the need for planners'],correct:2,explain:'Counterintuitively, bigger planning groups hurt: group discussion scored worst across metrics. Cognitive self-evolving planning (Reflexion-style) got the best Coordination Score and +3% milestone achievement.'},
+  {q:'Why evaluate with turn-level milestones instead of final scores only?',opts:['Final scores are impossible to compute','Milestones run faster','A team can fail slowly — milestone logs show who contributed, when, and where coordination broke (a Seer knew the werewolf but never shared it)','Milestones remove the need for LLM judges'],correct:2,explain:'The benchmark\'s LLM detector monitors every iteration, recording milestone hits and contributing agents — surfacing coordination failures (like the silent Seer) that a final score would hide.'},
+  {q:'Which is a legacy contribution of the paper?',opts:['It proved multi-agent systems always beat single agents','MARBLE — an open-source coordination backbone with 4 topologies and 4 planning strategies — plus the mixed-motive benchmark itself','It trained a new foundation model for cooperation','It replaced human evaluation entirely'],correct:1,explain:'MultiAgentBench + MARBLE (code and datasets public on GitHub) give the field standardized, reusable infrastructure for mixed-motive multi-agent evaluation.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>
+
 </body>
 </html>

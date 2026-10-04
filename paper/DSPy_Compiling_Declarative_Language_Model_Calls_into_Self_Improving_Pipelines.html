@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSPy: Compiling Declarative LM Calls into Self-Improving Pipelines — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the DSPy paper, with visual demos for Signatures, Modules, teleprompter optimization, and compiled pipelines that beat hand-written prompts.">
+<meta name="keywords" content="DSPy, prompts, programming model, signatures, modules, teleprompter, compiler, pipelines, few-shot, optimization, Stanford NLP">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/DSPy_Compiling_Declarative_Language_Model_Calls_into_Self_Improving_Pipelines.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="DSPy: Compiling Declarative LM Calls into Self-Improving Pipelines — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of DSPy — the programming model that replaces hand-written prompts with declarative signatures and a compiler that optimizes them.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/DSPy_Compiling_Declarative_Language_Model_Calls_into_Self_Improving_Pipelines.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="DSPy: Compiling Declarative LM Calls into Self-Improving Pipelines — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of DSPy — the programming model that replaces hand-written prompts with declarative signatures and a compiler that optimizes them.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Signatures</a>
+    <a class="nav-link" href="#modules">Modules</a>
+    <a class="nav-link" href="#teleprompter">Teleprompters</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">ICLR 2024</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Signatures</a>
+  <a href="#modules">Modules</a>
+  <a href="#teleprompter">Teleprompters</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Stop Writing Prompts. <em>Program Them.</em><br>DSPy
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the framework that treats prompts as compiled artifacts — declare what a pipeline stage does, and let an optimizer find the demonstrations, instructions, and strategies that make it work.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2310.03714" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">+25–65%</div>
+      <div class="stat-label">Over Few-Shot Baselines</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Core Abstractions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Minutes</div>
+      <div class="stat-label">To Compile</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Prompt String</em> to <em>Program</em></h2>
+  <p class="section-desc">DSPy reframed the central artifact of the LLM era: the prompt stopped being a hand-crafted asset and became compiler output.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2020–22</div><div class="tl-title">The prompt-crafting era</div><div class="tl-desc">GPT-3 few-shot magic; a folklore of templates, magic phrases, and "say you're an expert" — found by trial and error, versioned in notebooks.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022–23</div><div class="tl-title">Stacked pipelines appear</div><div class="tl-desc">Multi-hop QA, retrieval, agents: programs of chained LM calls — each link a fragile hand-written prompt. <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber-text);">CoT</a> · <a href="./ReAct.html" style="color:var(--amber-text);">ReAct</a>.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Oct</div><div class="tl-title">🚀 DSPy (Khattab et al., Stanford)</div><div class="tl-desc">A programming model: declarative Signatures + parameterized Modules + a compiler (teleprompter) that optimizes any pipeline for a metric — prompts become build artifacts.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2024 →</div><div class="tl-title">The optimizer ecosystem</div><div class="tl-desc">BootstrapFewShot → MIPRO/MIPROv2, GEPA, and a generation of "prompt optimizers" that treat prompting as search over programs.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The Analogy That Explains Everything</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;"Nobody hand-writes assembly anymore — we write Python and let a compiler optimize. DSPy's thesis: <strong>prompts are assembly</strong>. Writing them by hand was fine for one function; for pipelines it's unmaintainable folklore. Declare intent; compile for your model, your metric, your data.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Prompt Strings <em>Rot</em></h2>
+  <p class="section-desc">The paper's diagnosis of 2023's standard practice: pipelines of hard-coded templates, each discovered by trial and error.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">📜</div>
+      <div class="problem-title">Hand-Written Prompt Symptoms</div>
+      <ul class="problem-list">
+        <li>Long template strings discovered via trial and error — no systematic path to improvement</li>
+        <li>Every model change (or model version) silently breaks the magic phrases</li>
+        <li>Each pipeline stage tuned in isolation; no notion of end-task optimization</li>
+        <li>Demos, instructions, and control flow tangled inside one text artifact</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🧩</div>
+      <div class="problem-title">The Programmatic Answer</div>
+      <ul class="problem-list">
+        <li>Separate <em>what a stage does</em> (Signature) from <em>how it's prompted</em> (compiled artifact)</li>
+        <li>Compose stages as Modules with learnable parameters</li>
+        <li>Optimize the whole pipeline against YOUR metric with a compiler</li>
+        <li>Re-compile for a new model in minutes — the pipeline is the asset, the prompt is build output</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">The Cost of Folklore (Real Numbers)</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The paper's two case studies: multi-hop QA (HotpotQA) and math word problems (GSM8K-class). Succinct DSPy programs — a few lines — compile to prompts that beat standard few-shot <strong>by over 25% (GPT-3.5) and 65% (llama2-13b-chat)</strong>, and beat pipelines with expert-written demonstrations by up to 5-46% and 16-40% respectively. Expert hours replaced by compile-minutes.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SIGNATURES -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title"><em>Signatures</em> — Declarative Intent</h2>
+  <p class="section-desc">The atomic unit: a typed declaration of a transformation, stripped of any prompting strategy.</p>
+  <div class="formula-card">
+    <div class="formula-main">"context, question → answer" &nbsp;·&nbsp; "document → summary" &nbsp;·&nbsp; "question, choices → rationale, selection"</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">inputs</div><div class="fp-name">Left side</div><div class="fp-desc">Typed fields the stage consumes — the contract's dependencies.</div></div>
+      <div class="formula-piece"><div class="fp-sym">outputs</div><div class="fp-name">Right side</div><div class="fp-desc">Typed fields the stage produces — including intermediate fields like rationale.</div></div>
+      <div class="formula-piece"><div class="fp-sym">zero strategy</div><div class="fp-name">The discipline</div><div class="fp-desc">No demonstrations, no instruction wording, no output formatting tricks — those are compiler decisions.</div></div>
+      <div class="formula-piece"><div class="fp-sym">portable</div><div class="fp-name">The payoff</div><div class="fp-desc">The same Signature compiles to a 5-shot prompt, a finetuned T5-770M, or a chain-of-thought instruction.</div></div>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Signature Splitter</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="dspSigBtn" type="button" style="font-size:13px;padding:8px 18px;">Next pipeline stage →</button>
+    </div>
+    <div id="dspSigBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;min-height:190px;"></div>
+    <div id="dspSigNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MODULES -->
+<section id="modules">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title"><em>Modules</em> — Parameterized Strategy</h2>
+  <p class="section-desc">If Signatures say WHAT, Modules say HOW the call is structured — and carry the learnable parameters a compiler can tune.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">Predict</div><div class="notice-text">The simplest module: one LM call fulfilling a Signature — the substrate everything else decorates.</div></div>
+    <div class="notice-card"><div class="notice-title">ChainOfThought</div><div class="notice-text">Adds a rationale field and reasoning instructions — the CoT strategy as a reusable wrapper. <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber-text);">CoT paper</a>.</div></div>
+    <div class="notice-card"><div class="notice-title">ReAct / Retrieve</div><div class="notice-text">Agent loops and retrieval as first-class modules — the paper's compiler composes them into multi-hop pipelines.</div></div>
+    <div class="notice-card"><div class="notice-title">learnable params</div><div class="notice-text">Demonstrations, instructions, hyper-strategy choices: the knobs teleprompters search over — created and collected automatically, not hand-written.</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The Pipeline as Text-Transformation Graph</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The paper formalizes programs as imperative computational graphs where LMs are invoked through declarative modules — a graph you can <em>execute</em>, <em>inspect</em>, and <em>optimize end-to-end</em>. A multi-hop QA system in DSPy: a few composed modules and one metric function. The same graph is the optimizer's search space.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Control Flow Is Code</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Loops, retries, tool dispatch — plain Python in the graph, not prompt-embedded pseudo-logic. The division of labor: Python decides <em>control</em>; the compiler decides <em>prompting</em>; the LM decides <em>content</em>. Each concern finally lives where it belongs.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TELEPROMPTER -->
+<section id="teleprompter">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">The <em>Teleprompter</em> Compiles</h2>
+  <p class="section-desc">Optimization over pipeline space: search demonstrations, instructions, and strategies to maximize the metric.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Bootstrap Compilation</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="dspCompBtn" type="button" style="font-size:13px;padding:8px 18px;">Run compiler →</button>
+      <button class="btn-outline" id="dspCompResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="dspCompBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="dspCompNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">BootstrapFewShot (the paper's workhorse)</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Run the pipeline on training examples; keep the ones where the final answer scores well</li>
+        <li>Backpropagate credit through the graph: trace WHICH intermediate traces led to success</li>
+        <li>Those traces become in-context demonstrations for each module — self-generated few-shot data</li>
+        <li>Result: prompts whose examples are drawn from the model's own successful behavior</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">What "Compiling" Emits</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Per-module instruction wording (optionally proposed/selected by an LM or search)</li>
+        <li>Per-module demonstration sets (bootstrapped or retrieved)</li>
+        <li>Strategy choices (e.g., CoT on/off per stage)</li>
+        <li>Or: finetuned weights — the same program compiles to a small open model (T5-770M) competitive with expert-prompted GPT-3.5</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Numbers That <em>Hurt</em> Folklore</h2>
+  <p class="section-desc">Two case studies, four models of improvement, one consistent message.</p>
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Improvement Over Standard Few-Shot Prompting</div>
+    <table class="comp-table">
+      <thead><tr><th>Setting</th><th>Gain over few-shot</th><th>Over expert demonstrations</th></tr></thead>
+      <tbody>
+        <tr class="comp-best"><td>GPT-3.5 pipelines</td><td class="comp-best">> +25%</td><td>+5–46%</td></tr>
+        <tr class="comp-best"><td>llama2-13b-chat pipelines</td><td class="comp-best">> +65%</td><td>+16–40%</td></tr>
+        <tr><td>Small open models (T5-770M, compiled)</td><td colspan="2">competitive with expert-written prompt chains for GPT-3.5</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Within minutes of compiling — no prompt engineering hours, per case studies on multi-hop QA and math word problems.</p>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Quality Stack</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="dspStackBtn" type="button" style="font-size:13px;padding:8px 18px;">Reveal the stack →</button>
+    </div>
+    <div id="dspStackBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — Prompting Becomes a <em>Build Step</em></h2>
+  <p class="section-desc">The framework's descendants and the research field it named.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧰 The DSPy ecosystem</div><div class="notice-text">MIPRO/MIPROv2, GEPA, SIMBA — optimizer research exploded; dspy is a standard layer of the LLM stack.</div></div>
+    <div class="notice-card"><div class="notice-title">🧬 Offspring & cousins</div><div class="notice-text">TextGrad, OPRO, prompt-space search: an entire genre of "prompts as optimization targets".</div></div>
+    <div class="notice-card"><div class="notice-title">✅ DSPy Assertions</div><div class="notice-text">The direct sequel: computational constraints inside compiled programs — <a href="./DSPy_Assertions_Computational_Constraints_for_Self_Refining_Pipelines.html" style="color:var(--amber-text);">read it next</a>.</div></div>
+    <div class="notice-card"><div class="notice-title">🎓 Pedagogy shift</div><div class="notice-text">"Learn to program LMs" replaced "learn to prompt" in courses and docs across the industry.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Metrics are the new bottleneck (optimizers optimize what you measure); compile cost & data needs; not all tasks decompose cleanly.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Study path</div><div class="notice-text">Strategy modules' roots: <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber-text);">CoT</a> → this page → constraints: DSPy Assertions.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The Compiler <em>Bet</em>, Five Years Later</h2>
+  <p class="section-desc">DSPy's deepest claim is an analogy — and analogies in systems design are testable bets.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🎲</div>
+      <div class="problem-title">Where the Analogy Strains</div>
+      <ul class="problem-list">
+        <li>Classical compilers have semantics; LLM "compilation" is stochastic search — no correctness guarantee</li>
+        <li>The optimization target (metric) becomes the spec — garbage metric, eloquently compiled garbage</li>
+        <li>Bootstrapped demos can entrench model biases: self-training loops amplify quirks</li>
+        <li>Debugging a compiled artifact is its own skill — the folklore moved, it didn't vanish</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🏗</div>
+      <div class="problem-title">Where It Paid Off</div>
+      <ul class="problem-list">
+        <li>Model churn: re-compile beats re-prompt — portability is now demonstrably cheap</li>
+        <li>Credit assignment through multi-stage graphs was genuinely unsolvable by hand-tuning</li>
+        <li>Optimizers discovered non-obvious wins (fewer/different demos than experts choose)</li>
+        <li>The ecosystem effect: measurable, comparable prompt-improvement research replaced anecdotes</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Who Writes the Prompt?</div>
+    <p style="font-size:13px;color:var(--text2);margin:0 0 1rem;">The same QA stage under three regimes. Toggle and watch who decides the prompt's parts.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="dspR1Btn" type="button" style="font-size:12px;padding:8px 14px;">Human promptsmith</button>
+      <button class="btn-primary" id="dspR2Btn" type="button" style="font-size:12px;padding:8px 14px;">DSPy compiler</button>
+    </div>
+    <div id="dspRegimeBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">DSPy's bet — <strong>abstraction beats craftsmanship at scale</strong> — is the same bet every systems discipline took, and the LLM stack took it the moment pipelines got long enough. The honest residue: the compiler moved expertise from writing strings to writing metrics and signatures. That's not the end of craft; it's craft promoted a level — exactly what compilers have always done.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the DSPy paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Prompts are build artifacts, not source code — declare intent, let a compiler produce the prompt.</div>
+    <div class="card-sm">✅ Signatures (typed what) + Modules (parameterized how) = pipelines as optimizable text-transformation graphs.</div>
+    <div class="card-sm">✅ Teleprompters search demonstrations/instructions/strategies against your metric — minutes, not expert-hours.</div>
+    <div class="card-sm">✅ Compiled pipelines beat standard few-shot by >25% (GPT-3.5) and >65% (llama2-13b-chat); up to 5-46% over expert demos.</div>
+    <div class="card-sm">✅ The same program compiles to small open models: T5-770M competitive with expert-prompted GPT-3.5 chains.</div>
+    <div class="card-sm">✅ The sequel adds constraints: DSPy Assertions — reliability as a programming construct.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2310.03714" target="_blank" rel="noopener noreferrer">"DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines"</a> (Khattab et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2310.03714" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./DSPy_Assertions_Computational_Constraints_for_Self_Refining_Pipelines.html">DSPy Assertions Guide</a>
+    <a class="footer-link" href="./Chain_Of_Thought_Prompting.html">Chain-of-Thought Guide</a>
+    <a class="footer-link" href="./ReAct.html">ReAct Guide</a>
+    <a class="footer-link" href="./Toolformer.html">Toolformer Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "modules", "teleprompter", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === SIGNATURE SPLITTER ===
+(function(){
+  const box=document.getElementById('dspSigBox');
+  const note=document.getElementById('dspSigNote');
+  const btn=document.getElementById('dspSigBtn');
+  if(!box||!note||!btn)return;
+  const S=[
+    {t:'multi-hop QA · hop 1',sig:'"context, question → search query"',mod:'Predict',d:'First stage of a compiled multi-hop pipeline: from the question, produce the retrieval query. Note the absence of any wording — only the contract.'},
+    {t:'multi-hop QA · hop 2',sig:'"passages, question → rationale, answer"',mod:'ChainOfThought',d:'Reasoning is an OUTPUT FIELD, not a prompt trick: the compiler decides how rationale gets elicited.'},
+    {t:'summarize for QA',sig:'"long document → concise summary"',mod:'Predict',d:'A compression stage — the same Signature could compile to few-shot demos or a finetuned small model.'},
+    {t:'agent step',sig:'"observations, goal → action"',mod:'ReAct',d:'Control flow (loops, tools) lives in Python; the Signature only fixes the stage contract. Strategy is the module choice.'}
+  ];
+  let i=0;
+  function render(){
+    const s=S[i];
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:8px;">${s.t.toUpperCase()}</div>
+    <div style="display:grid;grid-template-columns:1fr 30px 1fr;gap:8px;align-items:center;">
+      <div style="padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);font-family:var(--mono);font-size:12px;color:var(--text2);">${s.sig.split('→')[0].trim()}</div>
+      <div style="font-family:var(--mono);color:var(--amber-text);text-align:center;font-size:15px;">→</div>
+      <div style="padding:10px;border-radius:8px;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);font-family:var(--mono);font-size:12px;color:var(--amber-text);">${s.sig.split('→')[1].replace(/"/g,'').trim()}</div>
+    </div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:10px;">module: <span style="color:var(--blue-text);">dspy.${s.mod}</span> — the strategy wrapper that will carry compiled parameters</div>`;
+    note.textContent=s.d;
+    btn.textContent=i<S.length-1?'Next pipeline stage →':'Restart';
+  }
+  btn.addEventListener('click',()=>{i=(i+1)%S.length;render();});
+  render();
+})();
+
+// === BOOTSTRAP COMPILATION ===
+(function(){
+  const box=document.getElementById('dspCompBox');
+  const note=document.getElementById('dspCompNote');
+  const btn=document.getElementById('dspCompBtn');
+  const reset=document.getElementById('dspCompResetBtn');
+  if(!box||!note||!btn||!reset)return;
+  const ST=[
+    {t:'input',b:'<span style="color:var(--text3);">program:</span> MultiHopQA = Retrieve(k=3) → ChainOfThought("passages, question → rationale, answer")<br><span style="color:var(--text3);">metric:</span> answer_em · <span style="color:var(--text3);">train set:</span> 200 questions',n:'Everything a teleprompter needs: the graph, the metric, some data.'},
+    {t:'execute & trace',b:'<span style="color:var(--amber-text);">run 200 questions through the pipeline</span><br>✓ 116 correct · ✗ 84 wrong<br><span style="color:var(--text3);">each run records the intermediate values of every module (queries, passages, rationales)</span>',n:'Execution traces the compiler will mine — success paths become demonstration candidates.'},
+    {t:'credit assignment',b:'<span style="color:var(--teal-text);">for each correct answer:</span> keep the full trace as candidate demos<br>  hop-1 query: "birthplace of the director of Inception"<br>  hop-2 rationale: "The film was directed by Christopher Nolan, born in London…"<br><span style="color:var(--text3);">failed paths: discarded (or used by fancier optimizers as negatives)</span>',n:'The self-training move: the model teaches itself from its own successes — no human demo writing.'},
+    {t:'compiled output',b:'<span style="color:var(--green-text);">Predict(prompt-with-3-demos) · CoT(with-instruction-v2 · 5 demos) · Retrieve(k=3)</span><br><span style="color:var(--text3);">re-eval: 143/200 correct (+27) — the new prompt is a build artifact, reproducible and diffable</span>',n:'Minutes of compilation replaced expert prompt-crafting — and the artifact re-compiles when the model changes.'}
+  ];
+  let i=0;
+  function render(){
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;">${ST[i].t.toUpperCase()}</div><div style="font-size:12.5px;color:var(--text2);line-height:1.9;">${ST[i].b}</div>`;
+    note.textContent=ST[i].n;
+    btn.textContent=i<ST.length-1?'Run compiler →':'Restart';
+  }
+  btn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+  reset.addEventListener('click',()=>{i=0;render();});
+  render();
+})();
+
+// === QUALITY STACK ===
+(function(){
+  const box=document.getElementById('dspStackBox');
+  const btn=document.getElementById('dspStackBtn');
+  if(!box||!btn)return;
+  box.innerHTML='<div style="font-family:var(--mono);font-size:12px;color:var(--text3);">llama2-13b-chat · multi-hop QA. Press reveal.</div>';
+  btn.addEventListener('click',()=>{
+    const rows=[
+      {n:'zero-shot (bare signature)',v:36,c:'#94a3b8'},
+      {n:'standard few-shot (hand-picked)',v:52,c:'#3b82f6'},
+      {n:'+ expert-written demonstrations',v:64,c:'#14b8a6'},
+      {n:'DSPy-compiled (bootstrapped)',v:86,c:'#f59e0b'}
+    ];
+    box.innerHTML=rows.map(r=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:200px;text-align:right;">${r.n}</div>
+      <div style="flex:1;height:18px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:0;background:${r.c};border-radius:4px;transition:width .8s ease;" data-w="${r.v}"></div></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:30px;">${r.v}%</div></div>`).join('')+
+    '<div style="font-size:12px;color:var(--text3);margin-top:8px;">Illustrative of the paper\'s llama2-13b-chat gains (>65% over few-shot; +16-40% over expert demos).</div>';
+    setTimeout(()=>{box.querySelectorAll('div[data-w]').forEach(d=>{d.style.width=d.dataset.w+'%';});},60);
+  });
+})();
+
+// === WHO WRITES THE PROMPT ===
+(function(){
+  const box=document.getElementById('dspRegimeBox');
+  if(!box)return;
+  function render(mode){
+    const human=mode==='human';
+    const parts=human?[
+      ['opening persona','"You are an expert assistant…" — human-chosen phrase'],
+      ['instructions','hand-tuned wording, v7 of 9 drafts'],
+      ['demonstrations','3 examples the author liked'],
+      ['output format','"Answer with just the letter" — folklore']
+    ]:[
+      ['opening persona','— (compiler found no measurable gain)'],
+      ['instructions','searched against YOUR metric'],
+      ['demonstrations','bootstrapped from the model\'s own successful traces'],
+      ['output format','inferred from the Signature\'s typed output field']
+    ];
+    box.innerHTML=`<div style="display:grid;grid-template-columns:140px 1fr;gap:8px;">
+      ${parts.map(p=>`<div style="font-family:var(--mono);font-size:11px;color:var(--text3);text-align:right;padding:6px 0;">${p[0]}</div>
+      <div style="font-size:12px;color:var(--text2);padding:6px 10px;border-left:2px solid ${human?'var(--blue)':'var(--amber)'};background:var(--bg2);border-radius:0 6px 6px 0;">${p[1]}</div>`).join('')}
+    </div>
+    <div style="font-size:12px;color:var(--text3);margin-top:10px;">${human
+      ?'Craftsmanship: every decision human, every improvement another draft, every model migration a rewrite.'
+      :'Compiled: decisions assigned by search under the metric; the pipeline is the asset, the prompt is output.'}</div>`;
+  }
+  document.getElementById('dspR1Btn').addEventListener('click',()=>render('human'));
+  document.getElementById('dspR2Btn').addEventListener('click',()=>render('dspy'));
+  render('human');
+})();
+
+
+const QUIZ_DATA=[{"q": "What is a DSPy Signature?", "opts": ["A function-signature type annotation for Python", "A declarative typed declaration of a pipeline stage's inputs and outputs, stripped of prompting strategy", "A cryptographic check on model outputs", "A special prompt template format"], "correct": 1, "explain": "A Signature like \"question, choices → rationale, selection\" declares what a stage consumes and produces — including intermediate fields like rationale — while leaving demonstrations, wording, and strategy to the compiler."}, {"q": "What do DSPy Modules contribute on top of Signatures?", "opts": ["They replace the language model entirely", "Parameterized prompting strategies (e.g., ChainOfThought, ReAct) that carry learnable parameters like demonstrations and instructions", "They are only for retrieval", "They handle billing for API calls"], "correct": 1, "explain": "Modules are composable strategy wrappers — Predict, ChainOfThought, ReAct, Retrieve — each parameterized so a teleprompter can search over their demonstrations, instructions, and settings."}, {"q": "What does the compiler (teleprompter) optimize against?", "opts": ["Perplexity on held-out text", "A user-supplied metric for the end task, via execution and credit assignment through the pipeline", "Token cost only", "Human preference ratings gathered live"], "correct": 1, "explain": "The compiler executes the program on training data, evaluates with the program's metric, traces which module-level behaviors led to success, and searches demonstrations/instructions accordingly — end-to-end optimization, not per-stage tuning."}, {"q": "Which result did the paper report for compiled DSPy pipelines?", "opts": ["No improvement over few-shot", "Over 25% (GPT-3.5) and 65% (llama2-13b-chat) gains over standard few-shot prompting; up to 5-46% / 16-40% over expert demonstrations", "Only worked with GPT-4", "Improvements only on classification tasks"], "correct": 1, "explain": "In its multi-hop QA and math case studies, succinct DSPy programs compiled within minutes outperform standard few-shot prompting by over 25% (GPT-3.5) and 65% (llama2-13b-chat), and beat expert-demonstration pipelines by up to 5-46% and 16-40% respectively."}, {"q": "What does it mean that the same DSPy program can compile to T5-770M?", "opts": ["T5 can run any prompt unchanged", "The program is model-portable: the optimizer can emit finetuned weights for a small open model instead of a prompt for a large closed one", "All models share weights", "DSPy requires GPT-3.5"], "correct": 1, "explain": "Compilation is a target-dependent build: the same declarative program optimizes into prompts for GPT-3.5 or into finetuned weights for a 770M-parameter T5 — which proved competitive with approaches relying on expert-written prompt chains for the proprietary model."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

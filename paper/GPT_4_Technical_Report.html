@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPT-4 Technical Report — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the GPT-4 Technical Report, with visual demos for multimodal inputs, predictable scaling, professional benchmark results, and RLHF post-training.">
+<meta name="keywords" content="GPT-4, multimodal, predictable scaling, RLHF, MMLU, bar exam, transformer, frontier model, OpenAI">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/GPT_4_Technical_Report.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="GPT-4 Technical Report — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the GPT-4 Technical Report — multimodality, predictable scaling, and the benchmarks that defined the frontier.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/GPT_4_Technical_Report.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="GPT-4 Technical Report — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of the GPT-4 Technical Report — multimodality, predictable scaling, and the benchmarks that defined the frontier.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#scaling">Scaling</a>
+    <a class="nav-link" href="#benchmarks">Benchmarks</a>
+    <a class="nav-link" href="#training">Training</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#scaling">Scaling</a>
+  <a href="#benchmarks">Benchmarks</a>
+  <a href="#training">Training</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    The <em>Predictable</em> Frontier<br>GPT-4
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the technical report behind GPT-4 — a multimodal model whose performance could be predicted from small-scale runs, passing professional exams at human level while revealing the infrastructure science of frontier training.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2303.08774" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">86.4%</div>
+      <div class="stat-label">MMLU (5-shot)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Top 10%</div>
+      <div class="stat-label">Simulated Bar Exam</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1/1000</div>
+      <div class="stat-label">Compute for Prediction</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Scale</em> to <em>Infrastructure Science</em></h2>
+  <p class="section-desc">GPT-4 is the point where frontier training became an engineering discipline with predictive laws.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2020</div><div class="tl-title">GPT-3 & scaling laws (Kaplan et al.)</div><div class="tl-desc">175B parameters prove in-context learning — and power-law curves suggest scale predicts performance.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022 · Mar</div><div class="tl-title">InstructGPT / RLHF matures</div><div class="tl-desc">Human preference tuning turns raw LMs into assistants — the post-training recipe GPT-4 would inherit.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2022 · Nov</div><div class="tl-title">ChatGPT</div><div class="tl-desc">Instruction + RLHF on a GPT-3.5-class model goes viral — the world now knows what an assistant model is.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Mar</div><div class="tl-title">🚀 GPT-4 (OpenAI)</div><div class="tl-desc">Multimodal (image + text in, text out), 8K/32K context variants, human-level professional exams — and performance predicted from 1/1000th-compute runs.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2023 →</div><div class="tl-title">The frontier era</div><div class="tl-desc">Multimodal assistants, agentic tool use, and eval-driven development — every lineage traces a design decision back to this report.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">What Makes This Report Unusual</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">It is a <strong>system report, not a methods paper</strong>: capabilities and benchmarks are documented in detail while architecture, parameter count, and dataset construction are deliberately withheld — competitive and safety reasons given. The transferable science is the <strong>predictability infrastructure</strong>: loss curves, capability metrics, and safety behaviors that extrapolate across three orders of magnitude of compute.</p>
+      <div class="notice-card" style="margin-top:1rem;"><div class="notice-title">🧭 Study pairing</div><div class="notice-text">Read after <a href="./Scaling_Laws.html" style="color:var(--amber-text);">Scaling Laws</a> — GPT-4 is those laws, industrialized.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Why Frontier Runs <em>Gamble</em></h2>
+  <p class="section-desc">Training a model for months on massive clusters is the most expensive bet in software. GPT-4's central problem: make the bet predictable before you place it.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🎲</div>
+      <div class="problem-title">The Frontier Gamble</div>
+      <ul class="problem-list">
+        <li>A frontier run costs months of cluster time — a failed run is catastrophic</li>
+        <li>Models at scale fail in ways small models don't: loss spikes, instabilities, divergence</li>
+        <li>Raw capability is useless if behavior is unsafe or misaligned with users</li>
+        <li>You cannot A/B test a training run — you have to predict it</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">📐</div>
+      <div class="problem-title">The Predictability Stack</div>
+      <ul class="problem-list">
+        <li>Train families of small models on the same data at 1/1000th the compute</li>
+        <li>Fit loss and capability curves that extrapolate across 4-5 orders of magnitude</li>
+        <li>Predict final loss — and specific benchmark behavior — before committing</li>
+        <li>Pair the prediction with an alignment stage (RLHF) so capability arrives controllable</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Flight Simulator</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">You don't test a new aircraft by building the full plane and hoping. You fly thousands of scaled model flights, learn the physics, and predict the big machine's behavior — <strong>then</strong> you build it. GPT-4's small-model families are the wind tunnel; the final run is the first flight.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">One Model, <em>Two Senses</em></h2>
+  <p class="section-desc">GPT-4 accepts interleaved image and text input and produces text output — a Transformer-based model pretrained to predict the next token across both modalities.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🖼 Image + text in</div><div class="notice-text">Screenshots, documents, diagrams, photos — the model reasons over visual inputs, not just captions them.</div></div>
+    <div class="notice-card"><div class="notice-title">✍️ Text out</div><div class="notice-text">Generation stays textual — the interface is a chat, but the input is a page.</div></div>
+    <div class="notice-card"><div class="notice-title">📏 8K & 32K contexts</div><div class="notice-text">Two variants: 8,192 and 32,768-token windows — the 32K model could hold ~50 pages of text at once, then unheard-of for a chat model.</div></div>
+    <div class="notice-card"><div class="notice-title">🎯 Next-token pretraining</div><div class="notice-text">Still the core objective — scale, data mixture, and post-training do the rest.</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Two Senses, One Prompt</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Text-only vs multimodal exam questions: toggle the input and watch what becomes answerable.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="g4TextBtn" type="button" style="font-size:13px;padding:8px 18px;">Text-only input</button>
+      <button class="btn-outline" id="g4VisionBtn" type="button" style="font-size:13px;padding:8px 18px;">Image + text input</button>
+    </div>
+    <div id="g4VisionBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:2;min-height:180px;"></div>
+    <div id="g4VisionNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SCALING -->
+<section id="scaling">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Predictable <em>Scaling</em></h2>
+  <p class="section-desc">The report's most-cited science: final-loss and capability predictions fitted on runs using up to 1/1,000th of GPT-4's compute.</p>
+  <div class="formula-card">
+    <div class="formula-main">L(C) fits across ~10<sup>4</sup>–10<sup>5</sup>× compute ranges &nbsp;·&nbsp; capability metrics extrapolate too</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">L(C)</div><div class="fp-name">Loss vs compute</div><div class="fp-desc">Smooth curves fitted on small runs predicted GPT-4's final loss to high accuracy.</div></div>
+      <div class="formula-piece"><div class="fp-sym">1/1,000</div><div class="fp-name">Cheap predictions</div><div class="fp-desc">The computing budget of prediction models is up to three orders of magnitude smaller.</div></div>
+      <div class="formula-piece"><div class="fp-sym">ICL curve</div><div class="fp-name">Capability extrapolation</div><div class="fp-desc">Not just loss: benchmark-style performance (from a suite of internal problems) also extrapolates across scale.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Infra rules</div><div class="fp-name">Stability at scale</div><div class="fp-desc">Loss spikes at scale were predicted and preempted — large runs need engineered interventions, not luck.</div></div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Beyond Loss — Training Infrastructure</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Optimized kernels:</strong> custom implementations for throughput on the hardware of the era</li>
+        <li><strong>Loss spike playbook:</strong> predicted spike rates, and bail-out strategies (data batch skipping, learning-rate surgery)</li>
+        <li><strong>Data mixture control:</strong> carefully staged domain mixtures — a lever Kaplan-era scaling underweighted</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">What Was NOT Predictable</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Qualitative jumps:</strong> downstream usefulness and emergent behaviors are still not smooth functions</li>
+        <li><strong>Alignment outcomes:</strong> RLHF results were tuned by iteration, not by law</li>
+        <li><strong>Capability risk:</strong> predictable loss ≠ predictable safety profile — the motivation for red-teaming and the system card</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Prediction Ladder</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Fit the curve on small runs (1/1000 compute), then extrapolate to the full GPT-4 run. Press Run.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="g4ScaleBtn" type="button" style="font-size:13px;padding:8px 18px;">Fit & extrapolate</button>
+    </div>
+    <div id="g4ScaleChart" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="g4ScaleNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BENCHMARKS -->
+<section id="benchmarks">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Professional <em>Exams</em></h2>
+  <p class="section-desc">The report's signature move: evaluate on human exams — the uniform, adversarially-designed test suite society already maintains.</p>
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Human-Level Exam Performance (simulated, no tools)</div>
+    <table class="comp-table">
+      <thead><tr><th>Exam</th><th>GPT-4 (overall)</th><th>GPT-3.5</th><th>Human bottom–top</th></tr></thead>
+      <tbody>
+        <tr class="comp-best"><td>Uniform Bar Exam</td><td class="comp-best">~90th percentile</td><td>~10th percentile</td><td>5th–95th</td></tr>
+        <tr class="comp-best"><td>GRE Quantitative</td><td class="comp-best">163–166 range (~80th percentile)</td><td>~25th percentile</td><td>—</td></tr>
+        <tr class="comp-best"><td>AP Biology</td><td class="comp-best">85–100th percentile</td><td>62–75th</td><td>—</td></tr>
+        <tr><td>AP English Lit & Composition</td><td>~60th percentile</td><td>~10–20th</td><td>—</td></tr>
+        <tr class="comp-best"><td>USABO Semifinal (bio olympiad)</td><td class="comp-best">~87th percentile</td><td>~31st</td><td>—</td></tr>
+        <tr><td> AMC 12 (math competition)</td><td>~30th–90th percentile range</td><td>~1st–10th</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Weak areas remain: English literature, complex math competitions, and any task needing sustained original derivation. "Human-level on exams" is not general human expertise.</p>
+  </div>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">MMLU (5-shot)</div><div class="result-score" style="color:var(--amber-text);">86.4%</div><div class="result-label">vs 70.0% GPT-3.5 — across 57 subjects</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:86%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">FACTUALITY (internal)</div><div class="result-score" style="color:var(--blue-text);">+40%</div><div class="result-label">reduction in hallucination vs GPT-3.5 on internal adversarial factuality eval</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:40%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">SENSITIVITY</div><div class="result-score" style="color:var(--teal-text);">↓</div><div class="result-label">calibration and instruction-following improved by RLHF post-training</div></div>
+    <div class="result-card"><div class="result-model">CONTEXT</div><div class="result-score" style="color:var(--purple-text);">32K</div><div class="result-label">tokens in the long-context variant (~50 pages)</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Percentile Machine</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Place GPT-4, GPT-3.5, and a human median on the bar-exam percentile ladder. Click each candidate.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="g4PctTabs"></div>
+    <div id="g4PctTrack" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="g4PctNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TRAINING -->
+<section id="training">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Post-Training & <em>Alignment</em></h2>
+  <p class="section-desc">Pretraining buys capability; post-training buys behavior. The report documents an RLHF pipeline inherited from InstructGPT, plus safety-driven evaluation culture.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">RLHF Post-Training</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>SFT-style behavior seeding from demonstrations (per the InstructGPT lineage)</li>
+        <li>Preference models trained from human comparisons; RL optimization against them</li>
+        <li>Result: improved factuality, instruction-following, and steerability versus the raw pretrained model</li>
+        <li>Refusal behavior, calibration, and policy compliance are tuned — and also benchmarked</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Safety Evaluation Culture</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Internal and external red-teaming before release; a separate system card documents risks</li>
+        <li>Domain-qualified testers for dangerous-capability areas (e.g., bio, cyber, persuasion)</li>
+        <li>Truthfulness and hallucination measured on adversarial internal suites — the +40% improvement claim</li>
+        <li>Steering and "jailbreak" behavior: post-training narrows, but does not eliminate, misuse surface</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>Template</em> for Frontier Reports</h2>
+  <p class="section-desc">Every frontier model report since borrows a piece of this document's structure.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">📊 Exam-based evals</div><div class="notice-text">Human exams as a public, comparable, adversarially-designed yardstick — now standard in every release.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Predictable-scaling discipline</div><div class="notice-text">Small-model extrapolation is now table stakes for frontier labs (and the seed of the Chinchilla-vs-Kaplan compute debate).</div></div>
+    <div class="notice-card"><div class="notice-title">🛡 System cards & red-teaming</div><div class="notice-text">Separating capability documentation from risk documentation became an industry norm.</div></div>
+    <div class="notice-card"><div class="notice-title">🖼 Multimodal assistants</div><div class="notice-text">Image+text chat set the interface expectations for the entire assistant market.</div></div>
+    <div class="notice-card"><div class="notice-title">🔒 The secrecy debate</div><div class="notice-text">Withholding architecture/data sparked a lasting open-vs-closed argument — and motivated open reproductions.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Hallucination persists, long-context ≠ long-memory, and benchmarks saturate — the story continued in evaluation research.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Predictable Loss, <em>Unpredictable Meaning</em></h2>
+  <p class="section-desc">The report's deepest tension: the more precisely you can predict training, the less you can infer about what the model will mean to people.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">📉</div>
+      <div class="problem-title">What Curves Can't Tell You</div>
+      <ul class="problem-list">
+        <li>Loss predicts loss — not hallucination rates, refusals, or misuse potential</li>
+        <li>Exam percentiles measure test-taking, not judgment or originality</li>
+        <li>Emergent behaviors (good and bad) arrive without a curve announcing them</li>
+        <li>Societal impact depends on deployment context, invisible to any training metric</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔭</div>
+      <div class="problem-title">Why Prediction Still Wins</div>
+      <ul class="problem-list">
+        <li>Predictable training de-risks the biggest capital bets in AI</li>
+        <li>It enables safety work <em>before</em> scale-up: risky-capability evals run on small proxies</li>
+        <li>Scaling transparency (even without architecture disclosure) lets outsiders reason about trends</li>
+        <li>The predictable part funds the careful part — you can't red-team what you can't afford to train</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Predicted vs Surprise</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Sort report outcomes into "fitted in advance" vs "discovered after training" — the honest split of what scaling science covers.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="g4SortBtn" type="button" style="font-size:13px;padding:8px 18px;">Reveal classification</button>
+    </div>
+    <div id="g4SortBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Read the GPT-4 report as two documents stapled together: an <strong>engineering triumph</strong> (capability you can forecast like weather) and a <strong>governance experiment</strong> (powerful capability released with new norms of documentation and secrecy). The engineering scaled; the governance questions are still open — which is exactly why evaluation papers like <a href="./MMLU_Measuring_Massive_Multitask_Language_Understanding.html" style="color:var(--amber-text);">MMLU</a> and safety frameworks matter as much as the models they measure.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the GPT-4 Technical Report.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Multimodal: image + text in, text out — still next-token pretrained underneath.</div>
+    <div class="card-sm">✅ 86.4% MMLU (5-shot) vs 70.0% for GPT-3.5, across all 57 subjects.</div>
+    <div class="card-sm">✅ Simulated bar exam: ~top 10% of test takers (GPT-3.5: ~bottom 10%).</div>
+    <div class="card-sm">✅ Performance predicted from models trained with ≤1/1,000th of the compute — including loss spikes.</div>
+    <div class="card-sm">✅ RLHF post-training improved factuality (internal adversarial suite, ~40% fewer hallucinations) and steerability.</div>
+    <div class="card-sm">✅ Architecture, size, and data deliberately withheld — the report documents behavior, not the recipe.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2303.08774" target="_blank" rel="noopener noreferrer">"GPT-4 Technical Report"</a> (OpenAI, 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2303.08774" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
+    <a class="footer-link" href="./Scaling_Laws.html">Scaling Laws Guide</a>
+    <a class="footer-link" href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT Guide</a>
+    <a class="footer-link" href="./Constitutional_AI_Harmlessness_from_AI_Feedback.html">Constitutional AI Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "scaling", "benchmarks", "training", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === TWO SENSES DEMO ===
+(function(){
+  const box=document.getElementById('g4VisionBox');
+  const note=document.getElementById('g4VisionNote');
+  const tBtn=document.getElementById('g4TextBtn');
+  const vBtn=document.getElementById('g4VisionBtn');
+  if(!box||!note||!tBtn||!vBtn)return;
+  function render(mode){
+    if(mode==='text'){
+      box.innerHTML=`<span style="color:var(--text3);">Q:</span> "A rectangle's length is twice its width and its perimeter is 36. What is its area?"<br><span style="color:var(--text3);">A:</span> <span style="color:var(--green-text);">w=6, l=12 → area 72</span><br><br><span style="color:var(--red-text);">Q:</span> "What does this <em>figure in the textbook</em> show?"<br><span style="color:var(--text3);">A:</span> <span style="color:var(--red-text);">cannot answer — no visual access</span>`;
+      note.textContent='TEXT-ONLY: standard GPT-3-style interface — anything embedded in an image is invisible.';
+    }else{
+      box.innerHTML=`<span style="color:var(--blue-text);">[IMAGE: hand-drawn diagram of a pulley system with labeled masses]</span><br><span style="color:var(--text3);">Q:</span> "At what rate does the 2 kg mass accelerate?"<br><span style="color:var(--text3);">A:</span> <span style="color:var(--green-text);">reads the diagram, sets up equations, solves stepwise</span><br><br><span style="color:var(--blue-text);">[IMAGE: photo of a fridge interior]</span><br><span style="color:var(--text3);">Q:</span> "What can I cook with these?"<br><span style="color:var(--text3);">A:</span> <span style="color:var(--green-text);">identifies ingredients, suggests recipes</span>`;
+      note.textContent='IMAGE + TEXT: exams with figures, screenshots, charts, whiteboards — all become first-class input.';
+    }
+  }
+  tBtn.addEventListener('click',()=>render('text'));
+  vBtn.addEventListener('click',()=>render('vision'));
+  render('text');
+})();
+
+// === PREDICTION LADDER ===
+(function(){
+  const chart=document.getElementById('g4ScaleChart');
+  const note=document.getElementById('g4ScaleNote');
+  const btn=document.getElementById('g4ScaleBtn');
+  if(!chart||!note||!btn)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const pts=[
+    {c:0.001,l:3.55,fit:true},{c:0.01,l:2.98,fit:true},{c:0.1,l:2.51,fit:true},{c:1,l:2.13,fit:true},
+    {c:10,l:1.82,fit:false},{c:1000,l:1.55,fit:false}
+  ];
+  function x(c){return (Math.log10(c)+3)/6*100;}
+  function draw(fitline){
+    let html=`<div style="position:relative;height:150px;border-bottom:2px solid var(--border2);margin:0 34px 26px 34px;">`;
+    html+=`<div style="position:absolute;left:0;top:0;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:space-between;pointer-events:none;">${[0,1,2,3,4,5,6].map(v=>`<div style="width:1px;height:${(v/6)*100}%;background:var(--bg4);"></div>`).join('')}</div>`;
+    if(fitline){
+      html+=`<div style="position:absolute;left:${x(0.001)}%;top:${(3.55-1.2)/2.4*100}%;width:${x(1000)-x(0.001)}%;height:2px;background:linear-gradient(90deg,#3b82f6 15%,#3b82f6 15%,rgba(59,130,246,0.25) 15.1%,rgba(59,130,246,0.25));transform-origin:left;${RM?'':'animation:scaleIn 1.2s ease;'}"></div>`;
+    }
+    html+=pts.map(p=>`<div style="position:absolute;left:calc(${x(p.c)}% - 7px);top:${(p.l-1.2)/2.4*100}%;width:14px;height:14px;border-radius:50%;background:${p.fit?'#3b82f6':'#f59e0b'};border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2);"></div>`).join('');
+    html+=`</div>`;
+    html+=`<div style="display:flex;justify-content:space-between;margin:0 34px;font-family:var(--mono);font-size:10px;color:var(--text3);"><span>1/1000 C</span><span>1/100 C</span><span>1/10 C</span><span>C/1</span><span>10 C</span><span>GPT-4 = 1000×</span></div>`;
+    chart.innerHTML=html;
+  }
+  draw(false);
+  note.textContent='Blue points: small runs used to fit. Amber: the full GPT-4 run.';
+  btn.addEventListener('click',()=>{
+    draw(true);
+    note.textContent='Fitted on runs ≤1/1,000th compute, the loss curve predicted the final model — the report\'s core infrastructure claim.';
+  });
+})();
+
+// === PERCENTILE MACHINE ===
+(function(){
+  const tabs=document.getElementById('g4PctTabs');
+  const track=document.getElementById('g4PctTrack');
+  const note=document.getElementById('g4PctNote');
+  if(!tabs||!track||!note)return;
+  const C=[
+    {n:'GPT-4 (bar exam)',p:90,c:'#f59e0b',d:'Simulated Uniform Bar Exam: around the 90th percentile of human test takers — with no tools and no study hours.'},
+    {n:'GPT-3.5 (bar exam)',p:10,c:'#3b82f6',d:'Same exam, previous generation: around the 10th percentile. One training generation = a career-sized jump in exam terms.'},
+    {n:'Human median',p:50,c:'#14b8a6',d:'The median successful bar examinee. GPT-4 outscored ~80% of them.'}
+  ];
+  let cur=0;
+  function render(){
+    tabs.innerHTML=C.map((c,k)=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${c.n}</button>`).join('');
+    const c=C[cur];
+    track.innerHTML=`<div style="position:relative;height:44px;">
+      <div style="position:absolute;top:20px;left:0;right:0;height:8px;background:var(--bg4);border-radius:4px;"></div>
+      <div style="position:absolute;top:20px;left:0;width:${c.p}%;height:8px;background:${c.c};border-radius:4px;transition:width .6s ease;"></div>
+      <div style="position:absolute;top:8px;left:calc(${c.p}% - 1px);width:2px;height:32px;background:${c.c};"></div>
+      <div style="position:absolute;top:-4px;left:calc(${c.p}% + 8px);font-family:var(--mono);font-size:12px;color:${c.c};font-weight:600;">~${c.p}th pct</div>
+    </div>
+    <div style="font-size:12.5px;color:var(--text2);line-height:1.7;margin-top:14px;">${c.d}</div>`;
+  }
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    cur=Array.from(tabs.children).indexOf(b);render();
+  });
+  render();
+})();
+
+// === PREDICTED VS SURPRISE ===
+(function(){
+  const box=document.getElementById('g4SortBox');
+  const btn=document.getElementById('g4SortBtn');
+  if(!box||!btn)return;
+  const items=[
+    {t:'Final loss value',k:'predicted'},{t:'Loss spike timing (roughly)',k:'predicted'},
+    {t:'MMLU score band',k:'predicted'},{t:'Bar-exam percentile',k:'discovered'},
+    {t:'Refusal behavior & jailbreak surface',k:'discovered'},{t:'Where hallucination persists',k:'discovered'}
+  ];
+  box.innerHTML=`<div style="font-family:var(--mono);font-size:12px;color:var(--text3);">Press reveal to sort six report outcomes.</div>`;
+  btn.addEventListener('click',()=>{
+    box.innerHTML=['predicted','discovered'].map(k=>{
+      const rows=items.filter(i=>i.k===k);
+      const col=k==='predicted'?'var(--blue)':'var(--amber)';
+      const title=k==='predicted'?'FITTED IN ADVANCE — curve-extrapolable':'DISCOVERED AFTER — behavioral, not on the curve';
+      return `<div style="margin-bottom:12px;"><div style="font-family:var(--mono);font-size:11px;color:${col};font-weight:600;margin-bottom:6px;">${title}</div>${rows.map(r=>`<div style="font-size:12.5px;color:var(--text2);padding:4px 10px;border-left:2px solid ${col};margin-bottom:4px;">${r.t}</div>`).join('')}</div>`;
+    }).join('');
+  });
+})();
+
+
+const QUIZ_DATA=[{"q": "What input/output modalities does GPT-4 support?", "opts": ["Text in, image out", "Image and text in, text out", "Audio in, text out", "Image in, image out"], "correct": 1, "explain": "GPT-4 is multimodal on the input side — interleaved image and text — while all generation is text."}, {"q": "What fraction of GPT-4's final training compute was used by the models that predicted its performance?", "opts": ["No smaller models were used", "Up to about 1/1,000th", "Exactly half", "1/10,000th"], "correct": 1, "explain": "The report states that infrastructure and optimization methods behaved predictably across scales, allowing accurate prediction of some aspects of GPT-4's performance from models trained with no more than 1/1,000th of the compute."}, {"q": "What was GPT-4's 5-shot MMLU score reported in the paper?", "opts": ["70.0%", "75.2%", "86.4%", "92.8%"], "correct": 2, "explain": "GPT-4 scored 86.4% on MMLU (5-shot), versus 70.0% for GPT-3.5 — across the benchmark's 57 subjects."}, {"q": "On the simulated Uniform Bar Exam, GPT-4 scored roughly…", "opts": ["Bottom 10% of test takers", "Median", "Top 10% of test takers", "Top 0.1%"], "correct": 2, "explain": "GPT-4 passed with a score around the top 10% of test takers — while GPT-3.5 scored around the bottom 10%."}, {"q": "Which core detail did the report deliberately withhold?", "opts": ["Benchmark results", "Architecture and parameter count", "RLHF improvements", "Context length options"], "correct": 1, "explain": "Citing competitive landscape and safety implications, OpenAI withheld architecture, parameter count, and dataset construction details — documenting capabilities and behavior instead."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

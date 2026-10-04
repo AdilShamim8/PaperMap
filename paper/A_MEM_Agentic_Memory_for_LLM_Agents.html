@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -333,7 +339,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE A-MEM LOOP FOR EVERY NEW MEMORY</div>
         <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:var(--text2);">
-          new memory → <span style="color:var(--amber);font-weight:600;">① CONSTRUCT</span> note → <span style="color:var(--green);font-weight:600;">② LINK</span> to neighbors → <span style="color:var(--teal);font-weight:600;">③ EVOLVE</span> old notes → repeat
+          new memory → <span style="color:var(--amber-text);font-weight:600;">① CONSTRUCT</span> note → <span style="color:var(--green-text);font-weight:600;">② LINK</span> to neighbors → <span style="color:var(--teal-text);font-weight:600;">③ EVOLVE</span> old notes → repeat
         </div>
         <div style="font-size:12px;color:var(--text3);margin-top:8px;">No predefined schema, no fixed workflow — the structure emerges from the content.</div>
       </div>
@@ -376,11 +382,11 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-label">Analogy — The Library That Never Re-Catalogs</div>
     <div class="two-col">
       <div style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius);padding:1rem;">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:6px;">SYSTEM A — THE STATIC LIBRARY</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--red-text);margin-bottom:6px;">SYSTEM A — THE STATIC LIBRARY</div>
         <p style="font-size:12.5px;color:var(--text2);line-height:1.7;">Every book is dropped on a shelf in arrival order; the catalog is written once and never touched again. To answer a question you either read the whole library (a full context window) or trust a keyword match that cannot see across topics. Nothing inside ever changes.</p>
       </div>
       <div style="background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius);padding:1rem;">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--green);margin-bottom:6px;">SYSTEM B — THE RESEARCHER'S SLIP-BOX</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--green-text);margin-bottom:6px;">SYSTEM B — THE RESEARCHER'S SLIP-BOX</div>
         <p style="font-size:12.5px;color:var(--text2);line-height:1.7;">Each new slip is filed next to related slips, arrows are drawn between them, and an old note's summary is rewritten when a new slip changes what it means. To answer a question: start anywhere and follow the thread.</p>
       </div>
     </div>
@@ -424,7 +430,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       t&nbsp;&nbsp;2025-06-06 18:42<br>
       K&nbsp;&nbsp;[quiet, restaurant, dinner]<br>
       G&nbsp;&nbsp;[dining, preference]<br>
-      X&nbsp;&nbsp;<span style="color:var(--amber);">User prefers calm, low-noise dining venues; avoids loud or crowded restaurants.</span><br>
+      X&nbsp;&nbsp;<span style="color:var(--amber-text);">User prefers calm, low-noise dining venues; avoids loud or crowded restaurants.</span><br>
       e&nbsp;&nbsp;f<sub>enc</sub>(concat(c, K, G, X))&nbsp;&nbsp;→ dense vector<br>
       L&nbsp;&nbsp;[ ]&nbsp;&nbsp;<span style="color:var(--text3);">← filled in by link generation…</span>
     </div>
@@ -437,7 +443,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:0.75rem;">
       <button class="btn-primary" id="slipboxBtn" type="button" style="font-size:13px;padding:8px 18px;">Add next observation →</button>
       <button class="btn-outline" id="slipboxReset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
-      <div id="slipboxStage" style="font-family:var(--mono);font-size:11.5px;color:var(--amber);">① construction → ② linking → ③ evolution</div>
+      <div id="slipboxStage" style="font-family:var(--mono);font-size:11.5px;color:var(--amber-text);">① construction → ② linking → ③ evolution</div>
     </div>
     <div id="slipboxStatus" style="font-size:12px;color:var(--text2);margin-bottom:1rem;min-height:18px;">The slip-box is empty. Add observations one by one.</div>
     <div id="slipboxWall" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;"></div>
@@ -456,10 +462,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-label">How a New Note Finds Its Neighbors</div>
     <div style="font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:2;background:var(--bg3);padding:1rem;border-radius:var(--radius);overflow-x:auto;">
       new note m<sub>n</sub><br>
-      <span style="color:var(--blue);">① similarity</span>&nbsp;&nbsp;s<sub>n,j</sub> = e<sub>n</sub>·e<sub>j</sub> / (|e<sub>n</sub>||e<sub>j</sub>|)&nbsp;&nbsp;— cosine over all notes<br>
-      <span style="color:var(--blue);">② shortlist</span>&nbsp;&nbsp;top-k nearest notes (k = 10 in the experiments)<br>
-      <span style="color:var(--amber);">③ LLM judgment</span>&nbsp;&nbsp;prompt: do these notes share attributes or context?<br>
-      <span style="color:var(--green);">④ write links</span>&nbsp;&nbsp;L<sub>n</sub> updated — the note joins one or more "boxes"
+      <span style="color:var(--blue-text);">① similarity</span>&nbsp;&nbsp;s<sub>n,j</sub> = e<sub>n</sub>·e<sub>j</sub> / (|e<sub>n</sub>||e<sub>j</sub>|)&nbsp;&nbsp;— cosine over all notes<br>
+      <span style="color:var(--blue-text);">② shortlist</span>&nbsp;&nbsp;top-k nearest notes (k = 10 in the experiments)<br>
+      <span style="color:var(--amber-text);">③ LLM judgment</span>&nbsp;&nbsp;prompt: do these notes share attributes or context?<br>
+      <span style="color:var(--green-text);">④ write links</span>&nbsp;&nbsp;L<sub>n</sub> updated — the note joins one or more "boxes"
     </div>
     <p style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">Embedding retrieval is a cheap first filter that scales to large collections; the LLM-driven step is what catches subtle patterns, causal relationships, and conceptual connections that raw similarity misses.</p>
   </div>
@@ -478,18 +484,18 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card" style="overflow:hidden;">
     <div class="card-label">Interactive Demo — Static RAG vs A-MEM Retrieval Race</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same memory store, same query. The left column retrieves the top-3 chunks by cosine similarity only; the right column retrieves one note and <strong>follows its links</strong>. Run it and see what each system puts in the prompt.</p>
-    <div style="font-family:var(--mono);font-size:12.5px;color:var(--amber);background:var(--amber-dim);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius);padding:10px 12px;margin-bottom:1rem;">QUERY: "Plan a dinner for the user"</div>
+    <div style="font-family:var(--mono);font-size:12.5px;color:var(--amber-text);background:var(--amber-dim);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius);padding:10px 12px;margin-bottom:1rem;">QUERY: "Plan a dinner for the user"</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
       <button class="btn-primary" id="raceBtn" type="button" style="font-size:13px;padding:8px 18px;">Run query →</button>
       <button class="btn-outline" id="raceReset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" id="raceCols">
       <div style="background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius);padding:1rem;">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:10px;">STATIC RAG — top-3 by similarity</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--red-text);margin-bottom:10px;">STATIC RAG — top-3 by similarity</div>
         <div id="raceRag"></div>
       </div>
       <div style="background:rgba(34,197,94,0.04);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius);padding:1rem;">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--green);margin-bottom:10px;">A-MEM — retrieve + follow links</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--green-text);margin-bottom:10px;">A-MEM — retrieve + follow links</div>
         <div id="raceAmem"></div>
       </div>
     </div>
@@ -550,28 +556,28 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="results-grid">
     <div class="result-card">
       <div class="result-model">GPT-4o-mini · MULTI-HOP F1</div>
-      <div class="result-score" style="color:var(--amber);">45.85</div>
+      <div class="result-score" style="color:var(--amber-text);">45.85</div>
       <div class="result-label">vs 25.52 (MemGPT) and 18.41 (full context)</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">≈2× the best baseline where reasoning chains matter</div>
     </div>
     <div class="result-card">
       <div class="result-model">QWEN2.5-3B · AVG F1</div>
-      <div class="result-score" style="color:var(--blue);">12.57</div>
+      <div class="result-score" style="color:var(--blue-text);">12.57</div>
       <div class="result-label">vs 4.61 for the full-context baseline</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">a 2.7× gain — the biggest relative jump of the six</div>
     </div>
     <div class="result-card">
       <div class="result-model">DIALSIM · F1</div>
-      <div class="result-score" style="color:var(--teal);">3.45</div>
+      <div class="result-score" style="color:var(--teal-text);">3.45</div>
       <div class="result-label">+35% over LoCoMo (2.55), +192% over MemGPT (1.18)</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">best on every metric: F1, BLEU-1, ROUGE-L/2, METEOR, SBERT</div>
     </div>
     <div class="result-card">
       <div class="result-model">TOKENS PER ANSWER</div>
-      <div class="result-score" style="color:var(--green);">2,520</div>
+      <div class="result-score" style="color:var(--green-text);">2,520</div>
       <div class="result-label">vs 16,910 for full context (GPT-4o-mini)</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:15%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">85–93% token reduction; 1,216 with GPT-4o</div>
@@ -620,7 +626,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   </div>
 
   <div class="card" style="border:1px solid rgba(239,68,68,0.2);">
-    <div class="card-label" style="color:var(--red);">What A-MEM Did NOT Solve</div>
+    <div class="card-label" style="color:var(--red-text);">What A-MEM Did NOT Solve</div>
     <ul class="problem-list">
       <li>Memory organization quality is still bounded by the backbone LLM — different models write different descriptions and forge different links</li>
       <li>Text-only: the system does not yet handle multimodal memories (images, audio), which the authors leave to future work</li>
@@ -693,7 +699,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
       <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Evolution is the differentiator; efficiency is the by-product</div>
-      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">Multi-hop F1 of 45.85 with GPT-4o-mini — and 2.7× average improvement on a 3B backbone — while spending up to 93% fewer tokens per answer: because the notes already did the synthesis, the model reads a curated neighborhood instead of a transcript. O(N) storage keeps the bet affordable. The Zettelkasten lineage is explicit design honesty: the paper cites the method's human origin. Where the lineage continues: <a href="./Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html" style="color:var(--amber);font-weight:600;text-decoration:none;">Generative Agents</a> (proto-evolution via reflection), <a href="./MemGPT_Towards_LLMs_as_Operating_Systems.html" style="color:var(--amber);font-weight:600;text-decoration:none;">MemGPT</a> (capacity management), and the benchmarks that grade it: <a href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LongMemEval</a> and <a href="./LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LoCoMo-Plus</a>.</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">Multi-hop F1 of 45.85 with GPT-4o-mini — and 2.7× average improvement on a 3B backbone — while spending up to 93% fewer tokens per answer: because the notes already did the synthesis, the model reads a curated neighborhood instead of a transcript. O(N) storage keeps the bet affordable. The Zettelkasten lineage is explicit design honesty: the paper cites the method's human origin. Where the lineage continues: <a href="./Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">Generative Agents</a> (proto-evolution via reflection), <a href="./MemGPT_Towards_LLMs_as_Operating_Systems.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">MemGPT</a> (capacity management), and the benchmarks that grade it: <a href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">LongMemEval</a> and <a href="./LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">LoCoMo-Plus</a>.</div>
     </div>
   </div>
 
@@ -743,6 +749,8 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="footer-link" href="./A_Survey_on_the_Memory_Mechanism_of_LLM_Based_Agents.html">Memory Survey Guide</a>
     <a class="footer-link" href="./Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">Generative Agents Guide</a>
     <a class="footer-link" href="./MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT Guide</a>
+
+    <a class="footer-link" href="./Mem0_Building_Production_Ready_AI_Agents_with_Scalable_Long_Term_Memory.html">Mem0 Guide</a>
   </div>
   <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -846,8 +854,8 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     {tag:'hop 2 · follow link',main:'note 1 ↔ note 2',det:'same “dining preferences” box → dairy-free constraint found',c:'green'},
     {tag:'hop 3 · follow link',main:'note 2 ↔ note 4',det:'same “dietary constraints” box → partner is vegetarian',c:'green'}
   ];
-  function ragRow(r){const [s,n,ok]=r;return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;${RM?'':'animation:fadeUp .4s ease;'}"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:34px;">${s.toFixed(2)}</div><div style="flex:1;height:14px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${s*100}%;background:${ok?'var(--green)':'var(--red)'};border-radius:4px;${RM?'':'animation:scaleIn .6s ease;'}transform-origin:left;"></div></div><div style="font-size:11.5px;color:var(--text2);flex:1.6;">${n}</div><div style="font-family:var(--mono);font-size:11px;">${ok?'<span style="color:var(--green);">✓</span>':'<span style="color:var(--red);">✗</span>'}</div></div>`;}
-  function missedRow(m){const [s,n]=m;return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;opacity:0.55;${RM?'':'animation:fadeUp .4s ease;'}"><div style="font-family:var(--mono);font-size:11px;color:var(--red);width:34px;">${s.toFixed(2)}</div><div style="flex:1;height:14px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${s*100}%;background:var(--red);opacity:0.5;border-radius:4px;"></div></div><div style="font-size:11.5px;color:var(--text2);flex:1.6;">${n} <span style="color:var(--red);font-family:var(--mono);font-size:10px;">never retrieved</span></div></div>`;}
+  function ragRow(r){const [s,n,ok]=r;return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;${RM?'':'animation:fadeUp .4s ease;'}"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:34px;">${s.toFixed(2)}</div><div style="flex:1;height:14px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${s*100}%;background:${ok?'var(--green)':'var(--red)'};border-radius:4px;${RM?'':'animation:scaleIn .6s ease;'}transform-origin:left;"></div></div><div style="font-size:11.5px;color:var(--text2);flex:1.6;">${n}</div><div style="font-family:var(--mono);font-size:11px;">${ok?'<span style="color:var(--green-text);">✓</span>':'<span style="color:var(--red-text);">✗</span>'}</div></div>`;}
+  function missedRow(m){const [s,n]=m;return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;opacity:0.55;${RM?'':'animation:fadeUp .4s ease;'}"><div style="font-family:var(--mono);font-size:11px;color:var(--red-text);width:34px;">${s.toFixed(2)}</div><div style="flex:1;height:14px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${s*100}%;background:var(--red);opacity:0.5;border-radius:4px;"></div></div><div style="font-size:11.5px;color:var(--text2);flex:1.6;">${n} <span style="color:var(--red-text);font-family:var(--mono);font-size:10px;">never retrieved</span></div></div>`;}
   function amemRow(a){return `<div style="background:var(--${a.c}-dim);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:6px;${RM?'':'animation:fadeUp .4s ease;'}"><span class="pill pill-${a.c}">${a.tag}</span><div style="font-size:12px;color:var(--text);margin-top:4px;">${a.main}</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">${a.det}</div></div>`;}
   function clearAll(){
     timers.forEach(clearTimeout);timers.length=0;
@@ -861,10 +869,10 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     RAG.forEach((r,i)=>later(()=>rag.insertAdjacentHTML('beforeend',ragRow(r)),200+i*420));
     const mt=200+RAG.length*420+250;
     MISSED.forEach((m,i)=>later(()=>rag.insertAdjacentHTML('beforeend',missedRow(m)),mt+i*300));
-    later(()=>rag.insertAdjacentHTML('beforeend','<div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-top:6px;">2 of 4 constraints in the prompt — both dietary notes missed</div>'),mt+MISSED.length*300+200);
+    later(()=>rag.insertAdjacentHTML('beforeend','<div style="font-family:var(--mono);font-size:11px;color:var(--red-text);margin-top:6px;">2 of 4 constraints in the prompt — both dietary notes missed</div>'),mt+MISSED.length*300+200);
     AMEM.forEach((a,i)=>later(()=>amem.insertAdjacentHTML('beforeend',amemRow(a)),200+i*640));
-    later(()=>amem.insertAdjacentHTML('beforeend','<div style="font-family:var(--mono);font-size:11px;color:var(--green);margin-top:6px;">all 4 constraints in the prompt — one seed + two hops</div>'),200+AMEM.length*640+200);
-    later(()=>{verdict.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div class="card-sm" style="border:1px solid rgba(239,68,68,0.25);"><div style="font-weight:600;font-size:13px;color:var(--red);margin-bottom:4px;">✗ Static RAG</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">The prompt knows “quiet” and “7pm” but never sees the dietary notes — the plan suggests a cheese-heavy menu with no vegetarian main.</div></div><div class="card-sm" style="border:1px solid rgba(34,197,94,0.25);"><div style="font-weight:600;font-size:13px;color:var(--green);margin-bottom:4px;">✓ A-MEM</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">One seed hit plus two link hops surfaces every constraint: quiet, Friday 7pm, dairy-free, vegetarian.</div></div></div>';},Math.max(mt+MISSED.length*300+900,200+AMEM.length*640+800));
+    later(()=>amem.insertAdjacentHTML('beforeend','<div style="font-family:var(--mono);font-size:11px;color:var(--green-text);margin-top:6px;">all 4 constraints in the prompt — one seed + two hops</div>'),200+AMEM.length*640+200);
+    later(()=>{verdict.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div class="card-sm" style="border:1px solid rgba(239,68,68,0.25);"><div style="font-weight:600;font-size:13px;color:var(--red-text);margin-bottom:4px;">✗ Static RAG</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">The prompt knows “quiet” and “7pm” but never sees the dietary notes — the plan suggests a cheese-heavy menu with no vegetarian main.</div></div><div class="card-sm" style="border:1px solid rgba(34,197,94,0.25);"><div style="font-weight:600;font-size:13px;color:var(--green-text);margin-bottom:4px;">✓ A-MEM</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">One seed hit plus two link hops surfaces every constraint: quiet, Friday 7pm, dairy-free, vegetarian.</div></div></div>';},Math.max(mt+MISSED.length*300+900,200+AMEM.length*640+800));
   });
   rst.addEventListener('click',clearAll);
   clearAll();
@@ -890,7 +898,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       {v:'v3',trig:'new note — “User booked a trip to Mexico City”',txt:'An <hl>A1-level learner preparing for a trip to Mexico City</hl> — <hl>practical travel phrases</hl> are most relevant.'}],why:'The trip query and the learning note now meet inside one evolved description — a connection the memory system discovered on its own, not one hard-coded by a developer.'}
   };
   let cur='run';
-  function hl(s){return s.replace(/<hl>/g,'<span style="background:var(--amber-dim);color:var(--amber);padding:0 4px;border-radius:4px;font-weight:600;">').replace(/<\/hl>/g,'</span>');}
+  function hl(s){return s.replace(/<hl>/g,'<span style="background:var(--amber-dim);color:var(--amber-text);padding:0 4px;border-radius:4px;font-weight:600;">').replace(/<\/hl>/g,'</span>');}
   function render(){
     tabs.innerHTML=Object.keys(NOTES).map(k=>`<button type="button" data-k="${k}" style="font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${NOTES[k].label}</button>`).join('');
     tl.innerHTML=NOTES[cur].versions.map((ver,i)=>`${i>0?`<div style="font-family:var(--mono);font-size:10.5px;color:var(--text3);padding:4px 0 4px 14px;${RM?'':'animation:fadeUp .4s ease;'}">↓ a related note arrived — the LLM rewrote this note’s description</div>`:''}<div class="card-sm" style="${RM?'':'animation:fadeUp .5s ease;animation-delay:'+(i*0.28)+'s;'}"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;"><span class="pill ${i===0?'pill-blue':'pill-amber'}">${ver.v}</span><span style="font-family:var(--mono);font-size:10.5px;color:var(--text3);">${ver.trig}</span></div><div style="font-size:12.5px;color:var(--text2);line-height:1.7;">${hl(ver.txt)}</div></div>`).join('');
@@ -914,11 +922,11 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   function noteCard(i,ev){
     const n=N[i];
     const desc=ev>=n.desc.length?n.desc[n.desc.length-1]:n.desc[Math.min(ev,n.desc.length-1)];
-    const links=n.links.map(l=>'<span style="display:inline-block;background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:2px 7px;margin:2px 4px 0 0;font-size:9.5px;color:var(--blue);">↔ note-'+(l+1)+'</span>').join('');
+    const links=n.links.map(l=>'<span style="display:inline-block;background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:2px 7px;margin:2px 4px 0 0;font-size:9.5px;color:var(--blue-text);">↔ note-'+(l+1)+'</span>').join('');
     return '<div style="background:var(--bg2);border:1px solid '+(i===2?'rgba(59,130,246,.5)':'rgba(34,197,94,.4)')+';border-radius:var(--radius);padding:10px 12px;'+(RM?'':'opacity:0;animation:fadeUp .45s ease forwards;')+'">'
       +'<div style="font-size:11.5px;color:var(--text1);line-height:1.6;">'+n.t+'</div>'
       +'<div style="font-family:var(--mono);font-size:9.5px;color:var(--text3);margin:5px 0;">'+n.tags+'</div>'
-      +'<div style="font-size:10.5px;color:var(--purple);line-height:1.5;"><strong>desc:</strong> '+desc+'</div>'
+      +'<div style="font-size:10.5px;color:var(--purple-text);line-height:1.5;"><strong>desc:</strong> '+desc+'</div>'
       +'<div style="margin-top:5px;">'+links+'</div></div>';
   }
   function draw(){
@@ -931,7 +939,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   });
   query.addEventListener('click',()=>{
     if(stage<3){result.innerHTML='<div class="card-sm" style="border-left:3px solid var(--amber);font-size:12px;color:var(--text2);">Advance all sessions first — the query needs the whole neighborhood.</div>';return;}
-    result.innerHTML='<div class="card-sm animate-in" style="border-left:3px solid var(--green);"><div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;">MULTI-HOP QUERY · "Recommend weekend activities."</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">The query text shares no keywords with note-1 or note-2. Embedding search on "weekend activities" alone would surface nothing causal. Via links, the request note pulls its neighborhood: <em>young dog → overnight travel blocked</em> → the honest recommendation is daytime, dog-friendly, near-home activities — the 45.85 F1 pattern, synthesized from three unrelated sentences.</div></div>';
+    result.innerHTML='<div class="card-sm animate-in" style="border-left:3px solid var(--green);"><div style="font-size:12px;font-weight:600;color:var(--green-text);margin-bottom:4px;">MULTI-HOP QUERY · "Recommend weekend activities."</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">The query text shares no keywords with note-1 or note-2. Embedding search on "weekend activities" alone would surface nothing causal. Via links, the request note pulls its neighborhood: <em>young dog → overnight travel blocked</em> → the honest recommendation is daytime, dog-friendly, near-home activities — the 45.85 F1 pattern, synthesized from three unrelated sentences.</div></div>';
     if(!RM){result.classList.remove('animate-in');void result.offsetWidth;result.classList.add('animate-in');}
   });
   if(RM||!('IntersectionObserver' in window)){stage=1;draw();}
@@ -946,7 +954,7 @@ const QUIZ_DATA=[
   {q:'On LoCoMo with GPT-4o-mini, what multi-hop F1 did A-MEM achieve — roughly 2× the best baseline?',opts:['18.41','27.02','45.85','50.03'],correct:2,explain:'A-MEM scored 45.85 multi-hop F1, vs 25.52 for MemGPT and 18.41 for the full-context baseline. (50.03 is A-MEM’s adversarial-question score.)'},
   {q:'How does A-MEM fundamentally differ from static RAG memory?',opts:['It retrieves from a much larger vector store','It fine-tunes the LLM on past conversations','Its agency is at storage time — the memory structure itself self-organizes with links and evolution','It uses a longer context window instead of retrieval'],correct:2,explain:'Agentic RAG decides when and what to retrieve but keeps a static knowledge base. A-MEM’s agency is more fundamental: descriptions, links, and organization of the stored memory change as notes arrive.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

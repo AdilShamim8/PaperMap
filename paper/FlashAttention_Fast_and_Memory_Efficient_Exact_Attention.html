@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the FlashAttention paper, with visual demos for tiling, online softmax recomputation, GPU memory hierarchy, and block-sparse attention.">
+<meta name="keywords" content="FlashAttention, attention, IO-aware, tiling, online softmax, SRAM, HBM, GPU memory, block-sparse, long context, exact attention">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/FlashAttention_Fast_and_Memory_Efficient_Exact_Attention.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of FlashAttention — the IO-aware exact attention algorithm that made long contexts practical.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/FlashAttention_Fast_and_Memory_Efficient_Exact_Attention.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of FlashAttention — the IO-aware exact attention algorithm that made long contexts practical.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#memory">Memory Hierarchy</a>
+    <a class="nav-link" href="#tiling">Tiling</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">NeurIPS 2022</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#memory">Memory Hierarchy</a>
+  <a href="#tiling">Tiling</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Attention That <em>Respects the Hardware</em><br>FlashAttention
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the algorithm that made long-context Transformers practical — exact attention, 2-4× faster, by refusing to waste trips between GPU memory levels.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2205.14135" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">3×</div>
+      <div class="stat-label">GPT-2 Speedup (1K)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Exact</div>
+      <div class="stat-label">Not Approximate</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">15%</div>
+      <div class="stat-label">BERT-large vs MLPerf</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2022</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>FLOPs</em> to <em>Bytes</em></h2>
+  <p class="section-desc">Everyone was counting arithmetic operations. FlashAttention counted memory trips — and won.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2014–17</div><div class="tl-title">The quadratic era begins</div><div class="tl-desc">Self-attention's O(N²) compute and memory become the known cost of Transformers.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2019–21</div><div class="tl-title">Approximate attention boom</div><div class="tl-desc">Sparse, linear, low-rank, kernel methods — hundreds of papers reducing FLOPs, often with no wall-clock speedup and quality loss.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · May</div><div class="tl-title">🚀 FlashAttention (Dao, Fu, Ermon, Rudra, Ré)</div><div class="tl-desc">IO-aware exact attention: tile the computation, never materialize the N×N matrix, stream through SRAM — fewer HBM accesses by construction.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023 →</div><div class="tl-title">The default kernel</div><div class="tl-desc">FlashAttention-2, fused kernels everywhere, multi-GPU attention — long context stops being a luxury. Every serious stack inherits the idea.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The One-Sentence Insight</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">On a GPU, <strong>attention is memory-bound, not compute-bound</strong>: the time is dominated by moving data between the GPU's slow large memory (HBM) and its fast tiny memory (SRAM), not by arithmetic. Approximate attention attacked the wrong bottleneck. FlashAttention keeps the math <em>exact</em> and removes the memory traffic instead.</p>
+      <div class="notice-card" style="margin-top:1rem;"><div class="notice-title">🧭 Study pairing</div><div class="notice-text">Start with <a href="./Attention_Is_All_You_Need.html" style="color:var(--amber-text);">Attention Is All You Need</a> — this page is its systems sequel.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The <em>N×N</em> Materialization</h2>
+  <p class="section-desc">Standard attention computes an N×N matrix nobody needs to keep — and pays for it in the slowest memory on the chip.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">💾</div>
+      <div class="problem-title">The Standard Recipe's IO Bill</div>
+      <ul class="problem-list">
+        <li>Write S = QKᵀ (N×N) to HBM; read it back for softmax; write the normalized matrix; read again to multiply by V</li>
+        <li>Memory grows O(N²) — at 8K tokens the scores matrix alone is ~256× larger than the inputs</li>
+        <li>Every round trip crosses the slow HBM bottleneck; SRAM sits underused</li>
+        <li>Approximate attention cut FLOPs but often ran no faster — it was still HBM-bound</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">⚡</div>
+      <div class="problem-title">The FlashAttention Contract</div>
+      <ul class="problem-list">
+        <li>Never materialize the N×N matrix anywhere</li>
+        <li>Load tiles of Q, K, V into SRAM; compute attention for a tile block completely; write only the output block</li>
+        <li>Softmax online: accumulate running statistics per row — exact, incremental, no second pass</li>
+        <li>Backward pass recomputes attention (cheap, it's in SRAM) instead of storing it</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Kitchen Countertop</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8.">HBM is the <strong>walk-in pantry</strong>; SRAM is the <strong>countertop</strong>. Standard attention walks every ingredient to the countertop, then carries the half-finished dish back to the pantry, then returns to get it again — for every step of the recipe. FlashAttention rewrites the recipe so each countertop session completes a whole course: <strong>pantry trips: one in, one out</strong>.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Three Ideas, <em>One Kernel</em></h2>
+  <p class="section-desc">Tiling, online softmax, and kernel fusion — each old individually, decisive together.</p>
+  <div class="formula-card">
+    <div class="formula-main">O = softmax(QKᵀ / √d) · V &nbsp;·&nbsp; computed tile-by-tile with running (m, ℓ) statistics</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">Tiling</div><div class="fp-name">Block the loop</div><div class="fp-desc">Q rows × K/V columns in blocks sized to SRAM; the N×N matrix never exists in full.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Online softmax</div><div class="fp-name">Exact, streaming</div><div class="fp-desc">Track running max m and normalizer ℓ per row; rescale partial outputs as new tiles arrive — mathematically identical to the two-pass softmax.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Recomputation</div><div class="fp-name">Backward trick</div><div class="fp-desc">Store only Q,K,V and output O (O(N)); recompute attention inside the backward kernel — memory drops from O(N²) to O(N).</div></div>
+      <div class="formula-piece"><div class="fp-sym">IO-optimal</div><div class="fp-name">Proven</div><div class="fp-desc">The paper analyzes IO complexity: fewer HBM accesses than standard attention, and optimal for a range of SRAM sizes.</div></div>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Memory Trip Counter</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Standard vs Flash attention: watch HBM round trips per forward pass. Press Run.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="faTripBtn" type="button" style="font-size:13px;padding:8px 18px;">Run 4 tiles</button>
+    </div>
+    <div id="faTripChart" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="faTripNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MEMORY HIERARCHY -->
+<section id="memory">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The <em>Two-Level</em> World</h2>
+  <p class="section-desc">The physics the algorithm respects: big-and-slow HBM, small-and-fast SRAM.</p>
+  <div class="two-col">
+    <div class="card" style="overflow-x:auto;">
+      <div class="card-label">GPU Memory Ladder (A100-class)</div>
+      <table class="comp-table">
+        <thead><tr><th>Level</th><th>Size</th><th>Bandwidth</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td>HBM (main GPU memory)</td><td>~40–80 GB</td><td>~1.5–2 TB/s</td><td>Stores weights, activations, KV cache</td></tr>
+          <tr class="comp-best"><td>SRAM (on-chip)</td><td class="comp-best">~20 MB</td><td class="comp-best">~19 TB/s</td><td class="comp-best">Tiling workspace — ~10× the bandwidth</td></tr>
+          <tr><td>CPU RAM</td><td>100s of GB</td><td>~100s GB/s</td><td>Off-chip overflow (not in this story)</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px;">An algorithm that keeps its working set in SRAM can be arithmetic-bound and fast; one that spills to HBM is memory-bound regardless of its FLOP count.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Why Approximations Stalled</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Sparse/linear attention reduced arithmetic — but their scattered memory patterns still strided through HBM. Many ran <em>slower</em> than the dense baseline they replaced while also losing quality. The paper's framing — "make attention IO-aware" — reframed the whole subfield: fix the data movement first, approximate only if you still need to.</p>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Bandwidth Bottleneck Simulator</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="faBw1Btn" type="button" style="font-size:12px;padding:8px 14px;">SRAM-resident tiles</button>
+      <button class="btn-primary" id="faBw2Btn" type="button" style="font-size:12px;padding:8px 14px;">HBM round trips</button>
+    </div>
+    <div id="faBwChart" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="faBwNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TILING -->
+<section id="tiling">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Tiling in <em>Motion</em></h2>
+  <p class="section-desc">Watch one output tile assemble itself as K/V blocks stream through SRAM, with the running softmax rescaling everything.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Online Softmax Assembly</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">One row-block of Q, four blocks of K/V. Advance to see partial outputs merge into the exact final result.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="faTileBtn" type="button" style="font-size:13px;padding:8px 18px;">Next block →</button>
+      <button class="btn-outline" id="faTileResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="faTileBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="faTileNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The Rescaling Trick, Intuited</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Softmax needs every score before it can normalize anything — normally forcing the full row into memory. The online version keeps a running max <span class="code-inline">m</span> and sum <span class="code-inline">ℓ</span>: when a new block arrives with a bigger max, earlier partial outputs are rescaled down (cheap, in SRAM). At the end: <strong>bit-for-bit the same math</strong>, zero global passes.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Block-Sparse Extension</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Once attention is tiled, masking whole blocks is one line: skip loading them. Block-sparse FlashAttention combines exact tiling with approximate sparsity — the paper's long-context results (16K–64K) come from this extension, achieving quality <em>above</em> dense baselines at lower cost.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Speed <em>and</em> Quality</h2>
+  <p class="section-desc">The results table that ended the approximate-attention debate for training workloads.</p>
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Training Speedups (end-to-end wall clock)</div>
+    <table class="comp-table">
+      <thead><tr><th>Workload</th><th>Speedup</th><th>Reference</th></tr></thead>
+      <tbody>
+        <tr class="comp-best"><td>BERT-large (512 seq)</td><td class="comp-best">15%</td><td>vs MLPerf 1.1 training speed record</td></tr>
+        <tr class="comp-best"><td>GPT-2 (1K seq)</td><td class="comp-best">3×</td><td>end-to-end vs HuggingFace baseline</td></tr>
+        <tr class="comp-best"><td>Long-range arena (1K–4K)</td><td class="comp-best">2.4×</td><td>vs standard attention</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Exact outputs — speedups come purely from IO behavior, with zero change to model math.</p>
+  </div>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">MEMORY</div><div class="result-score" style="color:var(--blue-text);">O(N)</div><div class="result-label">activations for backward — the N×N matrix is never stored</div></div>
+    <div class="result-card"><div class="result-model">LONGER CONTEXT</div><div class="result-score" style="color:var(--amber-text);">16K–64K</div><div class="result-label">block-sparse variant reaches Path-X 61.4% / Path-256 63.1% — first better-than-chance Transformers</div></div>
+    <div class="result-card"><div class="result-model">QUALITY</div><div class="result-score" style="color:var(--teal-text);">+0.7 ppl</div><div class="result-label">GPT-2 perplexity improves with longer context enabled by block-sparse FlashAttention</div></div>
+    <div class="result-card"><div class="result-model">SCALING</div><div class="result-score" style="color:var(--purple-text);">→ Flash-2/3</div><div class="result-label">parallelism over sequence length and better occupancy drove further 2× in v2</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Sequence Length Wall</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Standard attention hits the memory wall as N grows; Flash stays in the race. Press play.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="faWallBtn" type="button" style="font-size:13px;padding:8px 18px;">Grow sequence</button>
+    </div>
+    <div id="faWallChart" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="faWallNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>Substrate</em> of Modern AI</h2>
+  <p class="section-desc">FlashAttention stopped being a paper and became plumbing: the layer every long-context system stands on.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧱 Default in every stack</div><div class="notice-text">PyTorch, JAX, HF Transformers, vLLM — fused attention kernels are assumed infrastructure now.</div></div>
+    <div class="notice-card"><div class="notice-title">📏 The long-context era</div><div class="notice-text">32K→128K→1M windows became economically feasible — see <a href="./PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html" style="color:var(--amber-text);">PagedAttention</a> for the serving side.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 Flash-2 / Flash-3 lineage</div><div class="notice-text">v2 doubled speed with work partitioning; v3 targets Hopper features (TMA, WGMMA, incoherent masking).</div></div>
+    <div class="notice-card"><div class="notice-title">🎓 The systems-ML field</div><div class="notice-text">Proved "a systems paper can change a modeling field" — IO-aware thinking spread to convolutions, norms, and optimizers.</div></div>
+    <div class="notice-card"><div class="notice-title">🚫 Approximation reset</div><div class="notice-text">Long-sequence research pivoted: approximate methods now justify themselves against exact-but-fast baselines.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">O(N²) compute remains (exactness kept); the KV cache at inference is a separate problem — PagedAttention's beat.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Exactness as a <em>Design Choice</em></h2>
+  <p class="section-desc">The deepest lesson for system design: before approximating, check whether your bottleneck is real.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">📉</div>
+      <div class="problem-title">The Approximate Mirage</div>
+      <ul class="problem-list">
+        <li>Years of FLOP-counting papers that didn't run faster on real GPUs</li>
+        <li>Quality loss bought zero wall-clock gain in many cases</li>
+        <li>The community's mental model ("attention is quadratic") conflated arithmetic with latency</li>
+        <li>Entire subfields optimized a term that wasn't dominant</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔬</div>
+      <div class="problem-title">The Measurement Discipline</div>
+      <ul class="problem-list">
+        <li>Profile first: HBM traffic dominated; SRAM sat idle</li>
+        <li>Reformulate the computation to fit the memory hierarchy — keep the math identical</li>
+        <li>Prove IO-optimality: the traffic bound isn't beatable for given SRAM sizes</li>
+        <li>Then — and only then — consider sparsity (block-sparse) as a multiplier</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Decide the Bottleneck</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Two attention workloads: FLOP-heavy but SRAM-resident vs FLOP-light but HBM-strided. Toggle and see which wins.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="faD1Btn" type="button" style="font-size:12px;padding:8px 14px;">Workload A: dense, tiled</button>
+      <button class="btn-primary" id="faD2Btn" type="button" style="font-size:12px;padding:8px 14px;">Workload B: sparse, strided</button>
+    </div>
+    <div id="faDecideBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">FlashAttention's headline numbers are speedups; its real contribution is an <strong>epistemic correction</strong>. "Attention is quadratic" was a statement about arithmetic — the field acted on it as a statement about time. One careful IO analysis later, exact attention runs 2-4× faster and long context is plumbing. The lesson generalizes far past attention: <em>measure the machine before modeling the math</em>.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the FlashAttention paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Attention on GPUs is memory (IO) bound — not compute bound. Count HBM trips, not FLOPs.</div>
+    <div class="card-sm">✅ Tiling + online softmax: compute attention block-by-block in SRAM; never materialize the N×N matrix.</div>
+    <div class="card-sm">✅ Exact outputs — same math as standard attention, provably fewer HBM accesses (IO-optimal for given SRAM sizes).</div>
+    <div class="card-sm">✅ Backward via recomputation: store O(N) activations, recompute attention in-kernel — memory drops from O(N²) to O(N).</div>
+    <div class="card-sm">✅ 15% BERT-large (vs MLPerf record), 3× GPT-2 (1K), 2.4× long-range arena; block-sparse enables 16K–64K contexts.</div>
+    <div class="card-sm">✅ Became the substrate of every modern stack — Flash-2/3, fused kernels, the entire long-context era.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2205.14135" target="_blank" rel="noopener noreferrer">"FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness"</a> (Dao et al., 2022)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2205.14135" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Attention_Is_All_You_Need.html">Transformer Guide</a>
+    <a class="footer-link" href="./PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html">PagedAttention Guide</a>
+    <a class="footer-link" href="./Speculative_Decoding_Fast_Inference_from_Transformers.html">Speculative Decoding Guide</a>
+    <a class="footer-link" href="./Scaling_Laws.html">Scaling Laws Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "memory", "tiling", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === MEMORY TRIP COUNTER ===
+(function(){
+  const chart=document.getElementById('faTripChart');
+  const note=document.getElementById('faTripNote');
+  const btn=document.getElementById('faTripBtn');
+  if(!chart||!note||!btn)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const steps=[
+    {std:['read Q','write S=QK^T','read S','write P=softmax','read P','read V','write O'],fl:['read Q tile','(SRAM: K,V tiles)','write O tile']},
+  ];
+  function row(name,items,color){
+    return `<div style="margin-bottom:8px;"><div style="font-family:var(--mono);font-size:11px;color:${color};margin-bottom:3px;">${name}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;">${items.map(i=>`<div style="font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:6px;background:${color}22;color:${color};border:1px solid ${color}44;${RM?'':'animation:fadeUp .4s ease both;'}">${i}</div>`).join('')}</div></div>`;
+  }
+  let n=0;
+  function render(){
+    const reps=steps[0].std.concat(n>0?steps[0].std.slice(0,3*n):[]);
+    chart.innerHTML=row(`STANDARD — HBM round trips (${steps[0].std.length} per pass)`,steps[0].std,'#3b82f6')+
+      row(`FLASH — per output tile (${steps[0].fl.length})`,steps[0].fl,'#f59e0b')+
+      `<div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:8px;">trips so far (4 tiles): standard = ${steps[0].std.length*4} · flash = ${steps[0].fl.length*4}</div>`;
+    note.textContent='Standard writes and re-reads the full N×N matrices; Flash touches HBM once in and once out per tile.';
+  }
+  btn.addEventListener('click',()=>{n=(n+1)%4;render();});
+  render();
+})();
+
+// === BANDWIDTH SIMULATOR ===
+(function(){
+  const chart=document.getElementById('faBwChart');
+  const note=document.getElementById('faBwNote');
+  if(!chart||!note)return;
+  function render(mode){
+    const sram=mode==='sram';
+    const time=sram?14:86;
+    chart.innerHTML=`<div style="display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--border2);">
+      <div style="width:${sram?86:14}%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:#000;">SRAM compute ${sram?86:14}%</div>
+      <div style="width:${time}%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:#fff;">HBM stalls ${time}%</div>
+    </div>
+    <div style="font-size:12.5px;color:var(--text2);line-height:1.7;margin-top:10px;">${sram
+      ?'Tiles resident in SRAM: the kernel spends its time doing arithmetic at ~19 TB/s effective bandwidth — the compute-bound regime.'
+      :'Strided access through HBM: the SMs wait on ~1.5-2 TB/s traffic — arithmetic capability sits idle. This is where "fast on paper" algorithms die.'}</div>`;
+    note.textContent=sram?'Mode: Flash-style tiling — pantry trips minimized.':'Mode: standard/sparse strided — HBM-bound.';
+  }
+  document.getElementById('faBw1Btn').addEventListener('click',()=>render('sram'));
+  document.getElementById('faBw2Btn').addEventListener('click',()=>render('hbm'));
+  render('sram');
+})();
+
+// === ONLINE SOFTMAX ASSEMBLY ===
+(function(){
+  const box=document.getElementById('faTileBox');
+  const note=document.getElementById('faTileNote');
+  const btn=document.getElementById('faTileBtn');
+  const reset=document.getElementById('faTileResetBtn');
+  if(!box||!note||!btn||!reset)return;
+  const KV=[['K₁V₁',2.1,3],['K₂V₂',5.8,4],['K₃V₃',0.4,1],['K₄V₄',3.3,5]];
+  let step=0;
+  function render(){
+    let html=`<div style="display:flex;gap:6px;align-items:center;margin-bottom:12px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);">Q block (loaded once)</div>
+      ${KV.map((b,i)=>`<div style="font-family:var(--mono);font-size:11px;padding:4px 8px;border-radius:6px;background:${i<step?'var(--amber-dim)':'var(--bg4)'};color:${i<step?'var(--amber)':'var(--text3)'};border:1px dashed ${i<step?'rgba(245,158,11,.4)':'var(--border)'};">${b[0]}</div>`).join('')}
+    </div>`;
+    if(step>0){
+      html+=`<div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:6px;">running statistics after ${step} block${step>1?'s':''}:</div>`;
+      for(let i=0;i<step;i++){
+        const max=Math.max(...KV.slice(0,step).map(b=>b[1]));
+        html+=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+          <span style="font-family:var(--mono);font-size:11px;color:var(--teal-text);width:60px;">m, ℓ update</span>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--text2);">m=${max.toFixed(1)} · ℓ=${KV.slice(0,step).map(b=>Math.exp(b[1]-max)).reduce((a,c)=>a+c,0).toFixed(2)} · partial O rescaled ${i>0?'(yes)':'(—)'}</span></div>`;
+      }
+      html+=`<div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-top:8px;">→ partial output = exact softmax over blocks seen so far, computed entirely in SRAM</div>`;
+    }
+    if(step===KV.length){
+      html+=`<div style="font-family:var(--mono);font-size:12px;color:var(--green-text);margin-top:10px;font-weight:600;">DONE — O tile written to HBM once. Bit-for-bit identical to standard attention.</div>`;
+    }
+    box.innerHTML=html;
+    note.textContent=step===0?'Press Next to stream the first K/V block through SRAM.':step<KV.length?`Block ${step}/${KV.length}: online softmax merges new scores — rescaling old partials when the running max moves.`:'Full row assembled without ever holding the N×N matrix.';
+    btn.textContent=step<KV.length?'Next block →':'Complete';
+  }
+  btn.addEventListener('click',()=>{if(step<KV.length){step++;}else{step=0;}render();});
+  reset.addEventListener('click',()=>{step=0;render();});
+  render();
+})();
+
+// === SEQUENCE LENGTH WALL ===
+(function(){
+  const chart=document.getElementById('faWallChart');
+  const note=document.getElementById('faWallNote');
+  const btn=document.getElementById('faWallBtn');
+  if(!chart||!note||!btn)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let N=1; // units of 1K tokens
+  let timer=null;
+  function peak(n){return Math.min(100,(n*n)/16);}
+  function render(){
+    chart.innerHTML=[
+      {n:'standard attention memory (N²)',v:peak(N),c:'#3b82f6'},
+      {n:'FlashAttention activations (O(N))',v:Math.min(100,N*8),c:'#f59e0b'}
+    ].map(r=>`<div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:3px;"><span>${r.n}</span><span style="color:${r.c};font-weight:600;">${Math.round(r.v)}%</span></div>
+      <div style="height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${r.v}%;background:${r.c};border-radius:4px;transition:width .5s ease;"></div></div></div>`).join('');
+    note.textContent=`N = ${N}K tokens — standard hits the HBM/A100 wall around 16K; Flash keeps scaling toward 64K+ (block-sparse: further).`;
+  }
+  btn.addEventListener('click',()=>{
+    if(timer)clearInterval(timer);
+    N=1;
+    if(RM){N=16;render();return;}
+    timer=setInterval(()=>{N++;render();if(N>=16)clearInterval(timer);},200);
+  });
+  render();
+})();
+
+// === DECIDE THE BOTTLENECK ===
+(function(){
+  const box=document.getElementById('faDecideBox');
+  if(!box)return;
+  function render(mode){
+    const a=mode==='a';
+    box.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div style="padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">ARITHMETIC</div>
+        <div style="font-family:var(--mono);font-size:16px;color:${a?'var(--teal)':'var(--text3)'};font-weight:600;">${a?'high':'low'}</div>
+      </div>
+      <div style="padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">HBM TRAFFIC</div>
+        <div style="font-family:var(--mono);font-size:16px;color:${a?'var(--text3)':'var(--red)'};font-weight:600;">${a?'minimal':'strided + heavy'}</div>
+      </div></div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">${a
+        ?'Workload A (dense, tiled): runs at SRAM bandwidth — the SMs are busy computing. Faster despite MORE FLOPs. This is FlashAttention.'
+        :'Workload B (sparse, strided): fewer FLOPs, but scattered HBM access stalls the SMs — slower despite LESS arithmetic. This is where many approximation papers landed.'}</div>
+      <div style="font-size:11.5px;color:var(--text3);margin-top:8px;">The profiling lesson: time = arithmetic / compute-rate + bytes / bandwidth. Know which term dominates before optimizing either.</div>`;
+  }
+  document.getElementById('faD1Btn').addEventListener('click',()=>render('a'));
+  document.getElementById('faD2Btn').addEventListener('click',()=>render('b'));
+  render('a');
+})();
+
+
+const QUIZ_DATA=[{"q": "What is FlashAttention's core insight about attention on GPUs?", "opts": ["Attention can be approximated with minimal quality loss", "Attention is memory (IO) bound — dominated by HBM read/write traffic, not arithmetic", "GPUs have too much SRAM that should be used", "Softmax can be removed entirely"], "correct": 1, "explain": "The paper argues a missing principle is making attention IO-aware: the time is dominated by reads/writes between HBM and SRAM. Reducing FLOPs (approximate attention) doesn't help if HBM traffic still dominates."}, {"q": "How does FlashAttention avoid materializing the full N×N attention matrix?", "opts": ["It samples only diagonal entries", "It tiles the computation into SRAM-sized blocks and uses online softmax with running statistics", "It truncates sequences at 512 tokens", "It compresses the matrix with a low-rank factorization"], "correct": 1, "explain": "Q/K/V are processed as tiles; the online (streaming) softmax tracks a running max m and normalizer per row, rescaling partial outputs as blocks arrive — mathematically exact, never storing the full matrix."}, {"q": "How does the backward pass achieve O(N) memory?", "opts": ["It skips gradients for attention", "It stores only Q, K, V, and the output, recomputing attention in-kernel during backprop", "It uses gradient checkpointing on CPU RAM", "It quantizes activations to 1 bit"], "correct": 1, "explain": "Instead of storing the O(N²) intermediate matrices, FlashAttention stores O(N) tensors and recomputes attention (cheap in SRAM) inside the backward kernel — memory savings without retraining."}, {"q": "Which reported result is from the paper?", "opts": ["10x speedup on BERT-large", "15% end-to-end speedup on BERT-large (512 seq) vs the MLPerf 1.1 record, 3x on GPT-2 (1K)", "Slower but more accurate training", "2x speedup at the cost of 5% quality loss"], "correct": 1, "explain": "FlashAttention trains Transformers faster: 15% end-to-end on BERT-large versus the MLPerf record, 3x on GPT-2 (seq length 1K), and 2.4x on the long-range arena — all with identical outputs."}, {"q": "What does the block-sparse extension add?", "opts": ["Exact attention at 10x speed", "Approximate attention by skipping masked blocks — enabling 16K-64K contexts, with Path-X (61.4%) and Path-256 (63.1%) results", "A new optimizer", "Multi-GPU sharding"], "correct": 1, "explain": "Once tiled, skipping blocks is nearly free: block-sparse FlashAttention is faster than prior approximate methods and enabled the first Transformers with better-than-chance performance on Path-X (16K, 61.4%) and Path-256 (64K, 63.1%)."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

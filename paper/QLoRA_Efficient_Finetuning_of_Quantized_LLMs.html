@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QLoRA: Efficient Finetuning of Quantized LLMs — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the QLoRA paper, with visual demos for NF4 quantization, double quantization, paged optimizers, and the Guanaco quality result.">
+<meta name="keywords" content="QLoRA, quantization, NF4, 4-bit, LoRA, finetuning, Guanaco, paged optimizers, double quantization, memory efficiency">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/QLoRA_Efficient_Finetuning_of_Quantized_LLMs.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="QLoRA: Efficient Finetuning of Quantized LLMs — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of QLoRA — 4-bit NormalFloat, double quantization, paged optimizers, and 65B finetuning on a single 48GB GPU.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/QLoRA_Efficient_Finetuning_of_Quantized_LLMs.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="QLoRA: Efficient Finetuning of Quantized LLMs — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of QLoRA — 4-bit NormalFloat, double quantization, paged optimizers, and 65B finetuning on a single 48GB GPU.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#nf4">NF4</a>
+    <a class="nav-link" href="#dq-paged">DQ + Paged</a>
+    <a class="nav-link" href="#guanaco">Guanaco</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">NeurIPS 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#nf4">NF4</a>
+  <a href="#dq-paged">DQ + Paged</a>
+  <a href="#guanaco">Guanaco</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    65B on a <em>48GB GPU</em><br>QLoRA
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the finetuning breakthrough that backpropagated through a frozen 4-bit quantized model into tiny LoRA adapters — reaching 99.3% of ChatGPT's benchmark performance in 24 hours on a single GPU.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2305.14314" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">65B</div>
+      <div class="stat-label">Model on 48GB</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">NF4</div>
+      <div class="stat-label">New Data Type</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">99.3%</div>
+      <div class="stat-label">of ChatGPT Score</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">Making Finetuning a <em>Consumer Product</em></h2>
+  <p class="section-desc">QLoRA collapsed the hardware requirement for serious finetuning from data-center to desktop.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2021</div><div class="tl-title">LoRA (Hu et al.)</div><div class="tl-desc">Low-rank adapters: train 0.1% of weights, freeze the rest — parameter-efficient, but memory still dominated by full-precision frozen weights. <a href="./LoRA_Low_Rank_Adaptation.html" style="color:var(--amber-text);">Read its guide</a>.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022</div><div class="tl-title">LLaMA & the open-weights wave</div><div class="tl-desc">Strong open base models appear — but finetuning them at 16-bit needs multi-GPU rigs, walling off research and hobbyists.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · May</div><div class="tl-title">🚀 QLoRA (Dettmers, Pagnoni, Holtzman, Zettlemoyer)</div><div class="tl-desc">Quantize the frozen base to 4-bit NF4, backprop through it into LoRA adapters: 65B finetuning on a single 48GB GPU — and Guanaco hits 99.3% of ChatGPT on the Vicuna benchmark.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023 →</div><div class="tl-title">The finetuning culture</div><div class="tl-desc">A laptop-class ecosystem: consumer-GPU finetunes, thousands of community adapters, and 4-bit as a default serving format.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The One-Sentence Idea</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">A quantized model can still be a <strong>differentiable substrate</strong>: freeze the 4-bit weights, dequantize them on the fly inside the backward pass, and route gradients into low-rank adapters. Storage collapses 4×, gradients still flow, quality follows — finetuning becomes a consumer activity.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The <em>Memory</em> Wall of Finetuning</h2>
+  <p class="section-desc">LoRA made trainable parameters small — but the frozen model still sat in memory at full precision.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🧱</div>
+      <div class="problem-title">16-Bit Ghost Weight</div>
+      <ul class="problem-list">
+        <li>A 65B model at 16 bits: ~130 GB just for weights — multi-GPU territory</li>
+        <li>Optimizer states and activations stack on top</li>
+        <li>Naively quantizing to 4 bits breaks training: rounding error destroys gradients</li>
+        <li>"4-bit quantized inference" existed — 4-bit quantized <em>backprop</em> did not</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🧊</div>
+      <div class="problem-title">Frozen 4-Bit, Trainable Adapters</div>
+      <ul class="problem-list">
+        <li>Store frozen weights in a 4-bit type mathematically matched to their distribution</li>
+        <li>Dequantize block-by-block on the fly for the forward/backward math (in bfloat16)</li>
+        <li>Gradients land only on LoRA adapters — the 4-bit tensor is never updated</li>
+        <li>65B finetuning fits on one 48GB GPU in 24 hours</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — Training in a Museum</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Full finetuning repaints every statue in the museum (and pays to store wet paint on all of them). LoRA repaints none, adding tiny clip-on ornaments. QLoRA goes further: <strong>the statues are shrink-wrapped in 4-bit foam</strong> — unwrapped momentarily wherever a craftsman needs to attach an ornament, then wrapped again. The warehouse gets 4× smaller; the ornaments get attached all the same.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Three Inventions, One <em>Training Loop</em></h2>
+  <p class="section-desc">NF4, double quantization, and paged optimizers — each attacks a different byte of the memory bill.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🔢 4-bit NormalFloat (NF4)</div><div class="notice-text">A quantization data type that is information-theoretically optimal for normally distributed weights — zero-centered, quantiles of the normal as grid points.</div></div>
+    <div class="notice-card"><div class="notice-title">♻️ Double Quantization</div><div class="notice-text">Quantize the quantization constants themselves — the per-block scaling numbers become 8-bit, saving ~0.37 bits/parameter on average.</div></div>
+    <div class="notice-card"><div class="notice-title">📄 Paged Optimizers</div><div class="notice-text">NVIDIA unified memory lets optimizer states spill to CPU and page back during the long-sequence spikes — no OOM during gradient checkpointing moments.</div></div>
+    <div class="notice-card"><div class="notice-title">🎯 The 4th piece: LoRA</div><div class="notice-text">Adapters on every linear layer, trained normally while the NF4 base stays frozen — the gradient path from the paper's title.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- NF4 -->
+<section id="nf4">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Why <em>Normal</em>Float?</h2>
+  <p class="section-desc">Neural network weights are approximately Gaussian — so make the quantization grid the quantiles of a Gaussian, not a uniform ladder.</p>
+  <div class="formula-card">
+    <div class="formula-main">NF4 grid = ±quantiles of N(0,1) at 2<sup>-k</sup> levels &nbsp;·&nbsp; per-block absmax rescale</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">normal weights</div><div class="fp-name">The empirical fact</div><div class="fp-desc">Trained weight tensors cluster around zero in a bell curve — most values near 0, few extremes.</div></div>
+      <div class="formula-piece"><div class="fp-sym">quantile grid</div><div class="fp-name">The match</div><div class="fp-desc">Placing grid points at normal quantiles gives equal expected mass per code — minimal quantization error for the actual distribution.</div></div>
+      <div class="formula-piece"><div class="fp-sym">blocks (64)</div><div class="fp-name">Local scaling</div><div class="fp-desc">Each block of 64 weights carries its own absmax constant — outliers handled locally, not globally.</div></div>
+      <div class="formula-piece"><div class="fp-sym">dequantize</div><div class="fp-name">On the fly</div><div class="fp-desc">Forward/backward math runs in bfloat16 on dequantized values; storage stays 4-bit.</div></div>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Quantization Grid Comparison</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="qlInt4Btn" type="button" style="font-size:12px;padding:8px 14px;">Uniform INT4</button>
+      <button class="btn-primary" id="qlNf4Btn" type="button" style="font-size:12px;padding:8px 14px;">NormalFloat NF4</button>
+    </div>
+    <div id="qlGridBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="qlGridNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DQ + PAGED -->
+<section id="dq-paged">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Squeezing the <em>Last Bits</em></h2>
+  <p class="section-desc">The two supporting tricks that make the memory math work end-to-end.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Double Quantization</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8">Every 64-weight block stores one 32-bit absmax constant — that's 0.5 extra bits per weight. Quantize those constants to 8-bit (with their own, coarser scale): ~0.37 bits/parameter saved. On 65B parameters, that's <strong>~3 GB</strong> — a data type optimization that frees a whole small model's worth of memory.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Paged Optimizers</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8">Gradient checkpointing makes memory usage spiky: some steps briefly need far more optimizer memory than average. Paged optimizers use NVIDIA unified memory to <strong>page optimizer states to CPU RAM during spikes</strong> and back — trading a few % of speed for never OOM-ing on long sequences.</p>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Memory Bill</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">A 65B finetune, three memory strategies. Toggle and watch the GPU requirement fall.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="qlMem1Btn" type="button" style="font-size:12px;padding:8px 14px;">16-bit + LoRA</button>
+      <button class="btn-outline" id="qlMem2Btn" type="button" style="font-size:12px;padding:8px 14px;">4-bit + LoRA</button>
+      <button class="btn-primary" id="qlMem3Btn" type="button" style="font-size:12px;padding:8px 14px;">QLoRA (NF4+DQ+paged)</button>
+    </div>
+    <div id="qlMemBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GUANACO -->
+<section id="guanaco">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Guanaco — the <em>Proof</em></h2>
+  <p class="section-desc">The paper's model family: LLaMA base + QLoRA + the OASST1 open-assistant data — quality where it hurt to believe.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The Result</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Guanaco 65B reaches <strong>99.3% of ChatGPT's performance level</strong> on the Vicuna benchmark — after 24 hours of finetuning on a single GPU</li>
+        <li>Outperforms all previously openly released models on that benchmark at the time</li>
+        <li>The 7B variant is trainable on a consumer GPU — a deliberately democratized flagship</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The Methodological Side-Quest</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The paper also famously dissects the Vicuna benchmark itself: human/gpt-4 ratings of style and correctness diverge — chat-style presentation inflates scores. Its MMLU analysis of chat models vs base models (the "chatbot degradation" question) made evaluation honesty part of the contribution.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 06</div>
+  <h2 class="section-title">The <em>Ledger</em></h2>
+  <p class="section-desc">What was measured, what was claimed, and what held.</p>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">MEMORY</div><div class="result-score" style="color:var(--amber-text);">65B/48GB</div><div class="result-label">single-GPU finetuning of a 65B model — previously a multi-GPU privilege</div></div>
+    <div class="result-card"><div class="result-model">QUALITY</div><div class="result-score" style="color:var(--blue-text);">16-bit parity</div><div class="result-label">NF4 quantization with adapters matches full 16-bit finetuning task performance</div></div>
+    <div class="result-card"><div class="result-model">BENCHMARK</div><div class="result-score" style="color:var(--teal-text);">99.3%</div><div class="result-label">of ChatGPT's Vicuna-benchmark level (Guanaco 65B, 24h, 1 GPU)</div></div>
+    <div class="result-card"><div class="result-model">DQ SAVINGS</div><div class="result-score" style="color:var(--purple-text);">~3 GB</div><div class="result-label">on a 65B model from quantizing the constants (0.37 bits/param)</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Quality vs Memory Frontier</div>
+    <p style="font-size:13px;color:var(--text2);margin:0 0 1rem;">Pick a finetuning recipe; see where it lands on memory vs downstream quality.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="qlRecipeTabs"></div>
+    <div id="qlRecipeBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);position:relative;height:220px;"></div>
+    <div id="qlRecipeNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>Adapter</em> Economy</h2>
+  <p class="section-desc">QLoRA turned model customization from an industrial activity into a folk culture.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🎨 The adapter ecosystem</div><div class="notice-text">Thousands of community QLoRA adapters on consumer GPUs — personalization at internet scale.</div></div>
+    <div class="notice-card"><div class="notice-title">📦 bitsandbytes</div><div class="notice-text">The 4-bit/8-bit integration in transformers made "load in 4-bit and train" a two-line code change.</div></div>
+    <div class="notice-card"><div class="notice-title">🔬 Small-lab research wave</div><div class="notice-text">Papers from single GPUs became normal — QLoRA collapsed the barrier to entry for alignment/finetuning research.</div></div>
+    <div class="notice-card"><div class="notice-title">⚙️ The quantization lineage</div><div class="notice-text">NF4 joined the data-type zoo (INT4, FP8, AWQ, GPTQ); block-wise scales + outlier care became standard design.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Inference speed (4-bit helps capacity, not latency); full-finetune-strictly-better debates for some tasks; benchmark style bias it itself exposed.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Study path</div><div class="notice-text">Peft basics: <a href="./LoRA_Low_Rank_Adaptation.html" style="color:var(--amber-text);">LoRA</a> → this page → serving: <a href="./PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html" style="color:var(--amber-text);">PagedAttention</a>.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">What Does "99.3% of ChatGPT" <em>Mean?</em></h2>
+  <p class="section-desc">The headline number is real — and the paper's own analysis is the best vaccine against over-reading it.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🎭</div>
+      <div class="problem-title">Reading It Naively</div>
+      <ul class="problem-list">
+        <li>"Guanaco ≈ ChatGPT" — a folk conclusion the number does not license</li>
+        <li>Vicuna-benchmark scores are relative judgments on ~a thousand style-heavy queries</li>
+        <li>Human raters reward format: verbosity, structure, confidence — independent of correctness</li>
+        <li>Chat-style models beat base models on presentation even when knowledge is equal</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔬</div>
+      <div class="problem-title">Reading It Honestly</div>
+      <ul class="problem-list">
+        <li>The claim: on this specific pairwise benchmark, Guanaco wins essentially as often as ChatGPT</li>
+        <li>Style and correctness are separable axes — the paper's gpt-4-vs-human rating analysis shows the divergence</li>
+        <li>On knowledge-heavy suites (MMLU-style), chat finetunes do NOT dominate their base models</li>
+        <li>Hardware democratization is the unambiguous win; benchmark parity is the suggestive one</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Style vs Correctness Judge</div>
+    <p style="font-size:13px;color:var(--text2);margin:0 0 1rem;">Two answers to one question: one polished, one right. Toggle the judge.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="qlJ1Btn" type="button" style="font-size:12px;padding:8px 14px;">Human style rater</button>
+      <button class="btn-primary" id="qlJ2Btn" type="button" style="font-size:12px;padding:8px 14px;">Correctness-aware rater</button>
+    </div>
+    <div id="qlJudgeBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;min-height:190px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">QLoRA's durable legacy is the <strong>compression of who gets to participate</strong>: one GPU, one night, one adapter — that used to be a data-center request ticket. The "99.3%" headline will keep being quoted; the paper's own rating analysis is the part worth remembering — because benchmark style bias is precisely the kind of thing a single-number culture keeps re-learning.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the QLoRA paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Backprop through a frozen 4-bit quantized model into LoRA adapters — 65B finetuning on one 48GB GPU.</div>
+    <div class="card-sm">✅ NF4: a 4-bit data type whose grid is the quantiles of a normal — optimal for Gaussian-like weights.</div>
+    <div class="card-sm">✅ Double quantization: 8-bit quantize the per-block constants — ~0.37 bits/param (~3 GB at 65B) saved.</div>
+    <div class="card-sm">✅ Paged optimizers spill optimizer states to CPU during memory spikes — no OOM with long sequences.</div>
+    <div class="card-sm">✅ Guanaco: 99.3% of ChatGPT's Vicuna-benchmark level after 24h on a single GPU; 7B trains on consumer hardware.</div>
+    <div class="card-sm">✅ The paper's style-vs-correctness rating analysis is a benchmark-honesty classic — quote the number, read the caveat.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2305.14314" target="_blank" rel="noopener noreferrer">"QLoRA: Efficient Finetuning of Quantized LLMs"</a> (Dettmers et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2305.14314" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./LoRA_Low_Rank_Adaptation.html">LoRA Guide</a>
+    <a class="footer-link" href="./GPT_4_Technical_Report.html">GPT-4 Guide</a>
+    <a class="footer-link" href="./PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html">PagedAttention Guide</a>
+    <a class="footer-link" href="./Mixtral_of_Experts.html">Mixtral of Experts Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "nf4", "dq-paged", "guanaco", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === QUANTIZATION GRID ===
+(function(){
+  const box=document.getElementById('qlGridBox');
+  const note=document.getElementById('qlGridNote');
+  if(!box||!note)return;
+  const S=260;
+  function axis(){
+    return `<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px;"><span>−1</span><span>0</span><span>+1</span></div>`;
+  }
+  function ticks(xs,color){
+    return `<div style="position:relative;height:46px;border-bottom:2px solid var(--border2);">${xs.map(x=>`<div style="position:absolute;left:${(x+1)/2*100}%;top:14px;width:2px;height:18px;background:${color};transform:translateX(-50%);"></div>`).join('')}</div>`;
+  }
+  function weights(color){
+    const pts=[-0.02,-0.05,0.01,-0.11,0.13,-0.07,0.22,-0.35,0.4,0.03,-0.01,0.08,-0.16,0.55,-0.28,0.02,0.07,-0.9,0.75,0.05];
+    return `<div style="position:relative;height:34px;">${pts.map(p=>`<div style="position:absolute;left:${(p+1)/2*100}%;bottom:${Math.exp(-p*p*6)*26+4}px;width:5px;height:5px;border-radius:50%;background:${color};opacity:0.7;transform:translateX(-50%);"></div>`).join('')}</div>`;
+  }
+  function render(mode){
+    const nf4=mode==='nf4';
+    // int4: 15 evenly spaced levels; nf4: normal quantile-ish cluster
+    const int4=Array.from({length:15},(_,k)=>-1+2*k/14);
+    const nf=[-1,-0.68,-0.52,-0.39,-0.28,-0.18,-0.09,0,0.09,0.18,0.28,0.39,0.52,0.68,1];
+    const grid=nf4?nf:int4;
+    box.innerHTML=axis()+weights(nf4?'#f59e0b':'#3b82f6')+ticks(grid,nf4?'#f59e0b':'#3b82f6');
+    note.textContent=nf4
+      ?'NF4: grid points cluster around zero like the weights do — each code carries roughly equal probability mass, minimizing quantization error for Gaussian tensors.'
+      :'Uniform INT4: equal-width levels waste resolution near zero where most weights live, and over-serve the empty tails.';
+  }
+  document.getElementById('qlInt4Btn').addEventListener('click',()=>render('int4'));
+  document.getElementById('qlNf4Btn').addEventListener('click',()=>render('nf4'));
+  render('nf4');
+})();
+
+// === MEMORY BILL ===
+(function(){
+  const box=document.getElementById('qlMemBox');
+  if(!box)return;
+  function render(k){
+    const R=[
+      {n:'16-bit weights + LoRA',mem:'>780 GB (multi-GPU)',bar:100,c:'#3b82f6',d:'Frozen base at 16 bits dominates: 130GB for weights + activations/optimizer — an 8-GPU rig.'},
+      {n:'4-bit weights + LoRA',mem:'~40 GB',bar:22,c:'#14b8a6',d:'Plain 4-bit storage shrinks weights 4x, but block constants and memory spikes still bite.'},
+      {n:'QLoRA (NF4 + DQ + paged)',mem:'~30-33 GB peak',bar:12,c:'#f59e0b',d:'NF4 + double quantization + optimizer paging: a 48GB card has headroom to spare.'}
+    ][k];
+    box.innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:170px;text-align:right;">${R.n}</div>
+      <div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${R.bar}%;background:${R.c};border-radius:4px;transition:width .7s ease;"></div></div>
+      <div style="font-family:var(--mono);font-size:11px;color:${R.c};width:140px;font-weight:600;">${R.mem}</div></div>
+    <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">${R.d}</div>
+    <div style="font-size:11.5px;color:var(--text3);margin-top:6px;">Numbers are for a 65B finetune, illustrative of the paper's reported configuration.</div>`;
+  }
+  document.getElementById('qlMem1Btn').addEventListener('click',()=>render(0));
+  document.getElementById('qlMem2Btn').addEventListener('click',()=>render(1));
+  document.getElementById('qlMem3Btn').addEventListener('click',()=>render(2));
+  render(2);
+})();
+
+// === RECIPE FRONTIER ===
+(function(){
+  const tabs=document.getElementById('qlRecipeTabs');
+  const plot=document.getElementById('qlRecipeBox');
+  const note=document.getElementById('qlRecipeNote');
+  if(!tabs||!plot||!note)return;
+  const R=[
+    {n:'full 16-bit FT',mem:96,q:96,c:'#ef4444',d:'Best quality ceiling, data-center memory bill.'},
+    {n:'LoRA (16-bit base)',mem:62,q:93,c:'#3b82f6',d:'Adapters cut trainable params; frozen weights still 16-bit in memory.'},
+    {n:'QLoRA',mem:14,q:92,c:'#f59e0b',d:'NF4 base: 16-bit-parity quality at consumer memory.'}
+  ];
+  let cur=2;
+  function render(){
+    tabs.innerHTML=R.map((r,k)=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${r.n}</button>`).join('');
+    plot.innerHTML=`<div style="position:absolute;left:44px;right:12px;top:12px;bottom:34px;border-left:2px solid var(--border2);border-bottom:2px solid var(--border2);">
+      <div style="position:absolute;bottom:100%;left:0;font-family:var(--mono);font-size:10px;color:var(--text3);transform:rotate(-90deg) translateX(4px);transform-origin:bottom left;">quality →</div>
+      <div style="position:absolute;top:100%;right:0;font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px;">← memory</div>
+      ${R.map((r,k)=>`<div style="position:absolute;left:${(100-r.mem/2.4)}%;bottom:${(r.q-72)}%;width:15px;height:15px;border-radius:50%;background:${r.c};opacity:${k===cur?1:0.4};transform:translate(-50%,50%);transition:all .5s;box-shadow:${k===cur?'0 0 0 4px '+r.c+'33':'none'};"></div>`).join('')}
+      <div style="position:absolute;left:${(100-R[cur].mem/2.4)}%;bottom:${(R[cur].q-72)}%;transform:translate(14px,-62px);font-family:var(--mono);font-size:11px;color:${R[cur].c};font-weight:600;">${R[cur].n}</div>
+    </div>`;
+    note.textContent=R[cur].d+' (axes illustrative)';
+  }
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    cur=Array.from(tabs.children).indexOf(b);render();
+  });
+  render();
+})();
+
+// === STYLE VS CORRECTNESS JUDGE ===
+(function(){
+  const box=document.getElementById('qlJudgeBox');
+  if(!box)return;
+  function render(mode){
+    const human=mode==='human';
+    box.innerHTML=`<span style="color:var(--text3);">Q: "Why do objects fall?"</span><br><br>
+    <span style="color:var(--purple-text);">ANSWER A (polished):</span> "Great question! Objects fall due to gravity — a fundamental force. Here are the key points: 1) Mass attracts mass... 2) Acceleration ~9.8 m/s²... 3) Air resistance modulates terminal velocity..." <span style="color:var(--text3);">(confident, structured, one number slightly wrong)</span><br><br>
+    <span style="color:var(--teal-text);">ANSWER B (plain):</span> "Gravity pulls them. Near Earth's surface the pull gives ~9.8 m/s² of acceleration, so speed grows 9.8 m/s every second, minus air drag."<br><br>
+    <span style="color:${human?'var(--amber)':'var(--teal)'};font-weight:600;">${human?'HUMAN STYLE RATER → prefers A':'CORRECTNESS-AWARE RATER → prefers B (A\'s velocity figure was the wrong one)'}</span><br>
+    <span style="color:var(--text3);">→ QLoRA's rating analysis: humans and GPT-4 reward presentation; correctness needs a different judge.</span>`;
+  }
+  document.getElementById('qlJ1Btn').addEventListener('click',()=>render('human'));
+  document.getElementById('qlJ2Btn').addEventListener('click',()=>render('correct'));
+  render('human');
+})();
+
+
+const QUIZ_DATA=[{"q": "What is the core QLoRA technique?", "opts": ["Training all weights in 4-bit precision directly", "Backpropagating gradients through a frozen, 4-bit quantized model into LoRA adapters", "Distilling a large model into a small one", "Pruning 90% of weights before finetuning"], "correct": 1, "explain": "QLoRA stores the pretrained model in 4-bit NF4, dequantizes on the fly for computation, and trains only LoRA adapters — the frozen quantized weights are never updated, just differentiated through."}, {"q": "Why is NF4 'information theoretically optimal' for this use?", "opts": ["It uses floating-point exponents", "Neural network weights are approximately normally distributed, so a grid at normal quantiles gives equal mass per code — minimal quantization error", "It compresses to 3 bits", "It was proven optimal for all data types"], "correct": 1, "explain": "4-bit NormalFloat places its levels at the quantiles of the standard normal, matching the empirical bell-shaped distribution of trained weights — each code carries roughly equal probability mass."}, {"q": "What does double quantization save?", "opts": ["It quantizes activations twice for speed", "It quantizes the per-block quantization constants to 8-bit, saving ~0.37 bits/parameter (~3 GB at 65B)", "It removes the LoRA adapters", "It halves the learning rate"], "correct": 1, "explain": "Each block of 64 weights carries a 32-bit absmax constant. Quantizing these constants themselves to FP8 (with their own scale) saves about 0.37 bits per parameter — roughly 3 GB for a 65B model."}, {"q": "What hardware claim did the paper demonstrate?", "opts": ["65B finetuning on a single 48GB GPU in 24 hours", "7B training on a phone", "65B inference on CPU only", "1000B training on one GPU"], "correct": 0, "explain": "QLoRA reduces memory enough to finetune a 65B-parameter model on a single 48GB GPU in 24 hours, reaching 99.3% of ChatGPT's Vicuna-benchmark performance level (Guanaco)."}, {"q": "What evaluation caveat did the paper itself surface?", "opts": ["That MMLU cannot be measured", "That benchmark raters (human or GPT-4) reward style — verbosity, structure, confidence — which can diverge from correctness", "That Vicuna numbers are fabricated", "That LoRA never works"], "correct": 1, "explain": "The paper's analysis of the Vicuna benchmark shows human and GPT-4 raters reward presentation style; style and correctness ratings diverge — a caution the field keeps re-learning when quoting chat benchmark numbers."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

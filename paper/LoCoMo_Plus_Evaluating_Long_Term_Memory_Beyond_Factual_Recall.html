@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -334,9 +340,9 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE TWO MOMENTS, SIDE BY SIDE</div>
         <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);">
-          <div>🎙️ <span style="color:var(--blue);font-weight:600;">Turn 12:</span> "Prepping for a big exam — want zero distractions."</div>
+          <div>🎙️ <span style="color:var(--blue-text);font-weight:600;">Turn 12:</span> "Prepping for a big exam — want zero distractions."</div>
           <div style="color:var(--text3);">… ~40 turns of work, family, and travel talk …</div>
-          <div>🎬 <span style="color:var(--purple);font-weight:600;">Turn 260:</span> "Should I start that new series everyone's talking about?"</div>
+          <div>🎬 <span style="color:var(--purple-text);font-weight:600;">Turn 260:</span> "Should I start that new series everyone's talking about?"</div>
         </div>
         <div style="font-size:12px;color:var(--text3);margin-top:8px;">The link is cognitive, not lexical — cue and trigger share almost no keywords.</div>
       </div>
@@ -486,10 +492,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     </table>
   </div>
   <div class="results-grid">
-    <div class="result-card"><div class="result-model">GENERATION MODELS</div><div class="result-score" style="color:var(--blue);">5</div><div class="result-label">gpt-5-nano, gpt-4o, gpt-4.1, gemini-2.5-flash, gemini-2.5-pro — used only to build data</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:55%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
-    <div class="result-card"><div class="result-model">TRIGGERS PER CUE</div><div class="result-score" style="color:var(--teal);">5</div><div class="result-label">distinct cognitive angles, then filtered down</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:55%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
-    <div class="result-card"><div class="result-model">TEMPERATURE</div><div class="result-score" style="color:var(--purple);">0.7</div><div class="result-label">stochastic decoding for diversity, 256-token cap</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:35%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
-    <div class="result-card"><div class="result-model">HUMAN PASSES</div><div class="result-score" style="color:var(--amber);">2</div><div class="result-label">memory-worthiness check + elicitation validation</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:30%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">GENERATION MODELS</div><div class="result-score" style="color:var(--blue-text);">5</div><div class="result-label">gpt-5-nano, gpt-4o, gpt-4.1, gemini-2.5-flash, gemini-2.5-pro — used only to build data</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:55%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">TRIGGERS PER CUE</div><div class="result-score" style="color:var(--teal-text);">5</div><div class="result-label">distinct cognitive angles, then filtered down</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:55%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">TEMPERATURE</div><div class="result-score" style="color:var(--purple-text);">0.7</div><div class="result-label">stochastic decoding for diversity, 256-token cap</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:35%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">HUMAN PASSES</div><div class="result-score" style="color:var(--amber-text);">2</div><div class="result-label">memory-worthiness check + elicitation validation</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:30%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
   </div>
 </section>
 
@@ -521,10 +527,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <p style="font-size:12px;color:var(--text3);margin-top:10px;">Scores / 100. Gaps run ~12–46 points across all 17 methods. Memory systems and retrieval pipelines do not close the cognitive gap — and differences between methods compress toward uniformly low performance.</p>
   </div>
   <div class="results-grid">
-    <div class="result-card"><div class="result-model">GEMINI-2.5-PRO</div><div class="result-score" style="color:var(--amber);">26.06</div><div class="result-label">best cognitive score — vs 71.78 factual average</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:26%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">−45.72 gap from its own Level-1 score</div></div>
-    <div class="result-card"><div class="result-model">GPT-4O (FULL CONTEXT)</div><div class="result-score" style="color:var(--blue);">21.05</div><div class="result-label">cognitive score — vs 62.99 factual average</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:21%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">context length alone doesn't save cognitive memory</div></div>
-    <div class="result-card"><div class="result-model">A-MEM (GPT-4O)</div><div class="result-score" style="color:var(--teal);">17.20</div><div class="result-label">best memory system on LoCoMo-Plus</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:17%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">structured agentic memory still −42.44 from its factual avg</div></div>
-    <div class="result-card"><div class="result-model">RAG TOP-5 (EMB-LARGE)</div><div class="result-score" style="color:var(--red);">15.55</div><div class="result-label">cognitive score — retrieval-only baseline</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:16%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">similarity search can't find semantically distant cues</div></div>
+    <div class="result-card"><div class="result-model">GEMINI-2.5-PRO</div><div class="result-score" style="color:var(--amber-text);">26.06</div><div class="result-label">best cognitive score — vs 71.78 factual average</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:26%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">−45.72 gap from its own Level-1 score</div></div>
+    <div class="result-card"><div class="result-model">GPT-4O (FULL CONTEXT)</div><div class="result-score" style="color:var(--blue-text);">21.05</div><div class="result-label">cognitive score — vs 62.99 factual average</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:21%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">context length alone doesn't save cognitive memory</div></div>
+    <div class="result-card"><div class="result-model">A-MEM (GPT-4O)</div><div class="result-score" style="color:var(--teal-text);">17.20</div><div class="result-label">best memory system on LoCoMo-Plus</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:17%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">structured agentic memory still −42.44 from its factual avg</div></div>
+    <div class="result-card"><div class="result-model">RAG TOP-5 (EMB-LARGE)</div><div class="result-score" style="color:var(--red-text);">15.55</div><div class="result-label">cognitive score — retrieval-only baseline</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:16%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:8px;">similarity search can't find semantically distant cues</div></div>
   </div>
   <div class="two-col" style="margin-bottom:1.5rem;">
     <div class="card">
@@ -549,10 +555,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <p style="font-size:11.5px;color:var(--text3);margin-top:12px;line-height:1.6;">Illustrative rendering of the paper's Figure 7 (100 representative cases per memory type, varying dialogue turns): object recall stays robust, episodic recall degrades steadily, cognitive memory collapses rapidly as context grows. Bar heights are qualitative, not measured values.</p>
   </div>
   <div class="results-grid">
-    <div class="result-card"><div class="result-model">REFERENCE LENGTH</div><div class="result-score" style="color:var(--blue);">5.18</div><div class="result-label">avg tokens in ground-truth answers — where string metrics peak</div></div>
-    <div class="result-card"><div class="result-model">RAG RETRIEVAL</div><div class="result-score" style="color:var(--teal);">Top-5</div><div class="result-label">dialogue segments retrieved per query, appended to the prompt</div></div>
-    <div class="result-card"><div class="result-model">HUMAN AGREEMENT</div><div class="result-score" style="color:var(--green);">0.903</div><div class="result-label">between the two human annotators (judge: 0.801–0.820 vs humans)</div></div>
-    <div class="result-card"><div class="result-model">LENGTH STUDY</div><div class="result-score" style="color:var(--purple);">100</div><div class="result-label">representative cases per memory type, varying dialogue turns</div></div>
+    <div class="result-card"><div class="result-model">REFERENCE LENGTH</div><div class="result-score" style="color:var(--blue-text);">5.18</div><div class="result-label">avg tokens in ground-truth answers — where string metrics peak</div></div>
+    <div class="result-card"><div class="result-model">RAG RETRIEVAL</div><div class="result-score" style="color:var(--teal-text);">Top-5</div><div class="result-label">dialogue segments retrieved per query, appended to the prompt</div></div>
+    <div class="result-card"><div class="result-model">HUMAN AGREEMENT</div><div class="result-score" style="color:var(--green-text);">0.903</div><div class="result-label">between the two human annotators (judge: 0.801–0.820 vs humans)</div></div>
+    <div class="result-card"><div class="result-model">LENGTH STUDY</div><div class="result-score" style="color:var(--purple-text);">100</div><div class="result-label">representative cases per memory type, varying dialogue turns</div></div>
   </div>
 </section>
 
@@ -572,7 +578,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="notice-card"><div class="notice-title">🧪 Open and auditable</div><div class="notice-text">The benchmark, judge prompts, annotations, and LLM-judge rationales are released at github.com/xjtuleeyf/Locomo-Plus for inspection and reproducibility.</div></div>
   </div>
   <div class="card" style="border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.03);">
-    <div class="card-label" style="color:var(--red);">What It Did NOT Solve</div>
+    <div class="card-label" style="color:var(--red-text);">What It Did NOT Solve</div>
     <ul class="problem-list" style="margin-top:6px;">
       <li><strong>Scope:</strong> no belief revision, emotional dynamics, or multi-agent memory — the constraints modeled are static per conversation.</li>
       <li><strong>Scale:</strong> deliberately small and diagnostic — unsuitable for training or fine-tuning large models.</li>
@@ -630,7 +636,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
       <div style="font-weight:600;font-size:14px;margin-bottom:4px;">The next benchmark always measures what current systems fake</div>
-      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The trajectory of this track is now legible: <a href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LongMemEval</a> asked whether facts survive length; LoCoMo-Plus asks whether <em>implications</em> survive at all. Causal, state, goal and value constraints have a whole answer space 𝒜𝒸, not one string — which is why LLM-judge evaluation with evidence grounding was the only scoring that worked (0.903 human agreement). Every memory system graded here, including <a href="./A_MEM_Agentic_Memory_for_LLM_Agents.html" style="color:var(--amber);font-weight:600;text-decoration:none;">A-MEM</a>, inherits the same homework: representation must carry meaning, not just tokens.</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The trajectory of this track is now legible: <a href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">LongMemEval</a> asked whether facts survive length; LoCoMo-Plus asks whether <em>implications</em> survive at all. Causal, state, goal and value constraints have a whole answer space 𝒜𝒸, not one string — which is why LLM-judge evaluation with evidence grounding was the only scoring that worked (0.903 human agreement). Every memory system graded here, including <a href="./A_MEM_Agentic_Memory_for_LLM_Agents.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">A-MEM</a>, inherits the same homework: representation must carry meaning, not just tokens.</div>
     </div>
   </div>
 
@@ -680,6 +686,8 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="footer-link" href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html">LongMemEval Guide</a>
     <a class="footer-link" href="./A_MEM_Agentic_Memory_for_LLM_Agents.html">A-MEM Guide</a>
     <a class="footer-link" href="./MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT Guide</a>
+
+    <a class="footer-link" href="./Mem0_Building_Production_Ready_AI_Agents_with_Scalable_Long_Term_Memory.html">Mem0 Guide</a>
   </div>
   <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -736,7 +744,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   }
   function render(){
     state.A=null;state.B=null;
-    el.innerHTML='<p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.7;">Maya has chatted with her assistant for months; it saw the four fragments below (the highlighted one is a <em>cue</em>). Answer both questions — the history is identical, the memory demand is not. <span style="color:var(--text3);font-size:11px;">Scenario adapted from the paper’s motivating example.</span></p>'+chips()+'<div class="two-col">'+qcard('A')+qcard('B')+'</div><div style="display:flex;gap:8px;margin-top:1rem;align-items:center;flex-wrap:wrap;"><button class="btn-primary" type="button" onclick="window._abReset()" style="font-size:13px;padding:8px 18px;">↺ Play Again</button><div id="abSummary" style="font-family:var(--mono);font-size:12.5px;color:var(--amber);font-weight:600;"></div></div><div id="abVerdict" style="margin-top:1rem;"></div>';
+    el.innerHTML='<p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.7;">Maya has chatted with her assistant for months; it saw the four fragments below (the highlighted one is a <em>cue</em>). Answer both questions — the history is identical, the memory demand is not. <span style="color:var(--text3);font-size:11px;">Scenario adapted from the paper’s motivating example.</span></p>'+chips()+'<div class="two-col">'+qcard('A')+qcard('B')+'</div><div style="display:flex;gap:8px;margin-top:1rem;align-items:center;flex-wrap:wrap;"><button class="btn-primary" type="button" onclick="window._abReset()" style="font-size:13px;padding:8px 18px;">↺ Play Again</button><div id="abSummary" style="font-family:var(--mono);font-size:12.5px;color:var(--amber-text);font-weight:600;"></div></div><div id="abVerdict" style="margin-top:1rem;"></div>';
   }
   window._abAnswer=function(side,i){
     if(state[side]!==null)return;
@@ -746,18 +754,18 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       const b=document.getElementById('ab'+side+j);
       if(!b)return;
       b.style.pointerEvents='none';
-      if(j===d.correct){b.style.background='var(--green-dim)';b.style.borderColor='rgba(34,197,94,0.35)';b.style.color='var(--green)';b.innerHTML='✓ '+b.innerHTML;}
-      else if(j===i){b.style.background='var(--red-dim)';b.style.borderColor='rgba(239,68,68,0.35)';b.style.color='var(--red)';b.innerHTML='✗ '+b.innerHTML;}
+      if(j===d.correct){b.style.background='var(--green-dim)';b.style.borderColor='rgba(34,197,94,0.35)';b.style.color='var(--green-text)';b.innerHTML='✓ '+b.innerHTML;}
+      else if(j===i){b.style.background='var(--red-dim)';b.style.borderColor='rgba(239,68,68,0.35)';b.style.color='var(--red-text)';b.innerHTML='✗ '+b.innerHTML;}
       else{b.style.opacity='0.55';}
     });
     const v=document.getElementById('abV'+side);
-    if(v){v.style.display='block';v.innerHTML=(i===d.correct?'<strong style="color:var(--green);">✓ Correct.</strong> ':'<strong style="color:var(--red);">✗ Not quite.</strong> ')+d.verdict;}
+    if(v){v.style.display='block';v.innerHTML=(i===d.correct?'<strong style="color:var(--green-text);">✓ Correct.</strong> ':'<strong style="color:var(--red-text);">✗ Not quite.</strong> ')+d.verdict;}
     if(state.A!==null&&state.B!==null){
       const sm=document.getElementById('abSummary');
       if(sm){sm.textContent='Both answered — see the comparison ↓';}
       const vd=document.getElementById('abVerdict');
       if(vd){
-        vd.innerHTML='<div class="card" style="border-color:rgba(245,158,11,0.3);"><div class="card-label">Why only Question B tests memory</div><div class="two-col"><div><div style="font-family:var(--mono);font-size:11px;color:var(--blue);margin-bottom:6px;">QUESTION A NEEDED</div><ul class="problem-list"><li>Find an explicitly stated fact</li><li>Strong cue–query semantic alignment</li><li>A string metric or one retrieval hop</li><li>One right answer to match</li></ul></div><div><div style="font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:6px;">QUESTION B NEEDED</div><ul class="problem-list"><li>Retain a latent constraint <em>c</em> (exam + no distractions)</li><li>Bridge a semantic disconnect — no shared keywords</li><li>Recognize the conflict and adapt behavior</li><li>Produce <em>any</em> response inside 𝒜𝒸</li></ul></div></div><p style="font-size:12.5px;color:var(--text2);margin-top:10px;line-height:1.7;">A model can be great at A and hopeless at B — and LoCoMo-Plus exists because that difference was invisible to recall-based benchmarks. The paper shows it is exactly where 17 methods, including the strongest 2025–2026 models, fall to 26.06 or below.</p></div>';
+        vd.innerHTML='<div class="card" style="border-color:rgba(245,158,11,0.3);"><div class="card-label">Why only Question B tests memory</div><div class="two-col"><div><div style="font-family:var(--mono);font-size:11px;color:var(--blue-text);margin-bottom:6px;">QUESTION A NEEDED</div><ul class="problem-list"><li>Find an explicitly stated fact</li><li>Strong cue–query semantic alignment</li><li>A string metric or one retrieval hop</li><li>One right answer to match</li></ul></div><div><div style="font-family:var(--mono);font-size:11px;color:var(--purple-text);margin-bottom:6px;">QUESTION B NEEDED</div><ul class="problem-list"><li>Retain a latent constraint <em>c</em> (exam + no distractions)</li><li>Bridge a semantic disconnect — no shared keywords</li><li>Recognize the conflict and adapt behavior</li><li>Produce <em>any</em> response inside 𝒜𝒸</li></ul></div></div><p style="font-size:12.5px;color:var(--text2);margin-top:10px;line-height:1.7;">A model can be great at A and hopeless at B — and LoCoMo-Plus exists because that difference was invisible to recall-based benchmarks. The paper shows it is exactly where 17 methods, including the strongest 2025–2026 models, fall to 26.06 or below.</p></div>';
         vd.querySelectorAll('.problem-list li').forEach(function(li){li.style.fontSize='12.5px';});
         if(!window.matchMedia('(prefers-reduced-motion:reduce)').matches){vd.firstElementChild.style.animation='fadeUp .5s ease';}
       }
@@ -886,7 +894,7 @@ const QUIZ_DATA=[
   {q:'Which statement matches the paper’s Table 1 findings?',opts:['GPT-4o nearly solves LoCoMo-Plus out of the box','Memory systems like A-Mem and Mem0 close the gap to under 2 points','Every method category — open LLMs, closed LLMs, RAG, memory systems — drops sharply from LoCoMo to LoCoMo-Plus, with differences compressing toward uniformly low scores','Only small open-source models struggle with cognitive memory'],correct:2,explain:'All 17 methods show large gaps (~12–46 points). The best, gemini-2.5-pro, scores 26.06 on LoCoMo-Plus versus a 71.78 factual average (−45.72); memory systems like A-Mem (17.20), Mem0 (15.80), and SeCom (14.90) also fall far behind their factual scores.'},
   {q:'In LoCoMo-Plus, how is a response to a cognitive question judged “correct”?',opts:['Exact string match against a single reference answer','A BLEU score above 0.5 against the reference','A majority vote from live users within 24 hours','An evidence-grounded LLM judge checks whether the response acknowledges or adapts to the cue — membership in the valid response space, with binary labels'],correct:3,explain:'Constraint consistency: queries come with no task disclosure, and the judge grades whether behavior reflects the latent constraint. Reliability was audited — 0.903 human–human agreement, 0.801–0.820 human–judge, and stable scores across judge backbones.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

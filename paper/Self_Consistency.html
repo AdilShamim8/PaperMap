@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -320,7 +326,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <p class="section-desc">Self-consistency landed three months after chain-of-thought prompting — and removed the last weakness that paper left behind: the model only ever got one attempt.</p>
   <div class="two-col">
     <div class="timeline">
-      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">Chain-of-Thought Prompting (Wei et al.)</div><div class="tl-desc">A few worked examples in the prompt make large models reason step by step — <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber);">read the CoT guide</a>. But decoding still returns exactly one reasoning path.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">Chain-of-Thought Prompting (Wei et al.)</div><div class="tl-desc">A few worked examples in the prompt make large models reason step by step — <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber-text);">read the CoT guide</a>. But decoding still returns exactly one reasoning path.</div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2022 · early</div><div class="tl-title">Greedy decoding is the default</div><div class="tl-desc">Prompting papers read the single path the model produces. Everyone evaluates argmax — one roll of the dice, one answer, no retry.</div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · Mar</div><div class="tl-title">🚀 Self-Consistency (Wang et al., Google)</div><div class="tl-desc">Sample diverse reasoning paths with temperature, extract the final answers, and marginalize: take the majority vote. GSM8K jumps +17.9 points with zero training.</div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2022–23</div><div class="tl-title">Voting goes universal</div><div class="tl-desc">Follow-up work extends the idea beyond discrete answers — universal self-consistency adapts voting to open-ended generation.</div></div>
@@ -333,8 +339,8 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">TWO DECODING RULES, SAME MODEL</div>
         <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:var(--text2);">
-          <span style="color:var(--text3);">greedy:</span>&nbsp;&nbsp;take the <span style="color:var(--red);">single most-likely path</span> → its answer<br>
-          <span style="color:var(--amber);">SC:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sample <span style="color:var(--amber);">k diverse paths</span> → vote over their answers
+          <span style="color:var(--text3);">greedy:</span>&nbsp;&nbsp;take the <span style="color:var(--red-text);">single most-likely path</span> → its answer<br>
+          <span style="color:var(--amber-text);">SC:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sample <span style="color:var(--amber-text);">k diverse paths</span> → vote over their answers
         </div>
       </div>
     </div>
@@ -373,9 +379,9 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card">
     <div class="card-label">Anatomy of a Doomed Path</div>
     <div style="font-family:var(--mono);font-size:13px;line-height:2.1;color:var(--text2);background:var(--bg3);border-radius:var(--radius);padding:1rem;">
-      <div>8 × 8 = <span style="color:var(--green);font-weight:600;">64 ✓</span></div>
-      <div>64 − 28 = <span style="color:var(--green);font-weight:600;">36 ✓</span></div>
-      <div>36 ÷ <span style="color:var(--red);font-weight:600;">3</span> jars = <span style="color:var(--red);font-weight:600;">12 ✗</span></div>
+      <div>8 × 8 = <span style="color:var(--green-text);font-weight:600;">64 ✓</span></div>
+      <div>64 − 28 = <span style="color:var(--green-text);font-weight:600;">36 ✓</span></div>
+      <div>36 ÷ <span style="color:var(--red-text);font-weight:600;">3</span> jars = <span style="color:var(--red-text);font-weight:600;">12 ✗</span></div>
       <div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);">→ final answer: <span class="pill pill-red">12</span></div>
     </div>
     <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-top:1rem;">Two correct steps, then a misread — <em>4 jars</em> becomes <em>3 jars</em> — and every remaining step inherits the error. Greedy decoding ships "12" with exactly the confidence it would ship "9". There is no second opinion, no retry, and no signal that anything went wrong.</p>
@@ -414,7 +420,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card" style="overflow:hidden;">
     <div class="card-label">Interactive Demo — Vote With Me</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A grade-school problem, a batch of model samples, and one vote. Choose how many reasoning paths to draw — then watch the answers land and the histogram settle.</p>
-    <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:1rem;"><span style="color:var(--amber);font-weight:600;">Q.</span> Nadia has 8 bags with 8 marbles in each. She gives 28 marbles to her cousin, then splits the rest equally into 4 jars. How many marbles are in each jar?</div>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:1rem;"><span style="color:var(--amber-text);font-weight:600;">Q.</span> Nadia has 8 bags with 8 marbles in each. She gives 28 marbles to her cousin, then splits the rest equally into 4 jars. How many marbles are in each jar?</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
       <span style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;">sample</span>
       <button id="scK1" type="button">k = 1</button>
@@ -473,7 +479,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="results-grid">
     <div class="result-card">
       <div class="result-model">GSM8K · PaLM-540B + SC</div>
-      <div class="result-score" style="color:var(--amber);">74.4</div>
+      <div class="result-score" style="color:var(--amber-text);">74.4</div>
       <div class="result-label">with 40 sampled paths (majority vote)</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">+17.9 absolute over greedy CoT</div>
@@ -487,14 +493,14 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     </div>
     <div class="result-card">
       <div class="result-model">TYPICAL GAIN · OTHER BENCHMARKS</div>
-      <div class="result-score" style="color:var(--teal);">+8 to +18</div>
+      <div class="result-score" style="color:var(--teal-text);">+8 to +18</div>
       <div class="result-label">absolute points, AQuA / SVAMP / StrategyQA and more</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:55%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">arithmetic, commonsense &amp; symbolic</div>
     </div>
     <div class="result-card">
       <div class="result-model">TRAINING REQUIRED</div>
-      <div class="result-score" style="color:var(--blue);">0</div>
+      <div class="result-score" style="color:var(--blue-text);">0</div>
       <div class="result-label">steps, new parameters, new prompts — none</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:2%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">works with standard samplers out of the box</div>
@@ -539,18 +545,18 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-label">Interactive Demo — Pay k×, Gain a Saturating Curve</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Drag the number of sampled paths: cost grows linearly, accuracy saturates. Then flip the toggle to see how little the 40th path actually buys.</p>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
-      <span style="font-family:var(--mono);font-size:11px;color:var(--text3);white-space:nowrap;">k = <b id="costK" style="color:var(--amber);">10</b></span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--text3);white-space:nowrap;">k = <b id="costK" style="color:var(--amber-text);">10</b></span>
       <input type="range" id="costSlider" min="1" max="40" value="10" style="flex:1;accent-color:var(--amber);cursor:pointer;" aria-label="Number of sampled paths">
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
       <div style="font-family:var(--mono);font-size:10px;color:var(--text3);width:150px;text-align:right;flex-shrink:0;">INFERENCE COST</div>
       <div style="flex:1;height:24px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div id="costFill" style="height:100%;width:0%;background:var(--red);border-radius:6px;transition:width .25s ease;"></div></div>
-      <div id="costVal" style="font-family:var(--mono);font-size:11px;color:var(--red);font-weight:600;width:56px;flex-shrink:0;">10×</div>
+      <div id="costVal" style="font-family:var(--mono);font-size:11px;color:var(--red-text);font-weight:600;width:56px;flex-shrink:0;">10×</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
       <div id="accTrackLabel" style="font-family:var(--mono);font-size:10px;color:var(--text3);width:150px;text-align:right;flex-shrink:0;">ACCURACY (GSM8K-STYLE)</div>
       <div style="flex:1;height:24px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div id="accFill" style="height:100%;width:0%;background:var(--green);border-radius:6px;transition:width .25s ease;"></div></div>
-      <div id="accVal" style="font-family:var(--mono);font-size:11px;color:var(--green);font-weight:600;width:56px;flex-shrink:0;">69.4</div>
+      <div id="accVal" style="font-family:var(--mono);font-size:11px;color:var(--green-text);font-weight:600;width:56px;flex-shrink:0;">69.4</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap;">
       <button class="btn-outline" id="costToggle" type="button" style="font-size:12px;padding:7px 16px;">Show gain per extra path</button>
@@ -580,7 +586,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="notice-card"><div class="notice-title">🏭 Data factories</div><div class="notice-text">Sample many paths, keep the consistent ones: self-consistency became a quality filter for generating synthetic reasoning data and a supervision signal for training.</div></div>
     <div class="notice-card"><div class="notice-title">🧠 Ensembles, made rigorous</div><div class="notice-text">An old intuition — many weak predictors beating one — formalized for a single model's sampled reasoning paths. One model, many minds.</div></div>
     <div class="notice-card"><div class="notice-title">🎁 Confidence for free</div><div class="notice-text">The vote margin doubles as an uncertainty estimate: a wide majority means a confident model, a narrow vote means "sample more or give up" — with no extra machinery.</div></div>
-    <div class="notice-card"><div class="notice-title">🔗 Why models can do this at all</div><div class="notice-text">Multi-step in-context reasoning rests on circuitry like induction heads, which copy and extend patterns from the prompt. For the mechanistic complement to this decoding story, read our <a href="./Induction_Heads.html" style="color:var(--amber);">Induction Heads guide</a>.</div></div>
+    <div class="notice-card"><div class="notice-title">🔗 Why models can do this at all</div><div class="notice-text">Multi-step in-context reasoning rests on circuitry like induction heads, which copy and extend patterns from the prompt. For the mechanistic complement to this decoding story, read our <a href="./Induction_Heads.html" style="color:var(--amber-text);">Induction Heads guide</a>.</div></div>
   </div>
 </section>
 
@@ -602,19 +608,19 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <button id="pcK10" type="button">k = 10</button>
       <button id="pcK20" type="button">k = 20</button>
       <button id="pcK40" type="button">k = 40</button>
-      <button id="pcVote" type="button" style="font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:8px;border:1px solid rgba(245,158,11,0.4);background:var(--amber-dim);color:var(--amber);cursor:pointer;">🗳️ run majority vote</button>
+      <button id="pcVote" type="button" style="font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:8px;border:1px solid rgba(245,158,11,0.4);background:var(--amber-dim);color:var(--amber-text);cursor:pointer;">🗳️ run majority vote</button>
     </div>
     <div id="pcChips" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px;min-height:34px;"></div>
     <div id="pcTally" style="font-family:var(--mono);font-size:12.5px;color:var(--text2);margin-top:12px;padding:10px 12px;background:var(--bg3);border-radius:8px;line-height:1.8;min-height:44px;">k = 10 — budget set. Press <b>run majority vote</b> to draw the chips and tally them.</div>
     <div style="display:flex;align-items:center;gap:8px;margin-top:1rem;margin-bottom:6px;">
       <div style="font-family:var(--mono);font-size:10px;color:var(--text3);width:150px;text-align:right;flex-shrink:0;">ACCURACY (GSM8K-STYLE ~)</div>
       <div style="flex:1;height:24px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div id="pcAccFill" style="height:100%;width:0%;background:var(--green);border-radius:6px;transition:width .35s ease;"></div></div>
-      <div id="pcAccVal" style="font-family:var(--mono);font-size:11px;color:var(--green);font-weight:600;width:56px;flex-shrink:0;">—</div>
+      <div id="pcAccVal" style="font-family:var(--mono);font-size:11px;color:var(--green-text);font-weight:600;width:56px;flex-shrink:0;">—</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
       <div style="font-family:var(--mono);font-size:10px;color:var(--text3);width:150px;text-align:right;flex-shrink:0;">INFERENCE COST</div>
       <div style="flex:1;height:24px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div id="pcCostFill" style="height:100%;width:0%;background:var(--amber);border-radius:6px;transition:width .35s ease;"></div></div>
-      <div id="pcCostVal" style="font-family:var(--mono);font-size:11px;color:var(--amber);font-weight:600;width:56px;flex-shrink:0;">—</div>
+      <div id="pcCostVal" style="font-family:var(--mono);font-size:11px;color:var(--amber-text);font-weight:600;width:56px;flex-shrink:0;">—</div>
     </div>
     <div class="card-sm" id="pcVerdict" style="margin-top:12px;"></div>
     <p style="font-size:11px;color:var(--text3);margin-top:10px;">Illustrative — chips follow a ~70%-correct sampled-answer distribution; the accuracy curve is anchored to the paper's GSM8K headline (56.5 → 74.4 at k = 40) and modeled as saturating (~), while the cost line is exact: every sampled path is a full generation.</p>
@@ -638,7 +644,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     </div>
     <div class="card">
       <div class="card-label">🔎 Consistency as a Truth Signal</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The asymmetry that powers the vote — right answers stable across samples, wrong ones wobbly — is also a lie detector: a fact the model actually knows repeats, a hallucination drifts. That insight inspired <span class="highlight">SelfCheckGPT</span> (2023), a zero-resource black-box hallucination detector that scores sampled passages for agreement with a claim — consistency, used as a truth signal. <a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber);">Read the SelfCheckGPT guide →</a></p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The asymmetry that powers the vote — right answers stable across samples, wrong ones wobbly — is also a lie detector: a fact the model actually knows repeats, a hallucination drifts. That insight inspired <span class="highlight">SelfCheckGPT</span> (2023), a zero-resource black-box hallucination detector that scores sampled passages for agreement with a claim — consistency, used as a truth signal. <a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber-text);">Read the SelfCheckGPT guide →</a></p>
     </div>
   </div>
 </section>
@@ -767,7 +773,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">'
         +'<div style="font-family:var(--mono);font-size:11px;color:'+(e.a===CORRECT?'var(--green)':'var(--red)')+';width:90px;text-align:right;font-weight:'+(isMode?'600':'400')+';">answer '+e.a+'</div>'
         +'<div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:'+color+';border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div>'
-        +'<div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:132px;">'+e.c+' · '+pct+'%'+(isMode?' <span style="color:var(--amber);font-weight:600;">★ vote</span>':'')+'</div>'
+        +'<div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:132px;">'+e.c+' · '+pct+'%'+(isMode?' <span style="color:var(--amber-text);font-weight:600;">★ vote</span>':'')+'</div>'
         +'</div>';
     }).join('');
     const vote=entries[0];
@@ -816,17 +822,17 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       const fill=document.getElementById('convFill-'+ai);
       const lbl=document.getElementById('convLbl-'+ai);
       if(fill)fill.style.width=pct+'%';
-      if(lbl)lbl.innerHTML=c+' · '+pct+'%'+(c===maxC&&maxC>0?' <span style="color:var(--amber);font-weight:600;">★</span>':'');
+      if(lbl)lbl.innerHTML=c+' · '+pct+'%'+(c===maxC&&maxC>0?' <span style="color:var(--amber-text);font-weight:600;">★</span>':'');
     });
     const modes=CANDS.filter(function(a){return counts[a]===maxC;});
     const share=k>0?Math.round(maxC/k*100):0;
     let status;
     if(modes.length>1){
-      status='<span style="color:var(--amber);">no majority — the vote is unstable</span>';
+      status='<span style="color:var(--amber-text);">no majority — the vote is unstable</span>';
     }else if(modes[0]===9){
-      status=share>=50?'<span style="color:var(--green);">majority locked onto the correct answer ✓</span>':'<span style="color:var(--amber);">correct answer leading, margin thin</span>';
+      status=share>=50?'<span style="color:var(--green-text);">majority locked onto the correct answer ✓</span>':'<span style="color:var(--amber-text);">correct answer leading, margin thin</span>';
     }else{
-      status='<span style="color:var(--red);">a wrong answer is winning ✗</span>';
+      status='<span style="color:var(--red-text);">a wrong answer is winning ✗</span>';
     }
     readEl.innerHTML='k = '+k+' sampled path'+(k>1?'s':'')+' · top answer: <b>'+modes.join(' / ')+'</b> ('+maxC+'/'+k+' = '+share+'%) — '+status;
   }
@@ -866,7 +872,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       if(accVal)accVal.textContent='+'+m.toFixed(2);
       if(accLabel)accLabel.textContent='GAIN FROM PATH #'+k;
     }
-    readEl.innerHTML='k = '+k+': pay <b style="color:var(--red);">'+k+'×</b> the compute → <b style="color:var(--green);">'+Math.round(frac*100)+'%</b> of the max gain'+(frac>=0.9?' — deep into diminishing returns; most of the value arrived by k ≈ 10–20.':(frac>=0.5?' — solid gains, curve flattening.':' — the first paths buy the most.'));
+    readEl.innerHTML='k = '+k+': pay <b style="color:var(--red-text);">'+k+'×</b> the compute → <b style="color:var(--green-text);">'+Math.round(frac*100)+'%</b> of the max gain'+(frac>=0.9?' — deep into diminishing returns; most of the value arrived by k ≈ 10–20.':(frac>=0.5?' — solid gains, curve flattening.':' — the first paths buy the most.'));
   }
   if(toggle)toggle.addEventListener('click',function(){
     mode=(mode==='abs')?'marg':'abs';
@@ -940,10 +946,10 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     if(curK===1)line='k = 1 is just greedy decoding — cheap, but one slip decides the answer and nothing checks it.';
     else{
       const prev=RUNGS[idx-1],mg=a-acc(prev);
-      line='the '+prev+' → '+curK+' step costs <b style="color:var(--amber);">'+(curK/prev)+'× more compute</b> for <b style="color:var(--green);">~+'+mg.toFixed(1)+' pts</b>'+(curK>=20?' — deep into diminishing returns: the last paths buy a fraction of what the first ones did.':' — the curve is already flattening; the next doubling buys less.');
+      line='the '+prev+' → '+curK+' step costs <b style="color:var(--amber-text);">'+(curK/prev)+'× more compute</b> for <b style="color:var(--green-text);">~+'+mg.toFixed(1)+' pts</b>'+(curK>=20?' — deep into diminishing returns: the last paths buy a fraction of what the first ones did.':' — the curve is already flattening; the next doubling buys less.');
     }
     verdictEl.innerHTML='<div class="card-label">Accuracy per Compute</div>'
-      +'<div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--amber);">~'+eff.toFixed(1)+' <span style="font-size:11px;color:var(--text3);font-weight:400;">accuracy pts per × of compute</span></div>'
+      +'<div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--amber-text);">~'+eff.toFixed(1)+' <span style="font-size:11px;color:var(--text3);font-weight:400;">accuracy pts per × of compute</span></div>'
       +'<p style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:6px;">k = '+curK+': ~'+a.toFixed(1)+' accuracy ('+Math.round(S(curK)*100)+'% of the +17.9 max gain) for '+curK+'× generation. '+line+'</p>';
   }
   function selectK(k){
@@ -983,7 +989,7 @@ const QUIZ_DATA=[
   {q:'What is the main cost of self-consistency?',opts:['It requires a much larger model','k-times the inference compute — sampling k paths means generating roughly k times as many tokens','Human labels for every sampled path','It only works with proprietary APIs'],correct:1,explain:'Accuracy is bought with test-time compute: k paths means roughly k-times the decoding cost and latency. Most of the gain arrives well before k = 40, so k works best as a budget dial.'},
   {q:'When does self-consistency break down?',opts:['Whenever temperature sampling is used','On any arithmetic benchmark like GSM8K or SVAMP','When the chain-of-thought prompt contains more than four exemplars','On open-ended tasks with no single discrete final answer, where several defensible outputs exist'],correct:3,explain:'Voting needs extractable, discrete final answers. If multiple defensible answers exist — open-ended generation — there is no single right target for the vote; follow-up work had to adapt the idea for that setting.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 

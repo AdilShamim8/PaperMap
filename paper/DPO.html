@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -317,7 +323,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="two-col">
     <div class="timeline">
       <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2020</div><div class="tl-title">GPT-3 — raw completions</div><div class="tl-desc">175B parameters, few-shot prompting — but the model completes rather than follows. "Write a poem about pandas" may return an essay <em>about</em> pandas instead of a poem.</div></div>
-      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022 · Mar</div><div class="tl-title">InstructGPT / RLHF</div><div class="tl-desc">The three-stage pipeline is born: SFT → train a separate reward model → optimize with PPO. A 1.3B model now beats 175B GPT-3 at following instructions. <a href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html" style="color:var(--blue);">Read the InstructGPT guide →</a></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022 · Mar</div><div class="tl-title">InstructGPT / RLHF</div><div class="tl-desc">The three-stage pipeline is born: SFT → train a separate reward model → optimize with PPO. A 1.3B model now beats 175B GPT-3 at following instructions. <a href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html" style="color:var(--blue-text);">Read the InstructGPT guide →</a></div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2022 · Nov–Dec</div><div class="tl-title">The ChatGPT era</div><div class="tl-desc">RLHF becomes the standard recipe for chat models — effective, but complex, unstable, and expensive to tune. Alignment quality is gated by engineering budget.</div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · May</div><div class="tl-title">🚀 DPO (Rafailov et al., Stanford)</div><div class="tl-desc">A closed-form derivation from the Bradley-Terry model: the reward is a policy log-ratio, so you can skip the reward model and the RL — and train directly on preference pairs.</div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2023–24 →</div><div class="tl-title">The DPO diffusion</div><div class="tl-desc">Zephyr-7B, Llama-3-Instruct and most open chat models adopt DPO-style training; IPO, KTO and SimPO refine the recipe further.</div></div>
@@ -327,7 +333,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">The reward model that RLHF painstakingly trains is <span class="highlight">already hiding inside the policy</span>. The reward that solves "maximize human preference while staying close to your reference model" is just a log-ratio of probabilities — so a separate reward model, and the PPO loop built around it, are both unnecessary detours.</p>
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE PAPER TITLE, AS AN EQUATION</div>
-        <div style="font-family:var(--mono);font-size:14px;color:var(--amber);line-height:1.8;">r(x, y) = β · log π(y|x) / π<sub>ref</sub>(y|x) + const</div>
+        <div style="font-family:var(--mono);font-size:14px;color:var(--amber-text);line-height:1.8;">r(x, y) = β · log π(y|x) / π<sub>ref</sub>(y|x) + const</div>
         <div style="font-size:12px;color:var(--text3);margin-top:8px;">Any policy defines a reward through its log-ratio to a reference — your language model is secretly a reward model.</div>
       </div>
     </div>
@@ -377,7 +383,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
       <button class="btn-primary" id="pipeRunBtn" type="button" style="font-size:13px;padding:8px 18px;">Run Both ▶</button>
       <button class="btn-outline" id="pipeResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
-      <div id="pipeStatus" style="font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:600;min-height:18px;"></div>
+      <div id="pipeStatus" style="font-family:var(--mono);font-size:12px;color:var(--amber-text);font-weight:600;min-height:18px;"></div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;" id="pipeCols"></div>
     <p style="font-size:11px;color:var(--text3);margin-top:12px;">Illustrative comparison — every lit box is a full training run with its own data, model, and hyperparameters. DPO also skips generation during training entirely: no rollouts, no reward inference.</p>
@@ -394,22 +400,22 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:1.5rem;">
     <div class="card-sm" style="border-left:3px solid var(--blue);">
-      <div class="card-label" style="color:var(--blue);">Step 1 · Bradley-Terry</div>
+      <div class="card-label" style="color:var(--blue-text);">Step 1 · Bradley-Terry</div>
       <div style="font-family:var(--mono);font-size:12px;color:var(--text);margin:6px 0;">P(y ≻ y′) = σ(r(x,y) − r(x,y′))</div>
       <p style="font-size:12px;color:var(--text2);line-height:1.6;">Humans prefer y over y′ with probability equal to the sigmoid of the reward difference. This is the model RLHF uses to train its reward model.</p>
     </div>
     <div class="card-sm" style="border-left:3px solid var(--teal);">
-      <div class="card-label" style="color:var(--teal);">Step 2 · KL-Constrained Optimum</div>
+      <div class="card-label" style="color:var(--teal-text);">Step 2 · KL-Constrained Optimum</div>
       <div style="font-family:var(--mono);font-size:12px;color:var(--text);margin:6px 0;">r(x,y) = β · log π(y|x)/π<sub>ref</sub>(y|x) + const</div>
       <p style="font-size:12px;color:var(--text2);line-height:1.6;">The policy that maximizes reward while staying close to π<sub>ref</sub> satisfies this identity: reward equals a log-ratio, up to a prompt-only constant.</p>
     </div>
     <div class="card-sm" style="border-left:3px solid var(--purple);">
-      <div class="card-label" style="color:var(--purple);">Step 3 · Invert It</div>
+      <div class="card-label" style="color:var(--purple-text);">Step 3 · Invert It</div>
       <div style="font-family:var(--mono);font-size:12px;color:var(--text);margin:6px 0;">π(y|x) ∝ π<sub>ref</sub>(y|x) · exp( r(x,y)/β )</div>
       <p style="font-size:12px;color:var(--text2);line-height:1.6;">Solve for the policy instead: it is the reference re-weighted by exponentiated reward — a softmax over responses. The policy can be recovered from the reward.</p>
     </div>
     <div class="card-sm" style="border-left:3px solid var(--amber);">
-      <div class="card-label" style="color:var(--amber);">Step 4 · Substitute</div>
+      <div class="card-label" style="color:var(--amber-text);">Step 4 · Substitute</div>
       <div style="font-family:var(--mono);font-size:12px;color:var(--text);margin:6px 0;">r → β · log π/π<sub>ref</sub></div>
       <p style="font-size:12px;color:var(--text2);line-height:1.6;">Plug Step 2 into Step 1. The constants cancel, the reward model disappears — and what remains is a loss over the policy's own log-probabilities, on pairs alone.</p>
     </div>
@@ -473,18 +479,18 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:6px;">PROMPT x</div>
       <div style="font-family:var(--mono);font-size:13px;color:var(--text);">"Explain like I'm five: why is the sky blue?"</div>
       <div style="margin-top:10px;padding:8px 10px;border-radius:8px;background:var(--green-dim);border:1px solid rgba(34,197,94,0.25);">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--green);font-weight:600;">✓ CHOSEN (y_w)</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--green-text);font-weight:600;">✓ CHOSEN (y_w)</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:4px;">Sunlight looks white, but it is really every color mixed together. Air scatters blue light the most — so when you look up, bounced blue light reaches your eyes from every direction.</div>
       </div>
       <div style="margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--red-dim);border:1px solid rgba(239,68,68,0.25);">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--red);font-weight:600;">✗ REJECTED (y_l)</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--red-text);font-weight:600;">✗ REJECTED (y_l)</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:4px;">The sky is blue. Blue is the color of the sky. The sky is blue because the sky is blue. That is why the sky is the color blue.</div>
       </div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
       <button class="btn-primary" id="pairStepBtn" type="button" style="font-size:13px;padding:8px 18px;">Train Step →</button>
       <button class="btn-outline" id="pairResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
-      <div id="pairStatus" style="font-family:var(--mono);font-size:12px;font-weight:600;min-height:18px;color:var(--amber);"></div>
+      <div id="pairStatus" style="font-family:var(--mono);font-size:12px;font-weight:600;min-height:18px;color:var(--amber-text);"></div>
     </div>
     <div id="pairBars"></div>
     <div id="pairReadout" style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-top:4px;"></div>
@@ -497,7 +503,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:1rem;">
       <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">margin s</div>
       <input type="range" id="sigSlider" min="-4" max="4" step="0.05" value="-0.55" style="flex:1;min-width:180px;accent-color:#f59e0b;cursor:pointer;" aria-label="Log-ratio margin s">
-      <div id="sigVal" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;min-width:44px;"></div>
+      <div id="sigVal" style="font-family:var(--mono);font-size:13px;color:var(--amber-text);font-weight:600;min-width:44px;"></div>
     </div>
     <div id="sigBars"></div>
     <div id="sigReadout" style="font-family:var(--mono);font-size:12px;margin-top:6px;min-height:20px;line-height:1.6;"></div>
@@ -515,22 +521,22 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="results-grid">
     <div class="result-card">
       <div class="result-model">GPT-J-6B · SENTIMENT STEERING</div>
-      <div class="result-score" style="color:var(--green);">≈ PPO</div>
+      <div class="result-score" style="color:var(--green-text);">≈ PPO</div>
       <div class="result-label">DPO reaches near-maximum positive-sentiment reward while staying fluent — no degenerate ALL-CAPS enthusiasm</div>
     </div>
     <div class="result-card">
       <div class="result-model">TL;DR · SUMMARIZATION</div>
-      <div class="result-score" style="color:var(--amber);">wins</div>
+      <div class="result-score" style="color:var(--amber-text);">wins</div>
       <div class="result-label">under GPT-4 judgment, DPO is preferred over both the SFT baseline and the PPO model</div>
     </div>
     <div class="result-card">
       <div class="result-model">ANTHROPIC HH · DIALOGUE</div>
-      <div class="result-score" style="color:var(--teal);">≈ best RLHF</div>
+      <div class="result-score" style="color:var(--teal-text);">≈ best RLHF</div>
       <div class="result-label">DPO and iterative DPO stay competitive with the strongest RLHF baselines on helpful assistant dialogue</div>
     </div>
     <div class="result-card">
       <div class="result-model">EXTRA MACHINERY NEEDED</div>
-      <div class="result-score" style="color:var(--blue);">0</div>
+      <div class="result-score" style="color:var(--blue-text);">0</div>
       <div class="result-label">reward models trained · rollout samples generated · value networks fitted</div>
     </div>
   </div>
@@ -566,7 +572,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   </div>
   <div class="card" style="margin-top:1.5rem;">
     <div class="card-label">Follow the Thread</div>
-    <p style="font-size:13px;color:var(--text2);line-height:1.8;">DPO is the direct successor of the RLHF pipeline from <a href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html" style="color:var(--amber);">InstructGPT (Training Language Models to Follow Instructions with Human Feedback)</a> — read that guide first to see exactly what DPO removed. <a href="./DeepSeek_R1.html" style="color:var(--amber);">DeepSeek-R1</a> shows where large-scale RL came back into the picture for reasoning.</p>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">DPO is the direct successor of the RLHF pipeline from <a href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html" style="color:var(--amber-text);">InstructGPT (Training Language Models to Follow Instructions with Human Feedback)</a> — read that guide first to see exactly what DPO removed. <a href="./DeepSeek_R1.html" style="color:var(--amber-text);">DeepSeek-R1</a> shows where large-scale RL came back into the picture for reasoning.</p>
   </div>
 </section>
 
@@ -606,7 +612,9 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
     <a class="footer-link" href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT Guide</a>
     <a class="footer-link" href="./DeepSeek_R1.html">DeepSeek-R1 Guide</a>
-    <a class="footer-link" href="./LLaMA.html">LLaMA Guide</a>
+    <a class="footer-link" href="./DeepSeek_R1.html">DeepSeek-R1 Guide</a>
+
+    <a class="footer-link" href="./Constitutional_AI_Harmlessness_from_AI_Feedback.html">Constitutional AI Guide</a>
   </div>
   <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -657,18 +665,18 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     return '<div id="pipe-'+side+'-'+i+'" class="card-sm" style="border:1px solid var(--border);border-left:3px solid '+col+';opacity:0.55;transition:all .45s ease;">'
       +'<div style="font-family:var(--mono);font-size:12px;font-weight:600;color:'+col+';">'+st.t+'</div>'
       +'<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:4px;">'+st.d+'</div>'
-      +(st.warn?'<div style="font-size:11px;color:var(--red);margin-top:6px;font-family:var(--mono);">'+st.warn+'</div>':'')
+      +(st.warn?'<div style="font-size:11px;color:var(--red-text);margin-top:6px;font-family:var(--mono);">'+st.warn+'</div>':'')
       +'</div>';
   }
   const arrow='<div style="text-align:center;font-family:var(--mono);font-size:14px;color:var(--text3);line-height:1.4;margin:2px 0;">↓</div>';
   function build(){
     wrap.innerHTML=
-      '<div><div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--teal);margin-bottom:8px;">RLHF / PPO — THE 3-STAGE RELAY</div>'
+      '<div><div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--teal-text);margin-bottom:8px;">RLHF / PPO — THE 3-STAGE RELAY</div>'
       +rlhf.map((s,i)=>stageBox('rlhf',i,s)).join(arrow)
-      +'<div id="pipe-rlhf-done" style="display:none;font-size:12px;font-family:var(--mono);color:var(--teal);background:var(--teal-dim);border:1px solid rgba(20,184,166,0.25);border-radius:var(--radius);padding:8px 10px;margin-top:10px;">done — 3 training stages · 2 models kept · reward-hacking risk</div></div>'
-      +'<div><div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--amber);margin-bottom:8px;">DPO — THE ONE-STAGE RUN</div>'
+      +'<div id="pipe-rlhf-done" style="display:none;font-size:12px;font-family:var(--mono);color:var(--teal-text);background:var(--teal-dim);border:1px solid rgba(20,184,166,0.25);border-radius:var(--radius);padding:8px 10px;margin-top:10px;">done — 3 training stages · 2 models kept · reward-hacking risk</div></div>'
+      +'<div><div style="font-family:var(--mono);font-size:11px;letter-spacing:0.08em;color:var(--amber-text);margin-bottom:8px;">DPO — THE ONE-STAGE RUN</div>'
       +dpo.map((s,i)=>stageBox('dpo',i,s)).join(arrow)
-      +'<div id="pipe-dpo-done" style="display:none;font-size:12px;font-family:var(--mono);color:var(--amber);background:var(--amber-dim);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius);padding:8px 10px;margin-top:10px;">done — 1 training stage · 1 model · stable like supervised learning</div></div>';
+      +'<div id="pipe-dpo-done" style="display:none;font-size:12px;font-family:var(--mono);color:var(--amber-text);background:var(--amber-dim);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius);padding:8px 10px;margin-top:10px;">done — 1 training stage · 1 model · stable like supervised learning</div></div>';
   }
   function light(side,i){
     const el=document.getElementById('pipe-'+side+'-'+i);
@@ -759,16 +767,16 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     readEl.textContent='σ(β·m) = '+p.toFixed(3)+' · loss = '+loss.toFixed(3)+' · gradient weight = '+gw.toFixed(3);
     if(step===0){
       statusEl.textContent='step 0/4 — pair ranked backwards: the model currently prefers the rambly rejected answer (margin −1.10).';
-      statusEl.style.color='var(--red)';
+      statusEl.style.color='var(--red-text)';
     }else if(step>=4){
       statusEl.textContent='✓ Converged: margin large, loss near zero — the sigmoid gate has closed; this pair barely contributes gradient.';
-      statusEl.style.color='var(--green)';
+      statusEl.style.color='var(--green-text)';
     }else if(step>=3){
       statusEl.textContent='✓ nearly converged — margin large, loss near zero; further steps move little.';
-      statusEl.style.color='var(--green)';
+      statusEl.style.color='var(--green-text)';
     }else{
       statusEl.textContent='step '+step+'/4 — margin '+(m>=0?'+':'')+m.toFixed(2)+' and widening; loss '+loss.toFixed(3)+' and shrinking.';
-      statusEl.style.color='var(--amber)';
+      statusEl.style.color='var(--amber-text)';
     }
     stepBtn.disabled=step>=4;
     stepBtn.textContent=step>=4?'Converged ✓':'Train Step →';
@@ -828,7 +836,7 @@ const QUIZ_DATA=[
   {q:'What does one DPO update do to the response log-probabilities?',opts:['Raises the chosen response and lowers the rejected one, relative to the reference model','Raises both the chosen and rejected responses','Lowers both to sharpen the whole distribution','Only updates the frozen reference model'],correct:0,explain:'The loss decreases as the margin between the log-ratios of the chosen and rejected responses grows — so gradients push the chosen up and the rejected down, anchored at π_ref.'},
   {q:'Which best describes DPO\'s real-world impact?',opts:['A theoretical result that was never used in practice','It replaced pre-training objectives entirely','It became a standard stage of open-model alignment — Zephyr-7B and Llama-3-Instruct use DPO-style training, and IPO/KTO/SimPO followed','It only works for sentiment classification tasks'],correct:2,explain:'Zephyr-7B, Llama-3-Instruct and most open chat models adopted DPO-style preference optimization; IPO, KTO and SimPO extended the family of simple, RL-free preference losses.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

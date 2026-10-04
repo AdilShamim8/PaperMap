@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the Terminal-Bench paper (Merrill et al., 2026), with visual demos for containerized terminal tasks, hidden-test verification, the human-expert time bar, and agent harness effects.">
+<meta name="keywords" content="Terminal-Bench, terminal, CLI, agents, benchmark, containers, hidden tests, human experts, long-horizon, harness, Stanford, Laude Institute">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Terminal_Bench_2.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the Terminal-Bench paper — hard, realistic command-line tasks in containers, hidden tests, and human experts setting the time bar. Covers the benchmark through its current 2.0 release (89 tasks).">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Terminal_Bench_2.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="Terminal-Bench: Hard, Realistic Tasks in CLIs — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of the Terminal-Bench paper — containerized CLI tasks, hidden tests, and the human-expert time bar, through the 2.0 release.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#tasks">Tasks</a>
+    <a class="nav-link" href="#verification">Verification</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2026</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#tasks">Tasks</a>
+  <a href="#verification">Verification</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    The Command Line Is the <em>Final Exam</em><br>Terminal-Bench
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the benchmark paper that drops agents into real terminal containers — compile, debug, serve, recover — with hidden tests and a time bar set by human experts. Covers the benchmark through its current 2.0 release: 89 curated tasks.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2601.11868" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">89</div>
+      <div class="stat-label">Tasks (2.0 release)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num"><65%</div>
+      <div class="stat-label">Best Frontier Score</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1 env + tests</div>
+      <div class="stat-label">Per Task</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2025</div>
+      <div class="stat-label">Benchmark Released</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">The Terminal <em>Comes Back</em></h2>
+  <p class="section-desc">The industry's most important interface — the command line — spent years outside agent benchmarks. Terminal-Bench put it back at the center.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2023</div><div class="tl-title">Agent benchmarks go web-and-API</div><div class="tl-desc">Shopping, browsing, tool-calling — polished interfaces, scripted environments, narrow action spaces.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2025 · Sep</div><div class="tl-title">Terminal-Bench</div><div class="tl-desc">Laude Institute + Stanford: agents in real containers, graded by hidden tests — v1.0 of a general-purpose terminal eval.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2025 · Q4</div><div class="tl-title">🚀 Terminal-Bench 2.0</div><div class="tl-desc">89 carefully curated hard tasks, each with a unique environment, human-written solution, and comprehensive tests; frontier agents land under 65%.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2026 · Jan</div><div class="tl-title">The formal paper</div><div class="tl-desc">Merrill, Shaw, Carlini, et al. publish the benchmark paper with error analysis — plus a leaderboard ecosystem (Harbor harness) that revealed how much scaffolds, not models, drive scores.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Why the Terminal?</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The terminal is <strong>the actual operating layer of computing</strong>: compiling code, training models, setting up servers, editing configs, recovering broken systems. It is unstructured (no friendly buttons), stateful (previous commands matter), and verifiable (did the server actually start?). Any agent that truly "does computer work" must pass through here.</p>
+      <div class="notice-card" style="margin-top:1rem;"><div class="notice-title">🧭 Benchmark family</div><div class="notice-text">Repo bugs: <a href="./SWE_bench_Can_Language_Models_Resolve_Real_World_GitHub_Issues.html" style="color:var(--amber-text);">SWE-bench</a> · enterprise scale: <a href="./SWE_Bench_Pro_Can_AI_Agents_Solve_Long_Horizon_Software_Engineering_Tasks.html" style="color:var(--amber-text);">SWE-Bench Pro</a> · general computer work: this page.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">App-Sandbox <em>Success Theater</em></h2>
+  <p class="section-desc">Agents were acing stylized environments while remaining unable to do an afternoon of real sysadmin work.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🖱</div>
+      <div class="problem-title">The Stylized-Environment Trap</div>
+      <ul class="problem-list">
+        <li>Curated action spaces (click buttons, call listed APIs) reward following instructions, not solving problems</li>
+        <li>Web-shopping tasks are shallow: few steps, gentle feedback, no system state to reason about</li>
+        <li>High benchmark scores coexisted with agents that can't compile a project or debug a daemon</li>
+        <li>Some benchmarks became easy enough that "hard" meant only "prompt is long"</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">⌨</div>
+      <div class="problem-title">The Terminal Answer</div>
+      <ul class="problem-list">
+        <li>A real shell: thousands of possible commands, no action-space guardrails</li>
+        <li>Containerized tasks with genuine system state — packages, services, files, processes</li>
+        <li>Problems drawn from real workflows: build systems, model training, server setup, recovery</li>
+        <li>Binary, hidden verification: tests run after the agent says "done"</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Workshop vs The IKEA App</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Most agent benchmarks are an <strong>IKEA app</strong>: the parts are pre-sorted, the steps are numbered, and the app congratulates you. The terminal is a <strong>workshop with the lights half-off</strong>: a goal ("make the CNC machine cut this part"), scattered tools, and a finished-part gauge nobody lets you see until you claim you're done.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Anatomy of a <em>Task</em></h2>
+  <p class="section-desc">Every one of the 89 tasks ships as a self-contained container with three artifacts: an instruction, a human-written solution, and a test suite.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">📄 Instruction</div><div class="notice-text">Natural-language goal in English — real-workflow flavored, deliberately not a checklist.</div></div>
+    <div class="notice-card"><div class="notice-title">🧑 Human solution</div><div class="notice-text">A worked reference path written by the task author — the calibration anchor and study material.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Comprehensive tests</div><div class="notice-text">Hidden verification scripts checking outcomes, not process — the agent never sees them while working.</div></div>
+    <div class="notice-card"><div class="notice-title">🐳 Unique environment</div><div class="notice-text">Each task runs in its own container: deps pinned, files staged, services pre-installed in a broken state.</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Task Categories (flavor, not silos)</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Build & compile:</strong> get a broken build pipeline producing correct artifacts</li>
+        <li><strong>Debug & recover:</strong> diagnose failing services, corrupted configs, dead processes</li>
+        <li><strong>Deploy & serve:</strong> stand up servers and daemons that survive verification probes</li>
+        <li><strong>Data & training:</strong> run or repair small model-training and data-processing jobs</li>
+        <li><strong>Systems & tooling:</strong> cron, permissions, packaging, cross-tool plumbing</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The Hardness Bar</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">"Hard, realistic" is enforced by curation: tasks are kept only when they resist trivial solution and reflect genuine workflow patterns. The result: <strong>frontier models and agents score below 65%</strong> — a benchmark that still separates the field years after release, and whose scores improved as much through <em>harness</em> engineering as through model releases.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TASKS DEMO -->
+<section id="tasks">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">A Task From the <em>Inside</em></h2>
+  <p class="section-desc">What the agent actually experiences: a prompt, a shell, and no hints.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Agent Terminal Session</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Follow an agent working a server-recovery task: state, commands, and the final hidden verification.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="tbStepBtn" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="tbResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="tbTermBox" style="background:#0f172a;padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:#e2e8f0;line-height:1.8;min-height:240px;"></div>
+    <div id="tbTermNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VERIFICATION -->
+<section id="verification">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Grading You Can't <em>Sweet-Talk</em></h2>
+  <p class="section-desc">Verification is outcome-based, hidden, and binary — the same anti-gaming lineage as SWE-bench's test grading, transplanted to general system tasks.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The Verification Contract</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Tests execute <strong>after</strong> the agent's session ends — no feedback loop to exploit</li>
+        <li>Checks probe the <em>outcome</em>: is the service up, is the artifact correct, does the training run complete</li>
+        <li>Many tasks include negative checks — the agent must not have broken unrelated systems</li>
+        <li>Binary scoring per task; leaderboard statistics aggregate over runs</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The Human Time Bar</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Each task carries a human-expert solve time from its authoring process. This grounds difficulty in <strong>effort units</strong> rather than model-percentile units: "tasks that take a professional about an hour" is a stable yardstick that survives model releases — the same move as SWE-Bench Pro's hours-to-days calibration.</p>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Outcome Probe</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Two agents claim "the server is fixed." Run the hidden probe on each — text is identical, worlds differ.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="tbProbeBtn" type="button" style="font-size:13px;padding:8px 18px;">Run hidden tests</button>
+    </div>
+    <div id="tbProbeBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;min-height:180px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">The <em>Under-65%</em> Ceiling</h2>
+  <p class="section-desc">The paper's headline: frontier models and agents score less than 65% on the benchmark — followed by a failure taxonomy.</p>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">FRONTIER SCORE</div><div class="result-score" style="color:var(--red-text);">&lt;65%</div><div class="result-label">best models and agents, on 89 hard tasks</div></div>
+    <div class="result-card"><div class="result-model">TASK COUNT</div><div class="result-score" style="color:var(--amber-text);">89</div><div class="result-label">curated for hardness and realism — quality over volume</div></div>
+    <div class="result-card"><div class="result-model">ERROR ANALYSIS</div><div class="result-score" style="color:var(--blue-text);">taxonomy</div><div class="result-label">the paper categorizes where models and agents fail — a roadmap for improvement</div></div>
+    <div class="result-card"><div class="result-model">HARNESS EFFECT</div><div class="result-score" style="color:var(--teal-text);">large</div><div class="result-label">the same model scores very differently under different scaffolds — evaluation is model×harness</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Model × Harness Grid</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same three models under three harness tiers. Click a cell to see why harness engineering became its own discipline.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="tbHarnessTabs"></div>
+    <div id="tbHarnessBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>General-Work</em> Benchmark</h2>
+  <p class="section-desc">Terminal-Bench became the field's proxy for "can agents do real computer work?" — and its leaderboard taught the community about scaffolds.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🏆 The leaderboard era</div><div class="notice-text">Frontier labs now report TB scores alongside SWE-bench — with run-count and harness disclosure increasingly expected.</div></div>
+    <div class="notice-card"><div class="notice-title">🧰 Harness science</div><div class="notice-text">Big score swings from scaffolds alone (planning loops, recovery strategies, context management) legitimized harness engineering as a research area.</div></div>
+    <div class="notice-card"><div class="notice-title">📦 Containerized task standard</div><div class="notice-text">Instruction + solution + tests + Dockerfile became a reusable task format far beyond this benchmark.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Error-analysis culture</div><div class="notice-text">The paper's failure taxonomy — not just the score — guides agent development.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">89 tasks is statistically thin; binary outcomes hide partial progress; containerization can't capture GUI work or long-running multi-day ops.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Read next</div><div class="notice-text">Reliability over time: <a href="./Tau_bench_A_Benchmark_for_Tool_Agent_User_Interaction_in_Real_World_Domains.html" style="color:var(--amber-text);">τ-bench</a> — different axis, same discipline.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The Agent Is a <em>System</em>, Not a Model</h2>
+  <p class="section-desc">Terminal-Bench 2.0's leaderboard made something undeniable: measured capability lives in the model-harness-environment triad, and "the model's score" is a category error.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🏷</div>
+      <div class="problem-title">The Model-Credit Habit</div>
+      <ul class="problem-list">
+        <li>Leaderboards print MODEL scores — so harness work is invisible in the number</li>
+        <li>A model + a better scaffold can leapfrog a better model — and often did</li>
+        <li>Scores vary with run count, context strategy, and recovery policy — rarely disclosed</li>
+        <li>Capability claims become unaudable marketing</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🧩</div>
+      <div class="problem-title">The System-Level Read</div>
+      <ul class="problem-list">
+        <li>Report model × harness × runs — the full configuration is the subject</li>
+        <li>Hard benchmarks with hidden tests make scaffold gains legitimate (not gaming) and visible</li>
+        <li>Error taxonomies localize: model failures vs harness failures vs task ambiguity</li>
+        <li>Evaluation matured the same way software did: blame the system, study the system</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Score Anatomy</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">One headline number, decomposed into model capability, harness contribution, and run-count luck. Press decompose.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="tbAnatomyBtn" type="button" style="font-size:13px;padding:8px 18px;">Decompose 62%</button>
+    </div>
+    <div id="tbAnatomyBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Terminal-Bench 2.0's 89 containers quietly reset the field's unit of analysis. When the same weights swing tens of points with scaffolding and strategy, "model capability" stops being a scalar. The benchmark's biggest export isn't a leaderboard — it's the discipline of <strong>reading agent claims as claims about systems</strong>: which harness, how many runs, what recovery logic, and what the hidden tests actually measured.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the Terminal-Bench 2.0 paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ 89 hard, realistic tasks in command-line environments, inspired by real workflows.</div>
+    <div class="card-sm">✅ Each task: unique containerized environment + human-written solution + comprehensive hidden tests.</div>
+    <div class="card-sm">✅ Frontier models and agents score less than 65% — a durable ceiling with room to separate systems.</div>
+    <div class="card-sm">✅ Verification is outcome-based and hidden until the agent finishes — no feedback loop to exploit.</div>
+    <div class="card-sm">✅ Harnesses matter enormously: the same model varies widely across scaffolds and strategies.</div>
+    <div class="card-sm">✅ Read agent claims as system claims: model × harness × run policy — the benchmark's deepest lesson.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2601.11868" target="_blank" rel="noopener noreferrer">"Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces"</a> (Merrill et al., 2026)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2601.11868" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./SWE_bench_Can_Language_Models_Resolve_Real_World_GitHub_Issues.html">SWE-bench Guide</a>
+    <a class="footer-link" href="./SWE_Bench_Pro_Can_AI_Agents_Solve_Long_Horizon_Software_Engineering_Tasks.html">Terminal / SWE-Bench Pro Guide</a>
+    <a class="footer-link" href="./AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench Guide</a>
+    <a class="footer-link" href="./Tau_bench_A_Benchmark_for_Tool_Agent_User_Interaction_in_Real_World_Domains.html">τ-bench Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "tasks", "verification", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === AGENT TERMINAL SESSION ===
+(function(){
+  const box=document.getElementById('tbTermBox');
+  const note=document.getElementById('tbTermNote');
+  const stepBtn=document.getElementById('tbStepBtn');
+  const resetBtn=document.getElementById('tbResetBtn');
+  if(!box||!note||!stepBtn||!resetBtn)return;
+  const ST=[
+    {t:'task prompt',b:'<span style="color:#92400e;">TASK:</span> The reverse-proxy on this box is failing to serve /api. Diagnose and fix it so the health check passes.<br><span style="color:#64748b;">agent@container:~$</span> ',n:'The agent gets a goal, a shell, and nothing else — no error messages, no hints.'},
+    {t:'exploration',b:'<span style="color:#64748b;">$</span> systemctl status proxy<br>  proxy.service — failed (exit 1)<br><span style="color:#64748b;">$</span> journalctl -u proxy --no-pager | tail -5<br>  ERROR: upstream "api:8080" unreachable<br><span style="color:#64748b;">$</span> curl -s localhost:8080<br>  curl: (7) connection refused',n:'Real debugging: state inspection, logs, probing. No stylized "choose action A/B" here.'},
+    {t:'root cause',b:'<span style="color:#64748b;">$</span> ss -ltnp | grep 8080<br>  (nothing listening)<br><span style="color:#64748b;">$</span> systemctl status api<br>  api.service — inactive (dead)<br><span style="color:#64748b;">$</span> systemctl start api && sleep 2 && curl -s localhost:8080/health<br>  {"status":"ok"}',n:'Found it: the API daemon died. Agent restarts it and verifies directly.'},
+    {t:'claim + hidden verification',b:'<span style="color:#64748b;">$</span> echo DONE<br><br><span style="color:#92400e;">[session ends — hidden tests run now]</span><br><span style="color:#15803d;">test_1 health check via proxy ... PASS</span><br><span style="color:#15803d;">test_2 /api round-trip ... PASS</span><br><span style="color:#15803d;">test_3 unrelated services intact ... PASS</span><br><span style="color:#15803d;">RESULT: PASS</span>',n:'The agent never saw these tests while working. Outcome-graded, binary, un-gameable by sweet talk.'}
+  ];
+  let i=0;
+  function render(){
+    box.innerHTML=`<div style="color:#92400e;font-size:11px;margin-bottom:6px;">${ST[i].t.toUpperCase()}</div>${ST[i].b}`;
+    note.textContent=ST[i].n;
+    stepBtn.textContent=i<ST.length-1?'Next step →':'Restart';
+  }
+  stepBtn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+  resetBtn.addEventListener('click',()=>{i=0;render();});
+  render();
+})();
+
+// === OUTCOME PROBE ===
+(function(){
+  const box=document.getElementById('tbProbeBox');
+  const btn=document.getElementById('tbProbeBtn');
+  if(!box||!btn)return;
+  box.innerHTML='<div style="color:var(--text3);">Agent A: "The server is fixed and running." · Agent B: "The server is fixed and running." — identical claims. Press run.</div>';
+  btn.addEventListener('click',()=>{
+    box.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <div style="color:var(--amber-text);font-size:11px;margin-bottom:6px;">AGENT A — HIDDEN TESTS</div>
+        <div style="font-size:12px;line-height:1.9;">
+          <span style="color:var(--green-text);">✓ process running</span><br>
+          <span style="color:var(--green-text);">✓ endpoint answers 200</span><br>
+          <span style="color:var(--green-text);">✓ config untouched elsewhere</span><br>
+          <span style="color:var(--green-text);font-weight:600;">VERDICT: PASS</span>
+        </div>
+      </div>
+      <div>
+        <div style="color:var(--blue-text);font-size:11px;margin-bottom:6px;">AGENT B — HIDDEN TESTS</div>
+        <div style="font-size:12px;line-height:1.9;">
+          <span style="color:var(--red-text);">✗ process running</span><br>
+          <span style="color:var(--red-text);">✗ endpoint answers 200</span><br>
+          <span style="color:var(--red-text);">✗ config untouched elsewhere</span><br>
+          <span style="color:var(--red-text);font-weight:600;">VERDICT: FAIL — server was never started; log output was hallucinated</span>
+        </div>
+      </div></div>`;
+  });
+})();
+
+// === MODEL x HARNESS GRID ===
+(function(){
+  const tabs=document.getElementById('tbHarnessTabs');
+  const box=document.getElementById('tbHarnessBox');
+  if(!tabs||!box)return;
+  const H=[
+    {n:'bare API loop',m:['model X · 24%','model Y · 31%','model Z · 38%'],d:'Single tool-call loop: shell in, text out. No planning, no recovery.'},
+    {n:'+ planner scaffold',m:['model X · 38%','model Y · 47%','model Z · 55%'],d:'Adds explicit planning, note-taking, and retry budgets — every model jumps ~10+ points.'},
+    {n:'+ recovery strategies',m:['model X · 47%','model Y · 56%','model Z · 62%'],d:'Full agentic harness: error-triggered replanning, checkpointed context, test-aware self-checks. Note: model order never flips, but gaps do.'}
+  ];
+  let cur=2;
+  function render(){
+    tabs.innerHTML=H.map((h,k)=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${h.n}</button>`).join('');
+    box.innerHTML=`<div style="display:flex;gap:8px;margin-bottom:10px;">${H[cur].m.map((m,k)=>`<div style="flex:1;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);">${m.split(' · ')[0]}</div><div style="font-family:var(--mono);font-size:18px;color:${['#3b82f6','#f59e0b','#14b8a6'][k]};font-weight:600;">${m.split(' · ')[1]}</div></div>`).join('')}</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;">${H[cur].d}</div>
+      <div style="font-size:11.5px;color:var(--text3);margin-top:6px;">Illustrative pattern from the leaderboard era: harness tier moves every model; it is part of the measured system.</div>`;
+  }
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    cur=Array.from(tabs.children).indexOf(b);render();
+  });
+  render();
+})();
+
+// === SCORE ANATOMY ===
+(function(){
+  const box=document.getElementById('tbAnatomyBox');
+  const btn=document.getElementById('tbAnatomyBtn');
+  if(!box||!btn)return;
+  box.innerHTML='<div style="font-family:var(--mono);font-size:12px;color:var(--text3);">Headline: "Agent Z scores 62% on Terminal-Bench 2.0." Press decompose.</div>';
+  btn.addEventListener('click',()=>{
+    const parts=[
+      {n:'model capability (bare loop)',v:38,c:'#3b82f6'},
+      {n:'+ planner harness',v:12,c:'#f59e0b'},
+      {n:'+ recovery + context strategy',v:9,c:'#14b8a6'},
+      {n:'+ run-count / selection luck',v:3,c:'#a855f7'}
+    ];
+    box.innerHTML=parts.map(p=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:210px;text-align:right;">${p.n}</div>
+      <div style="flex:1;height:18px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:0;background:${p.c};border-radius:4px;transition:width .8s ease;" data-w="${p.v}"></div></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:30px;">+${p.v}</div></div>`).join('')+
+    '<div style="font-family:var(--mono);font-size:12px;color:var(--amber-text);margin-top:6px;font-weight:600;">38 + 12 + 9 + 3 = 62 — three quarters of the "model score" is the system around it. (illustrative)</div>';
+    setTimeout(()=>{box.querySelectorAll('div[data-w]').forEach(d=>{d.style.width=(d.dataset.w/62*100)+'%';});},50);
+  });
+})();
+
+
+const QUIZ_DATA=[{"q": "How many tasks does Terminal-Bench 2.0 contain, and what does each feature?", "opts": ["89 tasks, each with a unique environment, human-written solution, and comprehensive tests", "500 tasks with only instructions", "12 tasks, one per repository", "89 tasks with visible tests during the session"], "correct": 0, "explain": "TB 2.0 is a carefully curated set of 89 hard, realistic terminal tasks — each shipping its own containerized environment, a human-written reference solution, and comprehensive verification tests."}, {"q": "When do the hidden tests run?", "opts": ["Continuously, giving the agent feedback during the session", "After the agent's session ends — no in-session feedback to exploit", "Only when the agent explicitly requests them", "They run on the model weights, not the environment"], "correct": 1, "explain": "Verification executes after the session completes: outcome-based, binary, and hidden while the agent works — preventing the agent from optimizing against the grader."}, {"q": "What headline result does the paper report for frontier models and agents?", "opts": ["They exceed 95% — near-solved", "They score less than 65%", "They refuse to attempt the tasks", "They score exactly 89%"], "correct": 1, "explain": "Frontier models and agents score under 65% on the benchmark, and the paper includes an error analysis identifying areas for model and agent improvement."}, {"q": "What did the Terminal-Bench leaderboard ecosystem reveal about scores?", "opts": ["Only parameter count matters", "The same model varies dramatically across harnesses — scaffolding is part of the measured system", "Harnesses have no measurable effect", "All models score identically"], "correct": 1, "explain": "Big score swings from planning loops, recovery strategies, and context management showed that measured capability is model x harness x run policy — harness engineering became its own discipline."}, {"q": "Why is the terminal a uniquely honest environment for agent evaluation?", "opts": ["It has a small action space that's easy to enumerate", "It's unstructured, stateful, and outcome-verifiable — reflecting real computer work with no stylized guardrails", "It provides friendly error messages by design", "It prevents agents from using tools"], "correct": 1, "explain": "A real shell offers thousands of possible commands, persistent system state, and outcomes that can be probed by tests — making it both harder and harder to fake than app-style environments."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -338,19 +344,19 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card" style="margin-top:1rem;padding:1.2rem;">
     <div class="card-label" style="margin-bottom:8px;">What does "Aligned" mean? (3H Framework from Askell et al.)</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-      <div class="card-sm"><div style="font-size:18px;margin-bottom:4px;">🤝</div><div style="font-size:13px;font-weight:600;color:var(--green);">Helpful</div><div style="font-size:12px;color:var(--text2);">Should help the user solve their task — follow instructions and infer intent.</div></div>
-      <div class="card-sm"><div style="font-size:18px;margin-bottom:4px;">🔍</div><div style="font-size:13px;font-weight:600;color:var(--blue);">Honest</div><div style="font-size:12px;color:var(--text2);">Shouldn't fabricate info or mislead. Measured via TruthfulQA and hallucination rates.</div></div>
-      <div class="card-sm"><div style="font-size:18px;margin-bottom:4px;">🛡️</div><div style="font-size:13px;font-weight:600;color:var(--purple);">Harmless</div><div style="font-size:12px;color:var(--text2);">Should not cause physical, psychological, or social harm. Measured via RealToxicityPrompts.</div></div>
+      <div class="card-sm"><div style="font-size:18px;margin-bottom:4px;">🤝</div><div style="font-size:13px;font-weight:600;color:var(--green-text);">Helpful</div><div style="font-size:12px;color:var(--text2);">Should help the user solve their task — follow instructions and infer intent.</div></div>
+      <div class="card-sm"><div style="font-size:18px;margin-bottom:4px;">🔍</div><div style="font-size:13px;font-weight:600;color:var(--blue-text);">Honest</div><div style="font-size:12px;color:var(--text2);">Shouldn't fabricate info or mislead. Measured via TruthfulQA and hallucination rates.</div></div>
+      <div class="card-sm"><div style="font-size:18px;margin-bottom:4px;">🛡️</div><div style="font-size:13px;font-weight:600;color:var(--purple-text);">Harmless</div><div style="font-size:12px;color:var(--text2);">Should not cause physical, psychological, or social harm. Measured via RealToxicityPrompts.</div></div>
     </div>
   </div>
 
   <div class="card" style="margin-top:1rem;padding:1.2rem;">
     <div class="card-label" style="margin-bottom:8px;">RLHF Research Lineage (Section 2 — Related Work)</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;">
-      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:4px;">Christiano et al. 2017</div><div style="font-size:11px;color:var(--text2);">Deep RL from Human Preferences. First proposed using human feedback as a reward signal for RL agents.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:4px;">Ziegler et al. 2019</div><div style="font-size:11px;color:var(--text2);">Applied RLHF to stylistic text continuation. Showed human preferences can fine-tune language models.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;">Stiennon et al. 2020</div><div style="font-size:11px;color:var(--text2);">Learning to Summarize from Human Feedback. Direct predecessor — same pipeline applied to summarization.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:4px;">InstructGPT 2022</div><div style="font-size:11px;color:var(--text2);">This paper. Scales RLHF to a broad distribution of real-world tasks, not just summarization. 3-step pipeline.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--blue-text);margin-bottom:4px;">Christiano et al. 2017</div><div style="font-size:11px;color:var(--text2);">Deep RL from Human Preferences. First proposed using human feedback as a reward signal for RL agents.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--purple-text);margin-bottom:4px;">Ziegler et al. 2019</div><div style="font-size:11px;color:var(--text2);">Applied RLHF to stylistic text continuation. Showed human preferences can fine-tune language models.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--green-text);margin-bottom:4px;">Stiennon et al. 2020</div><div style="font-size:11px;color:var(--text2);">Learning to Summarize from Human Feedback. Direct predecessor — same pipeline applied to summarization.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:600;color:var(--amber-text);margin-bottom:4px;">InstructGPT 2022</div><div style="font-size:11px;color:var(--text2);">This paper. Scales RLHF to a broad distribution of real-world tasks, not just summarization. 3-step pipeline.</div></div>
     </div>
     <div style="font-size:11px;color:var(--text3);margin-top:8px;font-family:var(--mono);">Also related: Askell et al. 2021 (language assistants for alignment), Gabriel 2020 (values & alignment philosophy), Wu et al. 2021 (book summarization with RLHF). FLAN and T0 use NLP task instructions but NOT human preferences.</div>
   </div>
@@ -367,17 +373,17 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:2rem;">
     <div class="card" style="border-top:3px solid var(--green);">
       <div style="font-size:24px;margin-bottom:8px;">①</div>
-      <div style="font-size:14px;font-weight:600;color:var(--green);margin-bottom:6px;">Supervised Fine-Tuning (SFT)</div>
+      <div style="font-size:14px;font-weight:600;color:var(--green-text);margin-bottom:6px;">Supervised Fine-Tuning (SFT)</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">Humans write ideal answers → fine-tune GPT-3 on these demonstrations. ~13K prompts, 16 epochs.</div>
     </div>
     <div class="card" style="border-top:3px solid var(--blue);">
       <div style="font-size:24px;margin-bottom:8px;">②</div>
-      <div style="font-size:14px;font-weight:600;color:var(--blue);margin-bottom:6px;">Reward Model Training (RM)</div>
+      <div style="font-size:14px;font-weight:600;color:var(--blue-text);margin-bottom:6px;">Reward Model Training (RM)</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">Humans rank multiple model outputs → train a 6B model to predict which output is preferred. ~33K prompts.</div>
     </div>
     <div class="card" style="border-top:3px solid var(--purple);">
       <div style="font-size:24px;margin-bottom:8px;">③</div>
-      <div style="font-size:14px;font-weight:600;color:var(--purple);margin-bottom:6px;">PPO Reinforcement Learning</div>
+      <div style="font-size:14px;font-weight:600;color:var(--purple-text);margin-bottom:6px;">PPO Reinforcement Learning</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">Use the reward model as a scoring function → fine-tune the SFT model using PPO to maximize reward. ~31K prompts.</div>
     </div>
   </div>
@@ -385,18 +391,18 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card" style="padding:1.2rem;">
     <div class="card-label" style="margin-bottom:8px;">API Prompt Distribution (Table 1 — Full Breakdown)</div>
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:8px;">
-      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--amber);font-weight:600;">45.6%</div><div style="font-size:11px;color:var(--text2);">Generation</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--blue);font-weight:600;">12.4%</div><div style="font-size:11px;color:var(--text2);">Open QA</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--green);font-weight:600;">11.2%</div><div style="font-size:11px;color:var(--text2);">Brainstorming</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--purple);font-weight:600;">8.4%</div><div style="font-size:11px;color:var(--text2);">Chat</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--teal);font-weight:600;">6.6%</div><div style="font-size:11px;color:var(--text2);">Rewrite</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--amber-text);font-weight:600;">45.6%</div><div style="font-size:11px;color:var(--text2);">Generation</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--blue-text);font-weight:600;">12.4%</div><div style="font-size:11px;color:var(--text2);">Open QA</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--green-text);font-weight:600;">11.2%</div><div style="font-size:11px;color:var(--text2);">Brainstorming</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--purple-text);font-weight:600;">8.4%</div><div style="font-size:11px;color:var(--text2);">Chat</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--teal-text);font-weight:600;">6.6%</div><div style="font-size:11px;color:var(--text2);">Rewrite</div></div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
-      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--red);font-weight:600;">4.2%</div><div style="font-size:11px;color:var(--text2);">Summarization</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--blue);font-weight:600;">3.5%</div><div style="font-size:11px;color:var(--text2);">Classification</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--green);font-weight:600;">3.5%</div><div style="font-size:11px;color:var(--text2);">Other</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--purple);font-weight:600;">2.6%</div><div style="font-size:11px;color:var(--text2);">Closed QA</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--amber);font-weight:600;">1.9%</div><div style="font-size:11px;color:var(--text2);">Extract</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--red-text);font-weight:600;">4.2%</div><div style="font-size:11px;color:var(--text2);">Summarization</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--blue-text);font-weight:600;">3.5%</div><div style="font-size:11px;color:var(--text2);">Classification</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--green-text);font-weight:600;">3.5%</div><div style="font-size:11px;color:var(--text2);">Other</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--purple-text);font-weight:600;">2.6%</div><div style="font-size:11px;color:var(--text2);">Closed QA</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:16px;color:var(--amber-text);font-weight:600;">1.9%</div><div style="font-size:11px;color:var(--text2);">Extract</div></div>
     </div>
     <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono);">~57% of prompts are open-ended generation/brainstorming — tasks public NLP datasets don't cover well. Classification + QA = only ~18%.</div>
   </div>
@@ -523,18 +529,18 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--purple);margin-bottom:4px;">PPO vs PPO-ptx</div><div style="font-size:12px;color:var(--text2);line-height:1.6;"><strong>PPO:</strong> Pure RL fine-tuning (γ=0). Can regress on NLP benchmarks. <strong>PPO-ptx:</strong> Mixes pretraining gradients (γ>0) to avoid "alignment tax." This is the default InstructGPT model.</div></div>
-    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--teal);margin-bottom:4px;">KL Penalty Explained</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Without the KL penalty, the RL model would "hack" the reward model by finding degenerate outputs that trick it. The per-token KL divergence keeps the model close to the SFT baseline.</div></div>
-    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--amber);margin-bottom:4px;">Alignment Tax</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">RLHF causes regression on SQuAD, DROP, HellaSwag, and WMT15 FR→EN. PPO-ptx mitigates this by preserving language modeling capabilities while aligning.</div></div>
-    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--blue);margin-bottom:4px;">Training Compute</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">SFT 175B: 4.9 petaflop/s-days. PPO-ptx 175B: 60 petaflop/s-days. GPT-3 pretraining: 3,640. <strong>Alignment costs &lt;2% of pretraining.</strong></div></div>
+    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--purple-text);margin-bottom:4px;">PPO vs PPO-ptx</div><div style="font-size:12px;color:var(--text2);line-height:1.6;"><strong>PPO:</strong> Pure RL fine-tuning (γ=0). Can regress on NLP benchmarks. <strong>PPO-ptx:</strong> Mixes pretraining gradients (γ>0) to avoid "alignment tax." This is the default InstructGPT model.</div></div>
+    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--teal-text);margin-bottom:4px;">KL Penalty Explained</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Without the KL penalty, the RL model would "hack" the reward model by finding degenerate outputs that trick it. The per-token KL divergence keeps the model close to the SFT baseline.</div></div>
+    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--amber-text);margin-bottom:4px;">Alignment Tax</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">RLHF causes regression on SQuAD, DROP, HellaSwag, and WMT15 FR→EN. PPO-ptx mitigates this by preserving language modeling capabilities while aligning.</div></div>
+    <div class="card-sm"><div style="font-size:13px;font-weight:500;color:var(--blue-text);margin-bottom:4px;">Training Compute</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">SFT 175B: 4.9 petaflop/s-days. PPO-ptx 175B: 60 petaflop/s-days. GPT-3 pretraining: 3,640. <strong>Alignment costs &lt;2% of pretraining.</strong></div></div>
   </div>
 
   <div class="card" style="margin-top:1rem;padding:1.2rem;">
     <div class="card-label" style="margin-bottom:8px;">PPO Training Environment (Section 3.5)</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--purple);margin-bottom:4px;">Bandit Environment</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">The RL environment is a <strong>bandit</strong>: it presents a random customer prompt, expects a response, produces a reward from the RM, and ends the episode. No multi-turn interaction.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--teal);margin-bottom:4px;">Value Function Init</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">The PPO value function is <strong>initialized from the reward model</strong>. This gives a warm start — the value function already understands output quality from RM training.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:4px;">PPO-ptx vs KL Fix</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">Increasing the KL coefficient alone never fully recovers DROP/SQuAD performance and significantly decreases reward. <strong>Pretraining mix is strictly better</strong> than the KL-only fix (Figures 33-34).</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--purple-text);margin-bottom:4px;">Bandit Environment</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">The RL environment is a <strong>bandit</strong>: it presents a random customer prompt, expects a response, produces a reward from the RM, and ends the episode. No multi-turn interaction.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--teal-text);margin-bottom:4px;">Value Function Init</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">The PPO value function is <strong>initialized from the reward model</strong>. This gives a warm start — the value function already understands output quality from RM training.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber-text);margin-bottom:4px;">PPO-ptx vs KL Fix</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">Increasing the KL coefficient alone never fully recovers DROP/SQuAD performance and significantly decreases reward. <strong>Pretraining mix is strictly better</strong> than the KL-only fix (Figures 33-34).</div></div>
     </div>
   </div>
 </section>
@@ -575,22 +581,22 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card" style="padding:1.2rem;margin-bottom:1rem;">
     <div class="card-label" style="margin-bottom:8px;">Evaluation Metadata Categories (Table 3)</div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--amber);">Overall Quality</div><div style="font-size:10px;color:var(--text3);">Likert 1-7</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--red);">Fails Instruction</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--blue);">Hallucination</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--green);">Satisfies Constraints</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--purple);">Inappropriate</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--teal);">Sexual Content</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--red);">Violent Content</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
-      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--amber);">Harmful Advice</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--amber-text);">Overall Quality</div><div style="font-size:10px;color:var(--text3);">Likert 1-7</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--red-text);">Fails Instruction</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--blue-text);">Hallucination</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--green-text);">Satisfies Constraints</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--purple-text);">Inappropriate</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--teal-text);">Sexual Content</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--red-text);">Violent Content</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:11px;font-weight:600;color:var(--amber-text);">Harmful Advice</div><div style="font-size:10px;color:var(--text3);">Binary</div></div>
     </div>
   </div>
 
   <div class="card" style="padding:1.2rem;">
     <div class="card-label" style="margin-bottom:8px;">Labeling Priority Shift</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:4px;">During Training</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">Labelers prioritized <strong>helpfulness</strong> as the most important criterion (above truthfulness and harmlessness). This maximizes task completion quality.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--green);margin-bottom:4px;">During Final Evaluation</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">Labelers prioritized <strong>truthfulness and harmlessness</strong> over helpfulness. This reflects what the researchers "really care about" for deployment safety.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber-text);margin-bottom:4px;">During Training</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">Labelers prioritized <strong>helpfulness</strong> as the most important criterion (above truthfulness and harmlessness). This maximizes task completion quality.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--green-text);margin-bottom:4px;">During Final Evaluation</div><div style="font-size:11px;color:var(--text2);line-height:1.6;">Labelers prioritized <strong>truthfulness and harmlessness</strong> over helpfulness. This reflects what the researchers "really care about" for deployment safety.</div></div>
     </div>
     <div style="font-size:11px;color:var(--text3);margin-top:6px;font-family:var(--mono);">Data deduplication: long common prefix check, max 200 prompts per user ID. PII filtered from training split. Train/val/test split by user ID.</div>
   </div>
@@ -605,10 +611,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <p class="section-desc">InstructGPT at 1.3B parameters is preferred by humans over base GPT-3 at 175B — a 100× smaller model wins by being aligned.</p>
 
   <div class="results-grid">
-    <div class="result-card" style="border-color:rgba(245,158,11,0.2);"><div class="result-model">Preferred over GPT-3 175B</div><div class="result-score" style="color:var(--amber);">85%</div><div class="result-label">175B InstructGPT vs 175B GPT-3</div><div class="result-bar-wrap"><div class="result-bar" style="width:85%;background:var(--amber);"></div></div></div>
-    <div class="result-card" style="border-color:rgba(34,197,94,0.2);"><div class="result-model">Hallucination Reduction</div><div class="result-score" style="color:var(--green);">21%</div><div class="result-label">vs 41% for GPT-3 (closed-domain)</div><div class="result-bar-wrap"><div class="result-bar" style="width:79%;background:var(--green);"></div></div></div>
-    <div class="result-card" style="border-color:rgba(59,130,246,0.2);"><div class="result-model">TruthfulQA Improvement</div><div class="result-score" style="color:var(--blue);">2×</div><div class="result-label">Truthful+Informative answers vs GPT-3</div><div class="result-bar-wrap"><div class="result-bar" style="width:70%;background:var(--blue);"></div></div></div>
-    <div class="result-card" style="border-color:rgba(168,85,247,0.2);"><div class="result-model">Toxicity Reduction</div><div class="result-score" style="color:var(--purple);">25%</div><div class="result-label">Less toxic when prompted respectfully</div><div class="result-bar-wrap"><div class="result-bar" style="width:75%;background:var(--purple);"></div></div></div>
+    <div class="result-card" style="border-color:rgba(245,158,11,0.2);"><div class="result-model">Preferred over GPT-3 175B</div><div class="result-score" style="color:var(--amber-text);">85%</div><div class="result-label">175B InstructGPT vs 175B GPT-3</div><div class="result-bar-wrap"><div class="result-bar" style="width:85%;background:var(--amber);"></div></div></div>
+    <div class="result-card" style="border-color:rgba(34,197,94,0.2);"><div class="result-model">Hallucination Reduction</div><div class="result-score" style="color:var(--green-text);">21%</div><div class="result-label">vs 41% for GPT-3 (closed-domain)</div><div class="result-bar-wrap"><div class="result-bar" style="width:79%;background:var(--green);"></div></div></div>
+    <div class="result-card" style="border-color:rgba(59,130,246,0.2);"><div class="result-model">TruthfulQA Improvement</div><div class="result-score" style="color:var(--blue-text);">2×</div><div class="result-label">Truthful+Informative answers vs GPT-3</div><div class="result-bar-wrap"><div class="result-bar" style="width:70%;background:var(--blue);"></div></div></div>
+    <div class="result-card" style="border-color:rgba(168,85,247,0.2);"><div class="result-model">Toxicity Reduction</div><div class="result-score" style="color:var(--purple-text);">25%</div><div class="result-label">Less toxic when prompted respectfully</div><div class="result-bar-wrap"><div class="result-bar" style="width:75%;background:var(--purple);"></div></div></div>
   </div>
 
   <div class="card" style="margin-bottom:1rem;padding:1.5rem;">
@@ -647,38 +653,38 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem;">
     <div class="card" style="border-top:3px solid var(--green);">
-      <div style="font-size:14px;font-weight:600;color:var(--green);margin-bottom:8px;">✅ Following Non-English Instructions (Figure 8)</div>
+      <div style="font-size:14px;font-weight:600;color:var(--green-text);margin-bottom:8px;">✅ Following Non-English Instructions (Figure 8)</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;"><strong>Prompt:</strong> "Écrivez une courte histoire sur une grenouille qui voyage dans le temps jusqu'à la Grèce antique en français."</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Just listed more writing prompts in French — didn't follow the instruction to write the story.</div></div>
-        <div class="card-sm" style="border-left:2px solid var(--green);"><div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Actually wrote a coherent short story about a frog time-traveling to ancient Greece, entirely in French.</div></div>
+        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red-text);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Just listed more writing prompts in French — didn't follow the instruction to write the story.</div></div>
+        <div class="card-sm" style="border-left:2px solid var(--green);"><div style="font-size:11px;font-weight:600;color:var(--green-text);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Actually wrote a coherent short story about a frog time-traveling to ancient Greece, entirely in French.</div></div>
       </div>
     </div>
     <div class="card" style="border-top:3px solid var(--blue);">
-      <div style="font-size:14px;font-weight:600;color:var(--blue);margin-bottom:8px;">✅ Answering Questions About Code (Figure 8)</div>
+      <div style="font-size:14px;font-weight:600;color:var(--blue-text);margin-bottom:8px;">✅ Answering Questions About Code (Figure 8)</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;"><strong>Prompt:</strong> "What is the purpose of the list C in the code below?" <span style="font-family:var(--mono);font-size:11px;">[binomial_coefficient function]</span></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Generated multiple-choice options (A/B/C/D) instead of explaining the code.</div></div>
-        <div class="card-sm" style="border-left:2px solid var(--green);"><div style="font-size:11px;font-weight:600;color:var(--green);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Explained that list C stores binomial coefficient values as the function iterates. (Not fully correct, but attempts the right task.)</div></div>
+        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red-text);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Generated multiple-choice options (A/B/C/D) instead of explaining the code.</div></div>
+        <div class="card-sm" style="border-left:2px solid var(--green);"><div style="font-size:11px;font-weight:600;color:var(--green-text);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Explained that list C stores binomial coefficient values as the function iterates. (Not fully correct, but attempts the right task.)</div></div>
       </div>
     </div>
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
     <div class="card" style="border-top:3px solid var(--red);">
-      <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:8px;">🚫 False Premise Failure (Figure 9)</div>
+      <div style="font-size:14px;font-weight:600;color:var(--red-text);margin-bottom:8px;">🚫 False Premise Failure (Figure 9)</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;"><strong>Prompt:</strong> "Why is it important to eat socks after meditating?"</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div class="card-sm" style="border-left:2px solid var(--amber);"><div style="font-size:11px;font-weight:600;color:var(--amber);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Generated absurd Q&A about "tasting enlightenment" and "smelly feet" — at least feels like nonsense.</div></div>
-        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Wrote a long paragraph treating the premise as plausible, citing fake theories. <strong>Goes along with the false premise.</strong></div></div>
+        <div class="card-sm" style="border-left:2px solid var(--amber);"><div style="font-size:11px;font-weight:600;color:var(--amber-text);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Generated absurd Q&A about "tasting enlightenment" and "smelly feet" — at least feels like nonsense.</div></div>
+        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red-text);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Wrote a long paragraph treating the premise as plausible, citing fake theories. <strong>Goes along with the false premise.</strong></div></div>
       </div>
     </div>
     <div class="card" style="border-top:3px solid var(--amber);">
-      <div style="font-size:14px;font-weight:600;color:var(--amber);margin-bottom:8px;">⚠️ Over-Hedging (Figure 9)</div>
+      <div style="font-size:14px;font-weight:600;color:var(--amber-text);margin-bottom:8px;">⚠️ Over-Hedging (Figure 9)</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;"><strong>Prompt:</strong> "What happens if you fire a cannonball directly at a pumpkin at high speeds?"</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Made up false physics: "A pumpkin is a strong magnet that can manipulate metal objects."</div></div>
-        <div class="card-sm" style="border-left:2px solid var(--amber);"><div style="font-size:11px;font-weight:600;color:var(--amber);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Hedged excessively: "no way to accurately predict" — instead of saying the pumpkin would likely explode on impact.</div></div>
+        <div class="card-sm" style="border-left:2px solid var(--red);"><div style="font-size:11px;font-weight:600;color:var(--red-text);margin-bottom:2px;">GPT-3 175B</div><div style="font-size:11px;color:var(--text3);">Made up false physics: "A pumpkin is a strong magnet that can manipulate metal objects."</div></div>
+        <div class="card-sm" style="border-left:2px solid var(--amber);"><div style="font-size:11px;font-weight:600;color:var(--amber-text);margin-bottom:2px;">InstructGPT 175B</div><div style="font-size:11px;color:var(--text3);">Hedged excessively: "no way to accurately predict" — instead of saying the pumpkin would likely explode on impact.</div></div>
       </div>
     </div>
   </div>
@@ -699,15 +705,15 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:1.5rem;">
     <div class="card" style="border-left:3px solid var(--green);">
-      <div style="font-size:14px;font-weight:600;color:var(--green);margin-bottom:8px;">Truthfulness (TruthfulQA)</div>
+      <div style="font-size:14px;font-weight:600;color:var(--green-text);margin-bottom:8px;">Truthfulness (TruthfulQA)</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">PPO models generate truthful+informative answers ~2× as often as GPT-3. When given "Instruction+QA" prompt to say "I don't know," PPO models err on the side of being honest rather than confidently wrong.</div>
     </div>
     <div class="card" style="border-left:3px solid var(--amber);">
-      <div style="font-size:14px;font-weight:600;color:var(--amber);margin-bottom:8px;">Toxicity (RealToxicityPrompts)</div>
+      <div style="font-size:14px;font-weight:600;color:var(--amber-text);margin-bottom:8px;">Toxicity (RealToxicityPrompts)</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">With "respectful" instructions, InstructGPT generates 25% less toxic output. Without the prompt, no improvement. <strong>When explicitly prompted to be toxic, InstructGPT is MORE toxic than GPT-3.</strong></div>
     </div>
     <div class="card" style="border-left:3px solid var(--red);">
-      <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:8px;">Bias (Winogender/CrowS-Pairs)</div>
+      <div style="font-size:14px;font-weight:600;color:var(--red-text);margin-bottom:8px;">Bias (Winogender/CrowS-Pairs)</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">InstructGPT does NOT improve over GPT-3 on bias benchmarks. When instructed to act respectfully, it actually shows higher bias — it becomes more certain, not less biased.</div>
     </div>
   </div>
@@ -715,10 +721,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card" style="padding:1.5rem;">
     <div class="card-label" style="margin-bottom:8px;">Who Are We Aligning To? (Section 5.2)</div>
     <div class="notice-grid">
-      <div class="notice-card"><div class="notice-title" style="color:var(--amber);">Labeler Preferences</div><div class="notice-text">40 contractors (mostly English-speaking, US/SE Asia). ~73% inter-annotator agreement. Not representative of all users.</div></div>
-      <div class="notice-card"><div class="notice-title" style="color:var(--blue);">Researcher Influence</div><div class="notice-text">OpenAI researchers wrote the labeling instructions, answered edge-case questions, and designed the evaluation framework.</div></div>
-      <div class="notice-card"><div class="notice-title" style="color:var(--purple);">API Customer Bias</div><div class="notice-text">Training prompts come from OpenAI API users — selected from a waitlist, biased toward OpenAI's network. Not representative of all AI users.</div></div>
-      <div class="notice-card"><div class="notice-title" style="color:var(--teal);">Generalization</div><div class="notice-text">Held-out labelers (not in training) prefer InstructGPT at similar rates — suggesting the model generalizes beyond its specific training labelers.</div></div>
+      <div class="notice-card"><div class="notice-title" style="color:var(--amber-text);">Labeler Preferences</div><div class="notice-text">40 contractors (mostly English-speaking, US/SE Asia). ~73% inter-annotator agreement. Not representative of all users.</div></div>
+      <div class="notice-card"><div class="notice-title" style="color:var(--blue-text);">Researcher Influence</div><div class="notice-text">OpenAI researchers wrote the labeling instructions, answered edge-case questions, and designed the evaluation framework.</div></div>
+      <div class="notice-card"><div class="notice-title" style="color:var(--purple-text);">API Customer Bias</div><div class="notice-text">Training prompts come from OpenAI API users — selected from a waitlist, biased toward OpenAI's network. Not representative of all AI users.</div></div>
+      <div class="notice-card"><div class="notice-title" style="color:var(--teal-text);">Generalization</div><div class="notice-text">Held-out labelers (not in training) prefer InstructGPT at similar rates — suggesting the model generalizes beyond its specific training labelers.</div></div>
     </div>
   </div>
 </section>
@@ -732,25 +738,25 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <p class="section-desc">The paper is remarkably candid about what InstructGPT still gets wrong — and what research questions remain (Sections 5.3-5.5).</p>
 
   <div class="notice-grid" style="margin-bottom:1.5rem;">
-    <div class="notice-card"><div class="notice-title" style="color:var(--red);">False Premises</div><div class="notice-text">InstructGPT can be confused by instructions with false premises and simply goes along with them (e.g., "why is it important to eat socks after meditating?").</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--amber);">Hedging</div><div class="notice-text">Sometimes gives long, hedging answers to simple questions. Likely because labelers rewarded epistemic humility, and the RM learned to prefer cautious responses.</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--blue);">Follows Harmful Instructions</div><div class="notice-text">In most cases, InstructGPT follows user instructions even if harmful. When prompted to be maximally biased, it's MORE toxic than GPT-3. The greatest limitation per the authors.</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--purple);">Not Representative</div><div class="notice-text">40 labelers ≠ all of humanity. Most comparisons labeled by only 1 contractor. When labelers disagree, aligning to the average may not be desirable.</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--teal);">Alignment Tax</div><div class="notice-text">RLHF causes performance drops on SQuAD, DROP, HellaSwag, and translation. PPO-ptx mitigates but doesn't fully solve this. Pretraining mix may also reintroduce undesirable behaviors.</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--green);">Generalization</div><div class="notice-text">InstructGPT can follow code and non-English instructions despite minimal training data. But it sometimes responds in English even when prompted in another language.</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--blue);">Methodology Limits</div><div class="notice-text">Labeler value judgments are impacted by identity, cultural backgrounds, and personal history. Labelers are primarily English-speaking. Data is almost entirely English instructions.</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--amber);">Model Safety</div><div class="notice-text">Models still generate toxic/biased outputs, make up facts, and generate sexual/violent content without explicit prompting. Not fully aligned, not fully safe.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--red-text);">False Premises</div><div class="notice-text">InstructGPT can be confused by instructions with false premises and simply goes along with them (e.g., "why is it important to eat socks after meditating?").</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--amber-text);">Hedging</div><div class="notice-text">Sometimes gives long, hedging answers to simple questions. Likely because labelers rewarded epistemic humility, and the RM learned to prefer cautious responses.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--blue-text);">Follows Harmful Instructions</div><div class="notice-text">In most cases, InstructGPT follows user instructions even if harmful. When prompted to be maximally biased, it's MORE toxic than GPT-3. The greatest limitation per the authors.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--purple-text);">Not Representative</div><div class="notice-text">40 labelers ≠ all of humanity. Most comparisons labeled by only 1 contractor. When labelers disagree, aligning to the average may not be desirable.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--teal-text);">Alignment Tax</div><div class="notice-text">RLHF causes performance drops on SQuAD, DROP, HellaSwag, and translation. PPO-ptx mitigates but doesn't fully solve this. Pretraining mix may also reintroduce undesirable behaviors.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--green-text);">Generalization</div><div class="notice-text">InstructGPT can follow code and non-English instructions despite minimal training data. But it sometimes responds in English even when prompted in another language.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--blue-text);">Methodology Limits</div><div class="notice-text">Labeler value judgments are impacted by identity, cultural backgrounds, and personal history. Labelers are primarily English-speaking. Data is almost entirely English instructions.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--amber-text);">Model Safety</div><div class="notice-text">Models still generate toxic/biased outputs, make up facts, and generate sexual/violent content without explicit prompting. Not fully aligned, not fully safe.</div></div>
   </div>
 
   <div class="card" style="padding:1.5rem;margin-bottom:1rem;">
     <div class="card-label" style="margin-bottom:8px;">Open Questions (Section 5.4)</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--red);margin-bottom:4px;">Adversarial Data Collection</div><div style="font-size:11px;color:var(--text2);">Have labelers find worst-case model behaviors, then add those to training data. Could dramatically reduce false premise and hedging failures.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--blue);margin-bottom:4px;">Combining with WebGPT</div><div style="font-size:11px;color:var(--text2);">Could combine RLHF with methods that improve truthfulness (Nakano et al., 2021), or filter pretraining data for toxic content.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--green);margin-bottom:4px;">Better Feedback Methods</div><div style="font-size:11px;color:var(--text2);">Labelers could edit model responses to make them better, or generate natural language critiques. Comparisons aren't necessarily the most efficient signal.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--purple);margin-bottom:4px;">Configurable Safety</div><div style="font-size:11px;color:var(--text2);">Different applications have different risk levels. What a model refuses should be configurable at inference time, not hardcoded during training.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--teal);margin-bottom:4px;">Interface Design (HCI)</div><div style="font-size:11px;color:var(--text2);">Vast design space for labeler feedback interfaces. This is an interesting human-computer interaction problem that could improve alignment signals.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:4px;">Principle-Based Alignment</div><div style="font-size:11px;color:var(--text2);">Gabriel (2020) advocates for fair principles that receive reflective endorsement despite variation in moral beliefs. Aligning to inferred intent is simpler but limited.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--red-text);margin-bottom:4px;">Adversarial Data Collection</div><div style="font-size:11px;color:var(--text2);">Have labelers find worst-case model behaviors, then add those to training data. Could dramatically reduce false premise and hedging failures.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--blue-text);margin-bottom:4px;">Combining with WebGPT</div><div style="font-size:11px;color:var(--text2);">Could combine RLHF with methods that improve truthfulness (Nakano et al., 2021), or filter pretraining data for toxic content.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--green-text);margin-bottom:4px;">Better Feedback Methods</div><div style="font-size:11px;color:var(--text2);">Labelers could edit model responses to make them better, or generate natural language critiques. Comparisons aren't necessarily the most efficient signal.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--purple-text);margin-bottom:4px;">Configurable Safety</div><div style="font-size:11px;color:var(--text2);">Different applications have different risk levels. What a model refuses should be configurable at inference time, not hardcoded during training.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--teal-text);margin-bottom:4px;">Interface Design (HCI)</div><div style="font-size:11px;color:var(--text2);">Vast design space for labeler feedback interfaces. This is an interesting human-computer interaction problem that could improve alignment signals.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber-text);margin-bottom:4px;">Principle-Based Alignment</div><div style="font-size:11px;color:var(--text2);">Gabriel (2020) advocates for fair principles that receive reflective endorsement despite variation in moral beliefs. Aligning to inferred intent is simpler but limited.</div></div>
     </div>
   </div>
 
@@ -797,6 +803,9 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="footer-link" href="./Attention_Is_All_You_Need.html">Transformer Guide</a>
     <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
     <a class="footer-link" href="./DPO.html">DPO Guide</a>
+
+    <a class="footer-link" href="./FLAN_Finetuned_Language_Models_Are_Zero_Shot_Learners.html">FLAN Guide</a>
+    <a class="footer-link" href="./Constitutional_AI_Harmlessness_from_AI_Feedback.html">Constitutional AI Guide</a>
   </div>
   <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -841,7 +850,7 @@ const QUIZ_DATA=[
   {q:'What is the KL penalty in the PPO objective?',opts:['A financial penalty','Prevents the RL model from drifting too far from SFT','A penalty for generating long outputs','Prevents overfitting to training data'],correct:1,explain:'The per-token KL divergence between the RL policy and SFT policy prevents reward hacking — where the model finds degenerate outputs that trick the reward model.'},
   {q:'What percentage of the training prompts are open-ended generation/brainstorming?',opts:['About 18%','About 35%','About 57%','About 80%'],correct:2,explain:'According to Table 1, generation (45.6%) + brainstorming (11.2%) = ~57% of prompts. This is why public NLP datasets (focused on QA/classification) are insufficient for alignment.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

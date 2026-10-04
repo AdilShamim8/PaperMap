@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PagedAttention: Efficient Memory Management for LLM Serving — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the PagedAttention paper, with visual demos for KV-cache fragmentation, virtual-memory paging, prefix sharing, and vLLM throughput gains.">
+<meta name="keywords" content="PagedAttention, vLLM, KV cache, paging, virtual memory, serving, throughput, fragmentation, beam search, parallel sampling, LLM inference">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="PagedAttention: Efficient Memory Management for LLM Serving — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of PagedAttention — OS-style virtual memory for the KV cache, and the 2-4x throughput of vLLM.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="PagedAttention: Efficient Memory Management for LLM Serving — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of PagedAttention — OS-style virtual memory for the KV cache, and the 2-4x throughput of vLLM.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#paging">Paging</a>
+    <a class="nav-link" href="#sharing">Sharing</a>
+    <a class="nav-link" href="#vllm">vLLM</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">SOSP 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#paging">Paging</a>
+  <a href="#sharing">Sharing</a>
+  <a href="#vllm">vLLM</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Virtual Memory for the <em>KV Cache</em><br>PagedAttention
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the serving breakthrough that borrowed 60 years of operating-system wisdom — paging the KV cache like RAM — and built vLLM, the inference engine that made GPU serving cheap.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2309.06180" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">2–4×</div>
+      <div class="stat-label">Throughput Gain</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num"><4%</div>
+      <div class="stat-label">KV Cache Waste</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">SOSP</div>
+      <div class="stat-label">First LLM Paper There</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">Serving Meets <em>1961</em></h2>
+  <p class="section-desc">The ideas are older than deep learning: virtual memory, paging, and copy-on-write — applied to the KV cache.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">1961–present</div><div class="tl-title">Virtual memory (Atlas → Linux)</div><div class="tl-desc">Operating systems solved "programs of unpredictable size, limited RAM" with pages, page tables, and copy-on-write decades ago.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022</div><div class="tl-title">KV cache becomes the bottleneck</div><div class="tl-desc">Attention serving stores per-token K/V states; the cache grows with traffic and sequence length, fragmenting GPU memory.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Sep</div><div class="tl-title">🚀 PagedAttention + vLLM (Kwon et al., UC Berkeley)</div><div class="tl-desc">KV cache in fixed-size blocks with a block table — near-zero waste, flexible sharing, 2-4x throughput. First LLM paper at SOSP, a systems venue.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023 →</div><div class="tl-title">The open serving era</div><div class="tl-desc">vLLM becomes the default open inference engine; paged KV management spreads to TensorRT-LLM, SGLang, and beyond.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The One-Sentence Idea</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Treat the KV cache like RAM: <strong>fixed-size physical blocks + a per-request page table + logical-to-physical mapping</strong>. Requests never need contiguous memory, fragmentation drops from catastrophic to <4%, and identical prefixes (a system prompt seen by a thousand users) become <em>shared</em> physical blocks.</p>
+      <div class="notice-card" style="margin-top:1rem;"><div class="notice-title">🧭 Pairing</div><div class="notice-text"><a href="./FlashAttention_Fast_and_Memory_Efficient_Exact_Attention.html" style="color:var(--amber-text);">FlashAttention</a> fixed attention compute; this fixes attention memory at serving time.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The <em>Fragmentation</em> Tax</h2>
+  <p class="section-desc">Before PagedAttention, serving systems reserved contiguous KV memory per request — and paid for it three ways.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🧩</div>
+      <div class="problem-title">Contiguous Reservation Fails</div>
+      <ul class="problem-list">
+        <li>Reserve by maximum possible length: 80%+ of the cache sits idle for short generations — massive internal fragmentation</li>
+        <li>Reserve small and grow: external fragmentation — GPU memory shatters into unusable gaps between live requests</li>
+        <li>Same shared prefix (long system prompt) stored again per request — redundant duplication</li>
+        <li>Result: tiny effective batch sizes, because memory — not compute — gates how many requests fit</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">📘</div>
+      <div class="problem-title">Paged Blocks Fit Anywhere</div>
+      <ul class="problem-list">
+        <li>KV states stored in fixed-size blocks (like 4KB pages), allocated on demand</li>
+        <li>Each request keeps a block table: logical block → physical block (like a page table)</li>
+        <li>Attention kernels gather K/V across non-contiguous blocks</li>
+        <li>Near-zero waste: fragmentation &lt;4% versus 60-80% in prior systems</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — Hotel Rooms vs Bunk Beds</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8">Contiguous reservation books every guest a <strong>12-room suite in case their family shows up</strong> — most rooms stay dark. Paged allocation gives each guest <strong>bunk beds as needed, wherever they exist</strong>: a guest's party may sleep on three floors, tracked by a ledger. Occupancy soars; nobody cares about floors.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Block <em>Table</em></h2>
+  <p class="section-desc">How one request's KV cache becomes a list of pointers — and why that's enough.</p>
+  <div class="formula-card">
+    <div class="formula-main">logical blocks [0, 1, 2, …] → block table → physical blocks (anywhere in GPU memory)</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">block size</div><div class="fp-name">Fixed, small</div><div class="fp-desc">e.g., 16 tokens' KV states per block — the "page size" of the cache.</div></div>
+      <div class="formula-piece"><div class="fp-sym">block table</div><div class="fp-name">Per request</div><div class="fp-desc">Maps the request's logical sequence to its physical blocks — indirection, the OS's classic move.</div></div>
+      <div class="formula-piece"><div class="fp-sym">on demand</div><div class="fp-name">Allocation</div><div class="fp-desc">A new block is allocated only when the generation crosses a block boundary.</div></div>
+      <div class="formula-piece"><div class="fp-sym">gather kernel</div><div class="fp-name">Attention</div><div class="fp-desc">PagedAttention computes attention by walking the block table — correctness independent of layout.</div></div>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Fragmentation Visualizer</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="paContigBtn" type="button" style="font-size:12px;padding:8px 14px;">Contiguous reservation</button>
+      <button class="btn-primary" id="paPagedBtn" type="button" style="font-size:12px;padding:8px 14px;">Paged blocks</button>
+    </div>
+    <div id="paFragBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="paFragNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PAGING -->
+<section id="paging">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Growing a <em>Sequence</em></h2>
+  <p class="section-desc">Follow one request generating tokens: new blocks appear anywhere, the table extends, memory never fragments.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Generation with a Block Table</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="paGenBtn" type="button" style="font-size:13px;padding:8px 18px;">Generate 8 tokens →</button>
+      <button class="btn-outline" id="paGenResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="paGenBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="paGenNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SHARING -->
+<section id="sharing">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Prefixes <em>Shared</em>, Copies Lazy</h2>
+  <p class="section-desc">The bonus that only indirection enables: many requests pointing at the same physical blocks.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Shared Prefixes</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Beam search & parallel sampling: candidates share the whole prompt's KV — one physical copy, multiple block-table entries</li>
+        <li>A long system prompt under a thousand requests: shared blocks instead of a thousand duplicates</li>
+        <li>Copy-on-write semantics: shared blocks are read-only until one request diverges — then, and only then, a private block is allocated</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Memory Savings Multiply</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Prefix sharing cuts memory up to 55% in beam-search-style workloads (parallel decoding)</li>
+        <li>Shared-prefix workloads cut up to ~3x in the paper's evaluations</li>
+        <li>Freed memory converts directly into bigger batches — throughput, not just efficiency</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Copy-on-Write Divergence</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Two requests share a prompt, then one branches. Watch which blocks fork.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="paCowBtn" type="button" style="font-size:13px;padding:8px 18px;">Diverge request B →</button>
+      <button class="btn-outline" id="paCowResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="paCowBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="paCowNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- vLLM -->
+<section id="vllm">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">vLLM — The <em>Engine</em></h2>
+  <p class="section-desc">PagedAttention is the kernel; vLLM is the serving system built around it.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🧮 KV cache manager</div><div class="notice-text">Block allocator + per-request tables; near-zero waste and on-demand growth.</div></div>
+    <div class="notice-card"><div class="notice-title">🔀 Continuous batching</div><div class="notice-text">Requests join/leave the batch at token boundaries — no waiting for a generation group to finish.</div></div>
+    <div class="notice-card"><div class="notice-title">⚡ Paged kernels</div><div class="notice-text">Attention and copy kernels natively traverse block tables (CUDA + custom ops).</div></div>
+    <div class="notice-card"><div class="notice-title">🚫 Preemption & swapping</div><div class="notice-text">Under memory pressure, requests can be recomputed or swapped out — OS eviction logic, again.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 06</div>
+  <h2 class="section-title">Throughput <em>Proof</em></h2>
+  <p class="section-desc">Same GPUs, same latency budgets, more requests served — measured against the state-of-the-art systems of the day.</p>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">THROUGHPUT</div><div class="result-score" style="color:var(--amber-text);">2–4×</div><div class="result-label">vs FasterTransformer and Orca at same latency (LLaMA-13B & 13B-class workloads)</div></div>
+    <div class="result-card"><div class="result-model">WASTE</div><div class="result-score" style="color:var(--blue-text);">&lt;4%</div><div class="result-label">KV cache memory wasted vs 60-80% in contiguous-reservation systems</div></div>
+    <div class="result-card"><div class="result-model">PREFIX SHARING</div><div class="result-score" style="color:var(--teal-text);">−55%</div><div class="result-label">memory in parallel-sampling workloads; up to ~3x with long shared system prompts</div></div>
+    <div class="result-card"><div class="result-model">VENUE</div><div class="result-score" style="color:var(--purple-text);">SOSP</div><div class="result-label">first LLM-inference paper at a premier *systems* conference — a field-crossing event</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Batch Size Machine</div>
+    <p style="font-size:13px;color:var(--text2);margin:0 0 1rem;">Memory freed by paging converts to concurrent requests. Toggle memory mode; watch throughput follow.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="paBatch1Btn" type="button" style="font-size:12px;padding:8px 14px;">Contiguous (60% waste)</button>
+      <button class="btn-primary" id="paBatch2Btn" type="button" style="font-size:12px;padding:8px 14px;">Paged (<4% waste)</button>
+    </div>
+    <div id="paBatchBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="paBatchNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — Serving Becomes <em>Systems</em></h2>
+  <p class="section-desc">PagedAttention pulled LLM inference into the operating-systems tradition — and never left it.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🌍 vLLM everywhere</div><div class="notice-text">The default open serving engine for years; the codebase became a shared industry foundation.</div></div>
+    <div class="notice-card"><div class="notice-title">🧠 Paged KV as a pattern</div><div class="notice-text">TensorRT-LLM, SGLang and successors adopted paged cache management — the idea is now table stakes.</div></div>
+    <div class="notice-card"><div class="notice-title">💰 The cost curve</div><div class="notice-text">2-4x throughput translates directly into per-token price — part of why inference got cheap.</div></div>
+    <div class="notice-card"><div class="notice-title">🔬 Systems-ML convergence</div><div class="notice-text">SOSP acceptance signaled the field: inference problems ARE OS problems — scheduling, allocation, eviction.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Compute per token (FlashAttention/quantization's lane), multi-GPU tensor parallelism details, and request-level scheduling fairness.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Study path</div><div class="notice-text">Attention compute: <a href="./FlashAttention_Fast_and_Memory_Efficient_Exact_Attention.html" style="color:var(--amber-text);">FlashAttention</a> → this page → token-level speedups: <a href="./Speculative_Decoding_Fast_Inference_from_Transformers.html" style="color:var(--amber-text);">Speculative Decoding</a>.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Indirection Is the <em>Universal Unlock</em></h2>
+  <p class="section-desc">The paper's technique is 60 years old. The lesson is why nobody applied it sooner — and what else it unlocks.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🔗</div>
+      <div class="problem-title">The Contiguity Habit</div>
+      <ul class="problem-list">
+        <li>ML systems assumed tensors must be contiguous for kernel efficiency</li>
+        <li>So memory managers pre-reserved big contiguous slabs — and inherited 1960-style fragmentation</li>
+        <li>Gather-based kernels looked "inefficient" — until measured against the waste they replace</li>
+        <li>Domain pressure ("this is an ML problem") hid the isomorphism to paging</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔓</div>
+      <div class="problem-title">What Indirection Buys</div>
+      <ul class="problem-list">
+        <li>Any-layout allocation: fragmentation → near zero</li>
+        <li>Sharing + copy-on-write: dedup at no correctness cost</li>
+        <li>Eviction/swapping become possible (requests as pages)</li>
+        <li>Each capability composes: sharing + preemption + batching interact multiplicatively in vLLM</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Isomorphism Mapper</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">OS concept → KV-cache counterpart. Click through four pairs.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="paIsoBtn" type="button" style="font-size:13px;padding:8px 18px;">Next mapping →</button>
+    </div>
+    <div id="paIsoBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">PagedAttention's meta-lesson: <strong>when a new field hits an old constraint, inventory the old solutions before inventing new ones</strong>. The KV cache's unpredictable growth, scarcity, and sharing needs are a re-run of 1961's virtual-memory problem — and the transfer cost was nearly zero once someone looked. The 2-4x that followed wasn't a cleverer model; it was a correct classification of the problem.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the PagedAttention paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ KV cache in fixed-size blocks + per-request block tables = virtual memory for inference.</div>
+    <div class="card-sm">✅ Fragmentation falls from 60-80% (contiguous reservation) to under 4%.</div>
+    <div class="card-sm">✅ Prefix sharing via block-table aliasing: up to 55% memory savings in parallel decoding; copy-on-write on divergence.</div>
+    <div class="card-sm">✅ vLLM: 2-4x throughput vs prior SOTA serving systems (FasterTransformer, Orca) at equal latency.</div>
+    <div class="card-sm">✅ Freed memory becomes bigger batches — paging converts efficiency into throughput.</div>
+    <div class="card-sm">✅ First LLM paper at SOSP: inference problems are operating-systems problems.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2309.06180" target="_blank" rel="noopener noreferrer">"Efficient Memory Management for Large Language Model Serving with PagedAttention"</a> (Kwon et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2309.06180" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./FlashAttention_Fast_and_Memory_Efficient_Exact_Attention.html">FlashAttention Guide</a>
+    <a class="footer-link" href="./Speculative_Decoding_Fast_Inference_from_Transformers.html">Speculative Decoding Guide</a>
+    <a class="footer-link" href="./Attention_Is_All_You_Need.html">Transformer Guide</a>
+    <a class="footer-link" href="./Mixtral_of_Experts.html">Mixtral of Experts Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "paging", "sharing", "vllm", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === FRAGMENTATION VISUALIZER ===
+(function(){
+  const box=document.getElementById('paFragBox');
+  const note=document.getElementById('paFragNote');
+  if(!box||!note)return;
+  function cell(kind){
+    const map={used:['var(--blue)','K','#fff'],free:['var(--bg4)','·','var(--text3)'],waste:['rgba(239,68,68,0.25)','×','var(--red)'],shared:['var(--amber)','S','#000'],cow:['var(--teal)','C','#000']};
+    const m=map[kind];
+    return `<div style="width:26px;height:26px;border-radius:5px;background:${m[0]};color:${m[2]};display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:600;">${m[1]}</div>`;
+  }
+  function render(mode){
+    let cells=[];
+    if(mode==='contig'){
+      // 3 requests: 2 short (mostly reserved-unused), 1 long; gaps between
+      cells=cells.concat(Array(4).fill('used')).concat(Array(6).fill('waste'))
+                 .concat(Array(3).fill('free')).concat(Array(3).fill('used')).concat(Array(5).fill('waste'))
+                 .concat(Array(2).fill('free')).concat(Array(2).fill('used')).concat(Array(5).fill('waste'));
+    }else{
+      cells=cells.concat(Array(4).fill('used')).concat(Array(3).fill('used'))
+                 .concat(Array(6).fill('free')).concat(Array(3).fill('used'))
+                 .concat(Array(2).fill('used')).concat(Array(1).fill('free'))
+                 .concat(Array(2).fill('used')).concat(Array(9).fill('free'));
+    }
+    const used=cells.filter(c=>c==='used').length;
+    const waste=cells.filter(c=>c==='waste').length;
+    const free=cells.length-used-waste;
+    box.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">${cells.map(cell).join('')}</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">used ${used} · reserved-unused ${waste} · unallocated ${free} / ${cells.length} blocks</div>`;
+    note.textContent=mode==='contig'
+      ?'Contiguous: each request reserves its max length — most of the reservation is dark (internal fragmentation), plus gaps nobody fits into (external).'
+      :'Paged: only 16-token blocks actually needed are allocated — waste <4%, requests scattered freely by the block table.';
+  }
+  document.getElementById('paContigBtn').addEventListener('click',()=>render('contig'));
+  document.getElementById('paPagedBtn').addEventListener('click',()=>render('paged'));
+  render('contig');
+})();
+
+// === GENERATION WITH BLOCK TABLE ===
+(function(){
+  const box=document.getElementById('paGenBox');
+  const note=document.getElementById('paGenNote');
+  const btn=document.getElementById('paGenBtn');
+  const resetBtn=document.getElementById('paGenResetBtn');
+  if(!box||!note||!btn||!resetBtn)return;
+  let tokens=0;
+  const BS=4; // tokens per block for the demo
+  function render(){
+    const blocks=Math.ceil(tokens/BS)||0;
+    const partial=tokens%BS;
+    const PHYS=[{id:17,from:0},{id:5,from:1},{id:42,from:2},{id:9,from:3}];
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:8px;">request tokens: ${tokens}${tokens>0&&partial>0?` (block ${blocks-1} fill: ${partial}/${BS})`:''}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">${PHYS.slice(0,blocks).map(p=>`
+      <div style="border:1px solid var(--amber);border-radius:8px;padding:6px 8px;background:var(--amber-dim);">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--amber-text);">logical #${p.from} → physical #${p.id}</div>
+        <div style="display:flex;gap:3px;margin-top:4px;">${Array.from({length:BS},(_,k)=>`<div style="width:10px;height:10px;border-radius:2px;background:${p.from*BS+k<tokens?'var(--amber)':'var(--bg4)'};"></div>`).join('')}</div>
+      </div>`).join('')}</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:10px;">block table: [${PHYS.slice(0,blocks).map(p=>p.id).join(', ')}] — physical blocks live anywhere in GPU memory</div>`;
+    note.textContent=tokens===0?'Press Generate — each block (4 tokens in this demo) is allocated on demand, wherever free space exists.':tokens>=16?'Blocks full — attention walks the table; layout never matters to correctness.':'Growing across block boundaries allocates the next physical block — no reservation, no fragmentation.';
+    btn.textContent=tokens<16?'Generate 8 tokens →':'Restart';
+  }
+  btn.addEventListener('click',()=>{tokens=tokens>=16?0:Math.min(16,tokens+8);render();});
+  resetBtn.addEventListener('click',()=>{tokens=0;render();});
+  render();
+})();
+
+// === COPY-ON-WRITE ===
+(function(){
+  const box=document.getElementById('paCowBox');
+  const note=document.getElementById('paCowNote');
+  const btn=document.getElementById('paCowBtn');
+  const resetBtn=document.getElementById('paCowResetBtn');
+  if(!box||!note||!btn||!resetBtn)return;
+  let diverged=false;
+  function blk(who,lbl,color,fill){
+    return `<div style="border:1px solid ${color};border-radius:8px;padding:5px 9px;background:${fill};font-family:var(--mono);font-size:10px;color:${color};">${lbl}</div>`;
+  }
+  function render(){
+    const shared=['#0','','#1',''].map((_,i)=>blk('shared','phys #'+(20+i),'var(--amber)','var(--amber-dim)')).join('');
+    const tailA=blk('A','phys #31','var(--blue)','var(--blue-dim)');
+    const tailB=diverged?blk('B','phys #77 (private copy)','var(--teal)','var(--teal-dim)'):blk('B','alias → #31','var(--purple)','rgba(168,85,247,0.12)');
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:6px;">SHARED PROMPT BLOCKS (read-only)</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;">${shared}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div><div style="font-family:var(--mono);font-size:11px;color:var(--blue-text);margin-bottom:6px;">REQUEST A table</div><div style="display:flex;gap:5px;flex-wrap:wrap;">${shared.replace(/shared/g,'A')}${tailA}</div></div>
+      <div><div style="font-family:var(--mono);font-size:11px;color:var(--purple-text);margin-bottom:6px;">REQUEST B table</div><div style="display:flex;gap:5px;flex-wrap:wrap;">${shared.replace(/shared/g,'B')}${tailB}</div></div>
+    </div>`;
+    note.textContent=diverged
+      ?'B generated a different token: the last shared block is COPIED once, then the tables fork — copy-on-write, exactly like forked processes.'
+      :'A and B share the prompt: one physical copy, two block-table entries. Divergence will trigger a copy of only the affected block.';
+  }
+  btn.addEventListener('click',()=>{diverged=!diverged;render();});
+  resetBtn.addEventListener('click',()=>{diverged=false;render();});
+  render();
+})();
+
+// === BATCH SIZE MACHINE ===
+(function(){
+  const box=document.getElementById('paBatchBox');
+  const note=document.getElementById('paBatchNote');
+  if(!box||!note)return;
+  function render(mode){
+    const paged=mode==='paged';
+    const eff=1-0.04; // usable fraction
+    const batch=paged?64:16;
+    const tput=paged?3.2:1.0;
+    box.innerHTML=`<div style="display:flex;gap:10px;margin-bottom:10px;">
+      <div style="flex:1;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">USABLE KV MEMORY</div>
+        <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:${paged?'var(--teal)':'var(--red)'};">${paged?'96%':'40%'}</div></div>
+      <div style="flex:1;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">CONCURRENT REQUESTS</div>
+        <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--blue-text);">${batch}</div></div>
+      <div style="flex:1;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">RELATIVE THROUGHPUT</div>
+        <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--amber-text);">${tput}×</div></div>
+    </div>
+    <div style="display:flex;gap:3px;flex-wrap:wrap;">${Array.from({length:batch},()=>`<div style="width:8px;height:8px;border-radius:2px;background:var(--blue);"></div>`).join('')}</div>`;
+    note.textContent=paged?'Paged: waste <4% → 4x the requests fit → GPU stays saturated. (illustrative of the 2-4x result)':'Contiguous: 60% waste → tiny batches → SMs idle between memory stalls.';
+  }
+  document.getElementById('paBatch1Btn').addEventListener('click',()=>render('contig'));
+  document.getElementById('paBatch2Btn').addEventListener('click',()=>render('paged'));
+  render('contig');
+})();
+
+// === ISOMORPHISM MAPPER ===
+(function(){
+  const box=document.getElementById('paIsoBox');
+  const btn=document.getElementById('paIsoBtn');
+  if(!box||!btn)return;
+  const M=[
+    {os:'virtual pages',kv:'fixed-size KV blocks',d:'The unit of allocation: small, uniform, everywhere-placeable.'},
+    {os:'page table',kv:'block table',d:'Per-process (per-request) indirection from logical to physical.'},
+    {os:'copy-on-write (fork)',kv:'shared prefix blocks',d:'Share until divergence; copy only the conflicting unit.'},
+    {os:'swap / evict',kv:'recompute or swap-out requests',d:'Memory pressure handled by demoting victims, not crashing.'}
+  ];
+  let i=0;
+  function render(){
+    box.innerHTML=`<div style="display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:center;">
+      <div style="padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);"><div style="font-family:var(--mono);font-size:10px;color:var(--text3);">OPERATING SYSTEMS</div><div style="font-size:13px;font-weight:600;color:var(--blue-text);">${M[i].os}</div></div>
+      <div style="font-family:var(--mono);color:var(--amber-text);text-align:center;font-size:16px;">→</div>
+      <div style="padding:10px;border-radius:8px;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);"><div style="font-family:var(--mono);font-size:10px;color:var(--text3);">KV-CACHE SERVING</div><div style="font-size:13px;font-weight:600;color:var(--amber-text);">${M[i].kv}</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:10px;">${M[i].d}</div>`;
+  }
+  btn.addEventListener('click',()=>{i=(i+1)%M.length;render();});
+  render();
+})();
+
+
+const QUIZ_DATA=[{"q": "What is the core mechanism of PagedAttention?", "opts": ["Quantizing KV cache values to 4-bit", "Storing the KV cache in fixed-size blocks with per-request block tables mapping logical to physical blocks", "Dropping attention heads at inference", "Compressing prompts with summarization"], "correct": 1, "explain": "KV cache states are stored in fixed-size blocks allocated on demand; each request keeps a block table (like a page table) mapping its logical sequence to physical blocks anywhere in GPU memory."}, {"q": "Roughly how much KV cache memory was wasted in prior systems, and how much with PagedAttention?", "opts": ["60-80% before, under 4% after", "5% before, 0% after", "100% before, 50% after", "No difference"], "correct": 0, "explain": "Contiguous reservation wastes the majority of the cache through internal fragmentation (over-reservation) and external fragmentation (gaps); paging cuts waste to under 4%."}, {"q": "How does prefix sharing work?", "opts": ["Prefixes are re-computed for each request", "Multiple requests' block tables point to the same physical blocks — with copy-on-write when they diverge", "Prefixes are stored on CPU only", "The system prompt is deleted after the first token"], "correct": 1, "explain": "Requests sharing a prompt (beam candidates, parallel samples, or many users with the same system prompt) alias the same physical blocks; divergence triggers a copy of only the affected block — classic copy-on-write."}, {"q": "What throughput improvement did vLLM demonstrate over prior serving systems?", "opts": ["1.1x", "2-4x at comparable latency", "10x at double the latency", "No improvement, just lower memory"], "correct": 1, "explain": "vLLM improves the throughput of popular LLMs by 2-4x compared to state-of-the-art baselines (FasterTransformer, Orca) at the same latency level — with gains growing with shared-prefix workloads."}, {"q": "Why did this paper matter beyond ML venues?", "opts": ["It was the largest model of 2023", "It was the first LLM paper accepted at SOSP — a premier systems conference — showing inference problems are OS problems", "It won a hardware award", "It required no GPUs"], "correct": 1, "explain": "Its SOSP acceptance marked the convergence of ML and systems research: scheduling, allocation, eviction, and copy-on-write — classic OS machinery — became first-class LLM-inference concerns."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

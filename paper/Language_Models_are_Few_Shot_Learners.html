@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -386,11 +392,11 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-label">Analogy — Why Fine-Tuning is Like Hiring a Specialist</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;">
       <div class="card-sm">
-        <div style="font-size:13px;color:var(--red);font-weight:500;margin-bottom:6px;">🔧 Fine-tuning = Hiring specialists</div>
+        <div style="font-size:13px;color:var(--red-text);font-weight:500;margin-bottom:6px;">🔧 Fine-tuning = Hiring specialists</div>
         <div style="font-size:13px;color:var(--text2);">Need a translator? Hire a translator. Need a summarizer? Hire a summarizer. Each specialist needs training (data), salary (compute), and space (storage). 50 tasks = 50 specialists.</div>
       </div>
       <div class="card-sm">
-        <div style="font-size:13px;color:var(--green);font-weight:500;margin-bottom:6px;">🧠 Few-shot = One genius polymath</div>
+        <div style="font-size:13px;color:var(--green-text);font-weight:500;margin-bottom:6px;">🧠 Few-shot = One genius polymath</div>
         <div style="font-size:13px;color:var(--text2);">Show the polymath 2-3 examples of any task, and they figure it out. One person, all tasks. That's GPT-3: show it examples in the prompt, and it adapts instantly.</div>
       </div>
     </div>
@@ -407,22 +413,22 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:2rem;">
     <div class="card" style="border-left:3px solid var(--red);">
-      <div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--red);margin-bottom:6px;">Zero-Shot</div>
+      <div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--red-text);margin-bottom:6px;">Zero-Shot</div>
       <div style="font-size:12px;font-weight:500;margin-bottom:4px;">No examples — just a task description</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.5;">The model receives only a natural language instruction. "Translate English to French: cheese →"</div>
       <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:8px;background:var(--bg3);padding:6px 8px;border-radius:6px;">Prompt: "Translate to French: cheese →"<br>Output: "fromage"</div>
     </div>
     <div class="card" style="border-left:3px solid var(--blue);">
-      <div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--blue);margin-bottom:6px;">One-Shot</div>
+      <div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--blue-text);margin-bottom:6px;">One-Shot</div>
       <div style="font-size:12px;font-weight:500;margin-bottom:4px;">One example + task description</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.5;">The model sees one (input, output) demonstration, then must apply the same pattern to a new input.</div>
-      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:8px;background:var(--bg3);padding:6px 8px;border-radius:6px;">sea → mer<br>cheese → <span style="color:var(--amber);">fromage</span></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:8px;background:var(--bg3);padding:6px 8px;border-radius:6px;">sea → mer<br>cheese → <span style="color:var(--amber-text);">fromage</span></div>
     </div>
     <div class="card" style="border-left:3px solid var(--green);">
-      <div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--green);margin-bottom:6px;">Few-Shot</div>
+      <div style="font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--green-text);margin-bottom:6px;">Few-Shot</div>
       <div style="font-size:12px;font-weight:500;margin-bottom:4px;">K examples (10–100) + task description</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.5;">The model sees K demonstrations. Performance improves with more examples. This is GPT-3's sweet spot.</div>
-      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:8px;background:var(--bg3);padding:6px 8px;border-radius:6px;">sea → mer<br>hello → bonjour<br>cat → chat<br>cheese → <span style="color:var(--amber);">fromage ✓</span></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:8px;background:var(--bg3);padding:6px 8px;border-radius:6px;">sea → mer<br>hello → bonjour<br>cat → chat<br>cheese → <span style="color:var(--amber-text);">fromage ✓</span></div>
     </div>
   </div>
 
@@ -436,7 +442,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div id="fewShotPrompt" style="font-family:var(--mono);font-size:13px;color:var(--text2);line-height:2;background:var(--bg3);padding:1rem;border-radius:var(--radius);white-space:pre-line;"></div>
       <div style="display:flex;align-items:center;gap:10px;margin-top:1rem;">
         <button class="btn-primary" id="fewShotRunBtn" type="button" style="font-size:13px;padding:8px 18px;">Run Prediction →</button>
-        <div id="fewShotResult" style="font-family:var(--mono);font-size:14px;color:var(--amber);font-weight:600;"></div>
+        <div id="fewShotResult" style="font-family:var(--mono);font-size:14px;color:var(--amber-text);font-weight:600;"></div>
       </div>
     </div>
   </div>
@@ -509,10 +515,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card">
       <div class="card-label">Dataset Details</div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
-        <div class="card-sm"><strong style="color:var(--amber);">CommonCrawl (filtered)</strong><br><span style="font-size:12px;color:var(--text2);">410B tokens, 60% weight. Heavily filtered for quality from 45TB raw data.</span></div>
-        <div class="card-sm"><strong style="color:var(--blue);">WebText2</strong><br><span style="font-size:12px;color:var(--text2);">19B tokens, 22% weight. Reddit links with 3+ karma — higher quality.</span></div>
-        <div class="card-sm"><strong style="color:var(--green);">Books1 & Books2</strong><br><span style="font-size:12px;color:var(--text2);">12B + 55B tokens, 8%+8% weight. Long-form text for coherent reasoning.</span></div>
-        <div class="card-sm"><strong style="color:var(--purple);">Wikipedia</strong><br><span style="font-size:12px;color:var(--text2);">3B tokens, 3% weight. High-quality factual knowledge.</span></div>
+        <div class="card-sm"><strong style="color:var(--amber-text);">CommonCrawl (filtered)</strong><br><span style="font-size:12px;color:var(--text2);">410B tokens, 60% weight. Heavily filtered for quality from 45TB raw data.</span></div>
+        <div class="card-sm"><strong style="color:var(--blue-text);">WebText2</strong><br><span style="font-size:12px;color:var(--text2);">19B tokens, 22% weight. Reddit links with 3+ karma — higher quality.</span></div>
+        <div class="card-sm"><strong style="color:var(--green-text);">Books1 & Books2</strong><br><span style="font-size:12px;color:var(--text2);">12B + 55B tokens, 8%+8% weight. Long-form text for coherent reasoning.</span></div>
+        <div class="card-sm"><strong style="color:var(--purple-text);">Wikipedia</strong><br><span style="font-size:12px;color:var(--text2);">3B tokens, 3% weight. High-quality factual knowledge.</span></div>
       </div>
     </div>
   </div>
@@ -526,9 +532,9 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card" style="margin-top:1rem;padding:1.2rem;">
     <div class="card-label" style="margin-bottom:8px;">CommonCrawl Filtering Pipeline (Appendix A)</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:4px;">1. Quality Filter</div><div style="font-size:11px;color:var(--text2);">Trained a logistic regression classifier using WebText as positive examples and raw CommonCrawl as negative. Documents kept probabilistically (α=9 Pareto distribution).</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--blue);margin-bottom:4px;">2. Fuzzy Dedup</div><div style="font-size:11px;color:var(--text2);">MinHashLSH with 10 hashes to remove documents with high overlap. WebText also removed from CommonCrawl. Reduced dataset ~10%.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--green);margin-bottom:4px;">3. Benchmark Removal</div><div style="font-size:11px;color:var(--text2);">Attempted to remove overlaps with benchmark test/dev sets. A bug caused partial removal only — analyzed in Section 4 (Data Contamination).</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber-text);margin-bottom:4px;">1. Quality Filter</div><div style="font-size:11px;color:var(--text2);">Trained a logistic regression classifier using WebText as positive examples and raw CommonCrawl as negative. Documents kept probabilistically (α=9 Pareto distribution).</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--blue-text);margin-bottom:4px;">2. Fuzzy Dedup</div><div style="font-size:11px;color:var(--text2);">MinHashLSH with 10 hashes to remove documents with high overlap. WebText also removed from CommonCrawl. Reduced dataset ~10%.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--green-text);margin-bottom:4px;">3. Benchmark Removal</div><div style="font-size:11px;color:var(--text2);">Attempted to remove overlaps with benchmark test/dev sets. A bug caused partial removal only — analyzed in Section 4 (Data Contamination).</div></div>
     </div>
   </div>
 </section>
@@ -575,10 +581,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
   <!-- Headline results -->
   <div class="results-grid">
-    <div class="result-card" style="border-color:rgba(245,158,11,0.2);"><div class="result-model">LAMBADA (Few-shot)</div><div class="result-score" style="color:var(--amber);">86.4%</div><div class="result-label">Accuracy (prev SOTA: 68%)</div><div class="result-bar-wrap"><div class="result-bar" style="width:86%;background:var(--amber);"></div></div></div>
-    <div class="result-card" style="border-color:rgba(34,197,94,0.2);"><div class="result-model">CoQA (Few-shot)</div><div class="result-score" style="color:var(--green);">85.0</div><div class="result-label">F1 Score (human: 90.7)</div><div class="result-bar-wrap"><div class="result-bar" style="width:85%;background:var(--green);"></div></div></div>
-    <div class="result-card" style="border-color:rgba(59,130,246,0.2);"><div class="result-model">TriviaQA (Few-shot)</div><div class="result-score" style="color:var(--blue);">71.2%</div><div class="result-label">Accuracy (SOTA in closed-book)</div><div class="result-bar-wrap"><div class="result-bar" style="width:71%;background:var(--blue);"></div></div></div>
-    <div class="result-card" style="border-color:rgba(168,85,247,0.2);"><div class="result-model">PTB Perplexity (Zero-shot)</div><div class="result-score" style="color:var(--purple);">20.5</div><div class="result-label">New SOTA (prev: 35.8)</div><div class="result-bar-wrap"><div class="result-bar" style="width:42%;background:var(--purple);"></div></div></div>
+    <div class="result-card" style="border-color:rgba(245,158,11,0.2);"><div class="result-model">LAMBADA (Few-shot)</div><div class="result-score" style="color:var(--amber-text);">86.4%</div><div class="result-label">Accuracy (prev SOTA: 68%)</div><div class="result-bar-wrap"><div class="result-bar" style="width:86%;background:var(--amber);"></div></div></div>
+    <div class="result-card" style="border-color:rgba(34,197,94,0.2);"><div class="result-model">CoQA (Few-shot)</div><div class="result-score" style="color:var(--green-text);">85.0</div><div class="result-label">F1 Score (human: 90.7)</div><div class="result-bar-wrap"><div class="result-bar" style="width:85%;background:var(--green);"></div></div></div>
+    <div class="result-card" style="border-color:rgba(59,130,246,0.2);"><div class="result-model">TriviaQA (Few-shot)</div><div class="result-score" style="color:var(--blue-text);">71.2%</div><div class="result-label">Accuracy (SOTA in closed-book)</div><div class="result-bar-wrap"><div class="result-bar" style="width:71%;background:var(--blue);"></div></div></div>
+    <div class="result-card" style="border-color:rgba(168,85,247,0.2);"><div class="result-model">PTB Perplexity (Zero-shot)</div><div class="result-score" style="color:var(--purple-text);">20.5</div><div class="result-label">New SOTA (prev: 35.8)</div><div class="result-bar-wrap"><div class="result-bar" style="width:42%;background:var(--purple);"></div></div></div>
   </div>
 
   <!-- Full results table -->
@@ -660,11 +666,11 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
     <div class="card-sm">
-      <div style="font-size:13px;font-weight:500;color:var(--amber);margin-bottom:6px;">Methodology</div>
+      <div style="font-size:13px;font-weight:500;color:var(--amber-text);margin-bottom:6px;">Methodology</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">25 article titles/subtitles from newser.com (~215 words). Completions generated from 4 model sizes. Articles formatted programmatically (no human cherry-picking). Same context window and prompts across all models.</div>
     </div>
     <div class="card-sm">
-      <div style="font-size:13px;font-weight:500;color:var(--blue);margin-bottom:6px;">Longer Articles (~500 words)</div>
+      <div style="font-size:13px;font-weight:500;color:var(--blue-text);margin-bottom:6px;">Longer Articles (~500 words)</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">12 Reuters articles (~569 words) tested separately. Accuracy was still ~52% for GPT-3 175B, barely above chance. Common indicators: factual inaccuracies, repetition, and non-sequiturs.</div>
     </div>
   </div>
@@ -672,10 +678,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card" style="margin-top:1rem;">
     <div class="card-label" style="margin-bottom:8px;">Novel Word Usage — Learning Words from Definitions</div>
     <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:2;background:var(--bg3);padding:1rem;border-radius:var(--radius);white-space:pre-line;">A "whatpu" is a small, furry animal native to Tanzania.
-An example: <span style="color:var(--amber);font-weight:600;">We were traveling in Africa and we saw these very cute whatpus.</span>
+An example: <span style="color:var(--amber-text);font-weight:600;">We were traveling in Africa and we saw these very cute whatpus.</span>
 
 To "screeg" something is to swing a sword at it.
-An example: <span style="color:var(--amber);font-weight:600;">We screeghed at each other for several minutes and then went outside and ate ice cream.</span></div>
+An example: <span style="color:var(--amber-text);font-weight:600;">We screeghed at each other for several minutes and then went outside and ate ice cream.</span></div>
     <div style="font-size:11px;color:var(--text3);margin-top:6px;">Boldface = GPT-3 completions. The model invents plausible conjugations ("screeghed") from a single definition.</div>
   </div>
 </section>
@@ -702,9 +708,9 @@ An example: <span style="color:var(--amber);font-weight:600;">We screeghed at ea
     </div>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-    <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--green);margin-bottom:4px;">✅ No Effect</div><div style="font-size:11px;color:var(--text2);">Most benchmarks: Reading comp source text found but not Q/A pairs. Translation: monolingual matches only, no paired sentences. Performance unchanged.</div></div>
-    <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:4px;">⚠️ Flagged</div><div style="font-size:11px;color:var(--text2);">PIQA: 29% flagged, 3% drop on clean subset (*marked in paper). Winograd: some schemas found in training data, small effect on results.</div></div>
-    <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--red);margin-bottom:4px;">❌ Removed</div><div style="font-size:11px;color:var(--text2);">4 Wikipedia LM benchmarks and Children's Book Test were entirely contained in training data — results not reported.</div></div>
+    <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--green-text);margin-bottom:4px;">✅ No Effect</div><div style="font-size:11px;color:var(--text2);">Most benchmarks: Reading comp source text found but not Q/A pairs. Translation: monolingual matches only, no paired sentences. Performance unchanged.</div></div>
+    <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber-text);margin-bottom:4px;">⚠️ Flagged</div><div style="font-size:11px;color:var(--text2);">PIQA: 29% flagged, 3% drop on clean subset (*marked in paper). Winograd: some schemas found in training data, small effect on results.</div></div>
+    <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--red-text);margin-bottom:4px;">❌ Removed</div><div style="font-size:11px;color:var(--text2);">4 Wikipedia LM benchmarks and Children's Book Test were entirely contained in training data — results not reported.</div></div>
   </div>
 </section>
 
@@ -719,12 +725,12 @@ An example: <span style="color:var(--amber);font-weight:600;">We screeghed at ea
   <!-- Technical Limitations -->
   <div class="card-label" style="margin-bottom:8px;">Technical Limitations (Section 5)</div>
   <div class="notice-grid" style="margin-bottom:1.5rem;">
-    <div class="notice-card"><div class="notice-title" style="color:var(--red);">Repetition & Coherence</div><div class="notice-text">GPT-3 sometimes loses coherence in long texts, repeats itself, contradicts earlier statements, and occasionally includes non-sequitur paragraphs. No persistent memory.</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--blue);">Bidirectional Tasks</div><div class="notice-text">As a left-to-right autoregressive model, GPT-3 struggles on tasks requiring bidirectional context (fill-in-the-blank, comparison tasks like WiC and NLI).</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--amber);">Sample Efficiency</div><div class="notice-text">175B parameters trained on 300B tokens is still far less sample-efficient than human learning. Humans see far less text in a lifetime yet learn language far more efficiently.</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--teal);">Interpretability</div><div class="notice-text">It's unclear what GPT-3 "knows" vs. what it's pattern-matching. The paper doesn't claim understanding — only performance on benchmarks.</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--purple);">Learning vs. Recognizing</div><div class="notice-text">An open question: does few-shot learning truly learn "from scratch" at inference time, or does it simply recognize tasks already seen during training? The paper acknowledges this spectrum.</div></div>
-    <div class="notice-card"><div class="notice-title" style="color:var(--green);">No Grounding</div><div class="notice-text">GPT-3 lacks grounding in physical experience, video, or real-world interaction. Future directions: learning objectives from humans, RL fine-tuning, multimodal inputs.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--red-text);">Repetition & Coherence</div><div class="notice-text">GPT-3 sometimes loses coherence in long texts, repeats itself, contradicts earlier statements, and occasionally includes non-sequitur paragraphs. No persistent memory.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--blue-text);">Bidirectional Tasks</div><div class="notice-text">As a left-to-right autoregressive model, GPT-3 struggles on tasks requiring bidirectional context (fill-in-the-blank, comparison tasks like WiC and NLI).</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--amber-text);">Sample Efficiency</div><div class="notice-text">175B parameters trained on 300B tokens is still far less sample-efficient than human learning. Humans see far less text in a lifetime yet learn language far more efficiently.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--teal-text);">Interpretability</div><div class="notice-text">It's unclear what GPT-3 "knows" vs. what it's pattern-matching. The paper doesn't claim understanding — only performance on benchmarks.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--purple-text);">Learning vs. Recognizing</div><div class="notice-text">An open question: does few-shot learning truly learn "from scratch" at inference time, or does it simply recognize tasks already seen during training? The paper acknowledges this spectrum.</div></div>
+    <div class="notice-card"><div class="notice-title" style="color:var(--green-text);">No Grounding</div><div class="notice-text">GPT-3 lacks grounding in physical experience, video, or real-world interaction. Future directions: learning objectives from humans, RL fine-tuning, multimodal inputs.</div></div>
   </div>
 
   <!-- Broader Impacts -->
@@ -734,9 +740,9 @@ An example: <span style="color:var(--amber);font-weight:600;">We screeghed at ea
   <div class="card" style="margin-bottom:1rem;">
     <div class="card-label" style="margin-bottom:8px;">6.1 — Misuse of Language Models</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--red);margin-bottom:4px;">Potential Misuse</div><div style="font-size:11px;color:var(--text2);">Misinformation, spam, phishing, fraudulent essays, social engineering. Quality of text synthesis directly increases misuse potential.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber);margin-bottom:4px;">Threat Actors</div><div style="font-size:11px;color:var(--text2);">Low/mid-skill actors showed interest post GPT-2 but no successful deployments observed. APTs have not yet found LMs significantly better than current methods.</div></div>
-      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--blue);margin-bottom:4px;">Countermeasures</div><div style="font-size:11px;color:var(--text2);">Automatic discriminators (GROVER, GLTR) may outperform humans at detection. Promising area for future research. Watermarking and detection tools needed.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--red-text);margin-bottom:4px;">Potential Misuse</div><div style="font-size:11px;color:var(--text2);">Misinformation, spam, phishing, fraudulent essays, social engineering. Quality of text synthesis directly increases misuse potential.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--amber-text);margin-bottom:4px;">Threat Actors</div><div style="font-size:11px;color:var(--text2);">Low/mid-skill actors showed interest post GPT-2 but no successful deployments observed. APTs have not yet found LMs significantly better than current methods.</div></div>
+      <div class="card-sm"><div style="font-size:12px;font-weight:500;color:var(--blue-text);margin-bottom:4px;">Countermeasures</div><div style="font-size:11px;color:var(--text2);">Automatic discriminators (GROVER, GLTR) may outperform humans at detection. Promising area for future research. Watermarking and detection tools needed.</div></div>
     </div>
   </div>
 
@@ -745,15 +751,15 @@ An example: <span style="color:var(--amber);font-weight:600;">We screeghed at ea
     <div class="card-label" style="margin-bottom:8px;">6.2 — Fairness, Bias, and Representation</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
       <div class="card-sm">
-        <div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:4px;">Gender Bias</div>
+        <div style="font-size:12px;font-weight:600;color:var(--purple-text);margin-bottom:4px;">Gender Bias</div>
         <div style="font-size:11px;color:var(--text2);line-height:1.6;"><strong>83%</strong> of 388 occupations tested were more likely followed by a male gender identifier. High-education occupations (legislator, professor) skewed heavily male. Female identifiers associated more with appearance words ("beautiful", "gorgeous").</div>
       </div>
       <div class="card-sm">
-        <div style="font-size:12px;font-weight:600;color:var(--teal);margin-bottom:4px;">Race Sentiment</div>
+        <div style="font-size:12px;font-weight:600;color:var(--teal-text);margin-bottom:4px;">Race Sentiment</div>
         <div style="font-size:11px;color:var(--text2);line-height:1.6;">Sentiment analysis of generated text varied by race prompt. The paper found that models reflect socio-historical associations from training data. Asian consistently had the highest positive sentiment across model sizes.</div>
       </div>
       <div class="card-sm">
-        <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:4px;">Religion</div>
+        <div style="font-size:12px;font-weight:600;color:var(--amber-text);margin-bottom:4px;">Religion</div>
         <div style="font-size:11px;color:var(--text2);line-height:1.6;">Islam disproportionately co-occurred with words like "terrorism" and "violent." Buddhism associated with "peace" and "enlightenment." Models reflect internet-scale stereotypes from training data.</div>
       </div>
     </div>
@@ -764,11 +770,11 @@ An example: <span style="color:var(--amber);font-weight:600;">We screeghed at ea
     <div class="card-label" style="margin-bottom:8px;">6.3 — Energy Usage</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
       <div class="card-sm">
-        <div style="font-size:12px;font-weight:500;color:var(--red);margin-bottom:4px;">Training Cost</div>
+        <div style="font-size:12px;font-weight:500;color:var(--red-text);margin-bottom:4px;">Training Cost</div>
         <div style="font-size:11px;color:var(--text2);">GPT-3 175B consumed several <strong>thousand petaflop/s-days</strong> of compute during pre-training, vs. tens of petaflop/s-days for GPT-2 1.5B. Trained on V100 GPU cluster provided by Microsoft.</div>
       </div>
       <div class="card-sm">
-        <div style="font-size:12px;font-weight:500;color:var(--green);margin-bottom:4px;">Amortized Efficiency</div>
+        <div style="font-size:12px;font-weight:500;color:var(--green-text);margin-bottom:4px;">Amortized Efficiency</div>
         <div style="font-size:11px;color:var(--text2);">Once trained, generating 100 pages of content costs ~0.4 kW-hr (a few cents). Model distillation can further reduce cost. The paradigm: train one large model, then create efficient versions.</div>
       </div>
     </div>
@@ -813,10 +819,10 @@ An example: <span style="color:var(--amber);font-weight:600;">We screeghed at ea
     <div>
       <div class="card" style="margin-bottom:16px;">
         <div class="card-label">Bridge — How Do Frozen Weights "Learn"?</div>
-        <p style="font-size:13px;color:var(--text2);line-height:1.7;">The paper demonstrates <span class="highlight">that</span> scale unlocks in-context learning, but not <span class="highlight">how</span>. Later mechanistic interpretability work proposed a mechanism: <strong>Induction Heads</strong> (Olsson et al., 2022) — attention heads implementing "A B … A → B", which spot earlier occurrences in context and copy what followed. They emerge over the course of training and measurably strengthen in-context learning, tying GPT-3's few-shot gradient to real circuits. <a href="./Induction_Heads.html" style="color:var(--amber);text-decoration:none;font-weight:500;">Read the Induction Heads guide →</a></p>
+        <p style="font-size:13px;color:var(--text2);line-height:1.7;">The paper demonstrates <span class="highlight">that</span> scale unlocks in-context learning, but not <span class="highlight">how</span>. Later mechanistic interpretability work proposed a mechanism: <strong>Induction Heads</strong> (Olsson et al., 2022) — attention heads implementing "A B … A → B", which spot earlier occurrences in context and copy what followed. They emerge over the course of training and measurably strengthen in-context learning, tying GPT-3's few-shot gradient to real circuits. <a href="./Induction_Heads.html" style="color:var(--amber-text);text-decoration:none;font-weight:500;">Read the Induction Heads guide →</a></p>
       </div>
       <div class="card-sm" style="background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15);">
-        <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:4px;">⚠️ Read the gradient with care</div>
+        <div style="font-size:12px;font-weight:600;color:var(--red-text);margin-bottom:4px;">⚠️ Read the gradient with care</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.6;">The paper is candid that this story is told on benchmarks it flagged itself: its contamination analysis (Section 4) marked a quarter of benchmarks as &gt;50% potentially contaminated via 13-gram overlap. Clean-subset scores mostly changed negligibly — but the authors call data contamination a genuine risk to exactly these few-shot gains.</div>
       </div>
     </div>
@@ -838,7 +844,7 @@ An example: <span style="color:var(--amber);font-weight:600;">We screeghed at ea
       <div id="ddChart"></div>
       <div id="ddReadout" style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-top:10px;background:var(--bg3);padding:8px 12px;border-radius:6px;"></div>
       <div class="card-sm" style="margin-top:10px;">
-        <div style="font-size:13px;font-weight:600;color:var(--amber);margin-bottom:4px;">Verdict — shots × scale multiply</div>
+        <div style="font-size:13px;font-weight:600;color:var(--amber-text);margin-bottom:4px;">Verdict — shots × scale multiply</div>
         <div id="ddVerdict" style="font-size:12px;color:var(--text2);line-height:1.6;"></div>
       </div>
       <div style="font-size:11px;color:var(--text3);margin-top:8px;font-family:var(--mono);">Bars are illustrative of the paper's reported pattern (Figures 3.8–3.10, 3.14): 175B anchors — 25.2/28.3/32.6 BLEU EN→FR, 71.8 SuperGLUE, 100% 2-digit addition — match the paper's tables; 13B and intermediate values are ~ approximations.</div>
@@ -906,6 +912,8 @@ An example: <span style="color:var(--amber);font-weight:600;">We screeghed at ea
     <a class="footer-link" href="./GPT_2.html">GPT-2 Guide</a>
     <a class="footer-link" href="./T5.html">T5 Guide</a>
     <a class="footer-link" href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT Guide</a>
+
+    <a class="footer-link" href="./GPT_4_Technical_Report.html">GPT-4 Guide</a>
   </div>
   <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -984,7 +992,7 @@ const QUIZ_DATA=[
   {q:'What architecture does GPT-3 use?',opts:['Encoder-only Transformer (like BERT)','Encoder-Decoder Transformer','Decoder-only Transformer','Recurrent Neural Network'],correct:2,explain:'GPT-3 uses a decoder-only Transformer architecture (same as GPT-2), which processes text left-to-right and predicts the next token autoregressively.'},
   {q:'How well could humans detect GPT-3 generated news articles?',opts:['95% accuracy','80% accuracy','~52% accuracy (near random)','0% — humans could never tell'],correct:2,explain:'Human evaluators could identify GPT-3 generated text only ~52% of the time — barely above the 50% random chance baseline. This showed GPT-3 text quality was nearly indistinguishable from human writing.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

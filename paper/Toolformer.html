@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -319,8 +325,8 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="two-col">
     <div class="timeline">
       <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2020</div><div class="tl-title">Augmented LMs (REALM &amp; friends)</div><div class="tl-desc">Retrieval moves <em>inside</em> the forward pass — knowledge is baked into special architectures, not callable on demand mid-generation.</div></div>
-      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">Chain-of-Thought prompting</div><div class="tl-desc">Models reason step by step in text — big gains on math and logic, but every step stays inside the model's own head. <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber);text-decoration:none;font-family:var(--mono);font-size:11px;">CoT Guide →</a></div></div>
-      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2022 · Oct</div><div class="tl-title">ReAct</div><div class="tl-desc">Thoughts and actions interleaved by prompting — a model can act in an environment, but every tool step is hand-prompted, example by example. <a href="./ReAct.html" style="color:var(--amber);text-decoration:none;font-family:var(--mono);font-size:11px;">ReAct Guide →</a></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">Chain-of-Thought prompting</div><div class="tl-desc">Models reason step by step in text — big gains on math and logic, but every step stays inside the model's own head. <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber-text);text-decoration:none;font-family:var(--mono);font-size:11px;">CoT Guide →</a></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2022 · Oct</div><div class="tl-title">ReAct</div><div class="tl-desc">Thoughts and actions interleaved by prompting — a model can act in an environment, but every tool step is hand-prompted, example by example. <a href="./ReAct.html" style="color:var(--amber-text);text-decoration:none;font-family:var(--mono);font-size:11px;">ReAct Guide →</a></div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Feb</div><div class="tl-title">🚀 Toolformer</div><div class="tl-desc">Self-supervised tool use: the model samples API calls inside raw text, filters them with a perplexity test, and fine-tunes on the survivors — calls live in the text it generates.</div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2023 →</div><div class="tl-title">Tool use goes mainstream</div><div class="tl-desc">Function-calling ships in production LLM APIs; Gorilla and ToolLLM train models on thousands of APIs; tool use becomes a standard part of agent stacks.</div></div>
     </div>
@@ -329,7 +335,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">The model is its own annotator. Nobody labels tool calls for Toolformer — a large LM <span class="highlight">proposes the calls itself</span>, executes them for real, and keeps only the ones whose results make the following text more predictable. Whatever survives becomes fine-tuning data.</p>
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">A CALL THAT SURVIVED THE FILTER</div>
-        <div style="font-size:13px;line-height:1.9;color:var(--text2);">The population of Marseille is <span style="font-family:var(--mono);font-size:12px;color:var(--blue);">[QA("What is the population of Marseille?", "Marseille") → <span style="background:var(--amber-dim);color:var(--amber);padding:1px 4px;border-radius:4px;font-weight:600;">861,635</span>]</span> as of 2017.</div>
+        <div style="font-size:13px;line-height:1.9;color:var(--text2);">The population of Marseille is <span style="font-family:var(--mono);font-size:12px;color:var(--blue-text);">[QA("What is the population of Marseille?", "Marseille") → <span style="background:var(--amber-dim);color:var(--amber-text);padding:1px 4px;border-radius:4px;font-weight:600;">861,635</span>]</span> as of 2017.</div>
         <div style="font-size:12px;color:var(--text3);margin-top:8px;">The call sits mid-sentence; the result comes back inline. Fine-tune on millions of passages like this and the model learns to write the bracket itself.</div>
       </div>
     </div>
@@ -373,7 +379,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <p style="font-size:13px;color:var(--text2);line-height:1.8;">A language model is a student forced to take every exam closed-book. Humans don't work that way: the moment a problem exceeds memory, we reach for a calculator, a dictionary, a search bar. Handing the model a pencil case sounds easy — but teaching <em>when</em> to reach in used to require millions of hand-labeled examples. Toolformer flips the roles: let the student draft its own practice problems, grade them with a perplexity test, and study only the ones it aced.</p>
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">3482 × 12</div>
-        <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);"><span style="color:var(--blue);">Human:</span> reaches for a calculator → <span style="color:var(--green);font-weight:600;">41,784</span><br><span style="color:var(--purple);">Plain LM:</span> guesses from its weights → <span style="color:var(--red);">"about 40,000?"</span></div>
+        <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);"><span style="color:var(--blue-text);">Human:</span> reaches for a calculator → <span style="color:var(--green-text);font-weight:600;">41,784</span><br><span style="color:var(--purple-text);">Plain LM:</span> guesses from its weights → <span style="color:var(--red-text);">"about 40,000?"</span></div>
       </div>
     </div>
   </div>
@@ -438,27 +444,27 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="notice-card">
       <div class="notice-title">🧮 Calculator</div>
       <div class="notice-text">Four basic arithmetic operations, results rounded to two decimals. A 6.7B LM can't multiply multi-digit numbers; the calculator is exact.</div>
-      <div style="font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--blue);margin-top:8px;background:var(--bg3);border-radius:6px;padding:6px 8px;">[Calculator(27 + 4 * 2) → <span style="background:var(--amber-dim);color:var(--amber);padding:1px 3px;border-radius:4px;font-weight:600;">35</span>]</div>
+      <div style="font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--blue-text);margin-top:8px;background:var(--bg3);border-radius:6px;padding:6px 8px;">[Calculator(27 + 4 * 2) → <span style="background:var(--amber-dim);color:var(--amber-text);padding:1px 3px;border-radius:4px;font-weight:600;">35</span>]</div>
     </div>
     <div class="notice-card">
       <div class="notice-title">❓ Question Answering</div>
       <div class="notice-text">A factoid QA system — Atlas, a retrieval-augmented model fine-tuned on Natural Questions. Ask a question, get a short answer.</div>
-      <div style="font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--blue);margin-top:8px;background:var(--bg3);border-radius:6px;padding:6px 8px;">[QA("Where was the Knights of Columbus founded?", "Knights of Columbus") → <span style="background:var(--amber-dim);color:var(--amber);padding:1px 3px;border-radius:4px;font-weight:600;">New Haven, Connecticut</span>]</div>
+      <div style="font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--blue-text);margin-top:8px;background:var(--bg3);border-radius:6px;padding:6px 8px;">[QA("Where was the Knights of Columbus founded?", "Knights of Columbus") → <span style="background:var(--amber-dim);color:var(--amber-text);padding:1px 3px;border-radius:4px;font-weight:600;">New Haven, Connecticut</span>]</div>
     </div>
     <div class="notice-card">
       <div class="notice-title">📚 Wikipedia Search</div>
       <div class="notice-text">A search engine over Wikipedia: give a term, get short snippets back. More comprehensive than QA — but the model has to read and use what returns.</div>
-      <div style="font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--blue);margin-top:8px;background:var(--bg3);border-radius:6px;padding:6px 8px;">[WikiSearch("Spin fishing") → <span style="background:var(--amber-dim);color:var(--amber);padding:1px 3px;border-radius:4px;font-weight:600;">"Spin fishing is distinguished from fly fishing…"</span>]</div>
+      <div style="font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--blue-text);margin-top:8px;background:var(--bg3);border-radius:6px;padding:6px 8px;">[WikiSearch("Spin fishing") → <span style="background:var(--amber-dim);color:var(--amber-text);padding:1px 3px;border-radius:4px;font-weight:600;">"Spin fishing is distinguished from fly fishing…"</span>]</div>
     </div>
     <div class="notice-card">
       <div class="notice-title">📅 Calendar</div>
       <div class="notice-text">Takes no arguments; returns the current date. Grounds "today", "tomorrow", and "next Friday" in actual time — something frozen weights can never know.</div>
-      <div style="font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--blue);margin-top:8px;background:var(--bg3);border-radius:6px;padding:6px 8px;">[Calendar() → <span style="background:var(--amber-dim);color:var(--amber);padding:1px 3px;border-radius:4px;font-weight:600;">2023-02-04, Saturday</span>]</div>
+      <div style="font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--blue-text);margin-top:8px;background:var(--bg3);border-radius:6px;padding:6px 8px;">[Calendar() → <span style="background:var(--amber-dim);color:var(--amber-text);padding:1px 3px;border-radius:4px;font-weight:600;">2023-02-04, Saturday</span>]</div>
     </div>
     <div class="notice-card">
       <div class="notice-title">🌐 Machine Translation</div>
       <div class="notice-text">A 600M-parameter NLLB model covering 200 languages, translating any phrase into English (source language auto-detected).</div>
-      <div style="font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--blue);margin-top:8px;background:var(--bg3);border-radius:6px;padding:6px 8px;">[MT("sûreté nucléaire", "French", "English") → <span style="background:var(--amber-dim);color:var(--amber);padding:1px 3px;border-radius:4px;font-weight:600;">nuclear safety</span>]</div>
+      <div style="font-family:var(--mono);font-size:11px;line-height:1.8;color:var(--blue-text);margin-top:8px;background:var(--bg3);border-radius:6px;padding:6px 8px;">[MT("sûreté nucléaire", "French", "English") → <span style="background:var(--amber-dim);color:var(--amber-text);padding:1px 3px;border-radius:4px;font-weight:600;">nuclear safety</span>]</div>
     </div>
     <div class="notice-card">
       <div class="notice-title">📐 The one constraint</div>
@@ -516,25 +522,25 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="results-grid" style="margin-bottom:1.5rem;">
     <div class="result-card">
       <div class="result-model">LAMA · T-REx</div>
-      <div class="result-score" style="color:var(--amber);">53.5</div>
+      <div class="result-score" style="color:var(--amber-text);">53.5</div>
       <div class="result-label">Toolformer (6.7B) — vs 39.8 for the 26× larger GPT-3</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
     <div class="result-card">
       <div class="result-model">LAMA · SQUAD</div>
-      <div class="result-score" style="color:var(--teal);">33.8</div>
+      <div class="result-score" style="color:var(--teal-text);">33.8</div>
       <div class="result-label">vs 26.8 for GPT-3 (175B) — +11.7 pts over the best baseline</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:64%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
     <div class="result-card">
       <div class="result-model">ASDIV · MATH</div>
-      <div class="result-score" style="color:var(--blue);">40.4</div>
+      <div class="result-score" style="color:var(--blue-text);">40.4</div>
       <div class="result-label">vs 14.0 for GPT-3 (175B) — calculator in 97.9% of cases</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:76%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
     <div class="result-card">
       <div class="result-model">AUTONOMY</div>
-      <div class="result-score" style="color:var(--purple);">98.1%</div>
+      <div class="result-score" style="color:var(--purple-text);">98.1%</div>
       <div class="result-label">of LAMA answers where the model chose to call the QA tool itself</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:98%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
@@ -581,7 +587,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="notice-card"><div class="notice-title">🦍 Gorilla (2023)</div><div class="notice-text">An LLM fine-tuned to call thousands of real APIs accurately — tool use scaled from Toolformer's five hand-seeded tools to entire API corpora.</div></div>
     <div class="notice-card"><div class="notice-title">🧰 ToolLLM &amp; API-Bank (2023)</div><div class="notice-text">Open tool-use instruction data and the first benchmarks for evaluating tool-using agents — the ecosystem that grew around self-taught tool use.</div></div>
     <div class="notice-card"><div class="notice-title">🪞 Models writing their own data</div><div class="notice-text">The deeper idea is the bootstrap: a model generating and filtering its own supervision. That lineage runs through self-generated instruction data into today's self-improvement loops.</div></div>
-    <div class="notice-card"><div class="notice-title">🤖 Agent stacks (2023–24)</div><div class="notice-text">Planner + tools + memory became the standard agent blueprint, usually wired through <a href="./ReAct.html" style="color:var(--amber);text-decoration:none;">ReAct</a>-style thought-action loops — tool use as a default module, not a special case.</div></div>
+    <div class="notice-card"><div class="notice-title">🤖 Agent stacks (2023–24)</div><div class="notice-text">Planner + tools + memory became the standard agent blueprint, usually wired through <a href="./ReAct.html" style="color:var(--amber-text);text-decoration:none;">ReAct</a>-style thought-action loops — tool use as a default module, not a special case.</div></div>
     <div class="notice-card"><div class="notice-title">📉 The scale lesson</div><div class="notice-text">A 6.7B model with the right tool beat a 175B model without one — the strongest early argument that tool augmentation can substitute for raw parameter count.</div></div>
   </div>
 </section>
@@ -622,7 +628,9 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
     <a class="footer-link" href="./ReAct.html">ReAct Guide</a>
     <a class="footer-link" href="./Chain_Of_Thought_Prompting.html">Chain-of-Thought Guide</a>
-    <a class="footer-link" href="./LLaMA.html">LLaMA Guide</a>
+    <a class="footer-link" href="./ReAct.html">ReAct Guide</a>
+
+    <a class="footer-link" href="./DSPy_Compiling_Declarative_Language_Model_Calls_into_Self_Improving_Pipelines.html">DSPy Guide</a>
   </div>
   
   <div class="footer-contact">
@@ -676,7 +684,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   function render(){
     const e=EX[cur];
     tabsEl.innerHTML=Object.keys(EX).map(k=>`<button type="button" style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;" data-k="${k}">${EX[k].label}</button>`).join('');
-    sentEl.innerHTML=e.pre+'<span style="font-family:var(--mono);font-size:12px;color:var(--blue);">['+e.call+' → <span style="background:var(--amber-dim);color:var(--amber);padding:1px 4px;border-radius:4px;font-weight:600;">'+e.res+'</span>]</span>'+e.post;
+    sentEl.innerHTML=e.pre+'<span style="font-family:var(--mono);font-size:12px;color:var(--blue-text);">['+e.call+' → <span style="background:var(--amber-dim);color:var(--amber-text);padding:1px 4px;border-radius:4px;font-weight:600;">'+e.res+'</span>]</span>'+e.post;
     const rows=[{lab:'WITHOUT result',v:e.wo,color:'#ef4444'},{lab:'WITH result',v:e.wi,color:'#22c55e'}];
     barsEl.innerHTML=rows.map(r=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:110px;text-align:right;">${r.lab}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${(r.v/MAX*100).toFixed(1)}%;background:${r.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:34px;">${r.v.toFixed(1)}</div></div>`).join('')+'<div style="font-size:11px;color:var(--text3);margin-top:4px;">Perplexity of the continuation after the call — lower = more predictable. Values illustrative.</div>';
     verdictEl.innerHTML='';
@@ -723,7 +731,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       mid='<span style="display:inline-block;border:1px dashed var(--border2);border-radius:6px;padding:0 10px;font-family:var(--mono);font-size:11px;color:var(--text3);vertical-align:middle;">▁▁▁ insert a tool call ▁▁▁</span>';
     }else{
       const c=CALLS[cur];
-      mid='<span style="font-family:var(--mono);font-size:12px;color:var(--blue);">['+c.call+' → <span style="background:var(--amber-dim);color:var(--amber);padding:1px 4px;border-radius:4px;font-weight:600;">'+c.res+'</span>]</span>';
+      mid='<span style="font-family:var(--mono);font-size:12px;color:var(--blue-text);">['+c.call+' → <span style="background:var(--amber-dim);color:var(--amber-text);padding:1px 4px;border-radius:4px;font-weight:600;">'+c.res+'</span>]</span>';
     }
     sentEl.innerHTML=PRE+mid+POST;
     if(!cur){
@@ -792,7 +800,7 @@ const QUIZ_DATA=[
   {q:'What was the headline zero-shot LAMA result?',opts:['Toolformer (6.7B) beat GPT-3 (175B) despite being 26× smaller','Toolformer matched GPT-J but lost to GPT-3','Toolformer only won with tools disabled at test time','Toolformer beat GPT-3 only on the math benchmarks'],correct:0,explain:'On every LAMA subset Toolformer clearly outperformed the much larger OPT-66B and GPT-3-175B (e.g. T-REx: 53.5 vs 39.8), mostly by choosing to ask its QA tool — which it does for 98.1% of answers.'},
   {q:'A key limitation of Toolformer is that it…',opts:['Only works on English text','Cannot chain tool calls and is bound to the fixed API call syntax it was fine-tuned on','Needs a human label for every tool call during fine-tuning','Loses its language modeling ability after fine-tuning'],correct:1,explain:'One call, one result: outputs can’t feed the next call, and the model can’t invent new tools or call formats. Humans still design the tools and write the seed demonstrations — but language modeling ability is preserved.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

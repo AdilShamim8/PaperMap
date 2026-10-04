@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Magentic-One: A Generalist Multi-Agent System — Interactive Guide</title>
-<meta name="description" content="An interactive explainer of Microsoft's Magentic-One generalist multi-agent system, featuring orchestrator ledger mechanics, WebSurfer, FileSurfer, Coder, and outer/inner loop replanning.">
-<meta name="keywords" content="Magentic-One, Microsoft Research, multi-agent systems, orchestrator, WebSurfer, FileSurfer, GAIA benchmark, generalist agents, AutoGen, interactive tutorial">
-<meta name="author" content="Adil Shamim">
+<meta name="description" content="A product-grade interactive explainer of the Magentic-One paper, with an orchestrator console simulation, a loop-lens planner diagram, a team roster of specialist agents, and real results across GAIA, AssistantBench, and WebArena.">
+<meta name="keywords" content="Magentic-One, multi-agent system, orchestrator, task ledger, progress ledger, stagnation, WebSurfer, FileSurfer, Coder, ComputerTerminal, AutoGen, GAIA, WebArena, AssistantBench, interactive tutorial">
+<meta name="author" content="PaperMap">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#f59e0b">
 <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -14,14 +14,14 @@
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="shortcut icon" href="../assets/favicon.svg">
 <meta property="og:title" content="Magentic-One: A Generalist Multi-Agent System — Interactive Guide">
-<meta property="og:description" content="Visual walkthrough of Microsoft's Magentic-One orchestrator-led multi-agent architecture for complex multimodal tasks.">
+<meta property="og:description" content="Visual, interactive walkthrough of the Magentic-One paper: one Orchestrator, two loops, four specialists.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://papermap.vercel.app/paper/Magentic_One_A_Generalist_Multi_Agent_System.html">
 <meta property="og:site_name" content="PaperMap">
 <meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Magentic-One — Interactive Guide">
-<meta name="twitter:description" content="Explore how Magentic-One solves open-ended web and computer tasks with an Orchestrator and specialized subagents.">
+<meta name="twitter:description" content="How one Orchestrator plans, tracks, and re-plans a team of web, file, and code agents.">
 <meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,217 +84,252 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
-
-.hero { min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 3rem;position:relative;overflow:hidden; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
-.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:1.5rem;background:var(--amber-dim); }
-.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 5.5vw, 4.2rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.2rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
-.hero-subtitle { max-width:640px;color:var(--text2);font-size:16px;margin-bottom:2rem;line-height:1.8; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
 .btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
 .btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
-
-.meta-badges { display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:2.5rem; }
-.meta-chip { display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--text2); }
-
-section { max-width:1100px;margin:0 auto;padding:4.5rem 2rem; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
-.section-desc { color:var(--text2);max-width:620px;font-size:15px;margin-bottom:2.2rem; }
-
-.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 8px 24px rgba(15,23,42,0.04);transition:transform .2s ease, box-shadow .2s ease; }
-.card:hover { transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,0.07); }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
 .card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
-.card-label { font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px; }
-.two-col { display:grid;grid-template-columns:1fr 1fr;gap:1.5rem; }
-.three-col { display:grid;grid-template-columns:repeat(3, 1fr);gap:1.2rem; }
-.four-col { display:grid;grid-template-columns:repeat(4, 1fr);gap:1rem; }
-
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-
-/* Interactive Ledger Simulator */
-.ledger-box { background:#0f172a;color:#f8fafc;border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 20px 40px rgba(0,0,0,0.25);margin-top:1.5rem;font-family:var(--mono);font-size:13px; }
-.ledger-header { display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:1rem;margin-bottom:1rem; }
-.ledger-body { display:grid;grid-template-columns:1fr 1.3fr;gap:1.5rem; }
-.task-ledger { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px; }
-.progress-ledger { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px; }
-
-/* Quiz styles */
-.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;margin-bottom:1.5rem; }
-.quiz-q { font-weight:600;font-size:15px;margin-bottom:1rem;color:var(--text); }
-.quiz-opt { display:block;width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;margin-bottom:8px;cursor:pointer;font-family:var(--sans);font-size:14px;color:var(--text);transition:all .2s; }
-.quiz-opt:hover { background:var(--bg3);border-color:rgba(245,158,11,0.4); }
-.quiz-opt.correct { background:rgba(34,197,94,0.15);border-color:var(--green);color:var(--green);font-weight:600; }
-.quiz-opt.wrong { background:rgba(239,68,68,0.15);border-color:var(--red);color:var(--red); }
-.quiz-explain { font-size:13px;color:var(--text2);margin-top:8px;padding:8px 12px;border-radius:6px;background:var(--bg3);display:none; }
-
-footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem; }
-.footer-links { display:flex;gap:1rem;flex-wrap:wrap; }
-.footer-link { font-family:var(--mono);font-size:12px;color:var(--text2);text-decoration:none; }
-.footer-link:hover { color:var(--amber); }
-
-@media(max-width:850px){
-  .ledger-body, .two-col, .three-col, .four-col { grid-template-columns:1fr; }
-  .nav-links, .nav-actions { display:none; }
-  .nav-toggle { display:flex;align-items:center;justify-content:center; }
-  .hero-title { font-size:2.4rem; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
 }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
 
-<a href="#content" class="skip-link">Skip to main content</a>
-
+<!-- NAV -->
 <nav>
-  <a href="../index.html" class="nav-logo">PaperMap</a>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
   <div class="nav-links">
-    <a href="#orchestrator" class="nav-link">Orchestrator</a>
-    <a href="#agents" class="nav-link">Specialists</a>
-    <a href="#ledger" class="nav-link">Ledger Simulator</a>
-    <a href="#results" class="nav-link">GAIA Results</a>
-    <a href="#quiz" class="nav-link">Quiz</a>
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#orchestrator">Orchestrator</a>
+    <a class="nav-link" href="#team">Team</a>
+    <a class="nav-link" href="#stagnation">Stagnation</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
   </div>
   <div class="nav-actions">
-    <span class="nav-badge">Category VII · Multi-Agent</span>
-    <a href="https://arxiv.org/abs/2411.04468" target="_blank" rel="noopener" class="btn-primary" style="padding:6px 14px;font-size:12px;">Paper PDF ↗</a>
+    <div class="nav-badge">arXiv 2024</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
   </div>
-  <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
 </nav>
 
-<div id="mobileMenu" class="mobile-menu">
-  <a href="../index.html">← All Papers</a>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
   <a href="#orchestrator">Orchestrator</a>
-  <a href="#agents">Specialists</a>
-  <a href="#ledger">Ledger Simulator</a>
-  <a href="#results">GAIA Results</a>
+  <a href="#team">Team</a>
+  <a href="#stagnation">Stagnation</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
 </div>
 
-<main id="content">
-
-<div class="hero">
+<!-- HERO -->
+<div class="hero" id="top">
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
-  <div class="hero-eyebrow">Microsoft Research · AutoGen · Nov 2024</div>
-  <h1 class="hero-title">Magentic-One: A Generalist<br><em>Multi-Agent System</em></h1>
-  <p class="hero-subtitle">How a centralized dual-loop Orchestrator directs specialized web, coding, and filesystem agents to conquer open-ended real-world multimodal tasks.</p>
-  
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    One <em>Conductor</em>, Many Players<br>Magentic-One
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that introduced Magentic-One — Microsoft's
+    open-source generalist multi-agent system, in which a lead Orchestrator plans, tracks
+    progress, and re-plans while directing a team of web, file, and code specialists.
+  </p>
   <div class="hero-actions">
-    <a href="#ledger" class="btn-primary">Inspect Dual Ledger</a>
-    <a href="#agents" class="btn-outline">Meet the Specialists</a>
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2411.04468" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
   </div>
-
-  <div class="meta-badges">
-    <div class="meta-chip"><span>Authors:</span> Adam Fourney, Gagan Bansal, et al.</div>
-    <div class="meta-chip"><span>Institution:</span> Microsoft Research</div>
-    <div class="meta-chip"><span>Framework:</span> Built on AutoGen</div>
-    <div class="meta-chip"><span>Key Feature:</span> Dual-loop Ledger Orchestration + WebSurfer</div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">1</div><div class="stat-label">Orchestrator (lead agent)</div></div>
+    <div class="stat"><div class="stat-num">2</div><div class="stat-label">Nested Loops (plan · execute)</div></div>
+    <div class="stat"><div class="stat-num">4</div><div class="stat-label">Specialist Agents</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Benchmarks, One Config</div></div>
   </div>
 </div>
 
 <div class="divider"></div>
-
-<!-- SECTION 1: ORCHESTRATOR -->
-<section id="orchestrator">
-  <div class="section-tag">Core Architecture</div>
-  <h2 class="section-title">The Dual-Loop <em>Orchestrator Pattern</em></h2>
-  <p class="section-desc">Magentic-One places a centralized Orchestrator in charge of all subagent delegations, maintaining global coherence and dynamic replanning.</p>
-
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Solo Agents to <em>Orchestrated</em> Teams</h2>
+  <p class="section-desc">Magentic-One arrived after two years of rapid experimentation: first single agents with tools, then role-playing agent societies, then benchmarks that punished both. Here is the road.</p>
   <div class="two-col">
-    <div class="card">
-      <div class="card-label">Outer Loop: Planning & Replanning</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
-        The outer loop maintains the <strong>Task Ledger</strong>. It formulates initial high-level sub-goals, tracks facts learned across tasks, and triggers wholesale strategy revisions if multiple subagents stall.
-      </p>
-      <div class="card-sm" style="border-left:3px solid var(--amber);">
-        <strong>Stall Counter:</strong> If the inner loop takes more than 3 turns without measurable progress, the outer loop executes a reset, clearing hallucinated context.
-      </div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2022–23</div><div class="tl-title">Single agents learn to act</div><div class="tl-desc">ReAct interleaves thought–action–observation and Toolformer teaches models to call tools — one brain, one loop, one narrow skill at a time.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023</div><div class="tl-title">Teams of agents emerge</div><div class="tl-desc">CAMEL and MetaGPT cast LLMs in human roles (researcher, engineer, reviewer) and let them talk; Microsoft's AutoGen generalizes multi-agent programming.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023–24</div><div class="tl-title">Benchmarks demand breadth</div><div class="tl-desc">GAIA, WebArena, and AssistantBench mix web browsing, file handling, and coding inside single tasks — a specialist that wins one benchmark fails the others.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2024 · Nov</div><div class="tl-title">🚀 Magentic-One</div><div class="tl-desc">One open-source system: an Orchestrator with two ledgers and two loops, directing WebSurfer, FileSurfer, Coder, and ComputerTerminal — the same team on every benchmark.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024–25</div><div class="tl-title">Orchestrators go mainstream</div><div class="tl-desc">The system is open-sourced on AutoGen (aka.ms/magentic-one) with AutoGenBench; plan–track–re-plan orchestrator teams spread across agent frameworks.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">Next</div><div class="tl-title">Agent teams as infrastructure</div><div class="tl-desc">Plug-and-play specialists, cheaper models per role, and humans-in-the-loop oversight — the paper's own roadmap for generalist agent teams.</div></div>
     </div>
-
-    <div class="card">
-      <div class="card-label">Inner Loop: Progress Assessment</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
-        The inner loop maintains the <strong>Progress Ledger</strong>. After every single subagent tool call or message, it evaluates whether the current sub-step succeeded or failed.
-      </p>
-      <div class="card-sm" style="border-left:3px solid var(--blue);">
-        <strong>Dynamic Dispatch:</strong> Selects the next specialist (WebSurfer vs Coder vs FileSurfer) based on immediate intermediate deliverables.
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- SECTION 2: SPECIALISTS -->
-<section id="agents">
-  <div class="section-tag">Agent Ecosystem</div>
-  <h2 class="section-title">The Four <em>Specialist Subagents</em></h2>
-  <p class="section-desc">Each agent is purpose-built with tailored prompts, actions, and isolated sandboxes.</p>
-
-  <div class="four-col">
-    <div class="card">
-      <div class="card-label">1. WebSurfer</div>
-      <h3 style="font-size:15px;color:var(--blue);margin-bottom:6px;">Autonomous Browser</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Operates Chromium via Playwright. Navigates, clicks interactive elements, scrolls pages, solves captchas, and extracts clean markdown DOMs.</p>
-    </div>
-    <div class="card">
-      <div class="card-label">2. FileSurfer</div>
-      <h3 style="font-size:15px;color:var(--teal);margin-bottom:6px;">Document Explorer</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Inspects local files, parses complex PDFs, parses multi-sheet Excel files, and runs OCR on scanned diagrams.</p>
-    </div>
-    <div class="card">
-      <div class="card-label">3. Coder</div>
-      <h3 style="font-size:15px;color:var(--amber);margin-bottom:6px;">Algorithm Writer</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Writes statistical Python scripts, data cleaning routines, and web scraping regexes tailored to subagent requests.</p>
-    </div>
-    <div class="card">
-      <div class="card-label">4. ComputerTerminal</div>
-      <h3 style="font-size:15px;color:var(--purple);margin-bottom:6px;">Sandbox Executor</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Executes Python and shell scripts inside an isolated container, capturing stdout, stderr, and returned figures.</p>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- SECTION 3: SIMULATOR -->
-<section id="ledger">
-  <div class="section-tag">Interactive Simulation</div>
-  <h2 class="section-title">Magentic-One <em>Ledger State Machine</em></h2>
-  <p class="section-desc">Observe how the Orchestrator tracks Task and Progress Ledgers on a multimodal GAIA benchmark question.</p>
-
-  <div class="ledger-box">
-    <div class="ledger-header">
-      <div>TASK: "Find the 2023 revenue of Microsoft's cloud segment, write a script to plot year-over-year growth, and save the chart."</div>
-      <button id="nextStepBtn" class="btn-primary" style="padding:6px 12px;font-size:12px;">Next Step ▶</button>
-    </div>
-    <div class="ledger-body">
-      <div class="task-ledger">
-        <div style="color:var(--amber);margin-bottom:8px;font-weight:600;">📋 TASK LEDGER (Outer Loop)</div>
-        <div id="taskLedgerContent" style="color:#cbd5e1;line-height:1.6;font-size:12px;"></div>
-      </div>
-      <div class="progress-ledger">
-        <div style="color:var(--blue);margin-bottom:8px;font-weight:600;">⚡ PROGRESS LEDGER (Inner Loop)</div>
-        <div id="progressLedgerContent" style="color:#cbd5e1;line-height:1.6;font-size:12px;"></div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Complex tasks need <span class="highlight">management, not just talent</span>. The bottleneck is rarely one missing skill — it is knowing what to do next, noticing that you are stuck, and changing course. Magentic-One makes one agent, the <strong>Orchestrator</strong>, responsible for that meta-work, so every specialist can stay simple.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE ORCHESTRATION CYCLE</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          <span style="color:var(--amber-text);font-weight:600;">plan</span> → <span style="color:var(--blue-text);font-weight:600;">dispatch</span> → <span style="color:var(--teal-text);font-weight:600;">observe</span> → <span style="color:var(--purple-text);font-weight:600;">track</span> → <span style="color:var(--red-text);font-weight:600;">stalled?</span> <span style="color:var(--text3);">→ (re)plan</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">One loop to plan the work, one loop to work the plan.</div>
       </div>
     </div>
   </div>
@@ -296,221 +337,709 @@ footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid
 
 <div class="divider"></div>
 
-<!-- SECTION 4: GAIA RESULTS -->
-<section id="results">
-  <div class="section-tag">Benchmark Evaluation</div>
-  <h2 class="section-title">State-of-the-Art on <em>GAIA & AssistantBench</em></h2>
-  <p class="section-desc">Evaluating performance on real-world multimodal problem solving.</p>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="card-label">GAIA Benchmark (General AI Assistants)</div>
-      <div style="margin-top:12px;">
-        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
-          <span>Single Agent (GPT-4o)</span>
-          <span style="color:var(--text3);font-weight:600;">32.4%</span>
-        </div>
-        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin-bottom:14px;">
-          <div style="width:32.4%;height:100%;background:var(--text3);"></div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
-          <span>OpenAI Assistants API + Tools</span>
-          <span style="color:var(--blue);font-weight:600;">34.8%</span>
-        </div>
-        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin-bottom:14px;">
-          <div style="width:34.8%;height:100%;background:var(--blue);"></div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
-          <span>Magentic-One (Multi-Agent)</span>
-          <span style="color:var(--amber);font-weight:600;">47.8%</span>
-        </div>
-        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;">
-          <div style="width:47.8%;height:100%;background:var(--amber);"></div>
-        </div>
-      </div>
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Why <em>Generalists</em> Are Hard to Build</h2>
+  <p class="section-desc">Before Magentic-One, agentic systems faced a fork: be a specialist that wins one benchmark, or a solo generalist that drowns in its own task. The paper's goal: one high-performing system across many task types.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🕸️</div>
+      <div class="problem-title">The Specialist / Soloist Trap</div>
+      <ul class="problem-list">
+        <li>One system per benchmark: web agents, file agents, code agents — each re-engineered for its own arena</li>
+        <li>Solo agents drown in long tasks: dozens of tools in one prompt, no working memory of "where am I?"</li>
+        <li>Rigid workflows: adding a skill means re-prompting or re-training the whole system</li>
+        <li>Errors are fatal: one wrong click or bad script ends the run — there is no notion of "we're stuck, change course"</li>
+        <li>Stateful environments punish evaluation too: agents leave side effects that corrupt later runs</li>
+      </ul>
     </div>
-
-    <div class="card">
-      <div class="card-label">Why the Architecture Wins</div>
-      <ul style="font-size:13px;color:var(--text2);line-height:1.8;padding-left:1.2rem;margin-top:6px;">
-        <li><strong>Tool Specialization:</strong> WebSurfer handles browser state trees without polluting the Coder's namespace.</li>
-        <li><strong>Stall Recovery:</strong> When WebSurfer hits an anti-bot wall, the Orchestrator pivots to FileSurfer searching downloaded local annual reports.</li>
-        <li><strong>Stateless Agent Reset:</strong> Subagents can be rebooted fresh with clean context while the Orchestrator preserves the global goal.</li>
+    <div class="problem-card good">
+      <div class="problem-icon">🎼</div>
+      <div class="problem-title">Magentic-One's Answer</div>
+      <ul class="problem-list">
+        <li>One team for many tasks: web + files + code composed on the fly by a lead agent</li>
+        <li>Two ledgers give working memory: a task ledger (plan + facts) and a progress ledger (state + next step)</li>
+        <li>Plug-and-play modularity: agents can be added or removed with no re-prompting of teammates</li>
+        <li>Stalls are detected and plans revised — errors become recoverable, not fatal</li>
+        <li>AutoGenBench runs each task in a fresh Docker container, so evaluation stays clean</li>
       </ul>
     </div>
   </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">The Analogy — A Project Manager with a Small Skilled Team</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">Think of Magentic-One as a project manager leading four specialists. The PM writes the plan and the checklist (<strong>task ledger</strong>), runs a stand-up every cycle to ask "done? blocked? who's next?" (<strong>progress ledger</strong>), and re-plans when the team stalls. The PM never touches the keyboard — the web researcher drives the browser, the analyst writes the code, and ops runs it. The paper uses its own analogy for the WebSurfer: <em>telephone tech support</em> — the Orchestrator knows what to do but cannot act, so it relays instructions and reads back the reports.</p>
+    <div style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:2;">
+      <span style="color:var(--amber-text);font-weight:600;">ORCHESTRATOR</span> "WebSurfer — find the three cheapest 2024 electric SUVs and save the source URLs."<br>
+      <span style="color:var(--blue-text);font-weight:600;">WEBSURFER</span> "Found 3 models. Screenshot + page summary attached. Sources: siteA.com, siteB.com, siteC.com."<br>
+      <span style="color:var(--amber-text);font-weight:600;">ORCHESTRATOR</span> "Progress ledger: forward. Coder — build a comparison table from those sources."
+    </div>
+  </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- SECTION 5: QUIZ -->
-<section id="quiz">
-  <div class="section-tag">Test Yourself</div>
-  <h2 class="section-title">Magentic-One <em>Mastery Quiz</em></h2>
-  <p class="section-desc">Assess your understanding of orchestrator-led multi-agent architectures and specialized tool routing.</p>
+<!-- ORCHESTRATOR -->
+<section id="orchestrator">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Orchestrator — <em>Two Loops</em>, Two Ledgers</h2>
+  <p class="section-desc">Magentic-One's core contribution is not a new model — it is a control system. A lead agent runs two nested loops, one for planning and one for execution, and keeps everything it knows in two structured ledgers.</p>
 
-  <div id="quizContainer">
-    <!-- Quiz injected by JS -->
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">The Lead Agent</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:8px;">
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">🧠</div><div style="font-weight:600;font-size:14px;">Plans</div><div style="font-size:12px;color:var(--text2);">Writes a step-by-step natural-language plan, assigned to agents.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">📍</div><div style="font-weight:600;font-size:14px;">Tracks</div><div style="font-size:12px;color:var(--text2);">Checks progress every cycle: done? looping? moving forward?</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">🔁</div><div style="font-weight:600;font-size:14px;">Re-plans</div><div style="font-size:12px;color:var(--text2);">Breaks out, reflects, and rewrites the plan when the team stalls.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">📤</div><div style="font-weight:600;font-size:14px;">Dispatches</div><div style="font-size:12px;color:var(--text2);">Picks the next agent and gives it an explicit instruction.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:2rem;">🏁</div><div style="font-weight:600;font-size:14px;">Decides</div><div style="font-size:12px;color:var(--text2);">Stops on completion, max attempts, or a time limit — then reports.</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:12px;">In the paper's default configuration the Orchestrator uses GPT-4o; a stronger variant swaps in OpenAI o1-preview for the outer loop. It never acts directly — it only directs.</p>
+  </div>
+
+  <div class="formula-card">
+    <div class="formula-main">Task&nbsp;Ledger&nbsp;=&nbsp;{&nbsp;facts:&nbsp;<span style="color:var(--blue-text);">given</span>&nbsp;∪&nbsp;<span style="color:var(--teal-text);">to_look_up</span>&nbsp;∪&nbsp;<span style="color:var(--purple-text);">to_derive</span>,&nbsp;<span style="color:var(--text2);">guesses</span>,&nbsp;<span style="color:var(--amber-text);">plan</span>&nbsp;}</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym" style="color:var(--blue-text);">GIVEN</div><div class="fp-name">Verified facts</div><div class="fp-desc">Stated in the request, or already confirmed during the task.</div></div>
+      <div class="formula-piece"><div class="fp-sym" style="color:var(--teal-text);">LOOK&nbsp;UP</div><div class="fp-name">Facts to find</div><div class="fp-desc">To be retrieved, e.g. via web search with the WebSurfer.</div></div>
+      <div class="formula-piece"><div class="fp-sym" style="color:var(--purple-text);">DERIVE</div><div class="fp-name">Facts to compute</div><div class="fp-desc">To be calculated programmatically or by reasoning.</div></div>
+      <div class="formula-piece"><div class="fp-sym">GUESSES</div><div class="fp-name">Educated guesses</div><div class="fp-desc">Qualified closed-book guesses — a guarded fallback when agents are stuck or out of time.</div></div>
+      <div class="formula-piece"><div class="fp-sym" style="color:var(--amber-text);">PLAN</div><div class="fp-name">Steps → agents</div><div class="fp-desc">A chain-of-thought-style hint in natural language, one entry per step with its assigned agent.</div></div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:1rem;">The task ledger is the outer loop's short-term memory. After every plan update, all agents clear their contexts and reset — the new plan is the single source of truth.</p>
+  </div>
+
+  <div class="two-col" style="margin-bottom:2rem;">
+    <div class="card">
+      <div class="card-label">Outer Loop — Planning</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Triggered by the task itself. The Orchestrator reflects on the request, pre-populates the task ledger (facts, facts to look up, facts to derive, guesses), considers its team's descriptions, and writes the plan. The loop re-runs whenever the inner loop gives up — each time with a reflection on what went wrong. Output: a fresh task ledger and plan.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Inner Loop — Execution</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Runs every cycle of actual work. Each iteration, the Orchestrator answers five questions into the <strong>progress ledger</strong>: Is the task complete? Is the team looping? Is forward progress being made? Which agent should speak next? What instruction should it get? Then it dispatches that agent and watches what happens.</p>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:2rem;">
+    <div class="card-label">Interactive Demo — Loop Lens</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Toggle between the two loops. The outer loop is a one-pass pipeline from goal to plan; the inner loop is a ring the team spins in until the progress ledger says stop.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="llOuterBtn" type="button" style="font-size:13px;padding:8px 18px;">Outer Loop — Plan</button>
+      <button class="btn-outline" id="llInnerBtn" type="button" style="font-size:13px;padding:8px 18px;">Inner Loop — Execute</button>
+    </div>
+    <div id="llView" style="min-height:230px;"></div>
+    <div id="llCaption" style="font-size:12px;color:var(--text3);margin-top:12px;border-top:1px dashed var(--border);padding-top:10px;"></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Orchestrator Console (Centerpiece)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A scripted orchestration run, one step at a time. Watch the task ledger fill in during outer-loop steps, the progress ledger update during inner-loop steps, and the dispatch row flash the chosen agent. Mid-run, the team hits a stall — and the console re-plans.</p>
+    <div style="background:var(--bg3);padding:0.8rem 1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:1rem;">
+      <span style="color:var(--amber-text);font-weight:600;">MISSION:</span> "Compare 2024 electric SUV prices and write a summary with sources."
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="ocStepBtn" type="button" style="font-size:13px;padding:8px 18px;">Step ▸</button>
+      <button class="btn-outline" id="ocResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+      <div id="ocPhase" style="font-family:var(--mono);font-size:12px;color:var(--amber-text);font-weight:600;"></div>
+    </div>
+    <div id="ocAlert" style="display:none;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.35);color:var(--amber-text);font-family:var(--mono);font-size:12px;padding:10px 12px;border-radius:var(--radius);margin-bottom:1rem;font-weight:600;"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem;">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);font-weight:600;letter-spacing:0.06em;margin-bottom:8px;">TASK LEDGER · outer loop</div>
+        <div id="ocFacts" style="font-family:var(--mono);font-size:11.5px;line-height:1.9;color:var(--text2);"></div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:0.06em;margin:10px 0 6px;">PLAN</div>
+        <div id="ocPlan" style="font-family:var(--mono);font-size:11.5px;line-height:1.9;color:var(--text2);"></div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--teal-text);font-weight:600;letter-spacing:0.06em;margin-bottom:8px;">PROGRESS LEDGER · inner loop</div>
+        <div id="ocProg" style="font-family:var(--mono);font-size:11.5px;line-height:1.9;color:var(--text2);"></div>
+      </div>
+    </div>
+    <div id="ocAgents" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1rem;"></div>
+    <div id="ocLog" style="background:#0f172a;border-radius:var(--radius);padding:12px 14px;font-family:var(--mono);font-size:11.5px;line-height:1.9;color:#cbd5e1;min-height:60px;max-height:190px;overflow-y:auto;"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:10px;">Scripted illustration of the paper's mechanism. The FileSurfer stays idle here — not every task needs every agent; in the paper's ablations, removing it still costs up to 39% on GAIA.</p>
   </div>
 </section>
 
-</main>
+<div class="divider"></div>
 
-<footer>
-  <div class="footer-links">
-    <a href="../index.html" class="footer-link">← Homepage</a>
-    <a href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html" class="footer-link">CAMEL Guide</a>
-    <a href="./MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html" class="footer-link">MetaGPT Guide</a>
-    <a href="./MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html" class="footer-link">MultiAgentBench Guide →</a>
+<!-- TEAM -->
+<section id="team">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The Team — <em>Four Specialists</em></h2>
+  <p class="section-desc">Magentic-One's agents are tool-centric, not role-centric: instead of "researcher" or "critic", each agent owns one capability — the browser, the files, the code, the console. This is the paper's recipe for clean separation of concerns and reuse.</p>
+
+  <div class="results-grid" style="margin-bottom:1.5rem;">
+    <div class="result-card">
+      <div class="result-model">🌐 WEBSURFER</div>
+      <div class="result-score" style="color:var(--blue-text);font-size:1.3rem;">Browser</div>
+      <div class="result-label">LLM-based, multimodal · commands a Chromium browser and reports the page state</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">📂 FILESURFER</div>
+      <div class="result-score" style="color:var(--teal-text);font-size:1.3rem;">Files</div>
+      <div class="result-label">LLM-based · reads PDFs, Office docs, images, audio, video via a read-only markdown preview</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">⌨️ CODER</div>
+      <div class="result-score" style="color:var(--purple-text);font-size:1.3rem;">Code</div>
+      <div class="result-label">LLM-based · writes programs, analyzes findings, debugs from console output</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">🖥️ COMPUTER&nbsp;TERMINAL</div>
+      <div class="result-score" style="color:var(--amber-text);font-size:1.3rem;">Console</div>
+      <div class="result-label">Deterministic, no LLM · executes Python and shell, installs libraries</div>
+    </div>
   </div>
-  <div style="font-family:var(--mono);font-size:12px;color:var(--text3);">
-    PaperMap · Created by Adil Shamim
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Team Roster</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Click a specialist to see its tools, an example action, and when the Orchestrator calls it.</p>
+    <div id="trTabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+    <div id="trDetail"></div>
+    <div style="margin-top:1.2rem;border-top:1px dashed var(--border);padding-top:12px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">WHO HANDLES WHAT</div>
+      <div id="trMap" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:2rem;">
+    <div class="card">
+      <div class="card-label">A Hierarchy of Tool Use</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Instead of choosing between dozens of raw actions, the Orchestrator only picks <em>which agent</em> provides a broad capability (e.g. browsing). The chosen agent then selects among its own small action set — click versus scroll, say. Two small decisions replace one giant one, which the authors argue is easier for LLMs to reason about.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Mixed Models, One Team</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">Modularity lets each role use the model that fits: multimodal GPT-4o for web and file surfing, optionally the stronger reasoning model o1-preview for the Orchestrator's outer loop and the Coder, and no LLM at all for the terminal. The paper points to cheaper, smaller models per subtask as a cost-reduction path.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STAGNATION -->
+<section id="stagnation">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Detecting the <em>Stall</em></h2>
+  <p class="section-desc">Agents fail in a particularly human way: they repeat the same failing action over and over. Magentic-One's answer is a counter, a budget, and a willingness to throw the plan away.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">if&nbsp;<span style="color:var(--red-text);">stall_counter</span>&nbsp;&gt;&nbsp;2&nbsp;→&nbsp;break&nbsp;inner&nbsp;loop&nbsp;→&nbsp;<span style="color:var(--amber-text);">reflect</span>&nbsp;→&nbsp;revise&nbsp;plan&nbsp;→&nbsp;restart</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym" style="color:var(--red-text);">COUNTER</div><div class="fp-name">Watch the loop</div><div class="fp-desc">Every inner-loop cycle, the Orchestrator checks: is the team looping or making no forward progress? If so, the counter ticks up.</div></div>
+      <div class="formula-piece"><div class="fp-sym">≤&nbsp;2</div><div class="fp-name">Recovery budget</div><div class="fp-desc">While the counter stays at or below the threshold, the Orchestrator keeps dispatching — small errors get a chance to self-correct.</div></div>
+      <div class="formula-piece"><div class="fp-sym" style="color:var(--amber-text);">BREAK</div><div class="fp-name">Leave the inner loop</div><div class="fp-desc">Once the budget is exceeded, execution stops. No more blind retries.</div></div>
+      <div class="formula-piece"><div class="fp-sym" style="color:var(--teal-text);">REFLECT</div><div class="fp-name">Self-refinement</div><div class="fp-desc">A new outer-loop pass asks: what went wrong, what did we learn, what would we do differently?</div></div>
+      <div class="formula-piece"><div class="fp-sym" style="color:var(--purple-text);">REVISE</div><div class="fp-name">New task ledger</div><div class="fp-desc">The task ledger is updated, the plan rewritten, agent contexts cleared, and the inner loop restarts.</div></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:1.5rem;">
+    <div class="card-sm"><div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:4px;">STEP 1 · WATCH</div><div style="font-size:12.5px;color:var(--text2);line-height:1.6;">Each cycle, the progress ledger answers five questions — including "is the team looping?" and "is forward progress being made?"</div></div>
+    <div class="card-sm"><div style="font-family:var(--mono);font-size:11px;color:var(--red-text);margin-bottom:4px;">STEP 2 · COUNT</div><div style="font-size:12.5px;color:var(--text2);line-height:1.6;">A repeated action or a stalled state increments the stagnation counter. Two identical failed scrapes? That's a loop.</div></div>
+    <div class="card-sm"><div style="font-family:var(--mono);font-size:11px;color:var(--teal-text);margin-bottom:4px;">STEP 3 · BUDGET</div><div style="font-size:12.5px;color:var(--text2);line-height:1.6;">While the counter is within budget (≤ 2 in the paper's experiments), the team keeps its head down and keeps trying.</div></div>
+    <div class="card-sm"><div style="font-family:var(--mono);font-size:11px;color:var(--purple-text);margin-bottom:4px;">STEP 4 · RE-PLAN</div><div style="font-size:12.5px;color:var(--text2);line-height:1.6;">Budget exceeded → break, reflect, update the task ledger, rewrite the plan, reset agents, spin the inner loop again.</div></div>
+    <div class="card-sm"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:4px;">STEP 5 · TERMINATE</div><div style="font-size:12.5px;color:var(--text2);line-height:1.6;">If re-plans run out — a configurable maximum attempt count or time limit — the loops end and the transcript is reviewed.</div></div>
+    <div class="card-sm"><div style="font-family:var(--mono);font-size:11px;color:var(--green-text);margin-bottom:4px;">STEP 6 · REPORT</div><div style="font-size:12.5px;color:var(--text2);line-height:1.6;">On termination the Orchestrator reviews the full transcript plus ledgers, then reports the final answer — or its best educated guess.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Why This Matters</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">The counter gives agents a <em>limited budget to recover from small errors</em> while guaranteeing they cannot spin forever — and the re-plan means the system's response to failure is a <span class="highlight">new strategy</span>, not louder repetition. In the paper's own error analysis, the top failure code is exactly the disease this treats: <strong>persistent-inefficient-actions</strong> — agents repeating unproductive behaviors without adapting. The stagnation mechanism is the cure, applied at the team level.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">One <em>Config</em>, Three Benchmarks</h2>
+  <p class="section-desc">The same unmodified team — same agents, same collaboration, same prompts — ran on GAIA, AssistantBench, and WebArena. The result: statistically competitive performance with the state of the art.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Test-Set Results — Task Completion Rate % (Table 1 of the paper)</div>
+    <table class="comp-table">
+      <thead><tr><th>System (model)</th><th>GAIA</th><th>AssistantBench (EM)</th><th>AssistantBench (acc)</th><th>WebArena</th></tr></thead>
+      <tbody>
+        <tr><td>GPT-4 (no agent team)</td><td>6.67</td><td>6.1</td><td>16.5</td><td>14.9</td></tr>
+        <tr><td class="comp-best">Magentic-One (GPT-4o)</td><td class="comp-best">32.33</td><td class="comp-best">11.0</td><td class="comp-best">25.3</td><td class="comp-best">32.8</td></tr>
+        <tr><td class="comp-best">Magentic-One (GPT-4o + o1-preview)</td><td class="comp-best">38.00</td><td class="comp-best">13.3</td><td class="comp-best">27.7</td><td>—*</td></tr>
+        <tr><td>Best single-benchmark baseline (Oct 2024)</td><td>40.53 (omne v0.1)</td><td>13.8 (SPA→CB, Claude)</td><td>26.4</td><td>37.2 (WebPilot)</td></tr>
+        <tr><td>Human</td><td>92.0</td><td>—</td><td>—</td><td>78.2</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">* o1-preview refused parts of WebArena (26% of Gitlab tasks), so that cell is not reported. Baselines differ per column — among Table 1's baselines, no prior system (other than base models) had been evaluated across all three benchmarks. Magentic-One (GPT-4o, o1) is statistically comparable to SOTA on GAIA and AssistantBench; on WebArena, the GPT-4o variant is comparable to most SOTA methods except WebPilot and Jace.AI.</p>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">GAIA · TEST SET</div>
+      <div class="result-score" style="color:var(--amber-text);">38.0</div>
+      <div class="result-label">% vs 92.0 human — statistically comparable to SOTA</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:38%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">GPT-4o + o1-preview · 300 hidden questions</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">ASSISTANTBENCH · ACC</div>
+      <div class="result-score" style="color:var(--blue-text);">27.7</div>
+      <div class="result-label">% accuracy (13.3 EM) — comparable to SOTA</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:27.7%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">181 hidden questions · real websites</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">WEBARENA · ALL 812</div>
+      <div class="result-score" style="color:var(--teal-text);">32.8</div>
+      <div class="result-label">% (GPT-4o config) — comparable to most SOTA</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:32.8%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">5 synthetic websites + cross-site tasks</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">MODELS SWAPPED, TEAM UNCHANGED</div>
+      <div class="result-score" style="color:var(--purple-text);">0</div>
+      <div class="result-label">changes to agent capabilities or collaboration across benchmarks</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:4%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">Only a final formatting prompt differed</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Ablations — Every Piece Pulls Its Weight (GAIA validation set)</div>
+    <div id="ablChart"></div>
+    <p style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6;">Replacing the Orchestrator with a simple group-chat manager — no ledgers, no planning, no loop detection — drops performance by <strong>~31%</strong>. Removing any single specialist costs between <strong>~21%</strong> (Coder, ComputerTerminal) and <strong>~39%</strong> (FileSurfer). The team even compensates creatively: with no Coder, agents once had the FileSurfer read code and reason out the answer.</p>
+  </div>
+
+  <div class="card" style="border-color:rgba(239,68,68,0.25);">
+    <div class="card-label" style="color:var(--red-text);">What Magentic-One Did NOT Solve</div>
+    <ul class="problem-list" style="margin-top:8px;">
+      <li><strong>Cost and latency:</strong> "perhaps several US dollars, and tens of minutes per task" — dozens of LLM calls per problem, unmeasured in the formal evaluation.</li>
+      <li><strong>No cross-task memory:</strong> lessons learned on one task are discarded; agents rediscover the same sub-tasks on WebArena over and over.</li>
+      <li><strong>Fixed team:</strong> the same five agents always play, whether needed or not — unused agents can distract the Orchestrator.</li>
+      <li><strong>Modality gaps:</strong> it cannot watch videos, hears only transcripts of audio, and markdown conversion flattens document layout.</li>
+      <li><strong>Narrow coding:</strong> the Coder rewrites a whole standalone program per request — ill-suited to multi-file repos (think SWE-bench).</li>
+      <li><strong>Stochastic runs:</strong> LLM variance is real — the authors counter with AutoGenBench repetition, 95% error bars, and statistical tests, not by eliminating it.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Orchestration</em> as a Pattern</h2>
+  <p class="section-desc">Magentic-One distilled "how should a generalist agent team be run?" into a reusable architecture. Its ideas outlived its benchmark numbers.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">📦 Open-source release</div><div class="notice-text">The full system shipped on Microsoft's AutoGen framework (aka.ms/magentic-one) — a rare open, reproducible generalist agent at the time.</div></div>
+    <div class="notice-card"><div class="notice-title">🧠 The orchestrator pattern</div><div class="notice-text">Plan → dispatch → track → re-plan became a reference architecture for lead-agent designs across later agent frameworks.</div></div>
+    <div class="notice-card"><div class="notice-title">🧩 Generalist over specialist</div><div class="notice-text">One unchanged team, three benchmarks, statistically competitive — evidence that breadth comes from composition, not from one giant prompt.</div></div>
+    <div class="notice-card"><div class="notice-title">📒 Ledgers as a design idea</div><div class="notice-text">Explicit checklists for "what do I know" (task ledger) and "where am I" (progress ledger) — short-term memory as an engineering artifact, not a hidden state.</div></div>
+    <div class="notice-card"><div class="notice-title">🛡️ Safety spotlight</div><div class="notice-text">The paper documents real near-misses — locked accounts, agents trying to recruit humans — arguing for least privilege and maximum human oversight.</div></div>
+    <div class="notice-card"><div class="notice-title">📏 Rigorous agent evaluation</div><div class="notice-text">AutoGenBench: fresh Docker containers per task, repetition for stochastic variance, and isolation from side effects — now a template for agentic evals.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The Orchestrator's Two <em>Ledgers</em></h2>
+  <p class="section-desc">Magentic-One's architecture is a loop with bookkeeping. An outer loop maintains the task ledger — what is given, what must be looked up, what can be derived, what is guessed, and the plan. An inner loop maintains the progress ledger — five questions asked every cycle. The design insight: re-planning is triggered by accounting, not vibes. When progress stalls twice, the orchestrator stops and thinks.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">📒</div>
+      <div class="problem-title">What the Ledgers Buy</div>
+      <ul class="problem-list">
+        <li>One unchanged configuration across three benchmarks: GAIA 38.0 · AssistantBench 27.7 · WebArena 32.8 — generalist by not over-fitting to any arena</li>
+        <li>Stagnation managed explicitly: a stall counter with ≤2 budget triggers reflection and a <em>revised plan</em>, not endless retries</li>
+        <li>Ablations: −31% without the ledgers; −21% to −39% for removing any single agent — the bookkeeping <em>is</em> the system</li>
+        <li>WebSurfer + FileSurfer + Coder + Terminal on AutoGen — four specialists, zero bespoke glue</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">⏳</div>
+      <div class="problem-title">The Price of Generalism</div>
+      <ul class="problem-list">
+        <li>Several dollars and tens of minutes per task — generalist loops are not cheap loops</li>
+        <li>No cross-task memory: every task starts from zero — the memory track's whole motivation</li>
+        <li>Fixed five-agent roster: the team can not recruit for the task (contrast MetaGPT's fixed SOPs — same rigidity, different layer)</li>
+        <li>Safety requires human oversight — an agent driving browsers and terminals unattended is a risk, not a demo</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Run the Outer Loop</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A GAIA-style task, live: "What is the height of the waterfall in the photo the user attached?" Watch both ledgers update as the WebSurfer searches, gets stalled by a paywall, and the orchestrator reflects and re-plans. The stall counter is the whole show — when it hits 2, strategy changes.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:12px;">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--amber-text);font-weight:700;margin-bottom:8px;">TASK LEDGER · outer loop</div>
+          <div id="mgoTask" style="font-family:var(--mono);font-size:10.5px;color:var(--text2);line-height:1.9;"></div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--blue-text);font-weight:700;margin-bottom:8px;">PROGRESS LEDGER · inner loop</div>
+          <div id="mgoProg" style="font-family:var(--mono);font-size:10.5px;color:var(--text2);line-height:1.9;"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <button class="btn-primary" id="mgoNext" type="button" style="font-size:12.5px;padding:8px 16px;">▶ Next cycle</button>
+        <span id="mgoStall" style="font-family:var(--mono);font-size:10.5px;color:var(--text3);">stall budget: 0 / 2 used</span>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Generalist = bookkeeping + humility</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The −31% ablation without ledgers is the number to remember: the same four specialists, blind, lose a third of the score. Being general is less about having more agents and more about knowing precisely what you know — the given/lookup/derive/guess taxonomy is epistemic hygiene implemented as a prompt. The family debate it settles into: <a href="./MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">MetaGPT</a> fixed the workflow, Magentic-One fixes the bookkeeping, <a href="./Multi_Agent_Collaboration_Mechanisms_A_Survey_of_LLMs.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">the survey</a> maps the whole space, and <a href="./AgentBench_Evaluating_LLMs_as_Agents.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">AgentBench</a> grades the results.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧮 Given · look up · derive · guess</div><div class="notice-text">The ledger's fact taxonomy forces the plan to declare its epistemics. Tasks fail differently when guesses are labeled as guesses — the orchestrator can double-check exactly the fragile steps.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 Stall budget ≤ 2</div><div class="notice-text">Two unproductive cycles trigger reflection and re-planning. Infinite retry is the default failure of agent loops — a budget converts it into a strategy change.</div></div>
+    <div class="notice-card"><div class="notice-title">🏗️ AutoGen substrate</div><div class="notice-text">Built on the AutoGen framework: the contribution is orchestration logic, not custom agents. Evidence that the layer above the agents is where generalism lives.</div></div>
+    <div class="notice-card"><div class="notice-title">💸 The honest cost column</div><div class="notice-text">Dollars and tens of minutes per task, no cross-task memory, safety oversight required. The paper reports its own limits prominently — rare, and necessary for the field's calibration.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the Magentic-One paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Magentic-One = 1 Orchestrator + 4 specialists (WebSurfer, FileSurfer, Coder, ComputerTerminal), built on AutoGen — the name fuses "multi" + "agentic".</div>
+    <div class="card-sm">✅ Outer loop keeps the task ledger (facts: given / look up / derive, guesses, plan); inner loop keeps the progress ledger (five questions per cycle).</div>
+    <div class="card-sm">✅ Stagnation is managed, not ignored: a stall counter with a ≤ 2 budget triggers reflection and a revised plan instead of endless retries.</div>
+    <div class="card-sm">✅ One unchanged configuration scored 38.0 on GAIA, 27.7 accuracy on AssistantBench, and 32.8 on WebArena — statistically competitive with SOTA.</div>
+    <div class="card-sm">✅ Ablations prove the design: −31% without the Orchestrator's ledgers; −21% to −39% for removing any single agent.</div>
+    <div class="card-sm">✅ Honest limits: several dollars and tens of minutes per task, no cross-task memory, a fixed five-agent roster, and real safety risks requiring oversight.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2411.04468" target="_blank" rel="noopener noreferrer">"Magentic-One: A Generalist Multi-Agent System for Solving Complex Tasks"</a> (Fourney et al., 2024)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2411.04468" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">MetaGPT Guide</a>
+    <a class="footer-link" href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html">CAMEL Guide</a>
+    <a class="footer-link" href="./ReAct.html">ReAct Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
   </div>
 </footer>
 
 <script>
-const LEDGER_STEPS = [
-  {
-    task: `[1] Search SEC EDGAR / MSFT IR for 2023 Cloud Revenue (Pending)\n[2] Extract figures into tabular format (Pending)\n[3] Plot YoY growth chart using Python (Pending)\nFacts: Target is Microsoft Intelligent Cloud segment.`,
-    progress: `Turn 1: Orchestrator -> WebSurfer\nInstruction: "Navigate to microsoft.com/investor and locate FY23 Q4 press release."\nAction: WebSurfer opens browser to investor site.`
-  },
-  {
-    task: `[1] Search SEC EDGAR / MSFT IR (Completed)\n[2] Extract figures into tabular format (Pending)\n[3] Plot YoY growth chart using Python (Pending)\nFacts: Intelligent Cloud FY23 = $87.91B; FY22 = $75.25B (+17%).`,
-    progress: `Turn 2: WebSurfer -> Orchestrator\nWebSurfer extracted Segment Revenue table.\nTurn 3: Orchestrator -> Coder\nInstruction: "Write a matplotlib script to plot FY22 vs FY23 Cloud Revenue."`
-  },
-  {
-    task: `[1] Search SEC EDGAR / MSFT IR (Completed)\n[2] Extract figures into tabular format (Completed)\n[3] Plot YoY growth chart using Python (In Progress)\nFacts: Data verified against 10-K report.`,
-    progress: `Turn 4: Coder -> ComputerTerminal\nInstruction: "Execute growth_plot.py in container sandbox."\nTerminal runs python script and outputs 'cloud_growth.png' (Exit code 0).`
-  },
-  {
-    task: `[1] Search SEC EDGAR / MSFT IR (Completed)\n[2] Extract figures into tabular format (Completed)\n[3] Plot YoY growth chart using Python (Completed)\nTASK COMPLETE: Saved growth chart and compiled summary report.`,
-    progress: `Turn 5: Orchestrator Final Verdict\nVerification passed. Task complete in 5 turns with 0 stalls.`
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','orchestrator','team','stagnation','results','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === LOOP LENS DEMO ===
+(function(){
+  const viewEl=document.getElementById('llView');
+  const capEl=document.getElementById('llCaption');
+  const outerBtn=document.getElementById('llOuterBtn');
+  const innerBtn=document.getElementById('llInnerBtn');
+  if(!viewEl||!capEl||!outerBtn||!innerBtn)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const outerNodes=[
+    {icon:'🎯',title:'GOAL',desc:'The task arrives — a prompt or benchmark question.',color:'var(--amber)'},
+    {icon:'📋',title:'TASK LEDGER',desc:'Seed it: facts given · to look up · to derive · guesses.',color:'var(--blue)'},
+    {icon:'🗺️',title:'PLAN',desc:'Step-by-step natural-language plan, each step → an agent.',color:'var(--teal)'},
+    {icon:'🔁',title:'RESET TEAM',desc:'All agents clear context — the plan is the source of truth.',color:'var(--purple)'}
+  ];
+  const innerNodes=[
+    {icon:'🗳️',title:'1 · PICK AGENT',desc:'Which agent should speak next?',color:'var(--blue)'},
+    {icon:'📤',title:'2 · INSTRUCT',desc:'Send one explicit instruction or question.',color:'var(--teal)'},
+    {icon:'👁️',title:'3 · ACT + OBSERVE',desc:'The agent acts and reports the new state.',color:'var(--purple)'},
+    {icon:'📒',title:'4 · PROGRESS LEDGER',desc:'Answer the five questions; tick the stall counter if looping.',color:'var(--amber)'},
+    {icon:'🔀',title:'5 · CHECK',desc:'Complete? Looping? Moving? → loop again, or exit.',color:'var(--red)'}
+  ];
+  const caps={
+    outer:'OUTER LOOP — runs once per plan (and once more after every re-plan). It builds the task ledger, writes the plan, and resets the team. In the paper: gpt-4o, or o1-preview in the stronger configuration.',
+    inner:'INNER LOOP — spins once per team action. It answers five questions into the progress ledger, dispatches one agent, and watches the stagnation counter. Budget exceeded → exit to the outer loop and re-plan.'
+  };
+  let mode='outer',timer=null,hl=-1;
+  function nodeHtml(n,i){
+    const anim=!reduced?`animation:fadeUp .5s ease ${(i*0.09).toFixed(2)}s both;`:'';
+    return `<div data-i="${i}" style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid ${n.color};border-radius:var(--radius);padding:8px 12px;display:flex;gap:10px;align-items:center;${anim}">
+      <div style="font-size:1.2rem;">${n.icon}</div>
+      <div><div style="font-weight:600;font-size:13px;color:${n.color};">${n.title}</div><div style="font-size:11.5px;color:var(--text2);line-height:1.5;">${n.desc}</div></div></div>`;
   }
-];
-
-let simIdx = 0;
-function updateLedger() {
-  const item = LEDGER_STEPS[simIdx];
-  document.getElementById('taskLedgerContent').innerHTML = item.task.replace(/\n/g, '<br>');
-  document.getElementById('progressLedgerContent').innerHTML = item.progress.replace(/\n/g, '<br>');
-}
-
-document.getElementById('nextStepBtn').addEventListener('click', () => {
-  simIdx = (simIdx + 1) % LEDGER_STEPS.length;
-  updateLedger();
-});
-
-updateLedger();
-
-// Quiz Data
-const QUIZ_ITEMS = [
-  {
-    q: 'What is the role of the Orchestrator\'s Task Ledger in Magentic-One?',
-    options: [
-      'It stores git credentials and SSH keys',
-      'It tracks global goals, sub-tasks, and accumulated facts across the entire session (Outer Loop)',
-      'It logs every individual keystroke of the human user',
-      'It executes C++ binaries'
-    ],
-    correct: 1,
-    explain: 'The Task Ledger is part of the Orchestrator\'s outer loop, maintaining the high-level roadmap, verified facts, and sub-task statuses.'
-  },
-  {
-    q: 'How does Magentic-One detect that subagents are stuck in a dead-end loop?',
-    options: [
-      'By checking GPU temperature',
-      'Using a progress stall counter; if no measurable progress occurs over successive turns, a replanning reset is triggered',
-      'By waiting 24 hours',
-      'By having human engineers manually intervene'
-    ],
-    correct: 1,
-    explain: 'Magentic-One tracks stall counters in the Progress Ledger; if progress stagnates, the outer loop intervenes to revise the plan or clear noisy context.'
-  },
-  {
-    q: 'Which specialized agent in Magentic-One is responsible for web browsing?',
-    options: [
-      'FileSurfer',
-      'WebSurfer',
-      'TerminalSurfer',
-      'DOMParser'
-    ],
-    correct: 1,
-    explain: 'WebSurfer is the dedicated multimodal web browsing agent powered by Playwright and Chromium.'
-  },
-  {
-    q: 'What open-source multi-agent framework serves as the underlying substrate for Magentic-One?',
-    options: [
-      'LangChain Classic',
-      'AutoGen',
-      'Hugging Face Transformers',
-      'Haystack'
-    ],
-    correct: 1,
-    explain: 'Magentic-One was built and released by Microsoft Research as part of the AutoGen multi-agent ecosystem.'
-  },
-  {
-    q: 'On which challenging multimodal general assistant benchmark did Magentic-One demonstrate state-of-the-art multi-agent results?',
-    options: [
-      'GAIA (General AI Assistants)',
-      'ImageNet',
-      'MNIST',
-      'GLUE'
-    ],
-    correct: 0,
-    explain: 'Magentic-One achieved competitive SOTA results on the GAIA benchmark, outperforming previous single-agent and tool-augmented baselines.'
+  function arrowHtml(i,n){
+    const last=i===n-1;
+    const label=mode==='outer'?(last?'→ start the INNER LOOP ▸':'↓'):(last?'↻ back to 1 · or ⏏ exit to outer loop':'↓');
+    const anim=!reduced?`animation:fadeUp .5s ease ${(i*0.09+0.05).toFixed(2)}s both;`:'';
+    return `<div style="text-align:center;color:var(--text3);font-family:var(--mono);font-size:12px;padding:2px 0;${anim}">${label}</div>`;
   }
+  function render(){
+    if(timer){clearInterval(timer);timer=null;hl=-1;}
+    const nodes=mode==='outer'?outerNodes:innerNodes;
+    viewEl.innerHTML=nodes.map((n,i)=>nodeHtml(n,i)+arrowHtml(i,nodes.length)).join('');
+    capEl.textContent=caps[mode];
+    if(mode==='inner'&&!reduced){
+      const cards=viewEl.querySelectorAll('[data-i]');
+      const step=()=>{hl=(hl+1)%cards.length;cards.forEach(c=>{const on=parseInt(c.getAttribute('data-i'),10)===hl;c.style.background=on?'var(--amber-dim)':'var(--bg3)';c.style.borderColor=on?'rgba(245,158,11,0.45)':'var(--border)';});};
+      step();timer=setInterval(step,1700);
+    }
+  }
+  outerBtn.addEventListener('click',()=>{mode='outer';outerBtn.className='btn-primary';innerBtn.className='btn-outline';render();});
+  innerBtn.addEventListener('click',()=>{mode='inner';innerBtn.className='btn-primary';outerBtn.className='btn-outline';render();});
+  render();
+})();
+
+// === ORCHESTRATOR CONSOLE DEMO ===
+(function(){
+  const factsEl=document.getElementById('ocFacts');
+  const planEl=document.getElementById('ocPlan');
+  const progEl=document.getElementById('ocProg');
+  const agentsEl=document.getElementById('ocAgents');
+  const logEl=document.getElementById('ocLog');
+  const stepBtn=document.getElementById('ocStepBtn');
+  const resetBtn=document.getElementById('ocResetBtn');
+  const phaseEl=document.getElementById('ocPhase');
+  const alertEl=document.getElementById('ocAlert');
+  if(!factsEl||!planEl||!progEl||!agentsEl||!logEl||!stepBtn||!resetBtn||!phaseEl||!alertEl)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const AGENTS=[
+    {k:'web',name:'WebSurfer',icon:'🌐'},
+    {k:'file',name:'FileSurfer',icon:'📂'},
+    {k:'coder',name:'Coder',icon:'⌨️'},
+    {k:'term',name:'ComputerTerminal',icon:'🖥️'}
+  ];
+  const FACTS=[
+    {id:'f1',tag:'GIVEN',txt:'compare 2024 electric SUV prices · cite sources',color:'var(--blue)'},
+    {id:'f2',tag:'LOOK UP',txt:'prices for 3 shortlisted models',color:'var(--teal)'},
+    {id:'f3',tag:'DERIVE',txt:'price deltas vs. average',color:'var(--purple)'},
+    {id:'f4',tag:'GUESS',txt:'EV SUVs cluster ~$50–80k (verify)',color:'var(--text3)'}];
+  const PLANS={
+    A:[{a:'WebSurfer',txt:'search + shortlist 3 models'},{a:'Coder',txt:'one script scrapes all 3 prices'},{a:'Terminal',txt:'run script → save table'},{a:'Coder',txt:'write summary with sources'}],
+    B:[{a:'WebSurfer',txt:'search + shortlist 3 models'},{a:'WebSurfer',txt:'fetch each price, one site at a time'},{a:'Coder',txt:'build comparison table + summary'},{a:'Terminal',txt:'run generator → final output'}]};
+  const STEPS=[
+    {ph:'OUTER',log:'task received → reflect on the request, seed TASK LEDGER',facts:['f1','f4']},
+    {ph:'OUTER',log:'add facts to look up / derive → consider the team → write PLAN v1',facts:['f2','f3'],prog:{complete:'No',loop:'No',fwd:'—',stall:'0',next:'(plan ready)',instr:'—'}},
+    {ph:'INNER',log:'dispatch WebSurfer: "search 2024 electric SUV prices + sources"',agent:'web',plan:{i:0,s:1},prog:{fwd:'Yes',next:'WebSurfer',instr:'search prices + sources'}},
+    {ph:'INNER',log:'WebSurfer ✓ 3 models shortlisted, source URLs saved',agent:'web',prog:{fwd:'Yes'}},
+    {ph:'INNER',log:'dispatch Coder: "one script, all three prices at once"',agent:'coder',plan:{i:1,s:1},prog:{next:'Coder',instr:'scrape all 3 prices'}},
+    {ph:'INNER',log:'✗ Terminal: script timed out on site B (attempt 1)',agent:'term',plan:{i:1,s:2},prog:{fwd:'No — stalled',stall:'1',next:'ComputerTerminal',instr:'run script'}},
+    {ph:'INNER',log:'✗ same script — same timeout (attempt 2)',agent:'term',prog:{loop:'YES — repeating',stall:'2'}},
+    {ph:'ALERT',log:'⚠ STAGNATION: loop + no forward progress, counter over budget → break inner loop',alert:'⚠ STAGNATION DETECTED — the team is repeating itself with no forward progress, and the stall counter has exceeded its ≤ 2 budget. Breaking out of the inner loop…',prog:{stall:'3 · exceeded'}},
+    {ph:'OUTER',log:'reflect: batch scraping is fragile → revise plan: fetch one site at a time',replan:true,prog:{loop:'No',fwd:'—',stall:'0',next:'(re-planned)',instr:'—'}},
+    {ph:'INNER',log:'dispatch WebSurfer: "price for Model A" … B ✓ … C ✓',agent:'web',plan:{i:1,s:1},prog:{fwd:'Yes',next:'WebSurfer',instr:'one price at a time'}},
+    {ph:'INNER',log:'dispatch Coder: "build table + write summary" · ComputerTerminal ✓ runs it',agent:'coder',plan:{i:2,s:1},prog:{next:'Coder',instr:'build table + summary'}},
+    {ph:'FINAL',log:'review transcript + ledgers → deliver summary with sources ✓',done:true,plan:{i:3,s:1},prog:{complete:'YES',fwd:'done',stall:'—',next:'—',instr:'—'}}
+  ];
+  let idx=0,busy=false,planKey='A',planState=[0,0,0,0],shownFacts=[];
+  let prog={complete:'—',loop:'—',fwd:'—',stall:'0',next:'—',instr:'—'};
+  function renderFacts(){
+    factsEl.innerHTML=FACTS.map(f=>{
+      const on=shownFacts.indexOf(f.id)>=0;
+      return `<div style="color:${on?'var(--text2)':'var(--text3)'};opacity:${on?1:0.4};">${on?'▣':'▢'} <span style="color:${on?f.color:'var(--text3)'};font-weight:600;">${f.tag}</span> · ${f.txt}</div>`;
+    }).join('');
+  }
+  function renderPlan(replan){
+    const rows=PLANS[planKey];
+    const head='<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">PLAN v'+(planKey==='A'?'1 · initial plan':'2 · revised after reflection')+'</div>';
+    planEl.innerHTML=head+rows.map((r,i)=>{
+      const st=planState[i];
+      const mark=st===1?'✓':(st===2?'✗':'·');
+      const a=(replan&&!reduced)?`animation:fadeUp .4s ease ${(i*0.08).toFixed(2)}s both;`:'';
+      return `<div style="color:${st===0?'var(--text3)':'var(--text2)'};${a}">${mark} ${i+1}. <span style="color:${st===2?'var(--red)':'var(--amber)'};font-weight:600;">${r.a}</span> — ${r.txt}</div>`;
+    }).join('');
+  }
+  function renderProg(){
+    const rows=[['task complete?',prog.complete],['team looping?',prog.loop],['forward progress?',prog.fwd],['stall counter',prog.stall],['next agent',prog.next],['instruction',prog.instr]];
+    progEl.innerHTML=rows.map(r=>{const k=r[0],v=String(r[1]);let c='var(--text2)';
+      if(k==='task complete?'&&v==='YES')c='var(--green)';
+      else if(k==='team looping?'&&v.indexOf('YES')===0)c='var(--red)';
+      else if(k==='forward progress?'&&v==='Yes')c='var(--green)';
+      else if(k==='forward progress?'&&v.indexOf('No')===0)c='var(--red)';
+      else if(k==='stall counter'&&v!=='0'&&v!=='—')c='var(--red)';
+      return `<div><span style="color:var(--text3);">${k}</span> <span style="color:${c};font-weight:600;">${v}</span></div>`;
+    }).join('');
+  }
+  function renderAgents(active){
+    agentsEl.innerHTML=AGENTS.map(a=>{
+      const on=active===a.k;
+      return `<div style="border:1px solid ${on?'rgba(245,158,11,0.45)':'var(--border)'};background:${on?'var(--amber-dim)':'var(--bg2)'};border-radius:var(--radius);padding:8px 10px;font-family:var(--mono);font-size:11px;color:${on?'var(--amber)':'var(--text3)'};font-weight:600;${on&&!reduced?'animation:pulse 1.3s ease-in-out infinite;':''}">${a.icon} ${a.name}${on?' ◂ dispatched':''}</div>`;
+    }).join('');
+  }
+  function addLog(ph,line){
+    const div=document.createElement('div');
+    let c='#cbd5e1';
+    if(line.indexOf('✗')>=0)c='#f87171';
+    else if(line.indexOf('⚠')>=0)c='#fbbf24';
+    else if(line.indexOf('✓')>=0)c='#34d399';
+    div.style.color=c;
+    if(!reduced)div.style.animation='fadeUp .4s ease both';
+    div.textContent='['+ph.toLowerCase()+'] '+line;
+    logEl.appendChild(div);
+    logEl.scrollTop=logEl.scrollHeight;
+  }
+  function applyStep(){
+    if(busy)return;
+    if(idx>=STEPS.length){phaseEl.textContent='run complete · press Reset to replay';return;}
+    const s=STEPS[idx];busy=true;
+    phaseEl.textContent='step '+(idx+1)+'/'+STEPS.length+' · '+s.ph+(s.replan?' · RE-PLANNING':'');
+    (s.facts||[]).forEach(f=>{if(shownFacts.indexOf(f)<0)shownFacts.push(f);});
+    if(s.plan)planState[s.plan.i]=s.plan.s;
+    if(s.replan){planKey='B';planState=[1,0,0,0];}
+    if(s.prog)Object.keys(s.prog).forEach(k=>{prog[k]=s.prog[k];});
+    if(s.alert!==undefined){alertEl.style.display='block';alertEl.textContent=s.alert;}
+    else if(s.replan){alertEl.style.display='block';alertEl.textContent='RE-PLANNING — reflection: batch scraping is fragile. New plan v2: fetch prices one at a time · agents reset · inner loop restarting.';}
+    else{alertEl.style.display='none';}
+    addLog(s.ph,s.log);
+    const finish=()=>{
+      renderFacts();renderPlan(s.replan);renderProg();renderAgents(s.agent||null);
+      busy=false;idx++;
+      if(idx>=STEPS.length)phaseEl.textContent='run complete · press Reset to replay';
+    };
+    if(reduced){finish();}else{setTimeout(finish,280);}
+  }
+  function reset(){
+    idx=0;busy=false;planKey='A';planState=[0,0,0,0];shownFacts=[];
+    prog={complete:'—',loop:'—',fwd:'—',stall:'0',next:'—',instr:'—'};
+    alertEl.style.display='none';alertEl.textContent='';
+    logEl.innerHTML='<div style="color:#64748b;">// console ready — press Step to advance the orchestration cycle</div>';
+    renderFacts();renderPlan(false);renderProg();renderAgents(null);
+    phaseEl.textContent='step 0/'+STEPS.length+' · idle';
+  }
+  stepBtn.addEventListener('click',applyStep);
+  resetBtn.addEventListener('click',reset);
+  reset();
+})();
+
+// === TEAM ROSTER DEMO ===
+(function(){
+  const tabsEl=document.getElementById('trTabs');
+  const detailEl=document.getElementById('trDetail');
+  const mapEl=document.getElementById('trMap');
+  if(!tabsEl||!detailEl)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const ROSTER={
+    web:{name:'WebSurfer',icon:'🌐',pill:'pill-blue',kind:'LLM-based · multimodal',color:'var(--blue)',domain:'the live web — any page a Chromium browser can render',
+      tools:['visit URL','web search','scroll viewport','click / type','summarize page','Q&A over page'],
+      action:'search("2024 electric SUV prices")\n→ click("Model A — pricing")\n→ report: annotated screenshot + page description',
+      when:'The task needs live facts or real actions on a website — searching, navigating, reading, or interacting with pages.',
+      note:'Grounds every click with set-of-marks prompting on annotated screenshots, and even reasons about content hiding below the fold. The paper\u2019s analogy: telephone tech support — the Orchestrator knows what to do but cannot act, so it relays instructions and reads the reports.'},
+    file:{name:'FileSurfer',icon:'📂',pill:'pill-green',kind:'LLM-based',color:'var(--teal)',domain:'local files — attachments and folder trees',
+      tools:['open PDF / Office / image / audio / video','list directory','navigate folders','summarize file','Q&A over file'],
+      action:'read("briefing.pdf")\n→ summarize(pages 2–4)\n→ answer("what is the 2024 budget?")',
+      when:'The task ships with attachments — PDFs, documents, spreadsheets — or requires walking a local folder structure.',
+      note:'Drives a custom read-only, markdown-based preview app: every document, even audio, is converted to text it can read. That flattening means it cannot inspect a document\u2019s figures or layout — a limitation the authors state plainly.'},
+    coder:{name:'Coder',icon:'⌨️',pill:'pill-purple',kind:'LLM-based',color:'var(--purple)',domain:'computation — turning findings into code and artifacts',
+      tools:['write Python programs','debug from console output','analyze collected data','create artifacts'],
+      action:'write("compare_prices.py")\n→ input: 3 prices + source URLs\n→ output: sorted comparison table',
+      when:'Numbers must be computed, cleaned, or compared — or a new artifact must be built from what the other agents found.',
+      note:'Specialized purely through its system prompt: it writes standalone programs and debugs them from the terminal\u2019s console output. In the o1-preview configuration, this is one of two roles upgraded to the stronger reasoning model.'},
+    term:{name:'ComputerTerminal',icon:'🖥️',pill:'pill-amber',kind:'deterministic · no LLM',color:'var(--amber)',domain:'the console — where code actually runs',
+      tools:['execute Python','run shell commands','install libraries'],
+      action:'run("python compare_prices.py")\n→ stdout: "table saved to summary.md"',
+      when:'Code must be executed or a library installed — it is the only agent on the team that can make code real.',
+      note:'Contains no LLM at all: it deterministically runs whatever it is handed, and its console output feeds the Coder\u2019s next debugging round. It can even expand the team\u2019s toolkit by installing new libraries.'}
+  };
+  const MAP=[['find a fact on the web','web'],['read the attached PDF','file'],['compute / transform data','coder'],['actually run the script','term']];
+  let cur='web';
+  window._trSelect=function(k){cur=k;render();};
+  function render(){
+    tabsEl.innerHTML=Object.keys(ROSTER).map(k=>{
+      const r=ROSTER[k];const on=k===cur;
+      return `<button type="button" style="font-family:var(--mono);font-size:11px;padding:6px 12px;border-radius:6px;border:1px solid ${on?'rgba(245,158,11,0.4)':'var(--border)'};background:${on?'var(--amber-dim)':'var(--bg3)'};color:${on?'var(--amber)':'var(--text2)'};cursor:pointer;" onclick="window._trSelect('${k}')">${r.icon} ${r.name}</button>`;
+    }).join('');
+    const r=ROSTER[cur];
+    detailEl.innerHTML=`<div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid ${r.color};border-radius:var(--radius);padding:1rem;${reduced?'':'animation:fadeUp .45s ease both;'}">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:8px;"><div style="font-weight:600;font-size:15px;">${r.icon} ${r.name}</div><span class="pill ${r.pill}">${r.kind}</span></div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px;"><strong>Domain:</strong> ${r.domain}</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px;">EXAMPLE ACTION</div>
+      <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;font-family:var(--mono);font-size:11.5px;color:var(--text2);white-space:pre-line;margin-bottom:8px;">${r.action}</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:4px;">TOOLS</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">${r.tools.map(t=>`<span class="pill pill-amber" style="font-size:10px;">${t}</span>`).join('')}</div>
+      <div style="font-size:12px;color:var(--text2);"><strong>The Orchestrator calls it when…</strong> ${r.when}</div>
+      <div style="font-size:11.5px;color:var(--text3);margin-top:8px;border-top:1px dashed var(--border);padding-top:8px;line-height:1.6;">${r.note}</div></div>`;
+  }
+  if(mapEl)mapEl.innerHTML=MAP.map(m=>`<span class="pill ${ROSTER[m[1]].pill}">${m[0]} → ${ROSTER[m[1]].name}</span>`).join('');
+  render();
+})();
+
+// === ABLATION CHART ===
+(function(){const el=document.getElementById('ablChart');if(!el)return;const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;const data=[{label:'full team (ledgers intact)',pct:100,color:'#22c55e'},{label:'simple orchestrator, no ledgers',pct:69,color:'#ef4444'},{label:'− FileSurfer',pct:61,color:'#f59e0b'},{label:'− Coder',pct:79,color:'#3b82f6'},{label:'− ComputerTerminal',pct:79,color:'#a855f7'}];el.innerHTML=data.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:190px;text-align:right;">${d.label}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${d.pct}%;background:${d.color};border-radius:4px;${reduced?'':'animation:scaleIn .8s ease;'}transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:56px;">≈${d.pct}%</div></div>`).join('');})();
+
+// === QUIZ DATA ===
+// === LEDGER LOOP (DEEP DIVE) ===
+(function(){
+  const task=document.getElementById('mgoTask'),prog=document.getElementById('mgoProg'),next=document.getElementById('mgoNext'),stall=document.getElementById('mgoStall');
+  if(!task||!prog||!next||!stall)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const CYCLES=[
+    {t:['FACTS · given: photo of waterfall; question: height','LOOK UP: identify falls from visual + text context','GUESSES: none','PLAN: WebSurfer → identify → search height'],p:['Q: is the plan on track? — yes','Q: what did the last action achieve? — image loaded, location unclear','Q: what remains? → identify + height lookup','Q: any blockers? — none yet'],s:0},
+    {t:['FACTS · given: photo of waterfall','LOOK UP: falls identity + height','DERIVED: candidate match — "Pistil Raven Falls"?','GUESSES: identity (medium confidence)'],p:['Q: on track? — tentative','Q: last action? — WebSurfer found a candidate falls page','Q: remains? → confirm identity, get height','Q: blockers? — page paywalled (stall 1/2)'],s:1},
+    {t:['FACTS · given: photo; DERIVED: candidate identity (unconfirmed)','LOOK UP: alternate sources — travel DB, Wikipedia','GUESSES: identity','PLAN (REVISED): skip paywall → cross-check 2 free sources → then height'],p:['REFLECTION TRIGGERED — stall budget hit 2/2','Q: why stalled? — paywall, no fallback source in plan','Q: new plan? — revised above','Q: confidence? — rising'],s:2},
+    {t:['FACTS · DERIVED: identity confirmed via two sources','LOOK UP: height (Wikipedia)','GUESSES: none remaining','PLAN: fetch height → answer'],p:['Q: on track? — yes','Q: last action? — cross-check succeeded','Q: remains? → height value','Q: blockers? — none'],s:2},
+    {t:['FACTS · identity confirmed; height = 46 m (Wikipedia)','DERIVED: answer ready','GUESSES: none','PLAN: final answer → complete'],p:['Q: task complete? — YES','answer synthesized from ledger facts, each with provenance','outer loop closed · task done'],s:2}
+  ];
+  let i=-1;
+  function draw(){
+    i=(i+1)%CYCLES.length;
+    const c=CYCLES[i];
+    task.innerHTML=c.t.map(l=>'<div style="'+(RM?'':'opacity:0;animation:fadeUp .3s ease forwards;')+'">'+l+'</div>').join('');
+    prog.innerHTML=c.p.map(l=>'<div style="color:'+(l.indexOf('REFLECTION')>=0?'var(--red)':l.indexOf('YES')>=0?'var(--green)':'var(--text2)')+';'+(RM?'':'opacity:0;animation:fadeUp .3s ease forwards;')+'">'+l+'</div>').join('');
+    stall.textContent='stall budget: '+c.s+' / 2 used'+(c.s>=2?' — reflection armed':'');
+    stall.style.color=c.s>=2?'var(--red)':'var(--text3)';
+    next.textContent=i<CYCLES.length-1?'▶ Next cycle':'↻ Restart task';
+  }
+  next.addEventListener('click',draw);
+  if(RM||!('IntersectionObserver' in window)){i=-1;draw();}
+  else{const io=new IntersectionObserver(en=>{if(en.some(e=>e.isIntersecting)){i=-1;draw();io.disconnect();}},{threshold:0.3});io.observe(task);}
+})();
+
+const QUIZ_DATA=[
+  {q:'What are the Orchestrator\u2019s two loops?',opts:['A training loop and a testing loop','An outer loop that plans (task ledger) and an inner loop that executes (progress ledger)','A browser loop and a file loop','A fast loop for easy tasks and a slow loop for hard ones'],correct:1,explain:'The outer loop creates and updates the task ledger — facts, guesses, and a step-by-step plan. The inner loop runs each cycle of execution, filling the progress ledger and dispatching the next agent.'},
+  {q:'What does the progress ledger track, cycle by cycle?',opts:['The token count and cost of each agent','The browser bookmarks and file paths in use','Is the task complete? Is the team looping? Is there forward progress? Who speaks next, and with what instruction?','The training loss of the underlying LLM'],correct:2,explain:'Every inner-loop iteration, the Orchestrator answers five questions into the progress ledger: task complete? looping? forward progress? which agent next? and what instruction to give it.'},
+  {q:'When the stagnation counter exceeds its budget (\u2264 2 in the paper), what happens?',opts:['The system immediately reports failure and shuts down','The Orchestrator breaks from the inner loop, reflects, updates the task ledger, revises the plan, and restarts the inner loop','The team votes on a new leader agent','All agents get a larger context window'],correct:1,explain:'A stall counter ticks up when the team loops or stops making progress. Exceeding the budget breaks the inner loop; the outer loop then reflects on what went wrong and writes a new plan — a new strategy, not more retries.'},
+  {q:'Which of the four specialist agents is deterministic — no LLM calls at all?',opts:['WebSurfer','FileSurfer','Coder','ComputerTerminal'],correct:3,explain:'The ComputerTerminal simply executes Python code or shell commands when asked. The other three are LLM-based agents with capability-specific tools and prompts.'},
+  {q:'What supports Magentic-One\u2019s claim to be a \u201Cgeneralist\u201D system?',opts:['It beat humans on GAIA','It uses the largest model available','One unchanged team and collaboration design achieved statistically competitive performance across GAIA, AssistantBench, and WebArena','It was trained on all three benchmarks'],correct:2,explain:'The same configuration — no changes to agent capabilities or how they collaborate — was statistically competitive with the state of the art on three diverse benchmarks. Among the paper\u2019s baselines, no prior system (other than base models) had even been evaluated on all three.'}
 ];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 
-function renderQuiz() {
-  const container = document.getElementById('quizContainer');
-  container.innerHTML = '';
-  QUIZ_ITEMS.forEach((item, qIdx) => {
-    const card = document.createElement('div');
-    card.className = 'quiz-card';
-    const title = document.createElement('div');
-    title.className = 'quiz-q';
-    title.textContent = `${qIdx + 1}. ${item.q}`;
-    card.appendChild(title);
-
-    const optsDiv = document.createElement('div');
-    item.options.forEach((optText, optIdx) => {
-      const btn = document.createElement('button');
-      btn.className = 'quiz-opt';
-      btn.textContent = optText;
-      btn.addEventListener('click', () => {
-        const parent = btn.parentElement;
-        const all = parent.querySelectorAll('.quiz-opt');
-        all.forEach(b => b.disabled = true);
-        if (optIdx === item.correct) {
-          btn.classList.add('correct');
-        } else {
-          btn.classList.add('wrong');
-          all[item.correct].classList.add('correct');
-        }
-        explain.style.display = 'block';
-      });
-      optsDiv.appendChild(btn);
-    });
-    card.appendChild(optsDiv);
-
-    const explain = document.createElement('div');
-    explain.className = 'quiz-explain';
-    explain.textContent = `Explanation: ${item.explain}`;
-    card.appendChild(explain);
-
-    container.appendChild(card);
-  });
-}
-renderQuiz();
-
-// Nav toggle
-const navBtn = document.getElementById('navToggle');
-const mobMenu = document.getElementById('mobileMenu');
-navBtn.addEventListener('click', () => {
-  mobMenu.classList.toggle('open');
-});
 </script>
+
 </body>
 </html>

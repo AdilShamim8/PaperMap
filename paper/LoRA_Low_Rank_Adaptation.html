@@ -32,7 +32,7 @@
   --bg:#ffffff;--bg2:#f8fafc;--bg3:#f1f5f9;--bg4:#e2e8f0;
   --border:rgba(15,23,42,0.10);--border2:rgba(15,23,42,0.18);
   --text:#0f172a;--text2:#475569;--text3:#64748b;
-  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.12);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.12);--amber-text:#92400e;--blue-text:#1d4ed8;--teal-text:#0f766e;--green-text:#15803d;--purple-text:#7e22ce;--red-text:#b91c1c;
   --blue:#3b82f6;--blue-dim:rgba(59,130,246,0.12);
   --teal:#14b8a6;--teal-dim:rgba(20,184,166,0.12);
   --red:#ef4444;--red-dim:rgba(239,68,68,0.12);
@@ -55,7 +55,7 @@
 }
 html{scroll-behavior:smooth;}
 body{font-family:var(--sans);background:radial-gradient(circle at 6% 0%, rgba(245,158,11,.10), transparent 34%),radial-gradient(circle at 93% 18%, rgba(20,184,166,.08), transparent 36%),radial-gradient(circle at 50% 90%, rgba(59,130,246,.06), transparent 40%),linear-gradient(180deg,#fffefb 0%,#ffffff 42%,#fcfdff 100%),var(--bg);color:var(--text);line-height:1.75;font-size:15px;overflow-x:hidden;}
-a{color:var(--blue);text-decoration:none;}a:hover{text-decoration:underline;}
+a{color:var(--blue-text);text-decoration:none;}a:hover{text-decoration:underline;}
 code{font-family:'Fira Code',monospace;background:var(--gray2);padding:1px 5px;border-radius:4px;font-size:.88em;}
 ::selection{background:var(--amber);color:#000;}
 ::-webkit-scrollbar{width:6px;}
@@ -67,27 +67,27 @@ code{font-family:'Fira Code',monospace;background:var(--gray2);padding:1px 5px;b
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px;}
-.nav-logo{font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-.02em;text-decoration:none;display:inline-flex;align-items:center;}
+.nav-logo{font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-.02em;text-decoration:none;display:inline-flex;align-items:center;}
 .nav-links{display:flex;gap:4px;}
 .nav-actions{display:flex;gap:10px;align-items:center;}
 .nav-link{font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono);}
 .nav-link:hover{background:var(--bg3);color:var(--text);}
-.nav-link.active{background:var(--amber-dim);color:var(--amber);}
-.nav-badge{background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,.2);}
+.nav-link.active{background:var(--amber-dim);color:var(--amber-text);}
+.nav-badge{background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,.2);}
 .nav-toggle{display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer;}
 .mobile-menu{position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px);}
 .mobile-menu.open{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .mobile-menu a{text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px;}
-.mobile-menu a:hover{border-color:rgba(245,158,11,.35);color:var(--amber);}
+.mobile-menu a:hover{border-color:rgba(245,158,11,.35);color:var(--amber-text);}
 
 /* HERO */
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden;}
 .hero>*{position:relative;z-index:1;}
 .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0;}
 .hero-glow{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:700px;height:500px;background:radial-gradient(ellipse, rgba(245,158,11,.12) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite;}
-.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim);}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim);}
 .hero-title{font-family:var(--serif);font-size:clamp(2.4rem,6vw,4.3rem);line-height:1.1;letter-spacing:-.02em;margin-bottom:1.4rem;}
-.hero-title em{color:var(--amber);font-style:italic;}
+.hero-title em{color:var(--amber-text);font-style:italic;}
 .hero-subtitle{max-width:700px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8;}
 .hero-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
 .btn-primary{background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block;}
@@ -96,12 +96,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,
 .btn-outline:hover{background:#fff;border-color:rgba(245,158,11,.35);}
 .hero-stats{display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border);}
 .stat{text-align:center;}
-.stat-num{font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber);}
+.stat-num{font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text);}
 .stat-label{font-size:12px;color:var(--text3);margin-top:2px;}
 
 /* FOOTER */
 footer{max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
-.footer-left{font-size:13px;color:var(--text3);} .footer-left a{color:var(--amber);text-decoration:none;}
+.footer-left{font-size:13px;color:var(--text3);} .footer-left a{color:var(--amber-text);text-decoration:none;}
 .footer-links{display:flex;gap:16px;}
 .footer-link{font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s;}
 .footer-link:hover{color:var(--text);}
@@ -112,7 +112,7 @@ footer{max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var
 .social-icon svg{width:16px;height:16px;fill:currentColor;}
 .social-icon.kg,.social-icon.md{border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,.5);}
 .social-icon:hover{opacity:1;transform:translateY(-1px);background:rgba(255,255,255,.58);text-decoration:none;}
-.social-icon.gh:hover{color:var(--text);} .social-icon.li:hover{color:#0a66c2;} .social-icon.kg:hover{color:#0891b2;border-color:rgba(8,145,178,.45);} .social-icon.x:hover{color:var(--text);} .social-icon.md:hover{color:var(--amber);border-color:rgba(245,158,11,.45);}
+.social-icon.gh:hover{color:var(--text);} .social-icon.li:hover{color:#0a66c2;} .social-icon.kg:hover{color:#0891b2;border-color:rgba(8,145,178,.45);} .social-icon.x:hover{color:var(--text);} .social-icon.md:hover{color:var(--amber-text);border-color:rgba(245,158,11,.45);}
 
 .reveal{opacity:0;transform:translateY(16px) scale(.995);transition:opacity .6s ease, transform .6s ease;}
 .reveal.visible{opacity:1;transform:translateY(0) scale(1);}
@@ -270,7 +270,7 @@ p{margin-bottom:.85rem;}
 .quiz-opt{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;}
 .quiz-opt:hover{border-color:var(--border2);background:var(--bg4);}
 .quiz-opt.correct{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.3);color:#0b7a58;}
-.quiz-opt.wrong{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.3);color:#ef4444;}
+.quiz-opt.wrong{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.3);color:#b91c1c;}
 .quiz-explain{font-size:12px;color:#475569;margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none;}
 .quiz-explain.show{display:block;}
 </style>
@@ -295,7 +295,7 @@ p{margin-bottom:.85rem;}
     <a class="nav-link" href="#s13">Resources</a>
   </div>
   <div class="nav-actions">
-    <div class="nav-badge">LoRA Paper Live</div>
+    <div class="nav-badge">ICLR 2022</div>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
   </div>
 </nav>
@@ -385,12 +385,12 @@ p{margin-bottom:.85rem;}
   <div class="sec-hdr">
     <div class="sec-ico" style="background:#fffde7;">🎯</div>
     <div>
-      <div class="ch-tag" style="color:#b45309;">Law 1 — Prediction Before Explanation</div>
+      <div class="ch-tag" style="color:#92400e;">Law 1 — Prediction Before Explanation</div>
       <h2>Before We Start — What Do You Think?</h2>
     </div>
   </div>
   <div class="box box-pred">
-    <span class="bl" style="color:#b45309;">🔮 Your Prediction Challenge</span>
+    <span class="bl" style="color:#92400e;">🔮 Your Prediction Challenge</span>
     <p style="font-size:14px;">GPT-3 has 175 billion parameters. Fine-tuning it means updating all 175B parameters — which costs $5M+ in compute and 1.2 TB of GPU RAM. <strong>If you had to update only a tiny fraction of those parameters to teach the model a new skill, how would you decide which ones to update?</strong></p>
     <p style="font-size:13px;color:#78350f;">Think about it like this: when you learn a new task at work, you don't rewire your entire brain — you build a small set of new habits on top of existing skills. LoRA does exactly this.</p>
   </div>
@@ -696,7 +696,7 @@ Savings:  <span class="fh">150,994,944 / 98,304 ≈ 1,536× reduction per layer!
   <div class="sec-hdr">
     <div class="sec-ico" style="background:#fef3c7;">🔢</div>
     <div>
-      <div class="ch-tag" style="color:#b45309;">Chapter 04 — Formulas</div>
+      <div class="ch-tag" style="color:#92400e;">Chapter 04 — Formulas</div>
       <h2>All Key Formulas — Complete Symbol Breakdown</h2>
     </div>
   </div>
@@ -1128,7 +1128,7 @@ r:  rank (hyperparameter)     &lt;&lt; min(d,k)
   </div>
 
   <div class="box box-pred">
-    <span class="bl" style="color:#b45309;">⚡ The 3-Line Summary (Law 3 — Compression)</span>
+    <span class="bl" style="color:#92400e;">⚡ The 3-Line Summary (Law 3 — Compression)</span>
     <p style="font-size:15px;font-weight:500;line-height:1.85;">1. Fine-tuning giant models is prohibitively expensive — storage, memory, compute.<br>
     2. Weight updates during fine-tuning are inherently low-rank — they live in a tiny subspace.<br>
     3. LoRA: freeze W₀, train two small matrices A,B, add BA to W₀ — match fine-tuning at 0.01% cost.</p>
@@ -1412,7 +1412,7 @@ r:  rank (hyperparameter)     &lt;&lt; min(d,k)
   <div class="sec-hdr">
     <div class="sec-ico" style="background:#fffde7;">🧠</div>
     <div>
-      <div class="ch-tag" style="color:#b45309;">Test Yourself</div>
+      <div class="ch-tag" style="color:#92400e;">Test Yourself</div>
       <h2>Quick Quiz — LoRA</h2>
     </div>
   </div>
@@ -1429,7 +1429,9 @@ r:  rank (hyperparameter)     &lt;&lt; min(d,k)
     <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
     <a class="footer-link" href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT Guide</a>
     <a class="footer-link" href="./RAG_Retrieval_Augmented_Generation.html">RAG Guide</a>
-    <a class="footer-link" href="./ColBERTv2.html">ColBERTv2 Guide</a>
+    <a class="footer-link" href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT Guide</a>
+
+    <a class="footer-link" href="./QLoRA_Efficient_Finetuning_of_Quantized_LLMs.html">QLoRA Guide</a>
   </div>
   <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -1570,7 +1572,7 @@ const QUIZ_DATA=[
   {q:'What resources did LoRA cut for GPT-3 175B fine-tuning?',opts:['It made training slower but cheaper','Checkpoint size and GPU memory reduced up to 10× (1.2TB VRAM → 350GB)','It removed the need for data','It removed the optimizer'],correct:1,explain:'By training only low-rank matrices, LoRA cuts optimizer states and gradient memory dramatically — the paper reports up to 10× VRAM reduction on GPT-3 175B (1.2TB → 350GB) and far smaller task checkpoints (10,000× smaller for r=1... vs full model copies).'},
   {q:'How did LoRA perform compared to full fine-tuning?',opts:['It always underperformed','It matched or exceeded full fine-tuning on RoBERTa, DeBERTa, and GPT-3 tasks','It only worked on classification','It required 100× more data'],correct:1,explain:'Across RoBERTa, DeBERTa, GPT-2 and GPT-3 evaluation suites, LoRA matches or slightly exceeds full fine-tuning quality — while training fewer parameters and allowing cheap task switching via swappable BA modules.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:#64748b;font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:#64748b;font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

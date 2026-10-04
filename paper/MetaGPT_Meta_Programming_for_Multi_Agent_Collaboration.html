@@ -3,25 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MetaGPT: Meta Programming for Multi-Agent Collaboration — Interactive Guide</title>
-<meta name="description" content="An interactive explainer of MetaGPT (ICLR 2024 Oral), exploring Standard Operating Procedures (SOPs), structured communication, role-based workflows, and software generation pipelines.">
-<meta name="keywords" content="MetaGPT, multi-agent framework, SOP, standard operating procedures, ICLR 2024, software engineering agents, product manager, architect, QA engineer, interactive tutorial">
-<meta name="author" content="Adil Shamim">
+<title>MetaGPT: Meta Programming for a Multi-Agent Collaborative Framework — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the MetaGPT paper, with animated demos for the 5-role assembly line, structured artifacts vs free-chat agents, the role explorer, and HumanEval / SoftwareDev results.">
+<meta name="keywords" content="MetaGPT, multi-agent, LLM agents, SOP, standardized operating procedures, assembly line, structured communication, PRD, software company, meta programming, ICLR 2024">
+<meta name="author" content="PaperMap">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#f59e0b">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="canonical" href="https://papermap.vercel.app/paper/MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="shortcut icon" href="../assets/favicon.svg">
-<meta property="og:title" content="MetaGPT: Meta Programming for Multi-Agent Collaboration — Interactive Guide">
-<meta property="og:description" content="Visual, interactive walkthrough of MetaGPT's SOP-driven multi-agent framework.">
+<meta property="og:title" content="MetaGPT: Meta Programming for a Multi-Agent Collaborative Framework — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of the MetaGPT paper: five roles, structured artifacts, an assembly line of GPTs.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://papermap.vercel.app/paper/MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">
 <meta property="og:site_name" content="PaperMap">
 <meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MetaGPT — Interactive Guide">
-<meta name="twitter:description" content="Learn how MetaGPT encodes Standard Operating Procedures into LLM societies to engineer complete software systems.">
+<meta name="twitter:description" content="How a software company of LLM agents ships working code. Demos, results, and intuition.">
 <meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,167 +84,265 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
-
-.hero { min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 3rem;position:relative;overflow:hidden; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
-.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:1.5rem;background:var(--amber-dim); }
-.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 5.5vw, 4.2rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.2rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
-.hero-subtitle { max-width:640px;color:var(--text2);font-size:16px;margin-bottom:2rem;line-height:1.8; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
 .btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
 .btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
-
-.meta-badges { display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:2.5rem; }
-.meta-chip { display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--text2); }
-
-section { max-width:1100px;margin:0 auto;padding:4.5rem 2rem; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
-.section-desc { color:var(--text2);max-width:620px;font-size:15px;margin-bottom:2.2rem; }
-
-.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 8px 24px rgba(15,23,42,0.04);transition:transform .2s ease, box-shadow .2s ease; }
-.card:hover { transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,0.07); }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
 .card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
-.card-label { font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px; }
-.two-col { display:grid;grid-template-columns:1fr 1fr;gap:1.5rem; }
-.three-col { display:grid;grid-template-columns:repeat(3, 1fr);gap:1.2rem; }
-
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-
-/* Interactive SOP Pipeline */
-.sop-pipeline { display:grid;grid-template-columns:repeat(5, 1fr);gap:10px;margin:2rem 0; }
-.sop-step { background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s; }
-.sop-step.active { border-color:var(--amber);background:var(--amber-dim);transform:scale(1.03);box-shadow:0 4px 16px rgba(245,158,11,0.2); }
-.sop-role { font-family:var(--mono);font-size:11px;font-weight:600;color:var(--amber);margin-bottom:4px; }
-.sop-doc { font-size:13px;font-weight:600;color:var(--text); }
-
-.terminal-view { background:#0f172a;color:#f8fafc;border-radius:var(--radius-lg);padding:1.6rem;font-family:var(--mono);font-size:13px;line-height:1.7;box-shadow:0 20px 40px rgba(0,0,0,0.2);min-height:220px;overflow-x:auto; }
-
-/* Quiz styles */
-.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;margin-bottom:1.5rem; }
-.quiz-q { font-weight:600;font-size:15px;margin-bottom:1rem;color:var(--text); }
-.quiz-opt { display:block;width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;margin-bottom:8px;cursor:pointer;font-family:var(--sans);font-size:14px;color:var(--text);transition:all .2s; }
-.quiz-opt:hover { background:var(--bg3);border-color:rgba(245,158,11,0.4); }
-.quiz-opt.correct { background:rgba(34,197,94,0.15);border-color:var(--green);color:var(--green);font-weight:600; }
-.quiz-opt.wrong { background:rgba(239,68,68,0.15);border-color:var(--red);color:var(--red); }
-.quiz-explain { font-size:13px;color:var(--text2);margin-top:8px;padding:8px 12px;border-radius:6px;background:var(--bg3);display:none; }
-
-footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem; }
-.footer-links { display:flex;gap:1rem;flex-wrap:wrap; }
-.footer-link { font-family:var(--mono);font-size:12px;color:var(--text2);text-decoration:none; }
-.footer-link:hover { color:var(--amber); }
-
-@media(max-width:850px){
-  .sop-pipeline { grid-template-columns:1fr 1fr; }
-  .two-col, .three-col { grid-template-columns:1fr; }
-  .nav-links, .nav-actions { display:none; }
-  .nav-toggle { display:flex;align-items:center;justify-content:center; }
-  .hero-title { font-size:2.4rem; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
 }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
 
-<a href="#content" class="skip-link">Skip to main content</a>
-
+<!-- NAV -->
 <nav>
-  <a href="../index.html" class="nav-logo">PaperMap</a>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
   <div class="nav-links">
-    <a href="#sop" class="nav-link">SOP Philosophy</a>
-    <a href="#pipeline" class="nav-link">Role Pipeline</a>
-    <a href="#pubsub" class="nav-link">Pub-Sub Message Bus</a>
-    <a href="#deepdive" class="nav-link">Deep Dive</a>
-    <a href="#quiz" class="nav-link">Quiz</a>
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#roles">Roles</a>
+    <a class="nav-link" href="#artifacts">Artifacts</a>
+    <a class="nav-link" href="#assembly">Assembly</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
   </div>
   <div class="nav-actions">
-    <span class="nav-badge">Category VII · Multi-Agent</span>
-    <a href="https://arxiv.org/abs/2308.00352" target="_blank" rel="noopener" class="btn-primary" style="padding:6px 14px;font-size:12px;">Paper PDF ↗</a>
+    <div class="nav-badge">ICLR 2024</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
   </div>
-  <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
 </nav>
 
-<div id="mobileMenu" class="mobile-menu">
-  <a href="../index.html">← All Papers</a>
-  <a href="#sop">SOP Philosophy</a>
-  <a href="#pipeline">Role Pipeline</a>
-  <a href="#pubsub">Pub-Sub Message Bus</a>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#roles">Roles</a>
+  <a href="#artifacts">Artifacts</a>
+  <a href="#assembly">Assembly</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
   <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
 </div>
 
-<main id="content">
-
-<div class="hero">
+<!-- HERO -->
+<div class="hero" id="top">
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
-  <div class="hero-eyebrow">ICLR 2024 Oral · DeepWisdom</div>
-  <h1 class="hero-title">MetaGPT: <em>Meta-Programming</em> for<br>Multi-Agent Collaboration</h1>
-  <p class="hero-subtitle">Encoding human Standard Operating Procedures (SOPs) into multi-agent systems to produce complete software architectures from a single line of natural language.</p>
-  
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    A Software <em>Company</em><br>of Agents
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to MetaGPT — the framework that turned a group of chatbots into a
+    software firm by encoding human SOPs: five specialized roles, structured documents instead of
+    dialogue, and an assembly line that ships working code from a one-line requirement.
+  </p>
   <div class="hero-actions">
-    <a href="#pipeline" class="btn-primary">Inspect Role Pipeline</a>
-    <a href="#pubsub" class="btn-outline">Explore Pub-Sub Mechanics</a>
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2308.00352" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
   </div>
-
-  <div class="meta-badges">
-    <div class="meta-chip"><span>Authors:</span> Sirui Hong, Mingchen Zhuge, et al.</div>
-    <div class="meta-chip"><span>Affiliation:</span> DeepWisdom & Fudan University</div>
-    <div class="meta-chip"><span>Venue:</span> ICLR 2024 Oral</div>
-    <div class="meta-chip"><span>Key Idea:</span> Code = SOP(Team); Structured Outputs over Chit-Chat</div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Roles in the Company</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">SOP</div>
+      <div class="stat-label">Workflows Encoded</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3.9/4</div>
+      <div class="stat-label">Executable-Code Score</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Year Released</div>
+    </div>
   </div>
 </div>
 
 <div class="divider"></div>
-
-<!-- SECTION 1: SOP PHILOSOPHY -->
-<section id="sop">
-  <div class="section-tag">Core Architecture</div>
-  <h2 class="section-title">The Standard Operating Procedure <em>(SOP) Breakthrough</em></h2>
-  <p class="section-desc">Why informal agent chat fails to produce enterprise-grade software, and how assembly-line SOPs eliminate cascading hallucination.</p>
-
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Role-Play Chats to <em>SOPs</em></h2>
+  <p class="section-desc">MetaGPT landed mid-2023, when "multi-agent" mostly meant several LLMs talking to each other. Here is the road that led there — and where it went next.</p>
   <div class="two-col">
-    <div class="card">
-      <div class="card-label">The Natural Language Chat Trap</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
-        In traditional multi-agent setups (e.g. ChatDev or raw agent loops), agents communicate via free-form natural language. As task complexity increases:
-      </p>
-      <div class="card-sm" style="border-left:3px solid var(--red);margin-bottom:8px;">
-        <strong>Unbounded Information Entropy:</strong> Dialogue explodes in length without converging on strict specifications.
-      </div>
-      <div class="card-sm" style="border-left:3px solid var(--amber);">
-        <strong>Cascade of Distortions:</strong> A slight misunderstanding in step 1 cascades exponentially by step 5, leading to broken imports and disjointed architectures.
-      </div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2022</div><div class="tl-title">ReAct (Yao et al.)</div><div class="tl-desc">One LLM agent that interleaves reasoning and acting — the behavioral style every MetaGPT role follows.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023 · Mar</div><div class="tl-title">CAMEL (Li et al.)</div><div class="tl-desc">Role-playing communicative agents solve tasks by chatting. AutoGen and other conversational frameworks followed the same year.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023 · Jun</div><div class="tl-title">MetaGPT open-sourced</div><div class="tl-desc">DeepWisdom commits the first lines in April 2023 and open-sources the project on June 30. It repeatedly tops GitHub trending.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Aug</div><div class="tl-title">🚀 The MetaGPT paper</div><div class="tl-desc">"Meta Programming for a Multi-Agent Collaborative Framework" encodes SOPs into prompt sequences and ships the 5-role software company.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024 · Jan</div><div class="tl-title">ICLR 2024 oral</div><div class="tl-desc">Accepted as an oral (top 1.2%), ranked #1 in the LLM-based agent category. Role-pipeline frameworks like ChatDev spread widely.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2024 → 2025</div><div class="tl-title">Software-agent products</div><div class="tl-desc">The roles-and-artifacts idea shows up in Devin-style coding pipelines and orchestrator systems; the MetaGPT team ships MGX in 2025.</div></div>
     </div>
-
-    <div class="card">
-      <div class="card-label">The MetaGPT Solution: Structured Artifacts</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">
-        MetaGPT mandates that agents deliver rigorous standardized documents:
-      </p>
-      <div class="card-sm" style="border-left:3px solid var(--green);margin-bottom:8px;">
-        <strong>Schema-Constrained Deliverables:</strong> PRDs (Product Requirement Docs), System Architecture diagrams, and Data API specifications.
-      </div>
-      <div class="card-sm" style="border-left:3px solid var(--teal);">
-        <strong>One-Way Assembly Line:</strong> Output of Agent <em>N</em> becomes the immutable input context for Agent <em>N+1</em>, isolating errors.
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">MetaGPT reads <span class="highlight">meta-programming</span> as "programming to program" — a whole organized company of agents whose product is code. The team's philosophy in one line: <span class="code-inline">Code = SOP(Team)</span>. Human teams ship reliable software not because individuals are smarter, but because <strong>Standardized Operating Procedures</strong> pin down who does what, in which order, and in what format.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">WHAT PURE CHAT LOOKS LIKE (PAPER, §1)</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          <span style="color:var(--text3);">"Hi, hello and how are you?"</span> — Alice <span style="color:var(--blue-text);">(Product Manager)</span><br>
+          <span style="color:var(--text3);">"Great! Have you had lunch?"</span> — Bob <span style="color:var(--teal-text);">(Architect)</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">Idle chatter burns tokens, distorts information, and lets hallucinations cascade.</div>
       </div>
     </div>
   </div>
@@ -246,338 +350,703 @@ footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid
 
 <div class="divider"></div>
 
-<!-- SECTION 2: INTERACTIVE PIPELINE -->
-<section id="pipeline">
-  <div class="section-tag">Interactive Simulation</div>
-  <h2 class="section-title">The MetaGPT <em>Assembly Line</em></h2>
-  <p class="section-desc">Click any role to see its SOP inputs, system prompt constraints, and generated software artifacts.</p>
-
-  <div class="sop-pipeline">
-    <div class="sop-step active" data-role="pm">
-      <div class="sop-role">Role 1</div>
-      <div class="sop-doc">Product Manager</div>
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem — <em>Cascading</em> Hallucinations</h2>
+  <p class="section-desc">Chain a few LLMs together with free-form chat and a single hallucinated detail infects everything downstream. MetaGPT's diagnosis: the communication medium is broken, not just the models.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">💬</div>
+      <div class="problem-title">Naively Chained LLMs</div>
+      <ul class="problem-list">
+        <li>Agents chat in unconstrained natural language</li>
+        <li>One hallucination cascades — logic inconsistencies multiply turn by turn</li>
+        <li>Like the telephone game: after rounds of " whispers", the spec is distorted</li>
+        <li>Idle chatter ("Have you had lunch?") wastes tokens and drifts off-task</li>
+        <li>No schema means no way to verify intermediate results</li>
+      </ul>
     </div>
-    <div class="sop-step" data-role="architect">
-      <div class="sop-role">Role 2</div>
-      <div class="sop-doc">Architect</div>
-    </div>
-    <div class="sop-step" data-role="project_manager">
-      <div class="sop-role">Role 3</div>
-      <div class="sop-doc">Project Manager</div>
-    </div>
-    <div class="sop-step" data-role="engineer">
-      <div class="sop-role">Role 4</div>
-      <div class="sop-doc">Engineer</div>
-    </div>
-    <div class="sop-step" data-role="qa">
-      <div class="sop-role">Role 5</div>
-      <div class="sop-doc">QA Engineer</div>
-    </div>
-  </div>
-
-  <div id="terminalDisplay" class="terminal-view">
-    <!-- Populated by JS -->
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- SECTION 3: PUB-SUB BUS -->
-<section id="pubsub">
-  <div class="section-tag">Communication Topology</div>
-  <h2 class="section-title">Publish-Subscribe <em>Message Bus</em></h2>
-  <p class="section-desc">Instead of O(N²) pairwise broadcast chatter, MetaGPT uses an asynchronous Pub-Sub event pool.</p>
-
-  <div class="three-col">
-    <div class="card">
-      <div class="card-label">1. Environment Pool</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.7;">A shared global event broker where all published documents, PRDs, code blocks, and test results are archived with typed metadata.</p>
-    </div>
-    <div class="card">
-      <div class="card-label">2. Subscription Filters</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.7;">Each agent declares an interest profile. The Engineer agent only watches for Architect schemas and PM tasks, completely ignoring raw user brainstorming.</p>
-    </div>
-    <div class="card">
-      <div class="card-label">3. Linear Token Scaling</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.7;">By filtering irrelevant chatter, total context window consumption scales linearly with pipeline depth rather than quadratically with agent count.</p>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- SECTION 4: DEEP DIVE -->
-<section id="deepdive">
-  <div class="section-tag">Deep Dive</div>
-  <h2 class="section-title">Benchmark Results on <em>HumanEval & SoftwareBench</em></h2>
-  <p class="section-desc">How structured multi-agent decomposition outperforms single-prompt LLM code generation.</p>
-
-  <div class="two-col">
-    <div class="card">
-      <div class="card-label">HumanEval Pass@1 Comparison</div>
-      <div style="margin-top:10px;">
-        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
-          <span>GPT-4 (Zero-Shot Single Agent)</span>
-          <span style="color:var(--text3);font-weight:600;">67.0%</span>
-        </div>
-        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin-bottom:14px;">
-          <div style="width:67%;height:100%;background:var(--text3);"></div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
-          <span>ChatDev (Peer-to-Peer Dialogue)</span>
-          <span style="color:var(--blue);font-weight:600;">82.9%</span>
-        </div>
-        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;margin-bottom:14px;">
-          <div style="width:82.9%;height:100%;background:var(--blue);"></div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:4px;">
-          <span>MetaGPT (SOP Assembly Line)</span>
-          <span style="color:var(--amber);font-weight:600;">85.9%</span>
-        </div>
-        <div style="height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;">
-          <div style="width:85.9%;height:100%;background:var(--amber);"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-label">Software Engineering Integrity</div>
-      <ul style="font-size:13px;color:var(--text2);line-height:1.8;padding-left:1.2rem;margin-top:6px;">
-        <li><strong>Code Executability:</strong> Reaches 100% executable rates on generated CLI utilities and web mini-apps vs 60-70% for unstructured agents.</li>
-        <li><strong>Cost Efficiency:</strong> Average cost per complete software project: ~$0.20 using GPT-3.5 and ~$2.00 using GPT-4.</li>
-        <li><strong>Dependency Resolution:</strong> Zero unresolved imports due to the Architect agent specifying shared file trees and class interfaces upfront.</li>
+    <div class="problem-card good">
+      <div class="problem-icon">🏭</div>
+      <div class="problem-title">MetaGPT's Solution</div>
+      <ul class="problem-list">
+        <li>Encode human SOPs into prompt sequences — a fixed workflow</li>
+        <li>Assign distinct roles: PM, Architect, Project Manager, Engineer, QA</li>
+        <li>Agents exchange <strong>structured documents</strong>, not dialogue</li>
+        <li>Intermediate outputs (PRDs, designs) are verifiable artifacts</li>
+        <li>Assembly line: each role consumes upstream artifacts and adds its own</li>
       </ul>
     </div>
   </div>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Analogy — Group Chat vs Real Firm</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">Imagine building an app in one giant group chat: everyone talks at once, requirements get paraphrased and misremembered, and nobody signs off on anything. A real software firm runs on <span class="highlight">specs and handoffs</span> — the PM writes a PRD, the architect signs a design doc, tasks are ticketed, code is reviewed, QA files a report. MetaGPT simply installs that operating system into a team of LLMs: every handover must comply with an established standard.</p>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Chat vs Artifacts</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">The same requirement, done two ways. Run each column and watch where the board size ends up.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:.6rem 1rem;font-family:var(--mono);font-size:12px;color:var(--amber-text);margin-bottom:1rem;">REQUIREMENT: "Create a 2048 game — the board must be 4×4."</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="cvChatBtn" type="button" style="font-size:13px;padding:8px 18px;">▶ Run free-chat agents</button>
+      <button class="btn-outline" id="cvDocBtn" type="button" style="font-size:13px;padding:8px 18px;">▶ Run MetaGPT artifacts</button>
+      <button class="btn-outline" id="cvResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div class="two-col">
+      <div>
+        <div class="card-sm" style="margin-bottom:8px;">
+          <div class="card-label" style="color:var(--red-text);">FREE-CHAT AGENTS</div>
+          <div id="cvChat" style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;min-height:70px;">— press "Run free-chat agents" —</div>
+        </div>
+        <div id="cvVerdictChat" style="display:none;background:var(--red-dim);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius);padding:.8rem 1rem;font-size:12px;color:var(--text2);line-height:1.6;"></div>
+      </div>
+      <div>
+        <div class="card-sm" style="margin-bottom:8px;">
+          <div class="card-label" style="color:var(--green-text);">METAGPT ARTIFACTS</div>
+          <div id="cvDocs" style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;min-height:70px;">— press "Run MetaGPT artifacts" —</div>
+        </div>
+        <div id="cvVerdictDoc" style="display:none;background:var(--green-dim);border:1px solid rgba(34,197,94,0.3);border-radius:var(--radius);padding:.8rem 1rem;font-size:12px;color:var(--text2);line-height:1.6;"></div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- SECTION 5: QUIZ -->
-<section id="quiz">
-  <div class="section-tag">Test Yourself</div>
-  <h2 class="section-title">MetaGPT <em>Mastery Quiz</em></h2>
-  <p class="section-desc">Assess your grasp of Standard Operating Procedures and multi-agent software engineering architectures.</p>
+<!-- ROLES -->
+<section id="roles">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Five Roles, One <em>Company</em></h2>
+  <p class="section-desc">MetaGPT's software company has exactly five employees. Each is a GPT instance with a profile (name, goal, constraints), its own tools, and a schema-locked output format.</p>
 
-  <div id="quizContainer">
-    <!-- Questions injected by JS -->
+  <div class="formula-card">
+    <div class="formula-main">Code = SOP(Team)</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">Code</div><div class="fp-name">The Output</div><div class="fp-desc">Working software — the "program" the system produces, from a one-line requirement.</div></div>
+      <div class="formula-piece"><div class="fp-sym">SOP</div><div class="fp-name">The Procedure</div><div class="fp-desc">Standardized Operating Procedures, encoded into prompt sequences to streamline workflows.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Team</div><div class="fp-name">The Executors</div><div class="fp-desc">GPTs with distinct roles and domain expertise — 5 roles in the software company.</div></div>
+      <div class="formula-piece"><div class="fp-sym">→</div><div class="fp-name">The Assembly Line</div><div class="fp-desc">Workflows run sequentially: each role consumes upstream artifacts and produces its own.</div></div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:1.5rem;">
+    <div class="card-sm"><div style="font-size:1.4rem;">🧭</div><div style="font-weight:600;font-size:14px;margin:4px 0;">Product Manager</div><div style="font-size:12px;color:var(--text2);">In: one-line requirement → Out: <strong>PRD</strong> (user stories, requirement pool, competitive analysis). Can use web search.</div></div>
+    <div class="card-sm"><div style="font-size:1.4rem;">🏗️</div><div style="font-weight:600;font-size:14px;margin:4px 0;">Architect</div><div style="font-size:12px;color:var(--text2);">In: PRD → Out: <strong>system design</strong> (file list, data structures, interface definitions, flow diagram).</div></div>
+    <div class="card-sm"><div style="font-size:1.4rem;">📊</div><div style="font-weight:600;font-size:14px;margin:4px 0;">Project Manager</div><div style="font-size:12px;color:var(--text2);">In: design → Out: <strong>task list</strong> — distributes work to the Engineer with budgets.</div></div>
+    <div class="card-sm"><div style="font-size:1.4rem;">💻</div><div style="font-weight:600;font-size:14px;margin:4px 0;">Engineer</div><div style="font-size:12px;color:var(--text2);">In: tasks + design → Out: <strong>code</strong>. Can execute code and debug from execution feedback.</div></div>
+    <div class="card-sm"><div style="font-size:1.4rem;">🧪</div><div style="font-weight:600;font-size:14px;margin:4px 0;">QA Engineer</div><div style="font-size:12px;color:var(--text2);">In: code → Out: <strong>test cases</strong> and a QA report that enforces code quality.</div></div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Role Explorer</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Click a role to see what it consumes, what it publishes, and what breaks when it is removed. (The paper's ablation actually removed roles — an Engineer working alone scored 1.0/4 executability.)</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;" id="roleTabs"></div>
+    <div id="rolePanel"></div>
   </div>
 </section>
 
-</main>
+<div class="divider"></div>
 
-<footer>
-  <div class="footer-links">
-    <a href="../index.html" class="footer-link">← Homepage</a>
-    <a href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html" class="footer-link">CAMEL Guide</a>
-    <a href="./Magentic_One_A_Generalist_Multi_Agent_System.html" class="footer-link">Magentic-One Guide →</a>
-    <a href="./MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html" class="footer-link">MultiAgentBench Guide</a>
+<!-- ARTIFACTS -->
+<section id="artifacts">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Structured <em>Artifacts</em>, Not Chatter</h2>
+  <p class="section-desc">Every role is given a schema and a format. The deliverables are documents and diagrams — PRDs, designs, task lists, code, test reports — that pin the spec for everyone downstream.</p>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Why Documents Win</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">MetaGPT requires agents to generate structured outputs — high-quality requirements documents, design artifacts, flowcharts, and interface specifications. The paper's argument: documents contain all necessary information, <em>preventing irrelevant or missing content</em>, and intermediate structured outputs keep communication consistent, which raises the success rate of target code generation. Unlike ChatDev's dialogue, agents here never "talk" — they publish.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">The Paper's Telephone Game</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">§3.2 asks whether pure natural-language communication suffices. In Chinese whispers, a message whispered person-to-person comes out the other end distorted. Chain LLMs through free conversation and a hallucinated detail — a 3×3 board instead of 4×4 — rides every later turn. A pinned document stops the distortion at the source.</p>
+    </div>
   </div>
-  <div style="font-family:var(--mono);font-size:12px;color:var(--text3);">
-    PaperMap · Created by Adil Shamim
+
+  <div class="card">
+    <div class="card-label">The Artifact Chain (illustrative structure of each hand-off)</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:8px;">
+      <div class="card-sm" style="background:#fff;">
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;"><span style="font-size:14px;">🧭</span> PRD.md</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.8;white-space:pre-wrap;"># PRD — 2048
+Original: "Create a 2048 game"
+User Stories:
+  US1 Player swipes to merge
+Requirement Pool:
+  [P0] 4x4 board   [P1] score
+Competitive Analysis: classic 2048…</div>
+      </div>
+      <div class="card-sm" style="background:#fff;">
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;"><span style="font-size:14px;">🏗️</span> design.md</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.8;white-space:pre-wrap;"># System Design — 2048
+Files: board.py, ui.py, main.py
+Data structures:
+  Board: 4x4 int matrix
+Interfaces:
+  move(board, dir) -> Board
+Sequence flow: swipe → merge → spawn</div>
+      </div>
+      <div class="card-sm" style="background:#fff;">
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;"><span style="font-size:14px;">📊</span> tasks.md</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.8;white-space:pre-wrap;"># Task List — sprint 1
+[1] board.py  owner: Engineer
+    init 4x4, place two tiles
+[2] ui.py     owner: Engineer
+    key controls + rendering
+budget: tokens & time per task</div>
+      </div>
+      <div class="card-sm" style="background:#fff;">
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;"><span style="font-size:14px;">💻</span> board.py</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.8;white-space:pre-wrap;"># board.py  (ref: design.md)
+class Board:
+    def __init__(self, n=4):
+        self.grid = [[0]*n
+                     for _ in range(n)]
+# + unit tests, executed</div>
+      </div>
+      <div class="card-sm" style="background:#fff;">
+        <div style="display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;"><span style="font-size:14px;">🧪</span> qa_report.md</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.8;white-space:pre-wrap;"># QA Report — 2048
+test_board_size: PASS (4x4)
+test_move_left:  PASS
+test_game_over:  PASS
+ref: PRD Requirement Pool [P0]</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Formats follow the paper's described deliverables (PRD with user stories + requirement pool; design with file list, data structures, interfaces; task distribution; code; test cases). Content here is illustrative.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ASSEMBLY -->
+<section id="assembly">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">The <em>Assembly Line</em> &amp; Message Pool</h2>
+  <p class="section-desc">Roles run sequentially — an assembly line. Coordination happens through one shared message pool with a publish-subscribe mechanism, and the Engineer gets an executable-feedback debug loop.</p>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — The Assembly Line (centerpiece)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Send a one-line requirement down the line. Watch the workpiece transform at each station, see each artifact appear, and watch QA catch a bug that loops back to the Engineer before the build turns green.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="pipeRun" type="button" style="font-size:13px;padding:8px 18px;">▶ Build software</button>
+      <button class="btn-outline" id="pipeStep" type="button" style="font-size:13px;padding:8px 18px;">Step ⏭</button>
+      <button class="btn-outline" id="pipeReset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:.5rem 1rem;margin-bottom:.8rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.08em;">WORKPIECE</span>
+      <span id="pipeWorkpiece" style="font-family:var(--mono);font-size:12px;color:var(--amber-text);font-weight:600;"></span>
+    </div>
+    <div id="pipeStations" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:.8rem;"></div>
+    <div id="pipeFeedback" style="display:none;font-family:var(--mono);font-size:11.5px;padding:.6rem 1rem;border-radius:var(--radius);margin-bottom:.8rem;"></div>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:.5rem 1rem;margin-bottom:.8rem;">
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.08em;margin-bottom:4px;">SHARED MESSAGE POOL — PUBLISHED ARTIFACTS</div>
+      <div id="pipePool" style="display:flex;gap:6px;flex-wrap:wrap;min-height:26px;"></div>
+    </div>
+    <div id="pipeDoc" style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:12px;line-height:1.9;color:var(--text2);white-space:pre-wrap;min-height:70px;"></div>
+    <div id="pipeStatus" style="font-family:var(--mono);font-size:12px;color:var(--amber-text);margin-top:.8rem;min-height:18px;"></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Publish – Subscribe (§3.2)</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:.8rem;">Instead of one-to-one dialogues (which tangle the communication topology), every agent <strong>publishes</strong> its structured message to a <span class="highlight">global message pool</span>. Agents then <strong>subscribe</strong> by role-specific interest: the Architect watches for PRDs; QA documents are of lesser concern to it. An agent's action fires only once all prerequisite dependencies have arrived.</p>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2);line-height:1.9;background:var(--bg3);border-radius:var(--radius);padding:.8rem 1rem;white-space:pre-wrap;">pool.subscribe()
+  Architect   ← PRD.md          (required)
+  Engineer    ← design.md, tasks.md
+  QA          ← board.py, PRD.md (ref)
+publish(Architect, "design.md") → notifies subscribers</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Executable Feedback (§3.3)</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:.8rem;">Chat-style code review can be fooled by hallucinations. So the Engineer goes further: it <strong>writes and executes unit tests</strong>, keeps its own execution and debugging memory, and loops — code, run, inspect, fix — until tests pass or a maximum of <span class="highlight">3 retries</span> is reached.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;">
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.1rem;color:var(--amber-text);font-weight:600;">+4.2%</div><div style="font-size:11px;color:var(--text2);">HumanEval Pass@1 from feedback</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.1rem;color:var(--blue-text);font-weight:600;">+5.4%</div><div style="font-size:11px;color:var(--text2);">MBPP Pass@1 from feedback</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.1rem;color:var(--teal-text);font-weight:600;">2.25→0.83</div><div style="font-size:11px;color:var(--text2);">human revisions per task</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.1rem;color:var(--purple-text);font-weight:600;">≤3</div><div style="font-size:11px;color:var(--text2);">debug retries before giving up</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Results — <em>Working Software</em></h2>
+  <p class="section-desc">MetaGPT was evaluated on HumanEval, MBPP, and its own SoftwareDev benchmark (70 development tasks; 7 representative tasks compared against chat-based frameworks). The pattern is consistent: SOPs produce code that actually runs.</p>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">HUMANEVAL PASS@1</div>
+      <div class="result-score" style="color:var(--amber-text);">85.9%</div>
+      <div class="result-label">MetaGPT + GPT-4 · single attempt (GPT-4 direct: 80.0%)</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:86%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">MBPP PASS@1</div>
+      <div class="result-score" style="color:var(--blue-text);">87.7%</div>
+      <div class="result-label">MetaGPT + GPT-4 · 427 Python tasks</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:88%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">EXECUTABILITY</div>
+      <div class="result-score" style="color:var(--teal-text);">3.9/4</div>
+      <div class="result-label">avg on 7 SoftwareDev tasks (ChatDev: 2.1)</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:97%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">HUMAN REVISIONS</div>
+      <div class="result-score" style="color:var(--green-text);">0.83</div>
+      <div class="result-label">manual fixes per task (ChatDev: 2.5)</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:33%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Table 4 — Executability on SoftwareDev (1 = failure … 4 = flawless)</div>
+    <table class="comp-table">
+      <thead><tr><th>Task</th><th>AutoGPT</th><th>LangChain</th><th>AgentVerse</th><th>ChatDev</th><th>MetaGPT</th></tr></thead>
+      <tbody>
+        <tr><td>Flappy bird</td><td>1</td><td>1</td><td>1</td><td>2</td><td class="comp-best">3</td></tr>
+        <tr><td>Tank battle game</td><td>1</td><td>1</td><td>1</td><td>2</td><td class="comp-best">4</td></tr>
+        <tr><td>2048 game</td><td>1</td><td>1</td><td>1</td><td>1</td><td class="comp-best">4</td></tr>
+        <tr><td>Snake game</td><td>1</td><td>1</td><td>1</td><td>3</td><td class="comp-best">4</td></tr>
+        <tr><td>Brick breaker game</td><td>1</td><td>1</td><td>1</td><td>1</td><td class="comp-best">4</td></tr>
+        <tr><td>Excel data process</td><td>1</td><td>1</td><td>1</td><td>4</td><td class="comp-best">4</td></tr>
+        <tr><td>CRUD manage</td><td>1</td><td>1</td><td>1</td><td>2</td><td class="comp-best">4</td></tr>
+        <tr><td><strong>Average score</strong></td><td class="comp-worst">1.0</td><td class="comp-worst">1.0</td><td class="comp-worst">1.0</td><td>2.1</td><td class="comp-best">3.9</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Chat-linked baselines mostly failed to produce runnable software at all; MetaGPT reached "nearly flawless" on five of the seven tasks, and the paper reports a 100% task completion rate across its experimental evaluations.</p>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Average Executability (of 4)</div>
+      <div id="execChart"></div>
+      <p style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6;">The gap isn't marginal — chat-linked agents produce mostly non-functional code on multi-file software tasks, while the SOP pipeline approaches flawless.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">HumanEval Pass@1 (%)</div>
+      <div id="humanevalChart"></div>
+      <p style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6;">GPT-3.5-Turbo direct (setting A, no code-prompt): 35.7%. GPT-4 direct with a code-only system prompt: 80.0%. MetaGPT w/o feedback ≈81.7 (85.9 minus the paper's reported 4.2-point feedback gain).</p>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label">Cost &amp; Productivity (Table 1, vs ChatDev)</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Tokens:</strong> 31,255 vs ChatDev's 19,292 — SOPs cost more raw tokens</li>
+        <li><strong>Productivity:</strong> 124.3 tokens per line of code vs ChatDev's 248.9</li>
+        <li><strong>Code volume:</strong> 251.4 lines across 5.1 files vs 77.5 lines in 1.9</li>
+        <li><strong>Running time:</strong> 541s (503s without feedback) vs ChatDev's 762s</li>
+        <li><strong>Human revisions:</strong> 0.83 vs 2.5 — the strongest single improvement</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Ablations — Roles &amp; Backends</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Engineer alone:</strong> executability 1.0, 10 human revisions per task</li>
+        <li><strong>Adding roles:</strong> with Product + Architect + Project roles: 4.0, revisions down to 2.5</li>
+        <li><strong>Backend matters:</strong> GPT-4 → 3.8 executability; GPT-3.5 → 2.8; DeepSeek Coder 33B → 1.4</li>
+        <li><strong>Feedback:</strong> +4.2 HumanEval / +5.4 MBPP Pass@1; revisions 2.25 → 0.83</li>
+        <li><strong>Detailed prompts help:</strong> richer one-line specs lift executability further (paper §C)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15);">
+    <div class="card-label" style="color:var(--red-text);">What MetaGPT Did NOT Solve</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">SOPs are not free lunch. Token usage <strong>grew</strong> vs ChatDev (31,255 vs 19,292) — structure costs tokens even when it saves them per line of code. Quality still leans on the backend LLM: with DeepSeek Coder 33B, executability collapsed to 1.4/4. The pipeline is sequential, so builds take minutes (503–541s), not seconds. Humans are still sometimes needed (0.83 revisions), and the authors note their summary-based optimizations only modify role specialization — the structured communication interfaces themselves were left untouched.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — the <em>SOP</em> Paradigm</h2>
+  <p class="section-desc">MetaGPT became one of the most-starred agent frameworks and set the template for the multi-agent software line: roles, artifacts, and pipelines.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🎓 ICLR 2024 oral</div><div class="notice-text">Accepted as an oral presentation (top 1.2%), ranked #1 in the LLM-based agent category — rare visibility for a systems-style agent paper.</div></div>
+    <div class="notice-card"><div class="notice-title">📦 Open-source adoption</div><div class="notice-text">Topped GitHub Trending Monthly 17 times by Aug 2023; selected for Open100's top-100 open-source achievements; installable with pip as <em>metagpt</em>.</div></div>
+    <div class="notice-card"><div class="notice-title">🧩 The SOP paradigm</div><div class="notice-text">Encoding human workflows into prompt sequences became a standard recipe — "inject SOPs like you inject chain-of-thought," as the paper puts it.</div></div>
+    <div class="notice-card"><div class="notice-title">💬 Documents &gt; dialogue</div><div class="notice-text">The structured-communication lesson — schema-constrained artifacts as the interface between agents — spread across the agent literature.</div></div>
+    <div class="notice-card"><div class="notice-title">🏭 Software-agent industry</div><div class="notice-text">The roles-and-artifacts DNA shows up in ChatDev-style pipelines, orchestrator systems like Magentic-One, and Devin-style coding products; the team shipped MGX in 2025.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Organizations as architecture</div><div class="notice-text">MetaGPT modeled a company the way Generative Agents modeled a town and Voyager modeled Minecraft — human organization charts became agent architecture.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Documents, Not <em>Dialogue</em></h2>
+  <p class="section-desc">MetaGPT's diagnosis of multi-agent failure is structural: free-form chat lets errors compound turn by turn, while structured artifacts — a PRD, a design, a task list — pin each agent to verifiable output. The assembly line replaces the group chat, and "crude code" stops cascading because the Engineer's output is executable and the QA's verdict is checkable.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">🏭</div>
+      <div class="problem-title">The Assembly Line</div>
+      <ul class="problem-list">
+        <li>Product Manager → Architect → Project Manager → Engineer → QA — human SOPs encoded as prompt sequences</li>
+        <li>Each role consumes structured inputs and emits structured documents — never free dialogue</li>
+        <li>One global message pool with publish-subscribe: agents wake only when their prerequisite artifacts land</li>
+        <li>Executable feedback: the Engineer runs unit tests and debugs up to 3 retries — +4.2 / +5.4 Pass@1 on HumanEval / MBPP</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">📊</div>
+      <div class="problem-title">What the Numbers Say — and Don't</div>
+      <ul class="problem-list">
+        <li>85.9% HumanEval and 87.7% MBPP Pass@1 — strong for a pipeline, not magic for the era</li>
+        <li>3.9 / 4 executability vs ≤ 2.1 for chat-linked baselines — the honest headline: <em>code that runs</em></li>
+        <li>0.83 human revisions per project — near-usable drafts, not finished products</li>
+        <li>Fixed SOPs buy reliability by spending flexibility — the workflow can not reroute itself (see Magentic-One for the counter-bet)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — One Requirement Down the Line</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Follow "build a CLI calculator" through the five stations. Each role lights up as its input arrives and its document is emitted into the pool. Watch the one place the line can stop — the Engineer's debug loop — fire, retry, and resolve; that loop is where the +4.2 Pass@1 points came from.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div id="mgLine" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:14px;"></div>
+      <div id="mgPool" style="font-family:var(--mono);font-size:11px;color:var(--text3);line-height:1.8;background:#0d1117;border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;min-height:110px;max-height:170px;overflow-y:auto;"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+        <button class="btn-primary" id="mgFlow" type="button" style="font-size:12.5px;padding:8px 16px;">▶ Send requirement down the line</button>
+        <span id="mgStat" style="font-family:var(--mono);font-size:10.5px;color:var(--text3);align-self:center;"></span>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Structure is a correctness technology</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The deepest idea survives translation beyond code: cascading hallucinations stop at document boundaries, because a PRD is checkable by an Architect and a test suite is checkable by a machine. Where the family argument goes: <a href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">CAMEL</a> is the free-chat baseline MetaGPT reacts against, <a href="./Magentic_One_A_Generalist_Multi_Agent_System.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">Magentic-One</a> trades fixed SOPs for dynamic planning, and <a href="./MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">MultiAgentBench</a> finally measures collaboration quality itself.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">📮 Publish-subscribe discipline</div><div class="notice-text">Agents subscribe to artifact types, not message streams. An Architect never sees QA chatter — context windows stay clean and roles stay on-task.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 The debug loop</div><div class="notice-text">Execution feedback is the only unambiguous feedback in the whole pipeline: tests pass or they do not. Grounding retries in that signal is why the gains were real.</div></div>
+    <div class="notice-card"><div class="notice-title">🖼️ Diagrams as contracts</div><div class="notice-text">The Architect emits system design as images/diagrams plus structured text — visual artifacts that constrain the Engineer more than prose ever could.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ SOP vs autonomy</div><div class="notice-text">A fixed pipeline can not re-plan: if step 2's document is wrong, step 3 inherits the error faithfully. That trade — reliability against adaptivity — is the fork Magentic-One takes.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the MetaGPT paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ MetaGPT encodes human SOPs into prompt sequences — a fixed workflow instead of free chat — to stop cascading hallucinations.</div>
+    <div class="card-sm">✅ Five roles: Product Manager → Architect → Project Manager → Engineer → QA, each with structured inputs and outputs.</div>
+    <div class="card-sm">✅ Structured communication: agents exchange documents and diagrams (PRDs, designs, task lists, tests), never dialogue.</div>
+    <div class="card-sm">✅ One global message pool with publish-subscribe: agents act only when their prerequisite artifacts arrive.</div>
+    <div class="card-sm">✅ Executable feedback: the Engineer runs unit tests and debugs up to 3 retries (+4.2 / +5.4 points Pass@1 on HumanEval / MBPP).</div>
+    <div class="card-sm">✅ Headline results: 85.9% HumanEval and 87.7% MBPP Pass@1; 3.9/4 executability vs ≤2.1 for chat-linked baselines; 0.83 human revisions.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2308.00352" target="_blank" rel="noopener noreferrer">"MetaGPT: Meta Programming for a Multi-Agent Collaborative Framework"</a> (Hong et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2308.00352" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html">CAMEL Guide</a>
+    <a class="footer-link" href="./Magentic_One_A_Generalist_Multi_Agent_System.html">Magentic-One Guide</a>
+    <a class="footer-link" href="./ReAct.html">ReAct Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
   </div>
 </footer>
 
 <script>
-const ROLE_DETAILS = {
-  pm: {
-    title: 'Product Manager (Alice)',
-    input: 'User Prompt: "Create a 2048 game in Python with Pygame"',
-    output: `## Product Requirements Document (PRD)
-- Target Audience: Casual desktop gamers
-- Core Gameplay: 4x4 sliding tile grid, tile merger rules (2+2=4), arrow key inputs
-- UI Requirements: Clean modern grid, score & high-score display, game-over modal
-- Competitive Analysis: 2048-original, threes
-- Modular Breakdown: game_logic.py, ui.py, main.py`
-  },
-  architect: {
-    title: 'Architect (Bob)',
-    input: 'PRD from Product Manager',
-    output: `## System Architecture & Data API Design
-- Implementation Approach: Pygame 2.5+, dataclasses for state representation
-- File Directory:
-  ├── main.py (Entry point & loop)
-  ├── board.py (Grid matrix & merge logic)
-  └── display.py (Surface rendering & animations)
-- Data Structures:
-  class BoardState:
-    grid: List[List[int]] (4x4)
-    score: int
-    over: bool`
-  },
-  project_manager: {
-    title: 'Project Manager (Eve)',
-    input: 'Architecture Design & File Directory from Bob',
-    output: `## Task Allocation & Dependency Graph
-1. [board.py] Write matrix slide/merge algorithm + unit tests
-2. [display.py] Build Pygame tile drawing & color dictionary
-3. [main.py] Wire event loop to BoardState and render surface
-- Priority: board.py MUST pass unit tests before main.py integration`
-  },
-  engineer: {
-    title: 'Engineer (Alex)',
-    input: 'Tasks from Eve + API Specs from Bob',
-    output: `## Code Implementation: board.py
-import numpy as np
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
 
-class Board:
-    def __init__(self):
-        self.grid = np.zeros((4, 4), dtype=int)
-        self.score = 0
-        self.spawn_tile()
-        self.spawn_tile()
-        
-    def move_left(self):
-        # Implementation of 2048 slide & merge
-        pass`
-  },
-  qa: {
-    title: 'QA Engineer (David)',
-    input: 'Implemented Code from Alex + PRD specs',
-    output: `## Test Suite: test_board.py
-import unittest
-from board import Board
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
 
-class TestBoard(unittest.TestCase):
-    def test_merge_tiles(self):
-        b = Board()
-        b.grid = [[2, 2, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-        b.move_left()
-        self.assertEqual(b.grid[0][0], 4)
-        
-- Status: 12/12 tests PASS. Executable verified.`
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','roles','artifacts','assembly','results','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === ASSEMBLY LINE DEMO (centerpiece) ===
+(function(){
+  const stationsEl=document.getElementById('pipeStations');
+  const wpEl=document.getElementById('pipeWorkpiece');
+  const docEl=document.getElementById('pipeDoc');
+  const poolEl=document.getElementById('pipePool');
+  const statusEl=document.getElementById('pipeStatus');
+  const fbEl=document.getElementById('pipeFeedback');
+  const runBtn=document.getElementById('pipeRun');
+  const stepBtn=document.getElementById('pipeStep');
+  const resetBtn=document.getElementById('pipeReset');
+  if(!stationsEl||!runBtn) return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const COLORS=['#f59e0b','#3b82f6','#14b8a6','#a855f7','#22c55e'];
+  const STATIONS=[
+    {icon:'🧭',name:'Product Manager',out:'PRD.md'},
+    {icon:'🏗️',name:'Architect',out:'design.md'},
+    {icon:'📊',name:'Project Manager',out:'tasks.md'},
+    {icon:'💻',name:'Engineer',out:'board.py'},
+    {icon:'🧪',name:'QA Engineer',out:'qa_report.md'}
+  ];
+  const D_PRD=[['# PRD.md — published by Product Manager','#64748b'],['Original requirement: "Create a 2048 game"',''],['User Stories: US1 swipe to merge equal tiles',''],['Requirement Pool: [P0] 4x4 board · [P1] score','']];
+  const D_DES=[['# design.md — published by Architect','#64748b'],['Files: board.py, ui.py, main.py',''],['Data structures: Board = 4x4 int matrix',''],['Interfaces: move(board, dir) -> Board','']];
+  const D_TASK=[['# tasks.md — published by Project Manager','#64748b'],['[1] board.py — owner: Engineer, init 4x4',''],['[2] ui.py — owner: Engineer, key controls',''],['Budget: tokens and time allocated per task','']];
+  const D_CODE=[['# board.py — published by Engineer','#64748b'],['class Board:',''],['    def __init__(self, n=4):',''],['        self.grid = [[0]*n for _ in range(n)]','']];
+  const D_QAFAIL=[['# qa_report.md — draft, QA Engineer','#64748b'],['test_board_size: PASS (4x4)',''],['test_move_left: FAIL ✗','#ef4444'],['   move_left([2,2,0,0]) -> [2,2,0,0]','#ef4444'],['   expected: [4,0,0,0]','#ef4444']];
+  const D_FIX=[['# board.py — revised by Engineer','#64748b'],['def move_left(row):',''],['    # bug: merge pass was skipped -> fixed','#f59e0b'],['    return merge_row(shift_row(row))',''],['// retried with execution feedback (1 of max 3)','#f59e0b']];
+  const D_QAPASS=[['# qa_report.md — final, QA Engineer','#64748b'],['test_board_size: PASS (4x4)','#22c55e'],['test_move_left: PASS ✓','#22c55e'],['test_game_over: PASS ✓','#22c55e'],['all test cases pass — software delivered ✓','#22c55e']];
+  const STEPS=[
+    {act:-1,done:[],wp:'💡 Idea',pool:[],doc:null,note:'A one-line requirement arrives: "Create a 2048 game". Press "Build software".'},
+    {act:0,done:[],wp:'📋 PRD',pool:['PRD.md'],doc:D_PRD,note:'Product Manager analyzes the requirement and publishes PRD.md to the message pool.'},
+    {act:1,done:[0],wp:'🏗️ Design',pool:['PRD.md','design.md'],doc:D_DES,note:'Architect (subscribed to PRDs) publishes design.md: files, data structures, interfaces.'},
+    {act:2,done:[0,1],wp:'📊 Tasks',pool:['PRD.md','design.md','tasks.md'],doc:D_TASK,note:'Project Manager turns the design into a distributed, budgeted task list.'},
+    {act:3,done:[0,1,2],wp:'💻 Code',pool:['PRD.md','design.md','tasks.md','board.py'],doc:D_CODE,note:'Engineer implements the assigned classes and functions, and writes unit tests.'},
+    {act:4,done:[0,1,2,3],wp:'💻 Code',pool:['PRD.md','design.md','tasks.md','board.py','qa ✗'],doc:D_QAFAIL,fb:'bug',note:'QA runs the tests — a bug is caught! Execution feedback loops back to the Engineer.'},
+    {act:3,done:[0,1,2],wp:'💻 Code',pool:['PRD.md','design.md','tasks.md','board.py','qa ✗'],doc:D_FIX,fb:'fix',note:'Engineer debugs using its own execution history (retry 1 of max 3).'},
+    {act:4,done:[0,1,2,3],wp:'✅ Tested',pool:['PRD.md','design.md','tasks.md','board.py','qa ✓'],doc:D_QAPASS,note:'QA re-runs the suite — every test passes now.'},
+    {act:-1,done:[0,1,2,3,4],wp:'🚀 Shipped',pool:['PRD.md','design.md','tasks.md','board.py','qa ✓'],doc:D_QAPASS,note:'Done — working software from 5 roles and 5 structured artifacts. (Paper: 3.9/4 avg executability.)'}
+  ];
+  let stage=0, timer=null;
+  function stopTimer(){if(timer){clearTimeout(timer);timer=null;}}
+  function render(){
+    const st=STEPS[stage];
+    stationsEl.innerHTML=STATIONS.map((s,i)=>{
+      const isDone=st.done.indexOf(i)>=0, isAct=st.act===i;
+      const border=isAct?('2px solid '+COLORS[i]):(isDone?'1px solid rgba(34,197,94,0.45)':'1px solid var(--border)');
+      const bg=isAct?'rgba(245,158,11,0.06)':(isDone?'rgba(34,197,94,0.05)':'var(--bg2)');
+      return '<div style="background:'+bg+';border:'+border+';border-radius:var(--radius);padding:.6rem .7rem;text-align:center;'+((isAct&&!RM)?'animation:pulse 1.6s ease-in-out infinite;':'')+'">'
+        +'<div style="font-size:1.3rem;">'+s.icon+'</div>'
+        +'<div style="font-size:12px;font-weight:600;margin:2px 0;color:'+(isAct?COLORS[i]:'var(--text)')+';">'+s.name+'</div>'
+        +'<div style="font-family:var(--mono);font-size:10px;color:var(--text3);">'+(isDone?'✓ ':'')+s.out+'</div></div>';
+    }).join('');
+    wpEl.textContent=st.wp;
+    wpEl.style.color=(stage===STEPS.length-1)?'var(--green)':'var(--amber)';
+    if(st.fb==='bug'){fbEl.style.display='block';fbEl.style.background='var(--red-dim)';fbEl.style.border='1px solid rgba(239,68,68,0.3)';fbEl.style.color='var(--red-text)';fbEl.textContent='⟲ EXECUTION FEEDBACK — QA → Engineer: test_move_left FAILED, fix required';}
+    else if(st.fb==='fix'){fbEl.style.display='block';fbEl.style.background='var(--amber-dim)';fbEl.style.border='1px solid rgba(245,158,11,0.3)';fbEl.style.color='var(--amber-text)';fbEl.textContent='⟲ debug loop — Engineer re-runs and revises board.py (retry ≤ 3, §3.3)';}
+    else{fbEl.style.display='none';}
+    poolEl.innerHTML=st.pool.length?st.pool.map(p=>'<span style="font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:6px;border:1px solid '+(p.indexOf('✗')>=0?'rgba(239,68,68,0.4)':(p.indexOf('✓')>=0?'rgba(34,197,94,0.4)':'var(--border2)'))+';background:#fff;color:'+(p.indexOf('✗')>=0?'var(--red)':(p.indexOf('✓')>=0?'var(--green)':'var(--text2)'))+';">'+p+'</span>').join(''):'<span style="font-family:var(--mono);font-size:11px;color:var(--text3);">(empty — nothing published yet)</span>';
+    docEl.innerHTML=st.doc?st.doc.map(l=>'<span style="'+(l[1]?('color:'+l[1]+';'):'')+'">'+l[0]+'</span>').join('\n'):'<span style="color:var(--text3);">— no artifact yet —</span>';
+    statusEl.textContent=st.note;
   }
-};
-
-function showRole(roleKey) {
-  const data = ROLE_DETAILS[roleKey];
-  const terminal = document.getElementById('terminalDisplay');
-  terminal.innerHTML = `
-    <div style="color:var(--amber);margin-bottom:8px;font-weight:600;">// ACTIVE ROLE: ${data.title}</div>
-    <div style="color:#94a3b8;margin-bottom:12px;">INPUT: ${data.input}</div>
-    <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;color:#f8fafc;white-space:pre-wrap;">${data.output}</div>
-  `;
-}
-
-document.querySelectorAll('.sop-step').forEach(step => {
-  step.addEventListener('click', () => {
-    document.querySelectorAll('.sop-step').forEach(s => s.classList.remove('active'));
-    step.classList.add('active');
-    showRole(step.getAttribute('data-role'));
+  function advance(){if(stage>=STEPS.length-1){stopTimer();return false;}stage++;render();return true;}
+  runBtn.addEventListener('click',()=>{
+    if(stage>=STEPS.length-1)return;
+    if(RM){stage=STEPS.length-1;render();return;}
+    stopTimer();
+    const tick=()=>{if(advance()&&stage<STEPS.length-1){timer=setTimeout(tick,950);}else{stopTimer();}};
+    tick();
   });
-});
+  stepBtn.addEventListener('click',()=>{stopTimer();advance();});
+  resetBtn.addEventListener('click',()=>{stopTimer();stage=0;render();});
+  render();
+})();
 
-showRole('pm');
-
-// Quiz
-const QUIZ_ITEMS = [
-  {
-    q: 'What is the core conceptual thesis of the MetaGPT paper?',
-    options: [
-      'Multi-agent systems should use reinforcement learning from scratch',
-      '"Code = SOP(Team)" — encoding human Standard Operating Procedures into agents yields structured, verifiable deliverables',
-      'Agents should talk as much as possible in natural language to discover emergent behaviors',
-      'Only single-agent systems can write bug-free Python code'
-    ],
-    correct: 1,
-    explain: 'MetaGPT\'s fundamental philosophy is "Code = SOP(Team)", translating proven human organizational workflows (PRD -> Architecture -> Task -> Code -> QA) into structured LLM interactions.'
-  },
-  {
-    q: 'How does MetaGPT avoid the quadratic token explosion of broadcast multi-agent communication?',
-    options: [
-      'By deleting all messages after 5 seconds',
-      'Through a Publish-Subscribe message broker where agents only subscribe to relevant artifact types',
-      'By limiting total project generation to 10 lines of code',
-      'By compressing prompts using zip algorithms'
-    ],
-    correct: 1,
-    explain: 'MetaGPT uses a Publish-Subscribe environment pool. Agents observe documents based on role profiles, keeping context window usage linear.'
-  },
-  {
-    q: 'What artifact does the Architect agent generate before the Engineer begins writing code?',
-    options: [
-      'A marketing website',
-      'System Architecture diagram, file directory structure, and Data API class specifications',
-      'Financial balance sheets',
-      'A git commit history'
-    ],
-    correct: 1,
-    explain: 'The Architect formalizes file structures, class interfaces, and API designs upfront, preventing dependency and import mismatches.'
-  },
-  {
-    q: 'What performance did MetaGPT achieve on the HumanEval programming benchmark?',
-    options: [
-      '45.2%',
-      '67.0%',
-      '85.9%',
-      '100%'
-    ],
-    correct: 2,
-    explain: 'MetaGPT achieved 85.9% pass@1 on HumanEval, significantly outperforming zero-shot single GPT-4 (67.0%) and peer-to-peer ChatDev (82.9%).'
-  },
-  {
-    q: 'Why are structured outputs (PRDs, JSON, UML) preferred over informal natural language in MetaGPT?',
-    options: [
-      'LLMs cannot read English paragraphs',
-      'Structured artifacts enforce unambiguous contractual boundaries, suppressing the cascading accumulation of errors',
-      'Structured formats take more tokens, which makes models think longer',
-      'Compilers only accept JSON as input'
-    ],
-    correct: 1,
-    explain: 'Structured documents act as immutable specification contracts, preventing semantic ambiguity and keeping agent downstream tasks aligned.'
+// === CHAT VS ARTIFACTS DEMO ===
+(function(){
+  const chatEl=document.getElementById('cvChat');
+  const docEl=document.getElementById('cvDocs');
+  const vChat=document.getElementById('cvVerdictChat');
+  const vDoc=document.getElementById('cvVerdictDoc');
+  const chatBtn=document.getElementById('cvChatBtn');
+  const docBtn=document.getElementById('cvDocBtn');
+  const resetBtn=document.getElementById('cvResetBtn');
+  if(!chatEl||!docBtn) return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let timers=[];
+  function stopAll(){timers.forEach(t=>clearTimeout(t));timers=[];}
+  const CHAT=[
+    {who:'PM Agent',text:'"Hi, hello and how are you?"',tone:'dim'},
+    {who:'Architect',text:'"Great! Have you had lunch?"',tone:'dim'},
+    {who:'PM Agent',text:"Let's build a 2048 clone. Board is 4×4, swipe to merge.",tone:'ok'},
+    {who:'Engineer',text:"Sure! I'll make the board 3×3 — cleaner layout.",tone:'bad'},
+    {who:'QA Agent',text:"3×3? …okay, I'll test 3×3 to match the code.",tone:'bad'},
+    {who:'Engineer',text:"All green on my side. Ship it!",tone:'bad'}
+  ];
+  const DOCS=[
+    {file:'📌 PRD.md',lines:['Board: 4×4 (16 tiles)','Requirement Pool: [P0] 4×4 board'],pin:true},
+    {file:'design.md',lines:['Data: grid = 4×4 int matrix','ref: PRD → Requirement Pool'],pin:false},
+    {file:'board.py',lines:['self.grid=[[0]*4 for _ in range(4)]','ref: design.md → PRD [P0]'],pin:false},
+    {file:'qa_report.md',lines:['test_board_size: PASS (4×4)','checked against PRD [P0]'],pin:true}
+  ];
+  function chatRow(t,who,text){
+    const col=t==='bad'?'var(--red)':(t==='ok'?'var(--green)':'var(--text3)');
+    const bg=t==='bad'?'var(--red-dim)':'var(--bg2)';
+    return '<div style="background:'+bg+';border-left:3px solid '+col+';border-radius:6px;padding:6px 10px;margin-bottom:6px;"><span style="color:'+col+';font-weight:600;">'+who+':</span> '+text+'</div>';
   }
+  function docRow(file,lines,pin){
+    return '<div style="background:var(--bg2);border:1px solid '+(pin?'rgba(34,197,94,0.35)':'var(--border)')+';border-radius:6px;padding:6px 10px;margin-bottom:6px;"><div style="color:'+(pin?'var(--green)':'var(--amber)')+';font-weight:600;margin-bottom:2px;">'+file+'</div>'+lines.map(l=>'<div style="color:var(--text2);">'+l+'</div>').join('')+'</div>';
+  }
+  function runChat(){
+    stopAll();vChat.style.display='none';vDoc.style.display='none';docEl.textContent='— press "Run MetaGPT artifacts" —';
+    chatEl.innerHTML='';
+    const show=(i)=>{
+      chatEl.insertAdjacentHTML('beforeend',chatRow(CHAT[i].tone,CHAT[i].who,CHAT[i].text));
+      if(i===CHAT.length-1){vChat.innerHTML='<strong style="color:var(--red-text);">✗ Error propagation.</strong> The hallucinated 3×3 board rides every later turn — even QA rewrites its tests to match the bug. The paper calls these cascading hallucinations.';vChat.style.display='block';}
+    };
+    if(RM){CHAT.forEach((_,i)=>show(i));return;}
+    CHAT.forEach((_,i)=>{timers.push(setTimeout(()=>show(i),650*i));});
+  }
+  function runDocs(){
+    stopAll();vChat.style.display='none';vDoc.style.display='none';chatEl.textContent='— press "Run free-chat agents" —';
+    docEl.innerHTML='';
+    const show=(i)=>{
+      docEl.insertAdjacentHTML('beforeend',docRow(DOCS[i].file,DOCS[i].lines,DOCS[i].pin));
+      if(i===DOCS.length-1){vDoc.innerHTML='<strong style="color:var(--green-text);">✓ Error containment.</strong> The PRD pins "4×4" once; every downstream artifact references the document. A hallucinated "3×3" contradicts the pinned spec and cannot slip through.';vDoc.style.display='block';}
+    };
+    if(RM){DOCS.forEach((_,i)=>show(i));return;}
+    DOCS.forEach((_,i)=>{timers.push(setTimeout(()=>show(i),650*i));});
+  }
+  chatBtn.addEventListener('click',runChat);
+  docBtn.addEventListener('click',runDocs);
+  resetBtn.addEventListener('click',()=>{stopAll();chatEl.textContent='— press "Run free-chat agents" —';docEl.textContent='— press "Run MetaGPT artifacts" —';vChat.style.display='none';vDoc.style.display='none';});
+})();
+
+// === ROLE EXPLORER DEMO ===
+(function(){
+  const tabsEl=document.getElementById('roleTabs');
+  const panelEl=document.getElementById('rolePanel');
+  if(!tabsEl||!panelEl) return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const ROLES={
+    pm:{tab:'🧭 PM',input:['# one-line user requirement','"Create a 2048 game"'],output:['# PRD.md','• user stories + requirement pool','• competitive analysis'],risk:"No Product Manager → vague requirements cascade into every later document. In the paper's role ablation, an Engineer working alone produced 83 lines with executability 1.0/4 and needed 10 human revisions per task."},
+    arch:{tab:'🏗️ Architect',input:['# from the message pool','PRD.md (subscribed)'],output:['# design.md','• file list, data structures','• interface definitions + flow diagram'],risk:"No Architect → the Engineer invents structure on the fly. Without the interface definitions (move(board, dir)…) files and modules stop matching the PRD — the paper found adding this role lifted executability from 2.0 to 2.5 and cut revisions."},
+    pjm:{tab:'📊 Project Mgr',input:['# from the message pool','design.md (subscribed)'],output:['# tasks.md','• task distribution for the Engineer','• budgeted in tokens and time'],risk:"No Project Manager → no task distribution. The Engineer faces one giant design document and must guess what to build first; nothing is budgeted, so costs and scope drift unchecked."},
+    eng:{tab:'💻 Engineer',input:['# from the message pool','tasks.md + design.md'],output:['# code: board.py, ui.py, main.py','class Board: def __init__(self, n=4)','+ executed unit tests (≤3 debug retries)'],risk:"No Engineer → beautiful documents, zero software. Nothing is ever implemented, executed, or debugged — the deliverable never exists."},
+    qa:{tab:'🧪 QA',input:['# from the message pool','code (board.py, ui.py) + PRD ref'],output:['# qa_report.md','test_board_size: PASS (4x4)','test cases enforced on every build'],risk:"No QA Engineer → bugs ship to the user. The paper's executable feedback (tests run by the builder) already cut human revisions from 2.25 to 0.83 — QA's independent test cases add the second line of defense."}
+  };
+  let cur='pm';
+  function render(){
+    tabsEl.innerHTML=Object.keys(ROLES).map(k=>'<button type="button" style="font-family:var(--mono);font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid '+(k===cur?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(k===cur?'var(--amber-dim)':'var(--bg3)')+';color:'+(k===cur?'var(--amber)':'var(--text2)')+';cursor:pointer;" data-role="'+k+'">'+ROLES[k].tab+'</button>').join('');
+    const r=ROLES[cur];
+    panelEl.innerHTML='<div class="two-col" style="margin-bottom:10px;">'
+      +'<div class="card-sm"><div class="card-label" style="color:var(--blue-text);">INPUT — CONSUMES</div><div style="font-family:var(--mono);font-size:11.5px;color:var(--text2);line-height:1.9;white-space:pre-wrap;">'+r.input.join('\n')+'</div></div>'
+      +'<div class="card-sm"><div class="card-label" style="color:var(--green-text);">OUTPUT — PUBLISHES</div><div style="font-family:var(--mono);font-size:11.5px;color:var(--text2);line-height:1.9;white-space:pre-wrap;">'+r.output.join('\n')+'</div></div>'
+      +'</div>'
+      +'<div class="card-sm" style="background:var(--red-dim);border:1px solid rgba(239,68,68,0.3);"><div class="card-label" style="color:var(--red-text);">WITHOUT THIS ROLE</div><div style="font-size:12.5px;color:var(--text2);line-height:1.7;">'+r.risk+'</div></div>';
+    if(!RM){panelEl.classList.remove('animate-in');void panelEl.offsetWidth;panelEl.classList.add('animate-in');}
+  }
+  tabsEl.addEventListener('click',e=>{const b=e.target.closest('button[data-role]');if(!b)return;cur=b.getAttribute('data-role');render();});
+  render();
+})();
+
+// === EXECUTABILITY CHART ===
+(function(){const el=document.getElementById('execChart');if(!el)return;const data=[{label:'AutoGPT',pct:25,v:'1.0',color:'#94a3b8'},{label:'LangChain',pct:25,v:'1.0',color:'#94a3b8'},{label:'AgentVerse',pct:25,v:'1.0',color:'#94a3b8'},{label:'ChatDev',pct:52.5,v:'2.1',color:'#3b82f6'},{label:'MetaGPT',pct:97.5,v:'3.9',color:'#f59e0b'}];el.innerHTML=data.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:84px;text-align:right;">${d.label}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${d.pct}%;background:${d.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:38px;">${d.v}</div></div>`).join('');})();
+
+// === HUMANEVAL CHART ===
+(function(){const el=document.getElementById('humanevalChart');if(!el)return;const data=[{label:'GPT-3.5 direct',pct:35.7,v:'35.7',color:'#94a3b8'},{label:'GPT-4 direct',pct:80,v:'80.0',color:'#3b82f6'},{label:'no feedback',pct:81.7,v:'≈81.7',color:'#14b8a6'},{label:'MetaGPT',pct:85.9,v:'85.9',color:'#f59e0b'}];el.innerHTML=data.map(d=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:84px;text-align:right;">${d.label}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${d.pct}%;background:${d.color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:44px;">${d.v}</div></div>`).join('');})();
+
+// === ASSEMBLY LINE (DEEP DIVE) ===
+(function(){
+  const line=document.getElementById('mgLine'),pool=document.getElementById('mgPool'),flow=document.getElementById('mgFlow'),stat=document.getElementById('mgStat');
+  if(!line||!pool||!flow||!stat)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const STATIONS=[
+    {n:'PRODUCT MGR',in:'requirement',out:'PRD · user stories, constraints'},
+    {n:'ARCHITECT',in:'PRD',out:'system design · diagram + module list'},
+    {n:'PROJECT MGR',in:'design',out:'task list · sequenced, assigned'},
+    {n:'ENGINEER',in:'task list',out:'code + tests (debug loop here)'},
+    {n:'QA',in:'code',out:'test report · pass/fail verdict'}
+  ];
+  const EVENTS=[
+    'user → pool: "build a CLI calculator"',
+    'PM subscribed [requirement] → WAKE · emitting PRD…',
+    'pool: PRD published (user stories: add, sub, mul, div, history)',
+    'ARCHITECT subscribed [PRD] → WAKE · emitting design…',
+    'pool: design published (3 modules: parser, ops, shell)',
+    'PJM subscribed [design] → WAKE · emitting tasks…',
+    'pool: task list published (9 tasks, dependency order)',
+    'ENGINEER subscribed [tasks] → WAKE · writing code…',
+    'engine: tests run → 2 FAIL (div-by-zero, arg parse)',
+    '⚠ debug loop 1/3: fixing div-by-zero… tests re-run → 1 FAIL',
+    '⚠ debug loop 2/3: fixing arg parse… tests re-run → ALL PASS',
+    'pool: code published (executable · all tests green)',
+    'QA subscribed [code] → WAKE · verdict: PASS',
+    '✓ pipeline complete — 5 documents, 2 debug cycles, 0 human turns'
+  ];
+  let running=false;
+  function stations(active,dbg){
+    line.innerHTML=STATIONS.map((s,i)=>{
+      const state=i<active?'done':(i===active?(dbg?'dbg':'active'):'idle');
+      const border=state==='done'?'rgba(34,197,94,.45)':state==='active'?'rgba(245,158,11,.6)':state==='dbg'?'rgba(239,68,68,.6)':'var(--border)';
+      const bg=state==='done'?'rgba(34,197,94,.07)':state==='active'?'rgba(245,158,11,.10)':state==='dbg'?'var(--red-dim)':'var(--bg2)';
+      const color=state==='done'?'var(--green)':state==='active'?'var(--amber)':state==='dbg'?'var(--red)':'var(--text3)';
+      return '<div style="background:'+bg+';border:1px solid '+border+';border-radius:var(--radius);padding:8px 10px;transition:all .4s;"><div style="font-family:var(--mono);font-size:10px;font-weight:700;color:'+color+';margin-bottom:3px;">'+s.n+'</div><div style="font-size:9.5px;color:var(--text3);line-height:1.5;">'+(state==='idle'?'waiting':'→ '+s.out)+'</div></div>';
+    }).join('');
+  }
+  flow.addEventListener('click',()=>{
+    if(running)return;running=true;
+    pool.innerHTML='';stations(0,false);
+    if(RM){pool.innerHTML=EVENTS.map(e=>'<div>'+e+'</div>').join('');stations(5,false);stat.textContent='pipeline complete (reduced-motion render)';running=false;return;}
+    let i=0;
+    const tmr=setInterval(()=>{
+      const e=EVENTS[i];
+      const d=document.createElement('div');
+      d.style.opacity='0';d.style.animation='fadeUp .35s ease forwards';
+      d.innerHTML='<span style="color:'+(e.indexOf('⚠')>=0?'var(--red)':e.indexOf('✓')>=0?'var(--green)':'var(--text3)')+';">'+e+'</span>';
+      pool.appendChild(d);pool.scrollTop=pool.scrollHeight;
+      const active=e.startsWith('pool: PRD')?1:e.startsWith('pool: design')?2:e.startsWith('pool: task')?3:e.startsWith('pool: code')?4:e.indexOf('QA')>=0?5:0;
+      stations(Math.max(active,e.indexOf('tests re-run')>=0?4:0),e.indexOf('debug')>=0);
+      stat.textContent='message '+(i+1)+'/'+EVENTS.length;
+      i++;
+      if(i>=EVENTS.length){clearInterval(tmr);stations(5,false);running=false;stat.textContent='done — 3.9/4 executability in the paper’s own terms';}
+    },420);
+  });
+  if(RM||!('IntersectionObserver' in window)){stations(0,false);}
+  else{stations(0,false);}
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'What does MetaGPT encode into prompt sequences to streamline multi-agent workflows?',opts:['Chain-of-thought reasoning examples','Standardized Operating Procedures (SOPs) from human teams','Reinforcement-learning reward functions','A Python grammar and type system'],correct:1,explain:'MetaGPT takes human SOPs — like the division of labor in a software company — and encodes them into prompt sequences, so agents follow a standardized workflow and produce structured outputs instead of free-form chat.'},
+  {q:'What is the correct order of MetaGPT\u2019s software-company pipeline?',opts:['Architect → Product Manager → Engineer → QA → Project Manager','Product Manager → Architect → Project Manager → Engineer → QA Engineer','Engineer → QA Engineer → Architect → Product Manager → Project Manager','Project Manager → Product Manager → QA Engineer → Architect → Engineer'],correct:1,explain:'The PRD (Product Manager) flows to the Architect for system design, then the Project Manager distributes tasks, the Engineer writes the code, and the QA Engineer closes with test cases.'},
+  {q:'Why do structured artifacts beat free-form chat between agents?',opts:['They are faster to generate than chat messages','Documents act as a shared source of truth, so one hallucinated turn cannot silently cascade','They remove the need for any role specialization','Chat agents cannot use GPT-4 as a backend'],correct:1,explain:'In chat chains, errors propagate like the telephone game — the paper\u2019s own analogy. MetaGPT\u2019s schema-constrained documents pin the spec, so downstream agents reference the same pinned artifact and intermediate results can be verified.'},
+  {q:'What headline code result did MetaGPT report with GPT-4?',opts:['67% Pass@1 on HumanEval','85.9% Pass@1 on HumanEval and 87.7% on MBPP','It failed to beat plain GPT-4 on both benchmarks','100% Pass@1 on MBPP'],correct:1,explain:'MetaGPT reached 85.9% / 87.7% Pass@1 on HumanEval / MBPP — a new SoTA at the time — and 3.9/4 average executability on SoftwareDev, vs ≤2.1 for chat-linked baselines. 67% is GPT-4\u2019s reported direct HumanEval score; 100% was the paper\u2019s task-completion claim, not a benchmark score.'},
+  {q:'What does "meta programming" mean in MetaGPT?',opts:['Learning to learn, as in meta-learning for optimization','Programming to program — an organized agent system whose product is code','Searching programs with metaheuristics','Fine-tuning one model on many programming languages'],correct:1,explain:'The paper defines meta-programming as "programming to program": the meta level is the organized company of specialized agents (roles + SOPs) whose output is working code — in contrast to meta learning ("learning to learn").'}
 ];
-
-function renderQuiz() {
-  const container = document.getElementById('quizContainer');
-  container.innerHTML = '';
-  QUIZ_ITEMS.forEach((item, qIdx) => {
-    const card = document.createElement('div');
-    card.className = 'quiz-card';
-    const title = document.createElement('div');
-    title.className = 'quiz-q';
-    title.textContent = `${qIdx + 1}. ${item.q}`;
-    card.appendChild(title);
-
-    const optsDiv = document.createElement('div');
-    item.options.forEach((optText, optIdx) => {
-      const btn = document.createElement('button');
-      btn.className = 'quiz-opt';
-      btn.textContent = optText;
-      btn.addEventListener('click', () => {
-        const parent = btn.parentElement;
-        const all = parent.querySelectorAll('.quiz-opt');
-        all.forEach(b => b.disabled = true);
-        if (optIdx === item.correct) {
-          btn.classList.add('correct');
-        } else {
-          btn.classList.add('wrong');
-          all[item.correct].classList.add('correct');
-        }
-        explain.style.display = 'block';
-      });
-      optsDiv.appendChild(btn);
-    });
-    card.appendChild(optsDiv);
-
-    const explain = document.createElement('div');
-    explain.className = 'quiz-explain';
-    explain.textContent = `Explanation: ${item.explain}`;
-    card.appendChild(explain);
-
-    container.appendChild(card);
-  });
-}
-renderQuiz();
-
-// Nav toggle
-const navBtn = document.getElementById('navToggle');
-const mobMenu = document.getElementById('mobileMenu');
-navBtn.addEventListener('click', () => {
-  mobMenu.classList.toggle('open');
-});
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>
+
 </body>
 </html>

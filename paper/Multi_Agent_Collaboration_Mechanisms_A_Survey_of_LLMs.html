@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Multi-Agent Collaboration Mechanisms: A Survey of LLMs — Interactive Guide</title>
-<meta name="description" content="A comprehensive interactive explainer of Multi-Agent Collaboration Mechanisms for LLMs, featuring communication topologies, coordination strategies, decision paradigms, and failure modes.">
-<meta name="keywords" content="multi-agent collaboration, LLM survey, communication topology, star network, peer to peer, multi-agent debate, consensus, collective intelligence, interactive tutorial">
-<meta name="author" content="Adil Shamim">
+<meta name="description" content="An interactive explainer of the 2025 survey of LLM multi-agent collaboration: build communication topologies, run debate vs voting simulations, and learn when an agent team beats a single LLM.">
+<meta name="keywords" content="multi-agent systems, LLM agents, collaboration mechanisms, cooperation, competition, coopetition, communication topology, debate, voting, coordination, arXiv 2501.06322, interactive tutorial">
+<meta name="author" content="PaperMap">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#f59e0b">
 <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -14,14 +14,14 @@
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="shortcut icon" href="../assets/favicon.svg">
 <meta property="og:title" content="Multi-Agent Collaboration Mechanisms: A Survey of LLMs — Interactive Guide">
-<meta property="og:description" content="Comprehensive interactive taxonomy of multi-agent LLM collaboration topologies, debate mechanisms, and collective intelligence.">
+<meta property="og:description" content="Visual, interactive walkthrough of the survey that maps how LLM agent teams collaborate — types, strategies, structures, and coordination.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://papermap.vercel.app/paper/Multi_Agent_Collaboration_Mechanisms_A_Survey_of_LLMs.html">
 <meta property="og:site_name" content="PaperMap">
 <meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Multi-Agent Collaboration Mechanisms Survey — Interactive Guide">
-<meta name="twitter:description" content="Understand the mathematical and structural taxonomies of LLM multi-agent systems with interactive network diagrams.">
+<meta name="twitter:title" content="Multi-Agent Collaboration Mechanisms — Interactive Guide">
+<meta name="twitter:description" content="Learn how LLM agent teams cooperate, compete, and coordinate — with interactive topology, debate, and team-builder demos.">
 <meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,187 +84,265 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
-
-.hero { min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 3rem;position:relative;overflow:hidden; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
-.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:1.5rem;background:var(--amber-dim); }
-.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 5.5vw, 4.2rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.2rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
-.hero-subtitle { max-width:640px;color:var(--text2);font-size:16px;margin-bottom:2rem;line-height:1.8; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
 .btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
 .btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
-
-.meta-badges { display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:2.5rem; }
-.meta-chip { display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;color:var(--text2); }
-
-section { max-width:1100px;margin:0 auto;padding:4.5rem 2rem; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
-.section-desc { color:var(--text2);max-width:620px;font-size:15px;margin-bottom:2.2rem; }
-
-.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 8px 24px rgba(15,23,42,0.04);transition:transform .2s ease, box-shadow .2s ease; }
-.card:hover { transform:translateY(-2px);box-shadow:0 12px 30px rgba(15,23,42,0.07); }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
 .card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
-.card-label { font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px; }
-.two-col { display:grid;grid-template-columns:1fr 1fr;gap:1.5rem; }
-.three-col { display:grid;grid-template-columns:repeat(3, 1fr);gap:1.2rem; }
-.four-col { display:grid;grid-template-columns:repeat(4, 1fr);gap:1rem; }
-
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-
-/* Interactive Topology Visualizer */
-.topo-container { background:#0f172a;color:#f8fafc;border-radius:var(--radius-lg);padding:1.6rem;box-shadow:0 20px 40px rgba(0,0,0,0.25);margin-top:1.5rem; }
-.topo-nav { display:flex;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap; }
-.topo-tab { background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#94a3b8;font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s; }
-.topo-tab.active { background:var(--amber);color:#000;border-color:var(--amber);font-weight:600; }
-.topo-view { display:grid;grid-template-columns:1.2fr 1fr;gap:1.5rem;align-items:center; }
-.canvas-holder { background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:10px;height:240px;display:flex;align-items:center;justify-content:center;position:relative; }
-
-/* Quiz styles */
-.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.6rem;margin-bottom:1.5rem; }
-.quiz-q { font-weight:600;font-size:15px;margin-bottom:1rem;color:var(--text); }
-.quiz-opt { display:block;width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#fff;margin-bottom:8px;cursor:pointer;font-family:var(--sans);font-size:14px;color:var(--text);transition:all .2s; }
-.quiz-opt:hover { background:var(--bg3);border-color:rgba(245,158,11,0.4); }
-.quiz-opt.correct { background:rgba(34,197,94,0.15);border-color:var(--green);color:var(--green);font-weight:600; }
-.quiz-opt.wrong { background:rgba(239,68,68,0.15);border-color:var(--red);color:var(--red); }
-.quiz-explain { font-size:13px;color:var(--text2);margin-top:8px;padding:8px 12px;border-radius:6px;background:var(--bg3);display:none; }
-
-footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem; }
-.footer-links { display:flex;gap:1rem;flex-wrap:wrap; }
-.footer-link { font-family:var(--mono);font-size:12px;color:var(--text2);text-decoration:none; }
-.footer-link:hover { color:var(--amber); }
-
-@media(max-width:850px){
-  .topo-view, .two-col, .three-col, .four-col { grid-template-columns:1fr; }
-  .nav-links, .nav-actions { display:none; }
-  .nav-toggle { display:flex;align-items:center;justify-content:center; }
-  .hero-title { font-size:2.4rem; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
 }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
 
-<a href="#content" class="skip-link">Skip to main content</a>
-
+<!-- NAV -->
 <nav>
-  <a href="../index.html" class="nav-logo">PaperMap</a>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
   <div class="nav-links">
-    <a href="#taxonomy" class="nav-link">Taxonomy</a>
-    <a href="#topologies" class="nav-link">Topologies</a>
-    <a href="#pitfalls" class="nav-link">Failure Modes</a>
-    <a href="#quiz" class="nav-link">Quiz</a>
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#framework">Framework</a>
+    <a class="nav-link" href="#mechanisms">Mechanisms</a>
+    <a class="nav-link" href="#communication">Communication</a>
+    <a class="nav-link" href="#failure">Failure</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
   </div>
   <div class="nav-actions">
-    <span class="nav-badge">Category VII · Multi-Agent</span>
-    <a href="https://arxiv.org/abs/2402.01680" target="_blank" rel="noopener" class="btn-primary" style="padding:6px 14px;font-size:12px;">Paper PDF ↗</a>
+    <div class="nav-badge">arXiv 2025</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
   </div>
-  <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
 </nav>
 
-<div id="mobileMenu" class="mobile-menu">
-  <a href="../index.html">← All Papers</a>
-  <a href="#taxonomy">Taxonomy</a>
-  <a href="#topologies">Topologies</a>
-  <a href="#pitfalls">Failure Modes</a>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#framework">Framework</a>
+  <a href="#mechanisms">Mechanisms</a>
+  <a href="#communication">Communication</a>
+  <a href="#failure">Failure</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
   <a href="#quiz">Quiz</a>
 </div>
 
-<main id="content">
-
-<div class="hero">
+<!-- HERO -->
+<div class="hero" id="top">
   <div class="hero-grid"></div>
   <div class="hero-glow"></div>
-  <div class="hero-eyebrow">Survey Paper · Multi-Agent Coordination</div>
-  <h1 class="hero-title">Multi-Agent Collaboration<br><em>Mechanisms: A Survey</em></h1>
-  <p class="hero-subtitle">A systematic taxonomy of interaction structures, communication topologies, consensus algorithms, and emergent pathologies in LLM multi-agent societies.</p>
-  
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    The <em>Physics</em> of<br>Agent Teams
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to "Multi-Agent Collaboration Mechanisms: A Survey of
+    LLMs" — the January 2025 survey by Tran et al. that maps how groups of LLM agents
+    actually work together: who talks to whom, why they compete, and when a team
+    beats a single model.
+  </p>
   <div class="hero-actions">
-    <a href="#topologies" class="btn-primary">Explore Topologies</a>
-    <a href="#taxonomy" class="btn-outline">View Mechanism Taxonomy</a>
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2501.06322" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
   </div>
-
-  <div class="meta-badges">
-    <div class="meta-chip"><span>Focus:</span> Multi-Agent Architectures & Interaction Dynamics</div>
-    <div class="meta-chip"><span>Taxonomy:</span> Topologies, Coordination, Consensus, Failures</div>
-    <div class="meta-chip"><span>Coverage:</span> 100+ Multi-Agent Systems & Frameworks</div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Framework Dimensions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">167</div>
+      <div class="stat-label">References Reviewed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Collaboration Types</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2025</div>
+      <div class="stat-label">Year Published</div>
+    </div>
   </div>
 </div>
 
 <div class="divider"></div>
-
-<!-- SECTION 1: TAXONOMY -->
-<section id="taxonomy">
-  <div class="section-tag">Classification Framework</div>
-  <h2 class="section-title">The Four Dimensions of <em>Agent Collaboration</em></h2>
-  <p class="section-desc">Every multi-agent LLM system can be decomposed along four fundamental design axes.</p>
-
-  <div class="four-col">
-    <div class="card">
-      <div class="card-label">1. Topology</div>
-      <h3 style="font-size:15px;color:var(--amber);margin-bottom:6px;">Information Routing</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">How messages travel between nodes: Centralized Star, Hierarchical Tree, Peer-to-Peer Mesh, or Linear Assembly Line.</p>
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From Solo Agents to <em>Agent Teams</em></h2>
+  <p class="section-desc">LLM-based multi-agent systems went from a curiosity to a research field in under two years. Here is the road that led to a survey being needed at all.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2023 · Mar</div><div class="tl-title">🤝 CAMEL (Li et al.)</div><div class="tl-desc">Role-playing "AI User" and "AI Assistant" agents complete tasks through conversation — an early open framework for cooperative LLM agents.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023 · Aug</div><div class="tl-title">🏗️ MetaGPT (Hong et al.)</div><div class="tl-desc">A software company in prompts: product manager, architect, engineer. Encodes human SOPs to keep a role-based team coordinated.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023</div><div class="tl-title">💬 Multi-agent debate (Du et al.)</div><div class="tl-desc">Multiple LLM instances argue for a fixed number of rounds — and factuality and reasoning improve. Competition becomes a feature.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024 · Nov</div><div class="tl-title">🎼 Magentic-One (Microsoft)</div><div class="tl-desc">A generalist system where an orchestrator agent directs specialized agents (web, files, coding) — dynamic orchestration at work.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2025 · Jan</div><div class="tl-title">🚀 This survey (Tran et al.)</div><div class="tl-desc">Reviews 167 references and maps the mechanisms themselves — collaboration types, strategies, structures, and coordination.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2025 · Mar →</div><div class="tl-title">📊 MultiAgentBench</div><div class="tl-desc">A benchmark purpose-built for collaboration and competition — starting to close the evaluation gap this survey flagged.</div></div>
     </div>
-    <div class="card">
-      <div class="card-label">2. Strategy</div>
-      <h3 style="font-size:15px;color:var(--blue);margin-bottom:6px;">Agent Incentives</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Cooperative (shared reward), Competitive (zero-sum gaming), or Adversarial Debate (truth discovery through thesis-antithesis).</p>
-    </div>
-    <div class="card">
-      <div class="card-label">3. Consensus</div>
-      <h3 style="font-size:15px;color:var(--teal);margin-bottom:6px;">Decision Synthesis</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">How the collective picks a final answer: Majority Voting, Elo Tournament ranking, Hierarchical Judge, or Iterative Discussion.</p>
-    </div>
-    <div class="card">
-      <div class="card-label">4. Memory</div>
-      <h3 style="font-size:15px;color:var(--purple);margin-bottom:6px;">State Sharing</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Private local scratchpads vs Central Blackboards vs Pub-Sub message buses with topic filters.</p>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- SECTION 2: INTERACTIVE TOPOLOGIES -->
-<section id="topologies">
-  <div class="section-tag">Interactive Topology Explorer</div>
-  <h2 class="section-title">Visualizing <em>Communication Networks</em></h2>
-  <p class="section-desc">Select a network topology to compare message complexity, fault tolerance, and context token overhead.</p>
-
-  <div class="topo-container">
-    <div class="topo-nav">
-      <button class="topo-tab active" data-topo="star">Centralized (Star / Hub)</button>
-      <button class="topo-tab" data-topo="mesh">Decentralized (Fully-Connected Mesh)</button>
-      <button class="topo-tab" data-topo="tree">Hierarchical (Tree / Pyramidal)</button>
-      <button class="topo-tab" data-topo="pipeline">Linear (Sequential Assembly)</button>
-    </div>
-
-    <div class="topo-view">
-      <div id="topoCanvas" class="canvas-holder">
-        <!-- SVG diagram rendered via JS -->
-      </div>
-      <div>
-        <div id="topoTitle" style="font-size:16px;font-weight:600;color:var(--amber);margin-bottom:8px;"></div>
-        <div id="topoDesc" style="font-size:13px;color:#cbd5e1;line-height:1.7;margin-bottom:12px;"></div>
-        <div id="topoStats" style="font-family:var(--mono);font-size:11px;color:#94a3b8;line-height:1.8;"></div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Key Insight</div>
+      <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:1rem;">LLM agents were never <span class="highlight">trained to collaborate</span>. LLMs are standalone next-token predictors — yet researchers keep putting them in teams. What separates systems that gain collective intelligence from systems that just burn tokens is the <span class="highlight">collaboration mechanism</span>: who talks to whom, why, under which rules, and who directs the traffic.</p>
+      <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">A COLLABORATION CHANNEL, PER THE SURVEY</div>
+        <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
+          channel&nbsp;<span style="color:var(--amber-text);">c</span>&nbsp;=&nbsp;<span style="color:var(--blue-text);">actors</span>&nbsp;+&nbsp;<span style="color:var(--teal-text);">type</span>&nbsp;+&nbsp;<span style="color:var(--purple-text);">structure</span>&nbsp;+&nbsp;<span style="color:var(--green-text);">strategy</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px;">Change any attribute and you get a different channel — a different team chemistry.</div>
       </div>
     </div>
   </div>
@@ -266,252 +350,647 @@ footer { max-width:1100px;margin:0 auto;padding:3.5rem 2rem;border-top:1px solid
 
 <div class="divider"></div>
 
-<!-- SECTION 3: FAILURE MODES -->
-<section id="pitfalls">
-  <div class="section-tag">Pathologies & Risks</div>
-  <h2 class="section-title">Multi-Agent <em>Emergent Failure Modes</em></h2>
-  <p class="section-desc">When multi-agent societies malfunction, they exhibit failure patterns not seen in single-agent prompts.</p>
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Problem with <em>Ad-Hoc</em> Teams</h2>
+  <p class="section-desc">By 2024, every new multi-agent framework shipped its own collaboration recipe. The survey's diagnosis: the field was drowning in frameworks and starving for mechanisms.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🌀</div>
+      <div class="problem-title">Every Paper Invents Its Own Team</div>
+      <ul class="problem-list">
+        <li>Each MAS framework ships an ad-hoc, one-off collaboration recipe</li>
+        <li>No shared vocabulary: "role", "channel", "protocol" mean different things</li>
+        <li>Prior surveys focus on single agents or applications — not mechanisms</li>
+        <li>Evaluations use narrow, differing setups — results are incomparable</li>
+        <li>Failure modes get re-discovered, not learned from, by every new builder</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🗺️</div>
+      <div class="problem-title">The Survey's Solution: a Mechanism-Level Map</div>
+      <ul class="problem-list">
+        <li>Characterize what happens <em>between</em> agents, not which framework they use</li>
+        <li>Five dimensions: actors, types, structures, strategies, coordination</li>
+        <li>One lens for CAMEL, MetaGPT, AutoGen, ChatDev, DyLAN, debate systems…</li>
+        <li>Lessons learned and open problems collected in one place</li>
+        <li>An extensible framework — new systems slot into the existing map</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — A Playbook for Sports Teams</div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;">⚾ A soccer coach does not invent passing patterns from scratch before every match. They study cataloged <span class="highlight">formations</span> — 4-4-2, 4-3-3, counter-attack — each with known strengths, weaknesses, and failure modes. This survey is the first playbook for LLM agent teams: you pick a topology, a strategy, and an interaction type the way a coach picks a formation — <em>deliberately</em>, knowing the trade-offs, instead of reinventing teamwork every game.</p>
+  </div>
+</section>
 
-  <div class="three-col">
+<div class="divider"></div>
+
+<!-- FRAMEWORK -->
+<section id="framework">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Survey's <em>Map</em> — Five Dimensions</h2>
+  <p class="section-desc">The survey's unit of analysis is the collaboration channel between agents. Every channel is described along the same five dimensions — which makes wildly different systems finally comparable.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">y<sub>collab</sub> = S( 𝒪<sub>collab</sub>, ℰ, x<sub>collab</sub> | 𝒜, 𝒞 )</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:6px;">The survey's problem definition (Eq. 1): collective output as a function of the team and its channels.</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">y<sub>collab</sub></div><div class="fp-name">Collective Output</div><div class="fp-desc">The final answer produced by the whole team — more than any single agent's output.</div></div>
+      <div class="formula-piece"><div class="fp-sym">𝒜</div><div class="fp-name">Agents</div><div class="fp-desc">Each agent a<sub>i</sub> carries its own objective o<sub>i</sub>, input x<sub>i</sub>, and the shared environment ℰ.</div></div>
+      <div class="formula-piece"><div class="fp-sym">𝒞</div><div class="fp-name">Collaboration Channels</div><div class="fp-desc">Channels c<sub>j</sub> are where the magic lives — each typed by actors, type, structure, and strategy.</div></div>
+      <div class="formula-piece"><div class="fp-sym">𝒪<sub>collab</sub></div><div class="fp-name">Shared Objective</div><div class="fp-desc">The goal all agents align on. In cooperation it unifies individual objectives; in competition they clash.</div></div>
+      <div class="formula-piece"><div class="fp-sym">ℰ</div><div class="fp-name">Environment</div><div class="fp-desc">The shared world agents perceive and act in — documents, tools, games, networks.</div></div>
+      <div class="formula-piece"><div class="fp-sym">x<sub>collab</sub></div><div class="fp-name">Shared Input</div><div class="fp-desc">The task prompt or query that kicks off the collaboration.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">The Five Dimensions at a Glance</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:8px;">
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">👥</div><div style="font-weight:600;font-size:13px;">1 · Actors</div><div style="font-size:12px;color:var(--text2);">Which agents are involved — and what expertise each brings.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">⚔️</div><div style="font-weight:600;font-size:13px;">2 · Types</div><div style="font-size:12px;color:var(--text2);">Cooperation, competition, or coopetition — why they interact.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">🕸️</div><div style="font-weight:600;font-size:13px;">3 · Structures</div><div style="font-size:12px;color:var(--text2);">Centralized, decentralized, or hierarchical — who talks to whom.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">📜</div><div style="font-weight:600;font-size:13px;">4 · Strategies</div><div style="font-size:12px;color:var(--text2);">Rule-, role-, or model-based — how interactions are governed.</div></div>
+      <div class="card-sm" style="text-align:center;"><div style="font-size:1.4rem;">🎬</div><div style="font-weight:600;font-size:13px;">5 · Coordination</div><div style="font-size:12px;color:var(--text2);">Static or dynamic orchestration — who directs the traffic.</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Dimension 4 — Collaboration Strategies (from the survey's Table 3)</div>
+    <table class="comp-table">
+      <thead><tr><th>Strategy</th><th>How It Works</th><th>Best For</th><th>Watch Out</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Rule-based</strong></td><td>Interactions strictly controlled by predefined rules (debate turns, majority rule, peer review, event-triggered messaging)</td><td>Consistency &amp; fairness; predictable, debuggable workflows</td><td class="comp-worst">Low adaptability — rule count explodes as tasks get complex</td></tr>
+        <tr><td><strong>Role-based</strong></td><td>Each agent owns a segmented objective matching its role — MetaGPT's SOPs, AgentVerse's specialist roles, BabyAGI's task chains</td><td>Modularity &amp; reusability; verifiable, specialized teamwork</td><td class="comp-worst">Rigid if roles are mis-specified; depends on inter-role communication</td></tr>
+        <tr><td><strong>Model-based</strong></td><td>Probabilistic decisions under uncertainty — Theory-of-Mind inference about teammates, graph models in games</td><td>Dynamic, uncertain environments; robust to noise</td><td class="comp-worst">Complex to implement and computationally expensive</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="two-col">
     <div class="card">
-      <div class="card-label">Sycophancy & Conformity</div>
-      <h3 style="font-size:15px;color:var(--red);margin-bottom:6px;">Echo Chambers</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Agents quickly converge to agree with the most confident or first-responding agent, abandoning correct contrarian factual knowledge.</p>
+      <div class="card-label">Dimension 5a — Static Orchestration</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The wiring is fixed up front from domain knowledge. Sequential chaining — one agent's output feeds the next — beat single-agent chain-of-thought on college-level science MCQs. MapCoder hard-codes a recall → planning → coding → debugging pipeline; MACRec fixes Manager / Analyst / Reflector roles for recommendations.</p>
     </div>
     <div class="card">
-      <div class="card-label">Information Distortions</div>
-      <h3 style="font-size:15px;color:var(--amber);margin-bottom:6px;">Chinese Whispers</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Across long sequential chains, critical constraints or numerical bounds get dropped or subtly distorted as summaries replace raw evidence.</p>
-    </div>
-    <div class="card">
-      <div class="card-label">Conversational Lock</div>
-      <h3 style="font-size:15px;color:var(--purple);margin-bottom:6px;">Politeness Deadlocks</h3>
-      <p style="font-size:12px;color:var(--text2);line-height:1.6;">Without strict halting criteria, agents enter cycles of mutual praise and repetitive meta-commentary, draining API budgets.</p>
+      <div class="card-label">Dimension 5b — Dynamic Orchestration</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The team re-organizes itself mid-task. Solo Performance Prompting spins up persona-based agents per input; a DAG Orchestrator builds a task graph on the fly and a Delegator merges results. <span class="highlight">Team formation is optimizable too</span>: DyLAN first runs <em>Team Optimization</em> (an LLM ranker deactivates weak agents, with early stopping), then solves the task with the survivors.</p>
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- SECTION 4: QUIZ -->
+<!-- MECHANISMS -->
+<section id="mechanisms">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Cooperate, <em>Compete</em> — or Both?</h2>
+  <p class="section-desc">The survey's second dimension: WHY agents interact. Three collaboration types, plus the hybrid channels that mix them.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:1.5rem;">
+    <div class="card">
+      <div class="card-label" style="color:var(--green-text);">Type 1 — Cooperation</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);background:var(--bg3);padding:6px 10px;border-radius:6px;margin-bottom:10px;">𝒪_collab = ⋃ oᵢ &nbsp;(objectives unify)</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">Agents align individual goals with a shared one. Feedback loops (Actor → Evaluator → Self-Reflection), shared belief states, and specialist roles (MetaGPT's assembly line). <strong style="color:var(--green-text);">+</strong> divides sub-tasks by strength. <strong style="color:var(--red-text);">−</strong> one agent's failure can be amplified.</p>
+    </div>
+    <div class="card">
+      <div class="card-label" style="color:var(--red-text);">Type 2 — Competition</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);background:var(--bg3);padding:6px 10px;border-radius:6px;margin-bottom:10px;">𝒪_collab = { oᵢ | oᵢ ≠ oⱼ } &nbsp;(objectives clash)</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">Agents pursue rival goals — debate to persuade a judge, strategic gameplay in LLMARENA's seven dynamic game environments. <strong style="color:var(--green-text);">+</strong> pushes reasoning, creativity, robustness. <strong style="color:var(--red-text);">−</strong> needs mechanisms to resolve conflicts and keep rivalry beneficial.</p>
+    </div>
+    <div class="card">
+      <div class="card-label" style="color:var(--purple-text);">Type 3 — Coopetition</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);background:var(--bg3);padding:6px 10px;border-radius:6px;margin-bottom:10px;">cooperate on this ⊕ compete on that</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">A strategic blend: negotiation agents trade off conflicting interests to reach mutually beneficial agreements — and mixture-of-experts is coopetition too: expert models compete to contribute, a gating network picks the winners.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Hybrid Channels — Real Systems Mix Types</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:0.75rem;">One system can run several channels at once. In LEGO, three agents <span class="highlight">cooperate</span> to gather task information, then an Explainer and a Critic <span class="highlight">compete</span> to refine the answer. In debate setups, two agents run a competitive channel while a judge holds cooperative channels with both.</p>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--text2);background:var(--bg3);padding:10px 12px;border-radius:6px;line-height:1.9;">
+      <span style="color:var(--red-text);">a₁ ⇄ a₂</span> &nbsp;competitive channel c<sub>comp</sub> (debate)&nbsp;&nbsp;|&nbsp;&nbsp;<span style="color:var(--green-text);">a₁ ⇄ a₃, a₂ ⇄ a₃</span> &nbsp;cooperative channels (verdict)
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Debate vs Vote</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">One question, three decision mechanisms. The bat-and-ball problem is famous for triggering a confident <em>wrong</em> first answer — a perfect stress test for teamwork.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-bottom:1rem;font-family:var(--mono);font-size:13px;color:var(--text);line-height:1.8;">
+      A bat and a ball cost $1.10 in total.<br>The bat costs $1.00 more than the ball.<br><span style="color:var(--amber-text);font-weight:600;">How much does the ball cost?</span>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;" id="dvTabs"></div>
+    <div id="dvStage"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:1rem;">
+    <div class="card-sm"><div style="font-weight:600;font-size:13px;margin-bottom:4px;">🧍 Single agent</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Cheapest and fastest — but nothing catches a systematic error. Use when tasks are simple or cost-sensitive.</div></div>
+    <div class="card-sm"><div style="font-weight:600;font-size:13px;margin-bottom:4px;">💬 Debate</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Reasoning gets exposed and checked round by round — the survey cites debate as a boost to factuality and reasoning. Costs N× agents × rounds.</div></div>
+    <div class="card-sm"><div style="font-weight:600;font-size:13px;margin-bottom:4px;">🗳️ Majority vote</div><div style="font-size:12px;color:var(--text2);line-height:1.6;">Cheap parallel opinions — but the survey warns voting fails when agents share the same bias, aggregating LLM overconfidence instead of fixing it.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COMMUNICATION -->
+<section id="communication">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">How Agents <em>Wire</em> Up</h2>
+  <p class="section-desc">The survey's third dimension: communication structures. Three topologies, each with its own failure personality — and the survey stresses the optimal structure varies with the task and the agent mix.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Dimension 3 — Communication Structures (from the survey's Table 4)</div>
+    <table class="comp-table">
+      <thead><tr><th>Structure</th><th>Definition</th><th>Strengths</th><th>Weaknesses</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Centralized</strong> (star)</td><td>Every agent connects to one hub agent that manages, controls, and coordinates all interactions (LLM-Blender, AgentCoord; federated learning as a centralized MAS)</td><td class="comp-best">Simple to design; efficient resource allocation</td><td class="comp-worst">If the central node fails, the entire system might collapse</td></tr>
+        <tr><td><strong>Decentralized</strong> (peer-to-peer)</td><td>Decision-making is distributed; agents talk directly to each other (debate systems, MedAgent, ChatDev, generative agent societies)</td><td class="comp-best">Keeps working when agents fail; high scalability; autonomous agents</td><td class="comp-worst">Inefficient resource allocation; high communication overhead</td></tr>
+        <tr><td><strong>Hierarchical</strong></td><td>Agents arranged in layers with distinct roles and levels of authority (DyLAN's multi-layer network, AgentVerse's hydrogen-siting team)</td><td class="comp-best">Low bottleneck — tasks spread across levels; efficient allocation</td><td class="comp-worst">Edge agents become critical; high complexity and latency</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">One more survey gem: Yin et al. map four communication paradigms to four hardware-style topologies — <span class="code-inline">memory → bus</span>, <span class="code-inline">report → star</span>, <span class="code-inline">relay → ring</span>, <span class="code-inline">debate → tree</span>.</p>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Topology Lab (Centerpiece)</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a communication structure, then send a message through the team and watch how it travels. The stats card updates per topology — straight from the survey's trade-off table.</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;" id="topoTabs"></div>
+    <div id="topoStage" style="position:relative;height:300px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:1rem;flex-wrap:wrap;">
+      <button class="btn-primary" id="topoSendBtn" type="button" style="font-size:13px;padding:8px 18px;">Send Message →</button>
+      <div id="topoStep" style="font-family:var(--mono);font-size:12px;color:var(--text3);"></div>
+    </div>
+    <div id="topoStats" style="margin-top:1rem;"></div>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">CENTRALIZED</div>
+      <div class="result-score" style="color:var(--red-text);">Fragile</div>
+      <div class="result-label">resilience to agent failure (qualitative)</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:25%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">Hub failure = total collapse; overhead stays low.</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">DECENTRALIZED</div>
+      <div class="result-score" style="color:var(--green-text);">Resilient</div>
+      <div class="result-label">resilience to agent failure (qualitative)</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:90%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">Loses agents and keeps going — pays in message overhead.</div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">HIERARCHICAL</div>
+      <div class="result-score" style="color:var(--amber-text);">Balanced</div>
+      <div class="result-label">resilience to agent failure (qualitative)</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:55%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+      <div class="result-label" style="margin-top:8px;">Spreads load across levels — but a failed branch is lost.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FAILURE -->
+<section id="failure">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">When Teams <em>Help</em> — and When They Hurt</h2>
+  <p class="section-desc">The survey's most practical lesson: a multi-agent system is not automatically smarter. Mechanism design decides whether the team wins or just multiplies the bill.</p>
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">📈</div>
+      <div class="problem-title">What a Well-Designed Team Buys You</div>
+      <ul class="problem-list">
+        <li>Distributed knowledge: agents retain and share diverse knowledge without overloading one model</li>
+        <li>Long-horizon planning: sub-tasks delegated across agents over extended interactions</li>
+        <li>Generalization: pooled expertise and personas cover more problem types</li>
+        <li>Efficiency: specialized agents work sub-tasks in parallel</li>
+        <li>Error-catching: debate and critic channels expose flawed reasoning</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">💸</div>
+      <div class="problem-title">What a Badly-Designed Team Costs You</div>
+      <ul class="problem-list">
+        <li>Coordination overhead: frequent multi-channel communication inflates cost and complexity</li>
+        <li>Error propagation: one failing agent drags the whole system down</li>
+        <li>Suboptimal channels: a poorly designed MAS can lose to one strong agent with a good prompt</li>
+        <li>Unpredictable behavior: agents messaging themselves, or pretending to be clients</li>
+        <li>Scalability walls: coordination gets harder as the agent count grows</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-label">Failure Modes the Survey Catalogs</div>
+    <ul class="problem-list" style="margin-top:6px;">
+      <li><strong>Cascading hallucinations</strong> — a single agent's hallucination is spread and reinforced by others, escalating minor inaccuracies into critical failures</li>
+      <li><strong>Overconfidence aggregation</strong> — LLMs persistently assert wrong outputs; voting over confident-but-wrong agents just amplifies the error</li>
+      <li><strong>Infinite conversation loops</strong> and amplified hallucination in open-ended cooperative chat</li>
+      <li><strong>Exploitation</strong> — in competitive settings, agents can game the system; compromised agents can be manipulated into harmful behavior</li>
+      <li><strong>Structural fragility</strong> — hub failure (centralized), branch loss (hierarchical), or message storms (decentralized)</li>
+    </ul>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — When Does a Team Help?</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Answer four questions about your task. The wizard applies the survey's cost-benefit logic and suggests a team size plus a mechanism to start with.</p>
+    <div id="wzRows"></div>
+    <div style="margin-top:1rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">ESTIMATED COORDINATION COST</div>
+        <div id="wzCostLabel" style="font-family:var(--mono);font-size:11px;color:var(--text2);">—</div>
+      </div>
+      <div style="height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div id="wzCostBar" style="height:100%;width:6%;background:linear-gradient(90deg,var(--teal),var(--amber),var(--red));border-radius:4px;transition:width .6s ease;"></div></div>
+    </div>
+    <div id="wzVerdict" style="margin-top:1.25rem;"></div>
+  </div>
+
+  <div class="card" style="border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.03);">
+    <div class="card-label" style="color:var(--red-text);">What This Survey Does NOT Solve</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">It is a map, not a benchmark. The survey organizes mechanisms but runs no head-to-head experiments quantifying which mechanism wins on which task — it explicitly calls out the <em>absence of standardized MAS evaluation protocols</em> as an open problem. It also does not train collaborative LLMs: models are still "standalone algorithms" not specifically trained for teamwork. And its applications review (5G/6G, Industry 5.0, QA/NLG, social simulation) stays qualitative — the numbers-heavy comparisons are left to the benchmarks it inspires.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — From Frameworks to a <em>Science</em> of Teams</h2>
+  <p class="section-desc">By mapping mechanisms instead of listing frameworks, the survey gives the field a shared foundation — and a to-do list.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🗺️ A shared vocabulary</div><div class="notice-text">Five dimensions that describe any LLM agent team — the first common language for comparing CAMEL to AutoGen to DyLAN on the same axes.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Design guidance</div><div class="notice-text">Pick mechanisms like a coach picks formations: rule-based for procedure-heavy tasks, role-based for specialization, model-based for uncertainty, debate for verification.</div></div>
+    <div class="notice-card"><div class="notice-title">📊 Benchmark design</div><div class="notice-text">Flagged the missing standardized MAS evaluation. Weeks later, MultiAgentBench (Mar 2025) arrived, purpose-built for collaboration and competition.</div></div>
+    <div class="notice-card"><div class="notice-title">💰 A cost-benefit lens</div><div class="notice-text">Teams are not free: coordination costs, communication overhead, and error propagation must be weighed against parallelism and error-catching.</div></div>
+    <div class="notice-card"><div class="notice-title">🔓 An open-problems list</div><div class="notice-text">The road to artificial collective intelligence: unified governance, richer shared decision-making, MAS scaling laws, and safety against hallucination cascades.</div></div>
+    <div class="notice-card"><div class="notice-title">🧩 Mechanisms over frameworks</div><div class="notice-text">The field's shift in focus: describe what agents DO between each other, not which toolkit they're built in — making lessons transferable across frameworks.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Cooperation, Competition, <em>Coopetition</em></h2>
+  <p class="section-desc">The survey's map of 167 works runs along five dimensions — actors, types, structures, strategies, coordination. Its most practically useful finding is a warning dressed as a taxonomy: teams are not automatically better. A well-designed channel structure beats a single strong agent; a suboptimal multi-agent system loses to one good model with a good prompt.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card good">
+      <div class="problem-icon">🧭</div>
+      <div class="problem-title">The Design Space, Named</div>
+      <ul class="problem-list">
+        <li><span class="highlight">Three types</span> — cooperation (aligned goals), competition (clashing), coopetition (both at once — and real systems mix them)</li>
+        <li><span class="highlight">Three strategies</span> — rule-based (predictable), role-based (SOPs à la MetaGPT), model-based (probabilistic, Theory-of-Mind)</li>
+        <li><span class="highlight">Three topologies</span> — star (centralized), decentralized mesh, hierarchical layers</li>
+        <li>Five dimensions total: actors · types · structures · strategies · coordination — a coordinate system, not a leaderboard</li>
+      </ul>
+    </div>
+    <div class="problem-card bad">
+      <div class="problem-icon">⚠️</div>
+      <div class="problem-title">The Warning and the Open Problems</div>
+      <ul class="problem-list">
+        <li>More agents ≠ more capability — channel design decides whether communication helps or drowns</li>
+        <li>Centralized star: efficient, but the hub is a single point of failure</li>
+        <li>Decentralized: resilient, but coordination overhead grows with the mesh</li>
+        <li>Open problems: standardized MAS benchmarking, and safety against cascading hallucinations, overconfidence aggregation, adversarial exploitation</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
+    <div class="card-label">Interactive Demo — Topology Blast Radius</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">The same task on three topologies. Watch messages route through each structure — then press the failure button: one node goes rogue (hallucinating or adversarial). The blast radius is the topology's safety property, visible in one click.</p>
+    <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <button class="btn-primary" id="tcStar" type="button" style="font-size:12.5px;padding:8px 16px;">Star</button>
+        <button class="btn-outline" id="tcTree" type="button" style="font-size:12.5px;padding:8px 16px;">Hierarchy</button>
+        <button class="btn-outline" id="tcMesh" type="button" style="font-size:12.5px;padding:8px 16px;">Decentralized mesh</button>
+        <button class="btn-outline" id="tcFail" type="button" style="font-size:12.5px;padding:8px 16px;border-color:rgba(239,68,68,.5);color:var(--red-text);">💥 Compromise one node</button>
+      </div>
+      <div id="tcGraph" style="background:#0d1117;border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-family:var(--mono);font-size:11px;min-height:170px;"></div>
+      <div id="tcRead" style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:10px;"></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
+      <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Pick the topology for its failures, not its flowchart</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">Cascading hallucination and adversarial exploitation propagate along communication edges — topology is a safety parameter before it is an efficiency parameter. The survey's systems to compare against the demo: <a href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">CAMEL</a> (two-node mesh, all the classic failures), <a href="./MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">MetaGPT</a> (role-based strategy, hierarchical), <a href="./Magentic_One_A_Generalist_Multi_Agent_System.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">Magentic-One</a> (star around an orchestrator), measured by <a href="./MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">MultiAgentBench</a>.</div>
+    </div>
+  </div>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🤝 Coopetition is the real default</div><div class="notice-text">Werewolf negotiation, marketplace agents, shared-resource coding teams — aligned and opposed goals co-exist in most real deployments. The survey treats it as first-class, not an edge case.</div></div>
+    <div class="notice-card"><div class="notice-title">🧠 Model-based strategy</div><div class="notice-text">Agents that model <em>each other's</em> beliefs — Theory of Mind — coordinate better in competition. The strategy axis is really a theory-of-other-agents axis.</div></div>
+    <div class="notice-card"><div class="notice-title">📉 Overconfidence aggregation</div><div class="notice-text">A team of confident agents voting produces confident wrong answers. Ensembling probabilities without calibration control amplifies shared bias — the survey's least-cited, most-important warning.</div></div>
+    <div class="notice-card"><div class="notice-title">📏 The benchmarking gap</div><div class="notice-text">Before MultiAgentBench, MAS papers rarely shared environments — claims were incommensurable, exactly HELM's pre-protocol complaint in a new domain.</div></div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
 <section id="quiz">
   <div class="section-tag">Test Yourself</div>
-  <h2 class="section-title">Collaboration Mechanisms <em>Quiz</em></h2>
-  <p class="section-desc">Test your understanding of multi-agent topologies and collective coordination strategies.</p>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the survey.</p>
+  <div id="quizContainer"></div>
+</section>
 
-  <div id="quizContainer">
-    <!-- Quiz injected by JS -->
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this survey.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ The survey (Tran et al., arXiv 2501.06322) reviews 167 works and maps collaboration along five dimensions: actors, types, structures, strategies, coordination.</div>
+    <div class="card-sm">✅ Three collaboration types: cooperation (aligned goals), competition (clashing goals), coopetition (both at once) — and real systems mix them in hybrid channels.</div>
+    <div class="card-sm">✅ Three strategies: rule-based (predictable), role-based (SOPs and specialization, à la MetaGPT), model-based (probabilistic, Theory-of-Mind).</div>
+    <div class="card-sm">✅ Three topologies: centralized/star (hub = single point of failure), decentralized (resilient, high overhead), hierarchical (layered authority).</div>
+    <div class="card-sm">✅ Teams aren't automatically better: well-designed channels beat single agents (AutoGen), but suboptimal MAS loses to one strong agent with a good prompt.</div>
+    <div class="card-sm">✅ Biggest open problems: standardized MAS benchmarking, and safety against cascading hallucinations, overconfidence aggregation, and adversarial exploitation.</div>
   </div>
 </section>
 
-</main>
-
+<div class="divider"></div>
+<!-- FOOTER -->
 <footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2501.06322" target="_blank" rel="noopener noreferrer">"Multi-Agent Collaboration Mechanisms: A Survey of LLMs"</a> (Tran et al., 2025)</div>
   <div class="footer-links">
-    <a href="../index.html" class="footer-link">← Homepage</a>
-    <a href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html" class="footer-link">CAMEL Guide</a>
-    <a href="./MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html" class="footer-link">MetaGPT Guide</a>
-    <a href="./MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html" class="footer-link">MultiAgentBench Guide →</a>
+    <a class="footer-link" href="https://arxiv.org/abs/2501.06322" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html">MultiAgentBench Guide</a>
+    <a class="footer-link" href="./MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">MetaGPT Guide</a>
+    <a class="footer-link" href="./CAMEL_Communicative_Agents_for_Mind_Exploration.html">CAMEL Guide</a>
   </div>
-  <div style="font-family:var(--mono);font-size:12px;color:var(--text3);">
-    PaperMap · Created by Adil Shamim
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
   </div>
 </footer>
 
 <script>
-const TOPOLOGIES = {
-  star: {
-    title: 'Centralized Hub (Star Network)',
-    desc: 'All communications pass through a central Orchestrator. Subagents never converse directly with one another. Prevents runaway chatter but creates a bottleneck at the central hub.',
-    stats: '• Message Complexity: O(N)\n• Context Overhead: Low for workers, High for Hub\n• Single Point of Failure: Yes (Hub)\n• Typical Examples: Magentic-One, AutoGen Orchestrator',
-    svg: `<svg width="220" height="180" viewBox="0 0 220 180">
-      <line x1="110" y1="90" x2="40" y2="40" stroke="#f59e0b" stroke-width="2" />
-      <line x1="110" y1="90" x2="180" y2="40" stroke="#f59e0b" stroke-width="2" />
-      <line x1="110" y1="90" x2="40" y2="140" stroke="#f59e0b" stroke-width="2" />
-      <line x1="110" y1="90" x2="180" y2="140" stroke="#f59e0b" stroke-width="2" />
-      <circle cx="110" cy="90" r="24" fill="#f59e0b" />
-      <text x="110" y="94" font-size="10" font-family="sans-serif" text-anchor="middle" fill="#000" font-weight="bold">HUB</text>
-      <circle cx="40" cy="40" r="14" fill="#3b82f6" />
-      <circle cx="180" cy="40" r="14" fill="#14b8a6" />
-      <circle cx="40" cy="140" r="14" fill="#a855f7" />
-      <circle cx="180" cy="140" r="14" fill="#ef4444" />
-    </svg>`
-  },
-  mesh: {
-    title: 'Decentralized Mesh (Fully Connected)',
-    desc: 'Every agent can send messages to every other agent. Maximizes emergence and creative debate, but token cost grows quadratically with team size.',
-    stats: '• Message Complexity: O(N²)\n• Context Overhead: Extremely High\n• Fault Tolerance: High (No single point of failure)\n• Typical Examples: Multi-Agent Debate, Free-form ChatDev',
-    svg: `<svg width="220" height="180" viewBox="0 0 220 180">
-      <polygon points="110,30 180,80 150,150 70,150 40,80" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3,3" />
-      <line x1="110" y1="30" x2="150" y2="150" stroke="#64748b" stroke-width="1" />
-      <line x1="110" y1="30" x2="70" y2="150" stroke="#64748b" stroke-width="1" />
-      <line x1="40" y1="80" x2="180" y2="80" stroke="#64748b" stroke-width="1" />
-      <circle cx="110" cy="30" r="14" fill="#f59e0b" />
-      <circle cx="180" cy="80" r="14" fill="#3b82f6" />
-      <circle cx="150" cy="150" r="14" fill="#14b8a6" />
-      <circle cx="70" cy="150" r="14" fill="#a855f7" />
-      <circle cx="40" cy="80" r="14" fill="#ef4444" />
-    </svg>`
-  },
-  tree: {
-    title: 'Hierarchical Tree (Pyramidal)',
-    desc: 'Management hierarchy where high-level manager agents supervise mid-level team leads who in turn dispatch execution workers. Mimics enterprise human corporate structure.',
-    stats: '• Message Complexity: O(N log N)\n• Context Overhead: Controlled\n• Specialization: High (Strict role boundaries)\n• Typical Examples: AgentVerse, MetaGPT Org Chart',
-    svg: `<svg width="220" height="180" viewBox="0 0 220 180">
-      <line x1="110" y1="30" x2="65" y2="85" stroke="#f59e0b" stroke-width="2" />
-      <line x1="110" y1="30" x2="155" y2="85" stroke="#f59e0b" stroke-width="2" />
-      <line x1="65" y1="85" x2="40" y2="145" stroke="#3b82f6" stroke-width="2" />
-      <line x1="65" y1="85" x2="90" y2="145" stroke="#3b82f6" stroke-width="2" />
-      <line x1="155" y1="85" x2="130" y2="145" stroke="#14b8a6" stroke-width="2" />
-      <line x1="155" y1="85" x2="180" y2="145" stroke="#14b8a6" stroke-width="2" />
-      <circle cx="110" cy="30" r="16" fill="#f59e0b" />
-      <circle cx="65" cy="85" r="13" fill="#3b82f6" />
-      <circle cx="155" cy="85" r="13" fill="#14b8a6" />
-      <circle cx="40" cy="145" r="10" fill="#a855f7" />
-      <circle cx="90" cy="145" r="10" fill="#a855f7" />
-      <circle cx="130" cy="145" r="10" fill="#22c55e" />
-      <circle cx="180" cy="145" r="10" fill="#22c55e" />
-    </svg>`
-  },
-  pipeline: {
-    title: 'Linear Sequential Assembly Line',
-    desc: 'Each agent strictly consumes the output artifact of the preceding agent and passes its refined deliverable forward. Minimal chatter, highly deterministic.',
-    stats: '• Message Complexity: O(N)\n• Context Overhead: Lowest\n• Feedback Loops: Requires explicit backward backtrack\n• Typical Examples: Standard MetaGPT SOP, LangGraph Chains',
-    svg: `<svg width="220" height="180" viewBox="0 0 220 180">
-      <line x1="25" y1="90" x2="195" y2="90" stroke="#f59e0b" stroke-width="3" stroke-dasharray="4,4" />
-      <circle cx="35" cy="90" r="14" fill="#3b82f6" />
-      <circle cx="85" cy="90" r="14" fill="#14b8a6" />
-      <circle cx="135" cy="90" r="14" fill="#f59e0b" />
-      <circle cx="185" cy="90" r="14" fill="#22c55e" />
-    </svg>`
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=['history','problem','framework','mechanisms','communication','failure','impact','deepdive','quiz'];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === TOPOLOGY LAB ===
+(function(){
+  const tabsEl=document.getElementById('topoTabs'),stageEl=document.getElementById('topoStage'),statsEl=document.getElementById('topoStats'),stepEl=document.getElementById('topoStep'),sendBtn=document.getElementById('topoSendBtn');
+  if(!tabsEl||!stageEl||!statsEl||!stepEl||!sendBtn)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const SVGNS='http://www.w3.org/2000/svg';
+  const MODES={
+    star:{label:'Centralized · Star',
+      nodes:[{id:'H',label:'Hub',x:50,y:50},{id:'A',label:'Coder',x:16,y:15},{id:'B',label:'Writer',x:84,y:15},{id:'C',label:'Researcher',x:16,y:85},{id:'D',label:'Tester',x:84,y:85}],
+      edges:[['H','A'],['H','B'],['H','C'],['H','D']],
+      flow:[['A','H','status update'],['B','H','status update'],['C','H','status update'],['D','H','status update'],['H','A','broadcast'],['H','B','broadcast'],['H','C','broadcast'],['H','D','broadcast']],
+      stats:{latency:'2 hops (leaf → hub → leaf)',msgs:'8 messages per broadcast',spof:['HIGH — the hub agent','pill-red'],overhead:['LOW — hub manages all links','pill-green'],note:'Simple to design and efficient — but if the central node fails, the entire system might collapse.'}},
+    mesh:{label:'Decentralized · Mesh',
+      nodes:[{id:'P0',label:'Peer A',x:50,y:10},{id:'P1',label:'Peer B',x:88,y:38},{id:'P2',label:'Peer C',x:72,y:88},{id:'P3',label:'Peer D',x:28,y:88},{id:'P4',label:'Peer E',x:12,y:38}],
+      edges:[['P0','P1'],['P1','P2'],['P2','P3'],['P3','P4'],['P4','P0'],['P0','P2'],['P1','P3']],
+      flow:[['P0','P1','direct hop'],['P0','P2','direct hop'],['P0','P4','direct hop'],['P4','P3','relayed hop']],
+      stats:{latency:'2 hops max (graph diameter)',msgs:'4 routed messages — no re-broadcast',spof:['NONE — survives agent failures','pill-green'],overhead:['HIGH — every peer keeps links; grows with team size','pill-red'],note:'The system keeps functioning even if some agents fail — at the price of high communication overhead.'}},
+    hier:{label:'Hierarchical · Tree',
+      nodes:[{id:'R',label:'Orchestrator',x:50,y:12},{id:'M1',label:'Planner',x:26,y:50},{id:'M2',label:'Researcher',x:74,y:50},{id:'L1',label:'Coder',x:26,y:88},{id:'L2',label:'Writer',x:74,y:88}],
+      edges:[['R','M1'],['R','M2'],['M1','L1'],['M2','L2']],
+      flow:[['L1','M1','report up'],['M1','R','escalate'],['R','M2','delegate'],['M2','L2','execute']],
+      stats:{latency:'4 hops (leaf → root → leaf)',msgs:'4 messages, one per level crossed',spof:['MEDIUM — root or branch lead loses its subtree','pill-amber'],overhead:['MEDIUM — low bottleneck, tasks spread across levels','pill-amber'],note:'Tasks are offloaded among levels — but edge agents become critical, and layering adds complexity and latency.'}}
+  };
+  let mode='star',nodeEls={},lineEls=[],timers=[];
+  const svg=document.createElementNS(SVGNS,'svg');
+  svg.setAttribute('width','100%');svg.setAttribute('height','100%');
+  svg.style.position='absolute';svg.style.top='0';svg.style.left='0';svg.style.zIndex='1';
+  stageEl.appendChild(svg);
+  function clearTimers(){timers.forEach(clearTimeout);timers=[];}
+  function renderTabs(){
+    tabsEl.innerHTML=Object.keys(MODES).map(k=>`<button type="button" style="font-family:var(--mono);font-size:11px;padding:6px 12px;border-radius:6px;border:1px solid ${k===mode?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===mode?'var(--amber-dim)':'var(--bg3)'};color:${k===mode?'var(--amber)':'var(--text2)'};cursor:pointer;">${MODES[k].label}</button>`).join('');
+    Array.from(tabsEl.children).forEach((btn,i)=>btn.addEventListener('click',()=>{mode=Object.keys(MODES)[i];renderTabs();build();}));
   }
-};
-
-function setTopo(key) {
-  const item = TOPOLOGIES[key];
-  document.getElementById('topoCanvas').innerHTML = item.svg;
-  document.getElementById('topoTitle').textContent = item.title;
-  document.getElementById('topoDesc').textContent = item.desc;
-  document.getElementById('topoStats').innerHTML = item.stats.replace(/\n/g, '<br>');
-}
-
-document.querySelectorAll('.topo-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.topo-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    setTopo(tab.getAttribute('data-topo'));
-  });
-});
-
-setTopo('star');
-
-// Quiz
-const QUIZ_ITEMS = [
-  {
-    q: 'What is the primary drawback of a fully-connected (mesh) multi-agent communication topology?',
-    options: [
-      'It cannot generate creative solutions',
-      'Communication token costs grow quadratically (O(N²)) with the number of agents',
-      'Agents are legally required to sign NDAs',
-      'It cannot run on Linux servers'
-    ],
-    correct: 1,
-    explain: 'In a fully-connected mesh where all agents read all messages, token overhead scales with O(N²), causing severe context window saturation.'
-  },
-  {
-    q: 'What is "Sycophancy" in multi-agent conversational dynamics?',
-    options: [
-      'An agent refusing to answer user prompts',
-      'The tendency of agents to unthinkingly agree with other agents or authoritative personas, suppressing accurate contrarian insights',
-      'A hardware error on GPU clusters',
-      'Translating English into French automatically'
-    ],
-    correct: 1,
-    explain: 'Sycophancy occurs when LLM agents conform to peers or supervisors even when the peer provides factually flawed reasoning.'
-  },
-  {
-    q: 'How does Multi-Agent Debate enhance reasoning accuracy over a single model?',
-    options: [
-      'By running models at higher temperatures',
-      'By forcing divergent models to present thesis and antithesis, exposing flawed intermediate chain-of-thought assumptions to a referee',
-      'By deleting failed runs from disk',
-      'By doubling the GPU clock speed'
-    ],
-    correct: 1,
-    explain: 'Debate pits opposing rationales against one another, compelling agents to defend premises and catch reasoning slips.'
-  },
-  {
-    q: 'Which topology best characterizes an enterprise software assembly line (e.g. PRD -> Architecture -> Implementation)?',
-    options: [
-      'Fully-connected mesh',
-      'Linear sequential or hierarchical pipeline',
-      'Ring buffer',
-      'Random gossip network'
-    ],
-    correct: 1,
-    explain: 'Linear sequential assembly lines pass validated artifacts strictly from role to role, minimizing conversational entropy.'
-  },
-  {
-    q: 'What mechanism prevents multi-agent societies from falling into endless mutual praise loops?',
-    options: [
-      'Disabling the internet router',
-      'Explicit termination tokens, max-turn constraints, and task-verifier halting checks',
-      'Resetting model weights to zero',
-      'Limiting prompt responses to 2 words'
-    ],
-    correct: 1,
-    explain: 'Engineered termination criteria, finite turn horizons, and objective goal-completion checkers prevent infinite chatting deadlocks.'
+  function statRow(k,v){return `<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:7px 10px;border-bottom:1px solid var(--border);font-size:12px;"><span style="color:var(--text3);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.06em;">${k}</span><span style="color:var(--text2);text-align:right;">${v}</span></div>`;}
+  function renderStats(){
+    const s=MODES[mode].stats;
+    statsEl.innerHTML=`<div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">${statRow('Latency (worst case)',s.latency)}${statRow('Messages',s.msgs)}${statRow('Single point of failure',`<span class="pill ${s.spof[1]}">${s.spof[0]}</span>`)}${statRow('Comm. overhead',`<span class="pill ${s.overhead[1]}">${s.overhead[0]}</span>`)}</div><div style="font-size:12px;color:var(--text2);line-height:1.6;padding:8px 10px 0;">${s.note}</div>`;
   }
-];
-
-function renderQuiz() {
-  const container = document.getElementById('quizContainer');
-  container.innerHTML = '';
-  QUIZ_ITEMS.forEach((item, qIdx) => {
-    const card = document.createElement('div');
-    card.className = 'quiz-card';
-    const title = document.createElement('div');
-    title.className = 'quiz-q';
-    title.textContent = `${qIdx + 1}. ${item.q}`;
-    card.appendChild(title);
-
-    const optsDiv = document.createElement('div');
-    item.options.forEach((optText, optIdx) => {
-      const btn = document.createElement('button');
-      btn.className = 'quiz-opt';
-      btn.textContent = optText;
-      btn.addEventListener('click', () => {
-        const parent = btn.parentElement;
-        const all = parent.querySelectorAll('.quiz-opt');
-        all.forEach(b => b.disabled = true);
-        if (optIdx === item.correct) {
-          btn.classList.add('correct');
-        } else {
-          btn.classList.add('wrong');
-          all[item.correct].classList.add('correct');
-        }
-        explain.style.display = 'block';
-      });
-      optsDiv.appendChild(btn);
+  function build(){
+    clearTimers();
+    Object.keys(nodeEls).forEach(k=>nodeEls[k].remove());nodeEls={};lineEls=[];
+    while(svg.firstChild)svg.removeChild(svg.firstChild);
+    const M=MODES[mode],w=stageEl.clientWidth,h=stageEl.clientHeight;
+    M.nodes.forEach(n=>{
+      const d=document.createElement('div');
+      d.textContent=n.label;
+      d.style.cssText='position:absolute;z-index:2;transform:translate(-50%,-50%);font-family:var(--mono);font-size:11px;color:var(--text2);background:#fff;border:1px solid var(--border2);border-radius:999px;padding:7px 12px;white-space:nowrap;transition:border-color .25s, box-shadow .25s;';
+      d.style.left=(n.x/100*w)+'px';d.style.top=(n.y/100*h)+'px';
+      stageEl.appendChild(d);nodeEls[n.id]=d;
     });
-    card.appendChild(optsDiv);
+    M.edges.forEach(pair=>{
+      const l=document.createElementNS(SVGNS,'line');
+      const A=M.nodes.find(n=>n.id===pair[0]),B=M.nodes.find(n=>n.id===pair[1]);
+      l.setAttribute('x1',A.x/100*w);l.setAttribute('y1',A.y/100*h);
+      l.setAttribute('x2',B.x/100*w);l.setAttribute('y2',B.y/100*h);
+      l.setAttribute('stroke','#cbd5e1');l.setAttribute('stroke-width','2');
+      svg.appendChild(l);lineEls.push(l);
+    });
+    stepEl.textContent='ready — press "Send Message"';
+    renderStats();
+  }
+  function runFlow(){
+    clearTimers();build();
+    const M=MODES[mode];
+    const applyStep=(i)=>{
+      const st=M.flow[i],from=st[0],to=st[1],label=st[2];
+      const ei=M.edges.findIndex(p=>(p[0]===from&&p[1]===to)||(p[0]===to&&p[1]===from));
+      if(ei>=0){lineEls[ei].setAttribute('stroke','#f59e0b');lineEls[ei].setAttribute('stroke-width','3.5');}
+      const nd=nodeEls[to];
+      if(nd){nd.style.borderColor='#f59e0b';nd.style.boxShadow='0 0 0 4px rgba(245,158,11,0.18)';}
+      stepEl.textContent='step '+(i+1)+'/'+M.flow.length+':  '+from+' → '+to+'  ('+label+')';
+    };
+    if(reduced){M.flow.forEach((_,i)=>applyStep(i));stepEl.textContent='final state — '+M.flow.length+' steps applied at once (reduced motion)';return;}
+    M.flow.forEach((_,i)=>timers.push(setTimeout(()=>applyStep(i),i*550)));
+  }
+  sendBtn.addEventListener('click',runFlow);
+  window.addEventListener('resize',()=>{if(stageEl.clientWidth>0)build();});
+  renderTabs();build();
+})();
 
-    const explain = document.createElement('div');
-    explain.className = 'quiz-explain';
-    explain.textContent = `Explanation: ${item.explain}`;
-    card.appendChild(explain);
+// === DEBATE VS VOTE ===
+(function(){
+  const tabsEl=document.getElementById('dvTabs'),stageEl=document.getElementById('dvStage');
+  if(!tabsEl||!stageEl)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let mode='debate',timers=[];
+  const MODES={single:'🧍 Single Agent',debate:'💬 Debate (3 agents)',vote:'🗳️ Majority Vote'};
+  function card(title,text,kind){
+    const border=kind==='wrong'?'rgba(239,68,68,0.35)':(kind==='right'?'rgba(34,197,94,0.35)':'var(--border)');
+    const color=kind==='wrong'?'var(--red)':(kind==='right'?'var(--green)':'var(--text2)');
+    return `<div data-step="1" style="border:1px solid ${border};border-radius:var(--radius);padding:10px 12px;margin-bottom:8px;background:#fff;opacity:0;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:4px;">${title}</div><div style="font-family:var(--mono);font-size:13px;color:${color};line-height:1.6;">${text}</div></div>`;
+  }
+  function note(text){return `<div data-step="1" style="font-size:12px;color:var(--text2);line-height:1.7;padding:10px 12px;background:var(--bg3);border-radius:var(--radius);opacity:0;">${text}</div>`;}
+  function header(r){return `<div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);text-transform:uppercase;letter-spacing:0.08em;margin:10px 0 6px;" data-step="1">${r}</div>`;}
+  function renderTabs(){
+    tabsEl.innerHTML=Object.keys(MODES).map(k=>`<button type="button" style="font-family:var(--mono);font-size:11px;padding:6px 12px;border-radius:6px;border:1px solid ${k===mode?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===mode?'var(--amber-dim)':'var(--bg3)'};color:${k===mode?'var(--amber)':'var(--text2)'};cursor:pointer;">${MODES[k]}</button>`).join('');
+    Array.from(tabsEl.children).forEach((btn,i)=>btn.addEventListener('click',()=>{mode=Object.keys(MODES)[i];renderTabs();render();}));
+  }
+  function render(){
+    timers.forEach(clearTimeout);timers=[];
+    let html='';
+    if(mode==='single'){
+      html=card('AGENT — SOLO RUN','"The ball costs 10 cents." &nbsp;confidence: high','wrong')+note('Fast and cheap — but nothing catches the systematic error. The correct answer is <strong style="color:var(--green-text);">5 cents</strong> (ball 5¢ + bat $1.05 = $1.10 ✓).');
+    }else if(mode==='debate'){
+      html=header('Round 1 — take positions')
+        +card('AGENT 1','$0.10 — feels right, no need to check.','wrong')
+        +card('AGENT 2','$0.05 — check: if the ball is $0.10, the bat is $1.10, total $1.20 ≠ $1.10.','right')
+        +card('AGENT 3','$0.10 — I get the same as Agent 1.','wrong')
+        +header('Round 2 — challenge &amp; revise')
+        +card('AGENT 1','Agent 2\'s check breaks my answer. Revising: $0.05.','right')
+        +card('AGENT 3','My arithmetic check fails too. Agreeing: $0.05.','right')
+        +note('Team converges on <strong style="color:var(--green-text);">5 cents ✓</strong> — debate exposed the reasoning, so the error got caught. The survey cites multi-round debate as a way to boost factuality and reasoning.');
+    }else{
+      html=header('Each agent answers independently (no discussion)')
+        +card('VOTER 1','ballot: $0.10','wrong')
+        +card('VOTER 2','ballot: $0.10','wrong')
+        +card('VOTER 3','ballot: $0.05','right')
+        +header('Tally')
+        +`<div data-step="1" style="margin-bottom:8px;opacity:0;">${bar('$0.10','2 votes',66,'var(--red)')}${bar('$0.05','1 vote',33,'var(--green)')}</div>`
+        +note('Majority says <strong style="color:var(--red-text);">$0.10 ✗</strong> — voting failed: the three agents share the same systematic bias, so their errors are correlated. The survey warns that popular voting can simply aggregate LLM overconfidence.');
+    }
+    stageEl.innerHTML=html;
+    const steps=Array.from(stageEl.querySelectorAll('[data-step]'));
+    if(reduced){steps.forEach(s=>{s.style.opacity='1';s.style.animation='none';});return;}
+    steps.forEach((s,i)=>timers.push(setTimeout(()=>{s.style.transition='opacity .4s ease';s.style.opacity='1';},i*260)));
+  }
+  function bar(label,votes,pct,color){
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:52px;text-align:right;">${label}</div><div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${color};border-radius:4px;animation:scaleIn .8s ease;transform-origin:left;"></div></div><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:56px;">${votes}</div></div>`;
+  }
+  renderTabs();render();
+})();
 
-    container.appendChild(card);
-  });
-}
-renderQuiz();
+// === WHEN DOES A TEAM HELP ===
+(function(){
+  const rowsEl=document.getElementById('wzRows'),verdictEl=document.getElementById('wzVerdict'),barEl=document.getElementById('wzCostBar'),labelEl=document.getElementById('wzCostLabel');
+  if(!rowsEl||!verdictEl||!barEl||!labelEl)return;
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(reduced)barEl.style.transition='none';
+  const QS=[
+    {id:'parallel',q:'Can the task be split into independent subtasks?',hint:'e.g. research one document each, then merge'},
+    {id:'expertise',q:'Does it need clearly different kinds of expertise?',hint:'e.g. coding + writing + fact-checking'},
+    {id:'cost',q:'Can you afford extra tokens, latency, and API cost?',hint:'teams multiply the number of calls'},
+    {id:'verify',q:'Would an independent check catch likely errors?',hint:'e.g. code review, arithmetic checks'}
+  ];
+  const answers={};
+  function chip(val,selected){
+    return `<button type="button" data-val="${val}" style="font-family:var(--mono);font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid ${selected?'rgba(245,158,11,0.4)':'var(--border)'};background:${selected?'var(--amber-dim)':'#fff'};color:${selected?'var(--amber)':'var(--text2)'};cursor:pointer;">${val?'Yes':'No'}</button>`;
+  }
+  function renderRows(){
+    rowsEl.innerHTML=QS.map((item,i)=>`<div data-row="${i}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:9px 0;border-bottom:1px solid var(--border);"><div><div style="font-size:13px;color:var(--text);font-weight:500;">${i+1} · ${item.q}</div><div style="font-size:11px;color:var(--text3);">${item.hint}</div></div><div style="display:flex;gap:6px;">${chip(true,answers[item.id]===true)}${chip(false,answers[item.id]===false)}</div></div>`).join('');
+    Array.from(rowsEl.querySelectorAll('button')).forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const row=btn.closest('[data-row]');
+        if(!row)return;
+        const idx=parseInt(row.getAttribute('data-row'),10);
+        if(isNaN(idx)||idx<0||idx>=QS.length)return;
+        answers[QS[idx].id]=btn.dataset.val==='true';
+        renderRows();update();
+      });
+    });
+  }
+  function tier(){
+    if(answers.expertise&&answers.verify&&answers.cost)return 'structured';
+    if((answers.parallel||answers.expertise)&&answers.cost)return 'small';
+    return 'single';
+  }
+  function update(){
+    const done=QS.every(x=>answers[x.id]!==undefined);
+    if(!done){
+      labelEl.textContent='—';
+      barEl.style.width='6%';
+      verdictEl.innerHTML=`<div style="font-size:13px;color:var(--text3);padding:10px 12px;background:var(--bg3);border-radius:var(--radius);">Answer all four questions to get a recommendation…</div>`;
+      return;
+    }
+    const t=tier();
+    const map={single:['12%','low — one call stream'],small:['45%','medium — a few agents'],structured:['82%','high — full pipeline']}[t];
+    barEl.style.width=map[0];labelEl.textContent=map[1];
+    const verdicts={
+      single:{title:'🧍 Single agent (for now)',color:'var(--amber)',body:'Your task does not clearly need parallelism, diverse expertise, or verification — or the budget is not there. The survey\'s blunt lesson: a suboptimally designed MAS can be <em>overtaken</em> by a single agent with a strong prompt.',mech:'Start with: chain-of-thought prompting + self-consistency (sample several answers, keep the majority).'},
+      small:{title:'👥 Small team',color:'var(--green)',body:'A few cooperating agents fit: independent sub-tasks or complementary expertise, and you can afford the extra calls. Keep the team small — coordination cost grows with every agent you add.',mech:'Start with: cooperation type + role-based strategy (AgentVerse-style specialist roles) with rule-based turn-taking.'},
+      structured:{title:'🏛️ Structured team',color:'var(--blue)',body:'Full playbook justified: diverse expertise, real verification value, and budget for orchestration. This is where the survey says well-designed collaboration channels pay off — collective intelligence, not just parallel calls.',mech:'Start with: role-based SOPs (MetaGPT-style) + a debate or critic channel for verification + hierarchical orchestration. Consider DyLAN-style team optimization to prune weak agents.'}
+    };
+    const v=verdicts[t];
+    verdictEl.innerHTML=`<div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;background:#fff;" class="animate-in"><div style="font-weight:600;font-size:15px;color:${v.color};margin-bottom:6px;">${v.title}</div><div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;">${v.body}</div><div style="font-size:12px;color:var(--text2);line-height:1.6;background:var(--bg3);border-radius:6px;padding:8px 10px;"><span style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;">Mechanism suggestion</span><br>${v.mech}</div></div>`;
+  }
+  renderRows();update();
+})();
 
-// Nav toggle
-const navBtn = document.getElementById('navToggle');
-const mobMenu = document.getElementById('mobileMenu');
-navBtn.addEventListener('click', () => {
-  mobMenu.classList.toggle('open');
-});
+// === TOPOLOGY BLAST RADIUS (DEEP DIVE) ===
+(function(){
+  const g=document.getElementById('tcGraph'),read=document.getElementById('tcRead'),fail=document.getElementById('tcFail');
+  const btns={star:document.getElementById('tcStar'),tree:document.getElementById('tcTree'),mesh:document.getElementById('tcMesh')};
+  if(!g||!read||!fail||!btns.star||!btns.tree||!btns.mesh)return;
+  const RM=window.matchMedia('(prefs-reduced-motion:reduce)').matches;
+  const T={
+    star:{name:'STAR — orchestrator hub',
+      txt:'Every message routes through the hub. One compromise of the hub is total; one rogue leaf is caught at the hub — if the hub is honest. Blast radius of a rogue leaf: contained; of a rogue hub: everything.',
+      edges:[['hub','A'],['hub','B'],['hub','C']],rogue:'A'},
+    tree:{name:'HIERARCHY — layered authority',
+      txt:'Managers relay between layers. A rogue leaf poisons its subtree; other branches survive, but the root never hears clean data from the poisoned branch. Blast radius: the subtree below the compromised node.',
+      edges:[['root','m1'],['root','m2'],['m1','A'],['m1','B'],['m2','C']],rogue:'m1'},
+    mesh:{name:'MESH — decentralized',
+      txt:'Everyone talks to everyone. Information travels around a rogue node — resilience through redundancy — but nothing filters the poison, and coordination overhead grows with the square of the team. Blast radius: noisy but survivable.',
+      edges:[['A','B'],['B','C'],['C','A'],['A','D'],['B','D']],rogue:'D'}
+  };
+  let cur='star',failed=false;
+  function node(n,rogue){
+    const isRogue=failed&&n===T[cur].rogue;
+    return '<span style="display:inline-block;margin:8px;padding:5px 12px;border-radius:14px;font-weight:700;border:1px solid '+(isRogue?'var(--red)':'var(--blue)')+';color:'+(isRogue?'var(--red)':'var(--blue)')+';background:'+(isRogue?'var(--red-dim)':'var(--bg2)')+';">'+(isRogue?'💥 ':'')+n+'</span>';
+  }
+  function draw(){
+    const t=T[cur];
+    let html='<div style="color:var(--amber-text);font-weight:700;margin-bottom:6px;">'+t.name+'</div>';
+    if(cur==='star'){html+=node('hub')+node('A')+node('B')+node('C');}
+    else if(cur==='tree'){html+='<div>'+node('root')+'</div><div>'+node('m1')+node('m2')+'</div><div>'+node('A')+node('B')+node('C')+'</div>';}
+    else{html+='<div>'+node('A')+node('B')+node('C')+node('D')+'</div>';}
+    html+='<div style="color:var(--text3);margin-top:8px;font-size:10px;">'+(failed?'failure injected — node '+t.rogue+' compromised':'healthy network · press "compromise one node" to test resilience')+'</div>';
+    g.innerHTML=html;
+    read.textContent=t.txt;
+  }
+  function pick(k){cur=k;failed=false;fail.textContent='💥 Compromise one node';Object.keys(btns).forEach(b=>btns[b].className=(b===k)?'btn-primary':'btn-outline');draw();}
+  Object.keys(btns).forEach(k=>btns[k].addEventListener('click',()=>pick(k)));
+  fail.addEventListener('click',()=>{failed=!failed;fail.textContent=failed?'↩ Restore network':'💥 Compromise one node';draw();});
+  if(RM||!('IntersectionObserver' in window)){draw();}
+  else{const io=new IntersectionObserver(en=>{if(en.some(e=>e.isIntersecting)){draw();io.disconnect();}},{threshold:0.3});io.observe(g);}
+})();
+
+// === QUIZ ===
+const QUIZ_DATA=[
+  {q:'Which communication structure routes every message through a central hub agent — and pays for it with a single point of failure?',opts:['Decentralized (peer-to-peer) mesh','Hierarchical (layered authority)','Centralized (star) — the hub is the risk','Fully distributed ring'],correct:2,explain:'The survey\'s Table 4: centralized (star) systems are simple to design and allocate resources efficiently — but if the central node fails, the entire system might collapse. Decentralized systems keep functioning when agents fail, at the cost of high communication overhead.'},
+  {q:'Which collaboration mechanism — agents arguing opposing positions over multiple rounds — does the survey cite as boosting factuality and reasoning?',opts:['Majority voting','Multi-agent debate','Federated averaging','Silent self-refinement'],correct:1,explain:'The survey highlights that taking multiple LLM instances to debate for a fixed number of rounds (Du et al.; Liang et al.; Xiong et al.) can boost factuality and reasoning — a flagship example of the competition collaboration type.'},
+  {q:'According to the survey, what can happen when one hallucinating agent is part of an LLM multi-agent system?',opts:['Other agents automatically detect and delete the hallucination','The system restarts training from scratch','Nothing — agents work in isolation','The hallucination spreads, gets reinforced by other agents, and cascades into critical errors'],correct:3,explain:'A single agent\'s hallucination can be spread and reinforced by other agents, turning minor inaccuracies into critical and cascading effects — made worse by LLM overconfidence and misunderstandings between agents.'},
+  {q:'When does a multi-agent system actually beat a single LLM, per the survey\'s lessons learned?',opts:['Always — more agents means more intelligence','Only when collaboration channels are effectively designed','Only when at least 10 agents are used','Never — single agents are always cheaper'],correct:1,explain:'The survey\'s lesson: with effectively designed collaboration mechanisms (e.g., AutoGen), MASs can outperform single-agent systems — but a MAS with suboptimally designed competitive channels can be overtaken by a single-agent counterpart with strong prompts.'},
+  {q:'What does the survey\'s framework systematize — and along which dimensions?',opts:['Prompt engineering tricks: few-shot, zero-shot, chain-of-thought','Agent memory: short-term, long-term, episodic','Collaboration mechanisms: actors, types, structures, strategies, coordination','Model training: pre-training, fine-tuning, alignment'],correct:2,explain:'The conclusion states it plainly: the framework characterizes collaboration along five key dimensions — actors, types, structures, strategies, and coordination mechanisms — providing a systematic way to analyze and design LLM-based MASs.'}
+];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>
+
 </body>
 </html>

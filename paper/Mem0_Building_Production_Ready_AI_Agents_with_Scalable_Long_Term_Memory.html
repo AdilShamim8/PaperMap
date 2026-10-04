@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the Mem0 paper, with visual demos for the two-phase extraction pipeline, ADD/UPDATE/DELETE/NOOP memory operations, graph memory, and the LoCoMo benchmark results.">
+<meta name="keywords" content="Mem0, memory, LLM agents, long-term memory, extraction pipeline, graph memory, LoCoMo, production, latency, personalization">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Mem0_Building_Production_Ready_AI_Agents_with_Scalable_Long_Term_Memory.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of Mem0 — the production memory layer that extracts, consolidates, and retrieves salient facts, beating full-context at a fraction of the latency.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Mem0_Building_Production_Ready_AI_Agents_with_Scalable_Long_Term_Memory.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of Mem0 — the production memory layer that extracts, consolidates, and retrieves salient facts, beating full-context at a fraction of the latency.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#pipeline">Pipeline</a>
+    <a class="nav-link" href="#operations">Operations</a>
+    <a class="nav-link" href="#graph">Graph Memory</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2025</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#pipeline">Pipeline</a>
+  <a href="#operations">Operations</a>
+  <a href="#graph">Graph Memory</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Memory as an <em>Operating Layer</em><br>Mem0
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the memory architecture that treats recollection as an engineering pipeline — extract salient facts, resolve conflicts with explicit operations, and retrieve only what matters, instead of stuffing the whole past into the prompt.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2504.19413" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">26%</div>
+      <div class="stat-label">Accuracy Gain vs Full-Context</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">91%</div>
+      <div class="stat-label">Lower p95 Latency</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2 Phases</div>
+      <div class="stat-label">Extract → Resolve</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2025</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Context</em> to <em>Memory</em></h2>
+  <p class="section-desc">The chatbot memory problem went from "longer context windows will fix it" to "no, it's an engineering discipline."</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2023</div><div class="tl-title">MemGPT — the OS metaphor</div><div class="tl-desc">Context as RAM, self-managed paging to "disk" — the conceptual breakthrough. <a href="./MemGPT_Towards_LLMs_as_Operating_Systems.html" style="color:var(--amber-text);">Read its guide</a>.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2024</div><div class="tl-title">The benchmark wall</div><div class="tl-desc">LoCoMo and <a href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" style="color:var(--amber-text);">LongMemEval</a> show long-context models drop 30-60% on multi-session memory — windows aren't memory.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2025 · Apr</div><div class="tl-title">🚀 Mem0 (Chhikara et al.)</div><div class="tl-desc">A production-grade memory layer: two-phase pipeline, explicit memory operations, optional graph structure — 26% better accuracy than full-context with 91% lower p95 latency on LoCoMo.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2025 →</div><div class="tl-title">Memory as infrastructure</div><div class="tl-desc">Memory layers ship as products and open-source libraries; agentic memory research (A-MEM, surveys) maps the design space.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The Design Bet</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Mem0's bet: <strong>you don't need the whole conversation — you need the salient facts, kept current</strong>. Instead of paying the full-context tax every turn (latency, cost, distraction), run a cheap pipeline that extracts what matters, keeps it consistent, and retrieves only the relevant slice at answer time. The paper frames this explicitly as production engineering, not just a research idea.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Full-Context <em>Tax</em></h2>
+  <p class="section-desc">The naive approach to memory — paste everything into the prompt — fails on every axis that matters in production.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🧾</div>
+      <div class="problem-title">Stuffing the Past Into the Present</div>
+      <ul class="problem-list">
+        <li>Multi-session histories run to hundreds of thousands of tokens — approaching or exceeding window limits</li>
+        <li>Latency scales with input; users feel every token in the p95</li>
+        <li>Cost scales the same way — per-turn pricing punishes long relationships</li>
+        <li>Stale contradictions persist: the model reads "I live in Madrid" and "I moved to Berlin" with no resolution</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🗂</div>
+      <div class="problem-title">Curated, Versioned, Retrieved</div>
+      <ul class="problem-list">
+        <li>Extract salient facts as they occur — at write time, not read time</li>
+        <li>Resolve conflicts explicitly: ADD new facts, UPDATE changed ones, DELETE obsolete ones</li>
+        <li>Retrieve only the memories relevant to the current query</li>
+        <li>Constant-ish per-turn cost regardless of relationship length</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Assistant's Notebook</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">A human assistant who deals with full-context would <strong>re-read every email you ever sent before replying</strong>, every time, forever. A good one keeps a notebook: a line for your name, updated when you move, crossed out when you change teams — and glances at one page before answering. Mem0 is the notebook, with explicit editorial rules.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Two Phases, Then <em>Answer</em></h2>
+  <p class="section-desc">Every turn runs the same machinery: update memory (cheap, background-able), then answer (retrieval-augmented).</p>
+  <div class="formula-card">
+    <div class="formula-main">conversation → Extraction → {ADD · UPDATE · DELETE · NOOP} → memory store → retrieval → response</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">Extraction</div><div class="fp-name">Phase 1</div><div class="fp-desc">An extraction prompt pulls salient candidate facts from the recent exchange.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Update</div><div class="fp-name">Phase 2</div><div class="fp-desc">Candidates are reconciled against stored memory with an operation policy.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Store</div><div class="fp-name">Memory</div><div class="fp-desc">Vector store for content + relational store for user/session structure; graph optional.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Retrieval</div><div class="fp-name">At answer time</div><div class="fp-desc">Relevant memories fetched and injected — a prompt measured in dozens of tokens, not megabytes.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PIPELINE -->
+<section id="pipeline">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The Pipeline <em>Walked</em></h2>
+  <p class="section-desc">Watch a fact enter memory, collide with an older one, and get resolved.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Memory Update Stepper</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A user mentions they moved cities. Step through extraction, conflict detection, and the UPDATE operation.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="mem0StepBtn" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="mem0ResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="mem0StepBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.85;min-height:220px;"></div>
+    <div id="mem0StepNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- OPERATIONS -->
+<section id="operations">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Four <em>Operations</em>, One Invariant</h2>
+  <p class="section-desc">The editorial rules that keep memory small, current, and non-contradictory.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">➕ ADD</div><div class="notice-text">A genuinely new fact — no similar memory exists. Write it with user/session links.</div></div>
+    <div class="notice-card"><div class="notice-title">✏️ UPDATE</div><div class="notice-text">An existing memory changed — same subject, new value. The old content is replaced (versioned in practice).</div></div>
+    <div class="notice-card"><div class="notice-title">🗑 DELETE</div><div class="notice-text">A memory is obsolete or invalidated ("I cancelled the gym membership") — removed explicitly.</div></div>
+    <div class="notice-card"><div class="notice-title">⏸ NOOP</div><div class="notice-text">Nothing salient or new — most turns. The pipeline's default is restraint, not accumulation.</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Operation Router</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">New conversation fragments arrive; decide (with the policy) which operation fires. Click through five fragments.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="mem0OpBtn" type="button" style="font-size:13px;padding:8px 18px;">Next fragment →</button>
+    </div>
+    <div id="mem0OpBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GRAPH -->
+<section id="graph">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Graph <em>Memory</em></h2>
+  <p class="section-desc">The paper's second contribution: an enhanced variant that stores memories as entities and relations, not just text blobs.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Why Structure Helps</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Text memories answer "what does the user like?" — poorly at "how are these people connected?"</li>
+        <li>Graph memory: nodes for entities (people, places, preferences), typed edges for relationships</li>
+        <li>Relational queries traverse structure instead of hoping the right blob gets retrieved</li>
+        <li>On LoCoMo, the graph variant adds a few points on top of base Mem0 — modest but real</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The Honest Comparison</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Graph memory costs more writes (entity extraction + relation inference)</li>
+        <li>Gains concentrate in relational question types — the paper breaks this down by category</li>
+        <li>Base Mem0 remains the latency/cost champion; graph is the reasoning-heavy option</li>
+        <li>Both are compared against six baseline families in one framework</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Blob vs Graph Retrieval</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">The same question ("Who did the user travel with, and where do they live now?") under flat and graph memory. Toggle.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="mem0BlobBtn" type="button" style="font-size:13px;padding:8px 18px;">Flat memory</button>
+      <button class="btn-primary" id="mem0GraphBtn" type="button" style="font-size:13px;padding:8px 18px;">Graph memory</button>
+    </div>
+    <div id="mem0MemBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;min-height:190px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 06</div>
+  <h2 class="section-title">The LoCoMo <em>Ledger</em></h2>
+  <p class="section-desc">One benchmark, six baseline families, and a cost story that changed the deployment math.</p>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">ACCURACY</div><div class="result-score" style="color:var(--amber-text);">+26%</div><div class="result-label">relative improvement in the LLM-as-a-Judge metric over the full-context (OpenAI) approach</div></div>
+    <div class="result-card"><div class="result-model">LATENCY</div><div class="result-score" style="color:var(--blue-text);">−91%</div><div class="result-label">p95 latency versus full-context, on long conversations</div></div>
+    <div class="result-card"><div class="result-model">TOKEN COST</div><div class="result-score" style="color:var(--teal-text);">−90%+</div><div class="result-label">token savings at answer time — retrieval beats re-reading</div></div>
+    <div class="result-card"><div class="result-model">GRAPH VARIANT</div><div class="result-score" style="color:var(--purple-text);">+~2%</div><div class="result-label">further gains on relational questions vs base Mem0</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Latency & Cost Race</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Turn count grows; watch full-context latency climb linearly while Mem0 stays flat. Press play.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="mem0RaceBtn" type="button" style="font-size:13px;padding:8px 18px;">Play growth</button>
+    </div>
+    <div id="mem0RaceChart" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="mem0RaceNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">What's Being Measured (and What Isn't)</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">LoCoMo scores single-hop, temporal, multi-hop, and open-domain questions over long multi-session dialogues — factual recall. The paper is careful to compare against the right baselines (memory systems, RAG at multiple chunk sizes/k, full-context); it does <em>not</em> claim to solve latent-preference memory — that's exactly what <a href="./LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html" style="color:var(--amber-text);">LoCoMo-Plus</a> targets next.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — Memory Becomes a <em>Product</em></h2>
+  <p class="section-desc">Mem0 shipped as an open-source library and commercial API — and set the reference architecture for the memory layer category.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">📦 The memory-layer category</div><div class="notice-text">Extract-resolve-retrieve became the template; competitors and successors inherit its vocabulary.</div></div>
+    <div class="notice-card"><div class="notice-title">🧠 Agentic memory research wave</div><div class="notice-text">A-MEM's Zettelkasten notes, surveys of memory mechanisms — a field coalesced around these questions. <a href="./A_MEM_Agentic_Memory_for_LLM_Agents.html" style="color:var(--amber-text);">A-MEM Guide</a>.</div></div>
+    <div class="notice-card"><div class="notice-title">⚙️ Production discipline</div><div class="notice-text">p95 latency and token cost as headline metrics — evaluation speaking deployment language.</div></div>
+    <div class="notice-card"><div class="notice-title">🕸 Graph-memory legitimacy</div><div class="notice-text">Showed when structure pays and when it doesn't — an honest cost-benefit curve, not hype.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Extraction quality bounds everything; silent write failures; memory for latent goals/values (LoCoMo-Plus's thesis).</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Study path</div><div class="notice-text">MemGPT (paging) → Mem0 (production layer) → LongMemEval (benchmark) → A-MEM (self-organizing) → LoCoMo-Plus (beyond facts).</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Write-Time Intelligence vs <em>Read-Time Brute Force</em></h2>
+  <p class="section-desc">The deepest framing of the results: where you spend compute decides what memory costs you.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">📖</div>
+      <div class="problem-title">Read-Time Brute Force</div>
+      <ul class="problem-list">
+        <li>Spend at answer time: send everything, let attention sort it out</li>
+        <li>Quality degrades anyway: lost-in-the-middle, stale contradictions, distraction</li>
+        <li>Every user turn pays full price — the tax compounds with relationship length</li>
+        <li>Capped by the window; broken by the benchmark wall (30-60% drops)</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">✍️</div>
+      <div class="problem-title">Write-Time Intelligence</div>
+      <ul class="problem-list">
+        <li>Spend at write time: cheap extraction per exchange, one-time</li>
+        <li>Conflicts resolved ONCE at write — every future read inherits the answer</li>
+        <li>Read cost is constant: relevant slice only</li>
+        <li>Accuracy AND latency improve together — the rare free lunch, bought with editorial discipline</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Where the Compute Goes</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Toggle architecture: watch the compute bar move from read time to write time as conversation length grows.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="mem0ArchBtn" type="button" style="font-size:13px;padding:8px 18px;">Switch architecture</button>
+    </div>
+    <div id="mem0ArchBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="mem0ArchNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Mem0's 26%-and-91% headline is really one number viewed twice: <strong>intelligence moved from read time to write time</strong>. The trade is not free — extraction quality becomes the system's ceiling, and every write is a chance to corrupt memory silently. But for any product where relationships outlive context windows, the accounting is decisive: pay once per fact, not once per question, forever.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the Mem0 paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Two-phase pipeline: extract salient facts, then resolve against stored memory with an explicit policy.</div>
+    <div class="card-sm">✅ Four memory operations — ADD, UPDATE, DELETE, NOOP — keep memory current and non-contradictory.</div>
+    <div class="card-sm">✅ On LoCoMo: 26% relative accuracy gain over the full-context approach (LLM-as-a-Judge metric).</div>
+    <div class="card-sm">✅ 91% lower p95 latency and >90% token savings versus full-context on long conversations.</div>
+    <div class="card-sm">✅ Graph-memory variant captures relational structure and adds ~2% on top of base Mem0.</div>
+    <div class="card-sm">✅ Core economics: pay at write time (once per fact), not read time (every turn, forever).</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2504.19413" target="_blank" rel="noopener noreferrer">"Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory"</a> (Chhikara et al., 2025)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2504.19413" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT Guide</a>
+    <a class="footer-link" href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html">LongMemEval Guide</a>
+    <a class="footer-link" href="./A_MEM_Agentic_Memory_for_LLM_Agents.html">A-MEM Guide</a>
+    <a class="footer-link" href="./LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html">LoCoMo-Plus Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "pipeline", "operations", "graph", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === MEMORY UPDATE STEPPER ===
+(function(){
+  const box=document.getElementById('mem0StepBox');
+  const note=document.getElementById('mem0StepNote');
+  const stepBtn=document.getElementById('mem0StepBtn');
+  const resetBtn=document.getElementById('mem0ResetBtn');
+  if(!box||!note||!stepBtn||!resetBtn)return;
+  const ST=[
+    {t:'conversation turn',b:'<span style="color:var(--blue-text);">User:</span> "By the way, we finally moved — we\'re in Berlin now, not Madrid. The kids love it."',n:'A new fact arrives mixed with ordinary chat. Nothing here says "persist me" — extraction must decide.'},
+    {t:'phase 1 · extraction',b:'<span style="color:var(--amber-text);">Extraction output:</span> ["User moved from Madrid to Berlin", "User\'s children like Berlin"]<br><span style="color:var(--text3);">salience filter dropped: "by the way", small talk</span>',n:'Phase 1 extracts candidate memories — salient facts only, phrased as standalone statements.'},
+    {t:'phase 2 · conflict detection',b:'<span style="color:var(--amber-text);">Similarity search vs stored memory:</span><br>  m-0417: "User lives in Madrid" — cosine 0.82 · <span style="color:var(--red-text);">CONFLICT (same subject, different value)</span>',n:'Candidates are matched against existing memories. A high-similarity, different-value hit triggers resolution.'},
+    {t:'phase 2 · operation',b:'<span style="color:var(--teal-text);">UPDATE m-0417:</span> "User lives in Madrid" → "User lives in Berlin"<br><span style="color:var(--teal-text);">ADD m-0921:</span> "User\'s children like Berlin"<br><span style="color:var(--text3);">NOOP on: everything else in the turn</span>',n:'The policy fires: one UPDATE, one ADD, many NOOPs. Memory stays small and consistent.'},
+    {t:'later · answer time',b:'<span style="color:var(--blue-text);">User (weeks later):</span> "Can you recommend a pediatrician near us?"<br><span style="color:var(--amber-text);">Retrieved:</span> [m-0417 "User lives in Berlin", m-0921 "User\'s children…"] → answer localized to Berlin ✓',n:'A handful of retrieved tokens — vs re-reading months of transcripts. The 91% p95 story in one picture.'}
+  ];
+  let i=0;
+  function render(){
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;">${ST[i].t.toUpperCase()}</div><div style="font-size:12.5px;color:var(--text2);line-height:1.9;">${ST[i].b}</div>`;
+    note.textContent=ST[i].n;
+    stepBtn.textContent=i<ST.length-1?'Next step →':'Restart';
+  }
+  stepBtn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+  resetBtn.addEventListener('click',()=>{i=0;render();});
+  render();
+})();
+
+// === OPERATION ROUTER ===
+(function(){
+  const box=document.getElementById('mem0OpBox');
+  const btn=document.getElementById('mem0OpBtn');
+  if(!box||!btn)return;
+  const F=[
+    {t:'"Actually, cancel my Friday appointment — Tuesday works instead."',op:'UPDATE',d:'Same subject (appointment), new value (Tuesday). The Friday memory is stale, not absent.'},
+    {t:'"I just adopted a cat! Her name is Pixel."',op:'ADD',d:'No similar memory exists — a brand-new fact with a new entity (Pixel).'},
+    {t:'"Lovely weather today, isn\'t it?"',op:'NOOP',d:'Nothing salient. The pipeline\'s most common output — restraint.'},
+    {t:'"I quit my job at the hospital last month."',op:'DELETE/UPDATE',d:'"Works at the hospital" is invalidated — removal (or update to past-tense), not addition.'},
+    {t:'"Same time next week then!"',op:'NOOP',d:'Transactional chat already captured by session structure; extraction stays quiet.'}
+  ];
+  let i=0;
+  const COL={ADD:'#22c55e',UPDATE:'#f59e0b','DELETE/UPDATE':'#ef4444',NOOP:'#94a3b8'};
+  function render(){
+    const f=F[i];
+    box.innerHTML=`<div style="font-size:12.5px;color:var(--text2);margin-bottom:10px;font-style:italic;">"${f.t}"</div>
+      <div style="display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;color:${COL[f.op]};background:${'var(--bg2)'};padding:4px 12px;border-radius:20px;border:1px solid var(--border2);">
+        <strong>${f.op}</strong> ${f.op==='NOOP'?'· default restraint':'· fires'}</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.7;">${f.d}</div>`;
+  }
+  btn.addEventListener('click',()=>{i=(i+1)%F.length;render();});
+  render();
+})();
+
+// === BLOB vs GRAPH RETRIEVAL ===
+(function(){
+  const box=document.getElementById('mem0MemBox');
+  const blobBtn=document.getElementById('mem0BlobBtn');
+  const graphBtn=document.getElementById('mem0GraphBtn');
+  if(!box||!blobBtn||!graphBtn)return;
+  function render(mode){
+    if(mode==='blob'){
+      box.innerHTML=`<span style="color:var(--text3);">QUESTION:</span> "Who did the user travel with, and where do they live now?"<br><br>
+        <span style="color:var(--blue-text);">RETRIEVED (flat, top-k by similarity):</span><br>
+        m-018 "User lives in Berlin"<br>
+        m-233 "User enjoys hiking with Sam"  <span style="color:var(--red-text);">← maybe? unrelated trip mention?</span><br>
+        m-041 "User traveled to Japan"<br><br>
+        <span style="color:var(--text3);">→ The relation (Sam = travel partner) depends on which blob wins the similarity race — fragile on multi-hop.</span>`;
+    }else{
+      box.innerHTML=`<span style="color:var(--text3);">QUESTION:</span> "Who did the user travel with, and where do they live now?"<br><br>
+        <span style="color:var(--teal-text);">GRAPH TRAVERSAL:</span><br>
+        (User) --lives_in--> (Berlin) ✓<br>
+        (User) --traveled_with--> (Sam) --on--> (Japan trip) ✓<br><br>
+        <span style="color:var(--text3);">→ Entities and typed edges answer relational queries by structure — the multi-hop gain the paper measures.</span>`;
+    }
+  }
+  blobBtn.addEventListener('click',()=>render('blob'));
+  graphBtn.addEventListener('click',()=>render('graph'));
+  render('blob');
+})();
+
+// === LATENCY RACE ===
+(function(){
+  const chart=document.getElementById('mem0RaceChart');
+  const note=document.getElementById('mem0RaceNote');
+  const btn=document.getElementById('mem0RaceBtn');
+  if(!chart||!note||!btn)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let turns=10, timer=null;
+  function fc(t){return Math.min(100,(t/400)*100);}     // full-context p95 grows
+  function mem(t){return 8+(t/4000)*100;}               // mem0 stays ~flat
+  function render(){
+    chart.innerHTML=[
+      {n:'full-context p95',v:fc(turns),c:'#3b82f6',u:Math.round(fc(turns)*38)+'s'},
+      {n:'Mem0 p95',v:mem(turns),c:'#f59e0b',u:Math.round(mem(turns)*3.4+0.6)+'s'}
+    ].map(r=>`<div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:3px;"><span>${r.n}</span><span style="color:${r.c};font-weight:600;">${r.u}</span></div>
+      <div style="height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${r.v}%;background:${r.c};border-radius:4px;transition:width .5s ease;"></div></div></div>`).join('');
+    note.textContent=`conversation: ${turns} turns — full-context pays per token, every turn; Mem0 pays per fact, once. (illustrative of the 91% p95 gap)`;
+  }
+  btn.addEventListener('click',()=>{
+    if(timer)clearInterval(timer);
+    turns=10;
+    if(RM){turns=400;render();return;}
+    timer=setInterval(()=>{
+      turns+=20;render();
+      if(turns>=400)clearInterval(timer);
+    },120);
+  });
+  render();
+})();
+
+// === WHERE COMPUTE GOES ===
+(function(){
+  const box=document.getElementById('mem0ArchBox');
+  const note=document.getElementById('mem0ArchNote');
+  const btn=document.getElementById('mem0ArchBtn');
+  if(!box||!box||!btn)return;
+  let mem0=false;
+  function render(){
+    const read=mem0?12:88, write=mem0?14:2;
+    box.innerHTML=`<div style="display:flex;height:34px;border-radius:8px;overflow:hidden;margin-bottom:8px;border:1px solid var(--border2);">
+      <div style="width:${write}%;background:var(--amber);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:#000;">WRITE ${write}%</div>
+      <div style="width:${read}%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:#fff;">READ ${read}%</div>
+    </div>
+    <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">${mem0
+      ?'Mem0: extraction + resolution happen once per exchange (write); answer time retrieves a small slice. Total spend stays roughly flat as history grows.'
+      :'Full-context: writes are free (nothing extracted), but every answer re-processes the entire past — the compounding tax.'}</div>`;
+    note.textContent=mem0?'Current architecture: Mem0 (write-time intelligence).':'Current architecture: full-context (read-time brute force).';
+  }
+  btn.addEventListener('click',()=>{mem0=!mem0;render();});
+  render();
+})();
+
+
+const QUIZ_DATA=[{"q": "What are the two phases of the Mem0 pipeline?", "opts": ["Pretraining and finetuning", "Extraction of salient facts, then update-resolution against stored memory", "Compression and decompression", "Embedding and decoding"], "correct": 1, "explain": "Phase 1 extracts candidate salient memories from the recent exchange; phase 2 reconciles them with existing memories using the operation policy (ADD/UPDATE/DELETE/NOOP)."}, {"q": "What are the four memory operations?", "opts": ["READ, WRITE, EXECUTE, DELETE", "ADD, UPDATE, DELETE, NOOP", "CREATE, ALTER, DROP, TRUNCATE", "MERGE, SPLIT, COPY, MOVE"], "correct": 1, "explain": "ADD stores a new fact, UPDATE replaces a changed one, DELETE removes an invalidated one, and NOOP (the most common) declines to store anything — restraint keeps memory small."}, {"q": "What headline results does Mem0 report on LoCoMo versus the full-context approach?", "opts": ["Lower accuracy but cheaper", "26% relative accuracy improvement with 91% lower p95 latency", "No difference in either", "Better latency but equal token cost"], "correct": 1, "explain": "Mem0 attains a 26% relative improvement in the LLM-as-a-Judge metric over the full-context (OpenAI) approach, with 91% lower p95 latency and more than 90% token savings."}, {"q": "What does the graph-based memory variant add?", "opts": ["Faster training of base models", "Relational structure — entities and typed relationships — improving multi-hop/relational questions by a few points", "Image understanding", "Longer context windows"], "correct": 1, "explain": "The enhanced variant leverages graph-based memory representations to capture relational structure among conversational elements, gaining roughly 2% on top of base Mem0 — concentrated in relational question types."}, {"q": "What is the core economic argument of the paper?", "opts": ["Memory hardware is cheaper than GPUs", "Spend compute at write time (once per fact) instead of read time (every turn)", "Users prefer slower but accurate answers", "Latency doesn't matter for chat"], "correct": 1, "explain": "Full-context pays the entire history's cost on every single turn; Mem0 pays a small extraction cost once when a fact appears. That accounting shift is what buys simultaneous accuracy and latency wins."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

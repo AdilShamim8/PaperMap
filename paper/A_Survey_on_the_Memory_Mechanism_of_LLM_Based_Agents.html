@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -333,16 +339,16 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE SURVEY'S TWO DEFINITIONS</div>
         <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:var(--text2);">
-          <span style="color:var(--blue);">narrow</span> = history of the current trial<br>
-          <span style="color:var(--amber);">broad</span> = + past trials + external knowledge
+          <span style="color:var(--blue-text);">narrow</span> = history of the current trial<br>
+          <span style="color:var(--amber-text);">broad</span> = + past trials + external knowledge
         </div>
         <div style="font-size:12px;color:var(--text3);margin-top:8px;">A "trial" is one full attempt at a task; a "step" is one action–observation turn.</div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1rem;">
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--amber);">39</div><div style="font-size:11px;color:var(--text3);">pages long</div></div>
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--amber);">4</div><div style="font-size:11px;color:var(--text3);">comparison tables</div></div>
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--amber);">28</div><div style="font-size:11px;color:var(--text3);">memory systems mapped</div></div>
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--amber);">174</div><div style="font-size:11px;color:var(--text3);">references cited</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--amber-text);">39</div><div style="font-size:11px;color:var(--text3);">pages long</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--amber-text);">4</div><div style="font-size:11px;color:var(--text3);">comparison tables</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--amber-text);">28</div><div style="font-size:11px;color:var(--text3);">memory systems mapped</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--amber-text);">174</div><div style="font-size:11px;color:var(--text3);">references cited</div></div>
       </div>
     </div>
   </div>
@@ -437,31 +443,31 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="results-grid">
       <div class="result-card">
         <div class="result-model">RETRIEVED INTERACTIONS</div>
-        <div class="result-score" style="color:var(--amber);">17<span style="font-size:14px;color:var(--text3);">/28</span></div>
+        <div class="result-score" style="color:var(--amber-text);">17<span style="font-size:14px;color:var(--text3);">/28</span></div>
         <div class="result-label">61% of systems — the mainstream</div>
         <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:61%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       </div>
       <div class="result-card">
         <div class="result-model">COMPLETE HISTORY</div>
-        <div class="result-score" style="color:var(--blue);">11<span style="font-size:14px;color:var(--text3);">/28</span></div>
+        <div class="result-score" style="color:var(--blue-text);">11<span style="font-size:14px;color:var(--text3);">/28</span></div>
         <div class="result-label">39% keep the whole trajectory</div>
         <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:39%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       </div>
       <div class="result-card">
         <div class="result-model">EXTERNAL KNOWLEDGE</div>
-        <div class="result-score" style="color:var(--teal);">7<span style="font-size:14px;color:var(--text3);">/28</span></div>
+        <div class="result-score" style="color:var(--teal-text);">7<span style="font-size:14px;color:var(--text3);">/28</span></div>
         <div class="result-label">25% consult outside sources</div>
         <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:25%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       </div>
       <div class="result-card">
         <div class="result-model">RECENT WINDOW</div>
-        <div class="result-score" style="color:var(--purple);">5<span style="font-size:14px;color:var(--text3);">/28</span></div>
+        <div class="result-score" style="color:var(--purple-text);">5<span style="font-size:14px;color:var(--text3);">/28</span></div>
         <div class="result-label">18% cache only the newest</div>
         <div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:18%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       </div>
       <div class="result-card">
         <div class="result-model">FINE-TUNING</div>
-        <div class="result-score" style="color:var(--red);">4<span style="font-size:14px;color:var(--text3);">/28</span></div>
+        <div class="result-score" style="color:var(--red-text);">4<span style="font-size:14px;color:var(--text3);">/28</span></div>
         <div class="result-label">14% write into the weights</div>
         <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:14%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       </div>
@@ -488,25 +494,25 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card">
       <div class="card-label">⚡ Working Memory</div>
       <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px;">The active scratchpad — whatever is in the prompt <em>right now</em>. Small, fast, and constantly overwritten.</p>
-      <div style="font-size:12px;color:var(--amber);"><strong>Agent example:</strong> MemGPT's "working context" — recent history held in main context.</div>
+      <div style="font-size:12px;color:var(--amber-text);"><strong>Agent example:</strong> MemGPT's "working context" — recent history held in main context.</div>
       <div style="margin-top:8px;"><span class="pill pill-blue">survey term: inside-trial</span></div>
     </div>
     <div class="card">
       <div class="card-label">📅 Episodic Memory</div>
       <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px;">Specific past events with a "when" attached — what happened, to whom, in which session.</p>
-      <div style="font-size:12px;color:var(--amber);"><strong>Agent example:</strong> Generative Agents' memory stream logs each event as it happens.</div>
+      <div style="font-size:12px;color:var(--amber-text);"><strong>Agent example:</strong> Generative Agents' memory stream logs each event as it happens.</div>
       <div style="margin-top:8px;"><span class="pill pill-amber">survey term: cross-trial</span></div>
     </div>
     <div class="card">
       <div class="card-label">📚 Semantic Memory</div>
       <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px;">General facts, stripped of time and place — "Paris is the capital of France".</p>
-      <div style="font-size:12px;color:var(--amber);"><strong>Agent example:</strong> Huatuo fine-tunes medical knowledge into weights; GITM consults a knowledge base.</div>
+      <div style="font-size:12px;color:var(--amber-text);"><strong>Agent example:</strong> Huatuo fine-tunes medical knowledge into weights; GITM consults a knowledge base.</div>
       <div style="margin-top:8px;"><span class="pill pill-green">survey term: external / parametric</span></div>
     </div>
     <div class="card">
       <div class="card-label">🛠️ Procedural Memory</div>
       <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px;">Skills and policies — how to act, not what happened. Learned from experience, applied automatically.</p>
-      <div style="font-size:12px;color:var(--amber);"><strong>Agent example:</strong> Voyager's skill library of verified code; Reflexion's distilled lessons.</div>
+      <div style="font-size:12px;color:var(--amber-text);"><strong>Agent example:</strong> Voyager's skill library of verified code; Reflexion's distilled lessons.</div>
       <div style="margin-top:8px;"><span class="pill pill-purple">survey term: cross-trial, distilled</span></div>
     </div>
   </div>
@@ -534,27 +540,27 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:1.5rem;">
     <div class="card-sm">
       <div style="font-weight:600;font-size:14px;margin-bottom:6px;">✍️ Memory Writing</div>
-      <div style="font-family:var(--mono);font-size:11.5px;color:var(--amber);background:var(--bg3);border-radius:6px;padding:6px 8px;margin-bottom:8px;">store("429 on POST /orders")</div>
+      <div style="font-family:var(--mono);font-size:11.5px;color:var(--amber-text);background:var(--bg3);border-radius:6px;padding:6px 8px;margin-bottom:8px;">store("429 on POST /orders")</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">Decide what to keep: raw observations or summaries. TiM extracts entity relations; MemoChat stores topic keys; MemGPT lets the agent edit its own memory.</div>
     </div>
     <div class="card-sm">
       <div style="font-weight:600;font-size:14px;margin-bottom:6px;">🔗 Merging</div>
-      <div style="font-family:var(--mono);font-size:11.5px;color:var(--amber);background:var(--bg3);border-radius:6px;padding:6px 8px;margin-bottom:8px;">merge(S1, M1) → R1</div>
+      <div style="font-family:var(--mono);font-size:11.5px;color:var(--amber-text);background:var(--bg3);border-radius:6px;padding:6px 8px;margin-bottom:8px;">merge(S1, M1) → R1</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">Fold redundant entries together. GITM summarizes key actions across many plans into common reference plans; Voyager refines its skill library from environment feedback.</div>
     </div>
     <div class="card-sm">
       <div style="font-weight:600;font-size:14px;margin-bottom:6px;">💭 Reflection</div>
-      <div style="font-family:var(--mono);font-size:11.5px;color:var(--amber);background:var(--bg3);border-radius:6px;padding:6px 8px;margin-bottom:8px;">reflect(events) → insight</div>
+      <div style="font-family:var(--mono);font-size:11.5px;color:var(--amber-text);background:var(--bg3);border-radius:6px;padding:6px 8px;margin-bottom:8px;">reflect(events) → insight</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">Generate higher-level thoughts from accumulated events. Generative Agents triggers reflection when enough events pile up; MemoryBank distills daily insights and personality takeaways.</div>
     </div>
     <div class="card-sm">
       <div style="font-weight:600;font-size:14px;margin-bottom:6px;">🌫️ Forgetting</div>
-      <div style="font-family:var(--mono);font-size:11.5px;color:var(--amber);background:var(--bg3);border-radius:6px;padding:6px 8px;margin-bottom:8px;">decay(P2, t) → forgotten</div>
+      <div style="font-family:var(--mono);font-size:11.5px;color:var(--amber-text);background:var(--bg3);border-radius:6px;padding:6px 8px;margin-bottom:8px;">decay(P2, t) → forgotten</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">Drop the stale and irrelevant. MemoryBank updates memories with an Ebbinghaus-inspired forgetting curve; knowledge editing can also remove "bad memory" from weights.</div>
     </div>
     <div class="card-sm">
       <div style="font-weight:600;font-size:14px;margin-bottom:6px;">🔍 Memory Reading</div>
-      <div style="font-family:var(--mono);font-size:11.5px;color:var(--amber);background:var(--bg3);border-radius:6px;padding:6px 8px;margin-bottom:8px;">read(query) → top-K</div>
+      <div style="font-family:var(--mono);font-size:11.5px;color:var(--amber-text);background:var(--bg3);border-radius:6px;padding:6px 8px;margin-bottom:8px;">read(query) → top-K</div>
       <div style="font-size:12px;color:var(--text2);line-height:1.6;">Fetch what matters for the current state. ChatDB reads by generating SQL ("Chain-of-Memory"); ExpeL pulls the top-K most similar successful trajectories from a FAISS store.</div>
     </div>
   </div>
@@ -672,7 +678,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
       <div style="font-weight:600;font-size:14px;margin-bottom:4px;">The survey's loudest gap became the field's next paper</div>
-      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The authors' pointed observation — no benchmark existed for agent memory — was answered within months by <a href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" style="color:var(--amber);font-weight:600;text-decoration:none;">LongMemEval</a>. That is what a good survey does: it doesn't just sort the literature, it publishes the to-do list. For the systems mapped here, read onward: <a href="./MemGPT_Towards_LLMs_as_Operating_Systems.html" style="color:var(--amber);font-weight:600;text-decoration:none;">MemGPT</a> (management as an OS), <a href="./A_MEM_Agentic_Memory_for_LLM_Agents.html" style="color:var(--amber);font-weight:600;text-decoration:none;">A-MEM</a> (notes that evolve), <a href="./Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html" style="color:var(--amber);font-weight:600;text-decoration:none;">Generative Agents</a> (the origin of scored reading).</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The authors' pointed observation — no benchmark existed for agent memory — was answered within months by <a href="./LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">LongMemEval</a>. That is what a good survey does: it doesn't just sort the literature, it publishes the to-do list. For the systems mapped here, read onward: <a href="./MemGPT_Towards_LLMs_as_Operating_Systems.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">MemGPT</a> (management as an OS), <a href="./A_MEM_Agentic_Memory_for_LLM_Agents.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">A-MEM</a> (notes that evolve), <a href="./Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">Generative Agents</a> (the origin of scored reading).</div>
     </div>
   </div>
 
@@ -722,6 +728,8 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="footer-link" href="./Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">Generative Agents Guide</a>
     <a class="footer-link" href="./MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT Guide</a>
     <a class="footer-link" href="./A_MEM_Agentic_Memory_for_LLM_Agents.html">A-MEM Guide</a>
+
+    <a class="footer-link" href="./Mem0_Building_Production_Ready_AI_Agents_with_Scalable_Long_Term_Memory.html">Mem0 Guide</a>
   </div>
   <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -812,7 +820,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       +'<span style="font-size:16px;">'+d.icon+'</span><span style="font-weight:600;font-size:14px;">'+d.label+'</span>'
       +'<span class="pill '+(d.branch==='textual'?'pill-blue':'pill-purple')+'">'+BRANCHES[d.branch].name+'</span></div>'
       +'<div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:8px;">'+d.what+'</div>'
-      +'<div style="font-size:12px;color:var(--amber);margin-bottom:10px;"><strong>Who uses it:</strong> '+d.who+'</div>'
+      +'<div style="font-size:12px;color:var(--amber-text);margin-bottom:10px;"><strong>Who uses it:</strong> '+d.who+'</div>'
       +'<div style="display:flex;gap:6px;flex-wrap:wrap;">'
       +d.pros.map(p=>'<span class="pill pill-green">+ '+p+'</span>').join('')
       +d.cons.map(c=>'<span class="pill pill-red">− '+c+'</span>').join('')
@@ -843,14 +851,14 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   const picked={};let score=0;
   el.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">'
     +'<div style="font-size:13px;color:var(--text2);">Pick the cognitive memory type each scenario exercises:</div>'
-    +'<div id="typeScore" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;">Score 0 / 5</div></div>'
+    +'<div id="typeScore" style="font-family:var(--mono);font-size:13px;color:var(--amber-text);font-weight:600;">Score 0 / 5</div></div>'
     +SCEN.map((s,i)=>'<div class="card-sm" style="margin-bottom:10px;">'
-      +'<div style="font-size:13.5px;margin-bottom:8px;"><span style="font-family:var(--mono);color:var(--amber);font-size:12px;">S'+(i+1)+'.</span> '+s.text+'</div>'
+      +'<div style="font-size:13.5px;margin-bottom:8px;"><span style="font-family:var(--mono);color:var(--amber-text);font-size:12px;">S'+(i+1)+'.</span> '+s.text+'</div>'
       +'<div style="display:flex;gap:6px;flex-wrap:wrap;">'
       +TYPES.map(t=>'<button id="typebtn-'+i+'-'+t+'" onclick="window._pickType('+i+',\''+t+'\')" style="font-family:var(--mono);font-size:11.5px;padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;">'+META[t].icon+' '+META[t].label+'</button>').join('')
       +'</div>'
       +'<div id="typeverdict-'+i+'" style="font-size:12px;margin-top:8px;display:none;border-radius:6px;padding:8px 12px;line-height:1.6;"></div></div>').join('')
-    +'<div id="typeSummary" style="font-family:var(--mono);font-size:13px;color:var(--amber);font-weight:600;min-height:20px;"></div>';
+    +'<div id="typeSummary" style="font-family:var(--mono);font-size:13px;color:var(--amber-text);font-weight:600;min-height:20px;"></div>';
   window._pickType=function(i,t){
     if(picked[i])return;
     picked[i]=t;
@@ -860,7 +868,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     verd.style.display='block';
     verd.style.background=ok?'var(--green-dim)':'var(--red-dim)';
     verd.innerHTML='<strong style="color:'+(ok?'var(--green)':'var(--red)')+';">'+(ok?'✓ Correct':'✗ Not quite')+'</strong> — this is <strong>'+META[s.answer].label+'</strong> memory. '+s.why;
-    TYPES.forEach(tt=>{const b=document.getElementById('typebtn-'+i+'-'+tt);if(!b)return;b.style.pointerEvents='none';b.style.opacity='0.5';if(tt===s.answer){b.style.background='var(--green-dim)';b.style.borderColor='rgba(34,197,94,0.35)';b.style.color='var(--green)';b.style.opacity='1';}});
+    TYPES.forEach(tt=>{const b=document.getElementById('typebtn-'+i+'-'+tt);if(!b)return;b.style.pointerEvents='none';b.style.opacity='0.5';if(tt===s.answer){b.style.background='var(--green-dim)';b.style.borderColor='rgba(34,197,94,0.35)';b.style.color='var(--green-text)';b.style.opacity='1';}});
     const sc=document.getElementById('typeScore');if(sc)sc.textContent='Score '+score+' / 5';
     if(Object.keys(picked).length===SCEN.length){
       const sum=document.getElementById('typeSummary');
@@ -965,7 +973,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   function draw(){
     pipe.innerHTML=STAGES.map((s,k)=>'<div style="background:'+(k<=i?(k===i?'rgba(245,158,11,.10)':'rgba(34,197,94,.07)'):'var(--bg2)')+';border:1px solid '+(k===i?'rgba(245,158,11,.55)':k<i?'rgba(34,197,94,.35)':'var(--border)')+';border-radius:var(--radius);padding:8px 10px;font-family:var(--mono);font-size:10px;color:'+(k===i?'var(--amber)':k<i?'var(--green)':'var(--text3)')+';font-weight:600;transition:all .3s;">'+s.n+'</div>').join('');
     const s=STAGES[i];
-    card.innerHTML='<div class="card-sm" style="border-left:3px solid var(--amber);'+(RM?'':'opacity:0;animation:fadeUp .45s ease forwards;')+'"><div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:4px;">'+s.n+' · '+s.s+'</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">'+s.d+'</div></div>';
+    card.innerHTML='<div class="card-sm" style="border-left:3px solid var(--amber);'+(RM?'':'opacity:0;animation:fadeUp .45s ease forwards;')+'"><div style="font-size:12px;font-weight:600;color:var(--amber-text);margin-bottom:4px;">'+s.n+' · '+s.s+'</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">'+s.d+'</div></div>';
     next.textContent=i<STAGES.length-1?'▶ Advance lifecycle →':'✓ Lifecycle complete';
   }
   next.addEventListener('click',()=>{if(i<STAGES.length-1){i++;draw();}});
@@ -982,7 +990,7 @@ const QUIZ_DATA=[
   {q:'Which evaluation gap did the survey explicitly name?',opts:['There are no open-sourced benchmarks tailored to memory modules','Models are too small to hold memories','Users refuse to share conversation data','Vector databases are too slow for agents'],correct:0,explain:'§6.3: "to our knowledge, there are no open-sourced benchmarks tailored for the memory modules in LLM-based agents." Direct evaluation remained mostly subjective (coherence, rationality).'},
   {q:'How did LongMemEval (ICLR 2025) answer the gap this survey flagged?',opts:['It proposed a new parametric memory module','It proved forgetting is unnecessary','It replaced LLMs with SQL databases','It benchmarked 500 questions across 5 long-term memory abilities'],correct:3,explain:'LongMemEval evaluates information extraction, multi-session reasoning, temporal reasoning, knowledge updates, and abstention with 500 curated questions — exactly the memory-specific benchmark the survey found missing.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

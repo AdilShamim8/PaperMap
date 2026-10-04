@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speculative Decoding: Fast Inference from Transformers — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the speculative decoding paper, with visual demos for draft-then-verify decoding, acceptance sampling, and identical-output acceleration.">
+<meta name="keywords" content="speculative decoding, draft model, verification, sampling, acceleration, T5-XXL, autoregressive, inference latency, greedy sampling">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Speculative_Decoding_Fast_Inference_from_Transformers.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Speculative Decoding: Fast Inference from Transformers — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of speculative decoding — small models draft, the big model verifies, outputs stay provably identical.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Speculative_Decoding_Fast_Inference_from_Transformers.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="Speculative Decoding: Fast Inference from Transformers — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of speculative decoding — small models draft, the big model verifies, outputs stay provably identical.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#verify">Verification</a>
+    <a class="nav-link" href="#acceptance">Acceptance</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">ICML 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#verify">Verification</a>
+  <a href="#acceptance">Acceptance</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Draft Fast, <em>Verify Exact</em><br>Speculative Decoding
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the decoding trick that makes big models generate 2-3× faster with provably identical outputs — a small model guesses, the big model checks everything in parallel.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2211.17192" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">2–3×</div>
+      <div class="stat-label">T5-XXL Speedup</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Identical</div>
+      <div class="stat-label">Output Distribution</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Parallel</div>
+      <div class="stat-label">Verification</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">An Old Architecture <em>Trick</em>, Reborn</h2>
+  <p class="section-desc">Speculative execution built modern CPUs. The same bet — verify later, in bulk — rebuilt LLM decoding.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">1990s</div><div class="tl-title">Speculative execution in CPUs</div><div class="tl-desc">Branch predictors guess the control flow; the pipeline executes ahead and rolls back wrong paths. The trick that made clock speed matter.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2018–22</div><div class="tl-title">The autoregressive bottleneck</div><div class="tl-desc">Decoding K tokens takes K serial runs of the model. Bigger models are slower per token — inference costs grow with quality.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · Nov</div><div class="tl-title">🚀 Speculative Decoding (Leviathan, Kalman, Matias — Google)</div><div class="tl-desc">A small draft model generates γ tokens; the large model verifies all of them in ONE forward pass, accepting the good ones — sampling math guarantees the output distribution is unchanged.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023 →</div><div class="tl-title">The acceleration default</div><div class="tl-desc">DeepMind's speculative sampling (Chen et al.), Medusa's self-drafting heads, EAGLE, and n-gram drafters — speculative decoding ships in every serious inference stack.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The One-Sentence Idea</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Verification is <strong>parallel</strong> and generation is <strong>serial</strong> — so never generate directly with the big model. Let a cheap drafter guess several tokens, then let the expensive model check them all at once, accepting the prefix it agrees with and resampling where it doesn't. The math guarantees you always sample from exactly the big model's distribution.</p>
+      <div class="notice-card" style="margin-top:1rem;"><div class="notice-title">🧭 Pairing</div><div class="notice-text">Memory-side speedups: <a href="./PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html" style="color:var(--amber-text);">PagedAttention</a>. This page is the token-side story.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The <em>Serial</em> Tax</h2>
+  <p class="section-desc">Autoregressive decoding is a strict dependency chain: token k+1 cannot start until token k exists.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">⛓</div>
+      <div class="problem-title">One Model, One Token, One Pass</div>
+      <ul class="problem-list">
+        <li>K tokens = K serial forward passes of the full model</li>
+        <li>Each pass uses the model's full compute to produce ONE token — massive arithmetic under-utilization</li>
+        <li>Quality demands big models; big models are slow; latency budgets die</li>
+        <li>Parallelism inside a pass (batch, heads, sequence) can't break the cross-token dependency</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">✅</div>
+      <div class="problem-title">Guess, Then Check in Bulk</div>
+      <ul class="problem-list">
+        <li>A small draft model proposes γ tokens (cheap — it runs γ fast passes)</li>
+        <li>The large model scores ALL γ proposals plus the next position in ONE parallel pass</li>
+        <li>Accepted tokens are kept; the first rejection is resampled from the correct conditional</li>
+        <li>Expected tokens per large pass: 1 + (accepted prefix length) — the chain accelerates without changing its distribution</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Senior Architect</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">A senior architect (the large model) writing every word personally is slow. Instead, a junior drafter (the draft model) writes a paragraph; the architect reviews the whole paragraph <strong>in one read</strong>, keeps the sentences that are right, and rewrites from the first mistake. The signed document is architect-quality — the speed is junior-quality.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Why Verification Is <em>Free</em></h2>
+  <p class="section-desc">The asymmetry that makes it work: scoring k positions in one pass costs roughly the same as scoring one.</p>
+  <div class="formula-card">
+    <div class="formula-main">draft: x₁…x_γ ~ q &nbsp;·&nbsp; verify: one target pass over positions 1…γ+1 &nbsp;·&nbsp; accept while p agrees</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">γ</div><div class="fp-name">Draft length</div><div class="fp-desc">How many tokens the drafter proposes per round (tuned, typically a handful).</div></div>
+      <div class="formula-piece"><div class="fp-sym">1 pass</div><div class="fp-name">Verification cost</div><div class="fp-desc">The target model's forward pass computes distributions at all γ+1 positions simultaneously.</div></div>
+      
+      <div class="formula-piece"><div class="fp-sym">α</div><div class="fp-name">Acceptance rate</div><div class="fp-desc">Effective similarity between q and p — the paper's key parameter; α grows with draft quality.</div></div>
+      <div class="formula-piece"><div class="fp-sym">E[tokens]</div><div class="fp-name">The yield</div><div class="fp-desc">Expected accepted tokens per target pass — 1 + a geometric-ish sum in α and γ.</div></div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The Cost Model</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Per round: γ cheap draft passes (cost ~γ·c_d) + one target pass (c_t). If the drafter is ~10-100× cheaper, draft cost is noise; the round costs ≈ one normal token. Whatever the round accepts beyond 1 token is <strong>pure speedup</strong>. Greedy? Simplify: accept token i iff argmax p = draft token — the outputs are then exactly the greedy decode.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">The Two Sampling Modes</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Greedy:</strong> deterministic accept/reject against the target argmax — trivially exact</li>
+        <li><strong>Sampling:</strong> the modified rejection-sampling scheme — accept with probability min(1, p/q); on rejection, resample from the residual distribution norm(max(0, p−q)). Provable: the combined process samples exactly from p.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VERIFY -->
+<section id="verify">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">A Round, <em>Token by Token</em></h2>
+  <p class="section-desc">Watch one speculative round execute: drafting, parallel verification, prefix acceptance, corrective resample.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Speculative Round</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="sdStepBtn" type="button" style="font-size:13px;padding:8px 18px;">Next stage →</button>
+      <button class="btn-outline" id="sdResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="sdRoundBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;min-height:230px;"></div>
+    <div id="sdRoundNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ACCEPTANCE -->
+<section id="acceptance">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">The <em>α</em> Dial</h2>
+  <p class="section-desc">Everything reduces to one quantity: how often the draft model agrees with the target.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Acceptance & Yield Explorer</div>
+    <p style="font-size:13px;color:var(--text2);margin:0 0 1rem;">Set draft agreement α and draft length γ; see expected tokens per target pass and net speedup (assuming a 50× cheaper drafter).</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="sdA1Btn" type="button" style="font-size:12px;padding:8px 14px;">α = 0.5 (weak draft)</button>
+      <button class="btn-outline" id="sdA2Btn" type="button" style="font-size:12px;padding:8px 14px;">α = 0.7</button>
+      <button class="btn-primary" id="sdA3Btn" type="button" style="font-size:12px;padding:8px 14px;">α = 0.9 (aligned draft)</button>
+    </div>
+    <div id="sdAlphaBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="sdAlphaNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">📏 γ is tunable, α is earned</div><div class="notice-text">Draft length γ is a free parameter with an interior optimum; α comes from how well the drafter tracks the target — same tokenizer, similar training.</div></div>
+    <div class="notice-card"><div class="notice-title">📉 Diminishing γ returns</div><div class="notice-text">Longer drafts raise acceptance risk: the chance all k tokens survive decays like α^k. Past the optimum, wasted draft tokens cost more than verification saves.</div></div>
+    <div class="notice-card"><div class="notice-title">🎯 Hard tasks are easier</div><div class="notice-text">The paper's observation: harder language-modeling tasks have EASIER subtasks — drafts agree more where the text is formulaic (arithmetic templates, boilerplate) — so speculation pays most where latency hurts most.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">2–3× With <em>Identical</em> Outputs</h2>
+  <p class="section-desc">The paper's evaluation: T5-XXL 11B, verified against the T5X implementation, outputs bit-consistent with standard decoding.</p>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">T5-XXL 11B</div><div class="result-score" style="color:var(--amber-text);">2–3×</div><div class="result-label">acceleration vs standard T5X decoding, identical outputs</div></div>
+    <div class="result-card"><div class="result-model">NO RETRAINING</div><div class="result-score" style="color:var(--blue-text);">0</div><div class="result-label">changes to the target model — works on off-the-shelf weights</div></div>
+    <div class="result-card"><div class="result-model">DRAFT COST</div><div class="result-score" style="color:var(--teal-text);">~T5-3B</div><div class="result-label">a ~3B drafter (same tokenizer family) — negligible per-round overhead</div></div>
+    <div class="result-card"><div class="result-model">EXACTNESS</div><div class="result-score" style="color:var(--purple-text);">proved</div><div class="result-label">the accept/resample scheme provably samples from the target distribution p</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Wall-Clock Race</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Standard decoding vs speculative (α=0.8): same 40-token output, very different pass counts. Press play.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="sdRaceBtn" type="button" style="font-size:13px;padding:8px 18px;">Generate 40 tokens</button>
+    </div>
+    <div id="sdRaceBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="sdRaceNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>Free Lunch</em> Everyone Ate</h2>
+  <p class="section-desc">Provably-lossless acceleration became a standard layer of every inference stack — and spawned a research lineage.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🔀 DeepMind's sibling paper</div><div class="notice-text">Chen et al.'s "Accelerating LLM Decoding with Speculative Sampling" (2023) landed the same idea for Chinchilla — convergent discovery, shared vocabulary.</div></div>
+    <div class="notice-card"><div class="notice-title">🦑 Medusa & self-drafting</div><div class="notice-text">Why keep a separate drafter? Medusa attaches multiple decoding heads to the target itself; EAGLE refines it further.</div></div>
+    <div class="notice-card"><div class="notice-title">📚 N-gram & retrieval drafters</div><div class="notice-text">Drafts from n-gram caches or retrieval — no model at all — for hot-prefix serving workloads.</div></div>
+    <div class="notice-card"><div class="notice-title">⚙️ Stack integration</div><div class="notice-text">vLLM, TensorRT-LLM and friends ship speculative modes next to paged KV and continuous batching — the three compose.</div></div>
+    <div class="notice-card"><div class="notice-title">🧠 The α research agenda</div><div class="notice-text">Distilling drafters to maximize agreement became a named optimization target (draft-target alignment).</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Latency of the FIRST token; batch-heavy throughput regimes (verification gains shrink); draft models for multimodal and MoE targets need care.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Lossless vs <em>Everything Else</em></h2>
+  <p class="section-desc">Every other acceleration pays in quality. The deep reason this one doesn't: it never changes what is computed — only when.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">⚖️</div>
+      <div class="problem-title">The Acceleration Marketplace</div>
+      <ul class="problem-list">
+        <li>Quantization: cheaper math, some quality risk</li>
+        <li>Distillation: smaller model, permanent quality ceiling</li>
+        <li>Pruning/sparsity: fewer weights, distribution shift</li>
+        <li>Each buys speed by approximating the target — a price paid in outputs</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🧬</div>
+      <div class="problem-title">The Speculative Exception</div>
+      <ul class="problem-list">
+        <li>The TARGET model still computes every accepted token's distribution</li>
+        <li>Rejection sampling math: the final token stream is exactly p-distributed</li>
+        <li>Speedup comes from arithmetic idle-time (verify-parallel), not approximation</li>
+        <li>The drafter only proposes; it never decides — agreement or rollback, nothing in between</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Where the Speedup Lives</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">One target pass produces distributions for ALL positions. See what's "wasted" in normal decoding vs speculation.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="sdN1Btn" type="button" style="font-size:12px;padding:8px 14px;">Normal decoding</button>
+      <button class="btn-primary" id="sdN2Btn" type="button" style="font-size:12px;padding:8px 14px;">Speculative round</button>
+    </div>
+    <div id="sdNormBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Speculative decoding is best understood as <strong>latency arbitrage</strong>: the GPU could always verify k positions for the price of one — normal decoding simply never asked. Once the ask is made correctly (with exact rejection-sampling bookkeeping), 2-3× arrives without touching the model, the outputs, or the risk profile. The deeper lesson for system designers: <em>audit your pipeline for capabilities the hardware already has but the protocol never uses</em>.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the speculative decoding paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Autoregressive decoding is serial; verification is parallel — speculation converts one into the other.</div>
+    <div class="card-sm">✅ A cheap draft model proposes γ tokens; the target verifies all of them in ONE forward pass.</div>
+    <div class="card-sm">✅ Rejection-sampling acceptance provably preserves the target's output distribution — lossless.</div>
+    <div class="card-sm">✅ T5-XXL: 2-3× acceleration vs standard T5X decoding with identical outputs, no retraining.</div>
+    <div class="card-sm">✅ Yield is governed by α (draft agreement) and γ (draft length) — with an interior optimum in γ.</div>
+    <div class="card-sm">✅ Descendant lineage: speculative sampling, Medusa, EAGLE, n-gram drafters — now standard in serving stacks.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2211.17192" target="_blank" rel="noopener noreferrer">"Fast Inference from Transformers via Speculative Decoding"</a> (Leviathan et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2211.17192" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html">PagedAttention Guide</a>
+    <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
+    <a class="footer-link" href="./FlashAttention_Fast_and_Memory_Efficient_Exact_Attention.html">FlashAttention Guide</a>
+    <a class="footer-link" href="./Mixtral_of_Experts.html">Mixtral of Experts Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "verify", "acceptance", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === THE SPECULATIVE ROUND ===
+(function(){
+  const box=document.getElementById('sdRoundBox');
+  const note=document.getElementById('sdRoundNote');
+  const stepBtn=document.getElementById('sdStepBtn');
+  const resetBtn=document.getElementById('sdResetBtn');
+  if(!box||!note||!stepBtn||!resetBtn)return;
+  const ST=[
+    {t:'stage 1 · draft (small model)',b:'<span style="color:var(--teal-text);">draft q:</span> "The capital of France is [the] [largest] [city] [of] [Spain]"<br><span style="color:var(--text3);">γ = 5 tokens proposed in 5 cheap passes (a ~3B model)</span>',n:'The drafter guesses a continuation. It can be wrong — it will be, here, at token 3.'},
+    {t:'stage 2 · verify (target, ONE pass)',b:'<span style="color:var(--amber-text);">target p at all 6 positions:</span><br>  pos 1 "the" — p(top)=0.99 · argmax = "the" <span style="color:var(--green-text);">MATCH</span><br>  pos 2 "largest" — argmax = "second" <span style="color:var(--red-text);">MISMATCH</span><br>  pos 3-5 — (rejected region, not used)',n:'One forward pass scores every proposed position plus one extra. Accept while argmaxes agree; stop at the first mismatch.'},
+    {t:'stage 3 · accept prefix + resample',b:'<span style="color:var(--green-text);">ACCEPTED:</span> "The capital of France is the"<br><span style="color:var(--amber-text);">RESAMPLE from p(corrective):</span> "second" → continues: "…second-largest city of Spain…"<br><span style="color:var(--text3);">round yield: 3 tokens for 1 target pass + 5 draft passes</span>',n:'In sampling mode, the corrective token is drawn from the residual distribution — the provably-exact bookkeeping. Then the next round begins.'},
+    {t:'the ledger',b:'<span style="color:var(--text2);">standard:</span> 3 tokens = 3 target passes<br><span style="color:var(--teal-text);">speculative:</span> 3 tokens = 1 target pass + 5 tiny draft passes<br><span style="color:var(--green-text);font-weight:600;">→ ~3x fewer expensive passes, identical output stream</span>',n:'The drafter never decides — it only proposes. All decisions remain the target model\'s.'}
+  ];
+  let i=0;
+  function render(){
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;">${ST[i].t.toUpperCase()}</div><div style="font-size:12.5px;color:var(--text2);line-height:1.9;">${ST[i].b}</div>`;
+    note.textContent=ST[i].n;
+    stepBtn.textContent=i<ST.length-1?'Next stage →':'Restart';
+  }
+  stepBtn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+  resetBtn.addEventListener('click',()=>{i=0;render();});
+  render();
+})();
+
+// === ALPHA EXPLORER ===
+(function(){
+  const box=document.getElementById('sdAlphaBox');
+  const note=document.getElementById('sdAlphaNote');
+  if(!box||!note)return;
+  function render(alpha){
+    const gamma=4, cd=0.02; // draft cost as fraction of target pass
+    // expected accepted tokens per round: 1 + sum_{k=1..gamma-1} P(all k accepted)
+    let yieldT=1;
+    for(let k=1;k<gamma;k++) yieldT+=Math.pow(alpha,k);
+    const roundCost=1+gamma*cd;
+    const speedup=yieldT/roundCost;
+    box.innerHTML=`<div style="display:flex;gap:10px;margin-bottom:10px;">
+      <div style="flex:1;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">DRAFT LENGTH γ</div>
+        <div style="font-family:var(--mono);font-size:18px;color:var(--blue-text);font-weight:600;">${gamma}</div></div>
+      <div style="flex:1;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">TOKENS / TARGET PASS</div>
+        <div style="font-family:var(--mono);font-size:18px;color:var(--amber-text);font-weight:600;">${yieldT.toFixed(2)}</div></div>
+      <div style="flex:1;padding:10px;border-radius:8px;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);text-align:center;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">NET SPEEDUP</div>
+        <div style="font-family:var(--mono);font-size:18px;color:var(--amber-text);font-weight:600;">${speedup.toFixed(2)}×</div></div>
+    </div>
+    <div style="height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;margin-bottom:6px;">
+      <div style="height:100%;width:${alpha*100}%;background:var(--teal);border-radius:4px;"></div></div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">draft agreement α = ${alpha} — chance all k survive decays like α^k</div>`;
+    note.textContent=alpha<0.6
+      ?'Weak drafter: long prefixes rarely survive — rounds yield ~1-1.6 tokens; speedup barely covers draft cost.'
+      :alpha<0.85
+      ?'Healthy regime: rounds accept 2-3 tokens — the paper\'s operating point for T5-XXL\'s 2-3x.'
+      :'Aligned drafter (distilled/fine-tuned to the target): near the theoretical ceiling for this γ.';
+  }
+  document.getElementById('sdA1Btn').addEventListener('click',()=>render(0.5));
+  document.getElementById('sdA2Btn').addEventListener('click',()=>render(0.7));
+  document.getElementById('sdA3Btn').addEventListener('click',()=>render(0.9));
+  render(0.8);
+})();
+
+// === WALL-CLOCK RACE ===
+(function(){
+  const box=document.getElementById('sdRaceBox');
+  const note=document.getElementById('sdRaceNote');
+  const btn=document.getElementById('sdRaceBtn');
+  if(!box||!note||!btn)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const TOTAL=40;
+  function render(toks,mode){
+    const stdPasses=toks;
+    const specPasses=Math.ceil(toks/2.8);
+    box.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--blue-text);margin-bottom:6px;">STANDARD — ${stdPasses} target passes</div>
+        <div style="display:flex;flex-wrap:wrap;gap:3px;">${Array.from({length:TOTAL},(_,k)=>`<div style="width:9px;height:9px;border-radius:2px;background:${k<stdPasses?'var(--blue)':'var(--bg4)'};"></div>`).join('')}</div>
+      </div>
+      <div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;">SPECULATIVE — ${specPasses} target passes (+ tiny drafts)</div>
+        <div style="display:flex;flex-wrap:wrap;gap:3px;">${Array.from({length:TOTAL},(_,k)=>`<div style="width:9px;height:9px;border-radius:2px;background:${k<Math.round(specPasses*2.8)&&k<toks?'var(--amber)':'var(--bg4)'};"></div>`).join('')}</div>
+      </div></div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:10px;">${toks}/${TOTAL} tokens · identical output text in both columns</div>`;
+    note.textContent=mode==='done'?'Done: 40 tokens — ~2.8x fewer expensive passes for the exact same output string (α≈0.8, γ=4).':'generating…';
+  }
+  btn.addEventListener('click',()=>{
+    if(RM){render(TOTAL,'done');return;}
+    let t=0;
+    const iv=setInterval(()=>{t+=4;render(Math.min(TOTAL,t),'run');if(t>=TOTAL){clearInterval(iv);render(TOTAL,'done');}},160);
+  });
+  render(0,'idle');
+})();
+
+// === WHERE SPEEDUP LIVES ===
+(function(){
+  const box=document.getElementById('sdNormBox');
+  if(!box)return;
+  function render(mode){
+    const spec=mode==='spec';
+    const used=spec?[4,3,2,5]:[1];
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">ONE TARGET FORWARD PASS COMPUTES DISTRIBUTIONS AT:</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">${Array.from({length:6},(_,k)=>{
+      const live=spec?k<4:k<1;
+      const acc=spec&&(k<(used[0]-2));
+      return `<div style="width:60px;padding:8px 4px;border-radius:8px;text-align:center;background:${live?'var(--amber-dim)':'var(--bg4)'};border:1px solid ${live?'rgba(245,158,11,0.3)':'var(--border)'};">
+        <div style="font-family:var(--mono);font-size:10px;color:${live?'var(--amber)':'var(--text3)'};">pos ${k+1}</div>
+        <div style="font-family:var(--mono);font-size:13px;color:${live?'var(--amber)':'var(--text3)'};">${live?(spec?(k<2?'✓':'?'):'✓'):'—'}</div>
+      </div>`;
+    }).join('')}</div>
+    <div style="font-size:12.5px;color:var(--text2);line-height:1.7;margin-top:10px;">${spec
+      ?'Speculative: positions 1-4 all scored in parallel — 3 accepted, position 4 is the corrective resample, 5-6 idle. The arithmetic for parallel scoring was ALWAYS available; the protocol now uses it.'
+      :'Normal decoding: the pass scores 6 positions\' worth of compute but only 1 is used — positions 2-6 are the idle capacity speculation harvests.'}</div>`;
+  }
+  document.getElementById('sdN1Btn').addEventListener('click',()=>render('std'));
+  document.getElementById('sdN2Btn').addEventListener('click',()=>render('spec'));
+  render('std');
+})();
+
+
+const QUIZ_DATA=[{"q": "What are the two roles in speculative decoding?", "opts": ["A teacher model and a student model being distilled", "A small draft model that proposes tokens and the large target model that verifies them in parallel", "Two identical models racing", "A critic and a generator in adversarial training"], "correct": 1, "explain": "The draft model (cheap) generates gamma token proposals; the target model (expensive) computes distributions for all proposed positions in ONE forward pass and accepts the agreeing prefix."}, {"q": "Why can verification check several tokens for roughly the cost of one?", "opts": ["Verification skips the softmax", "A transformer forward pass computes output distributions at ALL input positions in parallel — the serial bottleneck only exists between tokens", "The draft model is quantized", "Verification uses half the layers"], "correct": 1, "explain": "Autoregression is serial only because each new token needs the previous ones — but a forward pass naturally scores every position. Normal decoding throws that parallelism away; verification harvests it."}, {"q": "What does the acceptance scheme guarantee about outputs?", "opts": ["Outputs are approximately the target's distribution", "Outputs are provably sampled from exactly the target model's distribution — lossless acceleration", "Outputs match the draft model's distribution", "Outputs are lower quality but faster"], "correct": 1, "explain": "The modified rejection sampling (accept with min(1, p/q), resample from the residual on rejection) provably preserves the target distribution — the paper's central theoretical guarantee."}, {"q": "What speedup did the paper demonstrate on T5-XXL?", "opts": ["1.2x with 10% quality loss", "2-3x with identical outputs versus standard T5X decoding", "10x by skipping layers", "No speedup on large models"], "correct": 1, "explain": "On T5-XXL, speculative decoding shows a 2X-3X acceleration compared to the standard T5X implementation — with the outputs remaining identical."}, {"q": "What is the role of α (alpha) in the cost model?", "opts": ["The learning rate of the draft model", "The effective agreement between draft and target distributions — it governs the expected accepted prefix length and thus the speedup", "The number of experts", "The temperature of sampling"], "correct": 1, "explain": "alpha measures how often the drafter's proposals survive verification; expected tokens per round is 1 plus a sum of terms like alpha^k — higher agreement, longer accepted prefixes, more speedup."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

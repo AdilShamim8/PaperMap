@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mixtral of Experts — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the Mixtral 8x7B paper, with visual demos for top-2 expert routing, 47B/13B sparse parameters, 32k context, and Apache 2.0 open weights.">
+<meta name="keywords" content="Mixtral, Mistral, mixture of experts, sparse models, top-2 routing, 8x7B, 47B parameters, 32k context, Apache 2.0, open weights">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Mixtral_of_Experts.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Mixtral of Experts — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of Mixtral 8x7B — the open sparse mixture-of-experts model that matched Llama 2 70B and GPT-3.5 with 13B active parameters.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Mixtral_of_Experts.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="Mixtral of Experts — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of Mixtral 8x7B — the open sparse mixture-of-experts model that matched Llama 2 70B and GPT-3.5 with 13B active parameters.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Architecture</a>
+    <a class="nav-link" href="#routing">Routing</a>
+    <a class="nav-link" href="#benchmarks">Benchmarks</a>
+    <a class="nav-link" href="#instruct">Instruct</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2024</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Architecture</a>
+  <a href="#routing">Routing</a>
+  <a href="#benchmarks">Benchmarks</a>
+  <a href="#instruct">Instruct</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Open Weights, <em>Sparse Brains</em><br>Mixtral 8x7B
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the open MoE that matched dense models 4× its active size — 47B total parameters, 13B active per token, top-2 routing, 32k context, and an Apache 2.0 license that changed the open-model market.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2401.04088" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">47B</div>
+      <div class="stat-label">Total Parameters</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">13B</div>
+      <div class="stat-label">Active per Token</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">8</div>
+      <div class="stat-label">Experts · Top-2</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2024</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">The Open-Weights <em>Counterattack</em></h2>
+  <p class="section-desc">After a year of closed frontier releases, a French lab answered with sparsity + openness.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2021–23</div><div class="tl-title">MoE inside the labs</div><div class="tl-desc">Switch, GLaM, and internal frontier MoEs prove the recipe — but stay closed. <a href="./Switch_Transformers_Scaling_to_Trillion_Parameter_Models.html" style="color:var(--amber-text);">Switch Guide</a>.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023 · Feb–Sep</div><div class="tl-title">Mistral 7B — proof of efficiency</div><div class="tl-desc">A dense 7B with sliding-window attention beats 13B-class models; Mistral AI establishes the "small, sharp, open" playbook.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Dec → 2024 · Jan</div><div class="tl-title">🚀 Mixtral 8x7B (Jiang et al.)</div><div class="tl-desc">Take the Mistral 7B architecture, put 8 experts in every FFN layer, route top-2: 47B parameters with 13B active — outperforming Llama 2 70B, Apache 2.0, weights on the open internet.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2024 →</div><div class="tl-title">The open MoE era</div><div class="tl-desc">Mixtral 8x22B, DeepSeek MoE families, Qwen MoE — sparse open models become a competitive market segment.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The Strategic Move</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Mixtral is a business-model experiment as much as a model: prove that <strong>sparsity + permissive licensing</strong> lets an open release match closed frontier quality at a fraction of serving cost. Every design choice — 8 experts, top-2, 32k context, Apache 2.0 — serves that thesis. It worked, and the market structure of open AI changed.</p>
+      <div class="notice-card" style="margin-top:1rem;"><div class="notice-title">🧭 Lineage</div><div class="notice-text">Switch proved top-1 at lab scale; Mixtral industrialized top-2 in the open.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Open-Model <em>Compute Trap</em></h2>
+  <p class="section-desc">Dense open models face a brutal trade: quality scales with parameters, and parameters scale with serving cost.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🐘</div>
+      <div class="problem-title">Dense Open Models Pay Everything</div>
+      <ul class="problem-list">
+        <li>To match a 70B dense model, an open release needed… a 70B dense model</li>
+        <li>Every token runs through every parameter — quality purchased with linear serving cost</li>
+        <li>Self-hosting economics collapse beyond ~13B for most teams</li>
+        <li>Meanwhile frontier labs kept the (sparse) efficiency tricks internal</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🪶</div>
+      <div class="problem-title">Sparcity: Capacity Without Cost</div>
+      <ul class="problem-list">
+        <li>8 expert FFNs per layer; a router picks <strong>two</strong> per token</li>
+        <li>47B parameters of knowledge storage, ~13B of per-token compute</li>
+        <li>Beats Llama 2 70B across benchmarks — at roughly GPT-3.5-class serving economics</li>
+        <li>All of it under Apache 2.0 — commercial use, modification, redistribution</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Studio Orchestra</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8">A dense 70B is a full symphony paid per performance regardless of the piece. Mixtral is a <strong>studio of 8 session players per section, where the conductor calls exactly 2 per note</strong>: the studio's total skill library is huge, but each note costs a duo's fee.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Mistral 7B, <em>Eightfold</em></h2>
+  <p class="section-desc">Architecturally, Mixtral is barely an innovation: the same decoder stack with each FFN replaced by 8 experts + a router.</p>
+  <div class="formula-card">
+    <div class="formula-main">y = Σ<sub>i∈Top2</sub> softmax(W<sub>r</sub>x)<sub>i</sub> · E<sub>i</sub>(x)</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">8 experts</div><div class="fp-name">Per FFN layer</div><div class="fp-desc">Each expert is a standard feed-forward network; attention layers stay dense and shared.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Top-2</div><div class="fp-name">Routing</div><div class="fp-desc">Softmax router selects the two highest-scoring experts per token; outputs combine weighted.</div></div>
+      <div class="formula-piece"><div class="fp-sym">47B / 13B</div><div class="fp-name">Sparse ratio</div><div class="fp-desc">Each token sees 47B parameters of storage but computes with ~13B.</div></div>
+      <div class="formula-piece"><div class="fp-sym">32k</div><div class="fp-name">Context</div><div class="fp-desc">Trained with 32k-token context — unusual generosity for the era, inherited from Mistral's sliding-window design.</div></div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">What Stayed Boring (On Purpose)</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Same tokenizer, training recipe, and inference stack as Mistral 7B — familiarity was a feature</li>
+        <li>No exotic routing tricks: plain softmax top-2 with standard load-balancing during training</li>
+        <li>The paper is short — the release, not the architecture, is the artifact</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The Two-Expert Compromise</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Switch's k=1 maximizes efficiency; Mixtral's k=2 buys gradient richness — two paths per token smooth training</li>
+        <li>Routing varies by timestep: the same token can see different expert pairs in different contexts</li>
+        <li>Robustness: with two experts, one misroute degrades a token instead of defining it</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ROUTING -->
+<section id="routing">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Routing <em>Live</em></h2>
+  <p class="section-desc">Watch tokens pick expert pairs layer by layer — and what the router actually learns.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Top-2 Router</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="mxRouteBtn" type="button" style="font-size:13px;padding:8px 18px;">Route next token →</button>
+      <button class="btn-outline" id="mxRouteResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="mxRouteBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="mxRouteNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🔬 What experts learn</div><div class="notice-text">The paper's analysis: specialization is modest and syntax-oriented, not clean semantic "domains" — some experts lean positional/structural roles rather than topics.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 Sequential routing</div><div class="notice-text">Routing is sequential across layers: a token's expert pair at layer 3 can differ from its pair at layer 17 — information composes across specialists.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Load balance</div><div class="notice-text">Training uses a balancing loss so no expert starves — critical for hardware utilization with expert parallelism.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BENCHMARKS -->
+<section id="benchmarks">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">The <em>Headline</em> Table</h2>
+  <p class="section-desc">The abstract's claim, unpacked: outperform or match Llama 2 70B and GPT-3.5 across all evaluated benchmarks.</p>
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Base-Model Comparison (selected benchmarks, paper-reported)</div>
+    <table class="comp-table">
+      <thead><tr><th>Benchmark</th><th>Mixtral 8x7B</th><th>Llama 2 70B</th><th>GPT-3.5</th></tr></thead>
+      <tbody>
+        <tr><td>MMLU (5-shot)</td><td class="comp-best">~70.0</td><td>~69.9</td><td>~70.0</td></tr>
+        <tr><td>HellaSwag (10-shot)</td><td class="comp-best">~81.3</td><td>~81.3</td><td>~81.1</td></tr>
+        <tr><td>Winogrande (5-shot)</td><td>~72.1</td><td class="comp-best">~80.1</td><td>~72.3</td></tr>
+        <tr><td>Arc-C (5-shot)</td><td>~61.2</td><td class="comp-best">~64.8</td><td>~61.6</td></tr>
+        <tr><td>GSM8K (5-shot, CoT)</td><td class="comp-best">~40.6</td><td>~34.2</td><td class="comp-best">~57.4</td></tr>
+        <tr><td>MBPP (3-shot)</td><td class="comp-best">~38.3</td><td>~33.2</td><td>~49.4</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px">Values rounded from the paper's table. The pattern: parity-or-better vs Llama 2 70B (5.4× the active compute), and a decisive win on mathematics/code — "vastly outperforms" per the abstract, with GPT-3.5 still ahead on reasoning-heavy suites.</p>
+  </div>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">ACTIVE COMPUTE</div><div class="result-score" style="color:var(--amber-text);">13B</div><div class="result-label">vs 70B for Llama 2 — same or better quality at ~1/5 the FLOPs</div></div>
+    <div class="result-card"><div class="result-model">MULTILINGUAL</div><div class="result-score" style="color:var(--blue-text);">strong</div><div class="result-label">beats Llama 2 70B on French/German/Spanish/Italian benchmarks</div></div>
+    <div class="result-card"><div class="result-model">MATH & CODE</div><div class="result-score" style="color:var(--teal-text);">+6 pts</div><div class="result-label">GSM8K and MBPP over Llama 2 70B — the "vastly outperforms" areas</div></div>
+    <div class="result-card"><div class="result-model">CONTEXT</div><div class="result-score" style="color:var(--purple-text);">32k</div><div class="result-label">tokens, with long-range retrieval holding up across the window</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Quality vs Serving Cost</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="mxBmTabs"></div>
+    <div id="mxBmBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- INSTRUCT -->
+<section id="instruct">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">The <em>Instruct</em> Sibling</h2>
+  <p class="section-desc">Mixtral 8x7B — Instruct: supervised finetuning + DPO on the sparse base — and the paper's chat evaluations.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Training Recipe</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>SFT on curated public instruction data (multi-turn, multilingual)</li>
+        <li>DPO (direct preference optimization) — no RL loop — for preference alignment. <a href="./DPO.html" style="color:var(--amber-text);">DPO Guide</a></li>
+        <li>Same sparse architecture; adapters are unnecessary — full sparse finetuning</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Human & Benchmark Results</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>On the paper's human benchmarks, Instruct Mixtral <strong>surpasses GPT-3.5 Turbo, Claude-2.1, Gemini Pro, and Llama 2 70B-chat</strong></li>
+        <li>MT-Bench-class evaluations place it at the front of the open field for its era</li>
+        <li>Math and code remain the visible gaps versus stronger closed models</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — Open MoE Becomes a <em>Market</em></h2>
+  <p class="section-desc">Mixtral's release re-anchored expectations: sparse efficiency is not a frontier secret, and open can compete.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧬 The open-MoE segment</div><div class="notice-text">Mixtral 8x22B, DeepSeek-V2/V3, Qwen-MoE: sparse open models became their own competitive category.</div></div>
+    <div class="notice-card"><div class="notice-title">💰 Serving economics</div><div class="notice-text">13B-active inference at 47B-quality made self-hosting frontier-class quality feasible — vLLM & friends added MoE kernels. <a href="./PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html" style="color:var(--amber-text);">PagedAttention Guide</a>.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Apache 2.0 signal</div><div class="notice-text">The most permissive practical license on a frontier-adjacent release — commercial adoption without legal friction became the baseline ask.</div></div>
+    <div class="notice-card"><div class="notice-title">🔬 Honest analysis culture</div><div class="notice-text">The paper ships routing-analysis and data-mixture details openly — including what did NOT cleanly specialize.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">MoE serving needs expert-parallel plumbing; memory footprint is still 47B; knowledge-per-parameter remains below dense.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Read with</div><div class="notice-text"><a href="./Switch_Transformers_Scaling_to_Trillion_Parameter_Models.html" style="color:var(--amber-text);">Switch Transformers</a> for the technique's origin story.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">47B Parameters Is a <em>Category</em>, Not a Fact</h2>
+  <p class="section-desc">The most-quoted number in every MoE debate — and the honest ways to use it.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🥊</div>
+      <div class="problem-title">The Apples-vs-Oranges Fight</div>
+      <ul class="problem-list">
+        <li>"Mixtral is just a 13B model" (compute camp) vs "it's 47B and should beat dense 70B" (memory camp)</li>
+        <li>Both camps quote the same paper; neither is wrong about the arithmetic</li>
+        <li>Parameter count stopped being a single number the moment routing existed</li>
+        <li>Leaderboards forced a naming convention (8x7B ≈ "8 experts of 7B-ish") to dodge the fight</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">📐</div>
+      <div class="problem-title">The Honest Accounting</div>
+      <ul class="problem-list">
+        <li>Quality per active FLOP: the deployment metric — Mixtral wins decisively here</li>
+        <li>Quality per stored parameter: the capacity metric — dense models still hold an edge</li>
+        <li>Memory × throughput: the economics — 47B of VRAM per replica, batch-dependent amortization</li>
+        <li>Report the axis, then the number — the debate dissolves</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Three Axes</div>
+    <p style="font-size:13px;color:var(--text2);margin:0 0 1rem;">Same two models, three scoring axes. Switch axes and watch the winner flip.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="mxAx1Btn" type="button" style="font-size:12px;padding:8px 14px;">per active FLOP</button>
+      <button class="btn-outline" id="mxAx2Btn" type="button" style="font-size:12px;padding:8px 14px;">per stored param</button>
+      <button class="btn-primary" id="mxAx3Btn" type="button" style="font-size:12px;padding:8px 14px;">quality / serving $</button>
+    </div>
+    <div id="mxAxBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="mxAxNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Mixtral's benchmark table is the moment the field had to grow up about model size. A routed model's "parameters" is a <strong>distribution over what a token could use</strong>, not a count of what it does use — and every honest comparison since names its axis first. The release itself — sparse, open, commercially unencumbered — did more to reshape the open ecosystem than its (modest, well-executed) architecture ever could.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the Mixtral of Experts paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Mixtral 8x7B: 8 experts per FFN layer, top-2 routing — 47B total, ~13B active per token.</div>
+    <div class="card-sm">✅ Outperforms or matches Llama 2 70B and GPT-3.5 across all evaluated benchmarks; "vastly" on math, code, multilingual.</div>
+    <div class="card-sm">✅ 32k-token context trained in — long-range retrieval holds across the window.</div>
+    <div class="card-sm">✅ Instruct variant (SFT + DPO) surpasses GPT-3.5 Turbo, Claude-2.1, Gemini Pro, Llama 2 70B-chat on human benchmarks.</div>
+    <div class="card-sm">✅ Apache 2.0: commercial-grade openness that reset market expectations for open models.</div>
+    <div class="card-sm">✅ Compare sparse models per active FLOP or per stored parameter — never a bare parameter count.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2401.04088" target="_blank" rel="noopener noreferrer">"Mixtral of Experts"</a> (Jiang et al., 2024)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2401.04088" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Switch_Transformers_Scaling_to_Trillion_Parameter_Models.html">Switch Transformers Guide</a>
+    <a class="footer-link" href="./QLoRA_Efficient_Finetuning_of_Quantized_LLMs.html">QLoRA Guide</a>
+    <a class="footer-link" href="./Chinchilla.html">Chinchilla Guide</a>
+    <a class="footer-link" href="./GPT_4_Technical_Report.html">GPT-4 Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "routing", "benchmarks", "instruct", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === TOP-2 ROUTER ===
+(function(){
+  const box=document.getElementById('mxRouteBox');
+  const note=document.getElementById('mxRouteNote');
+  const btn=document.getElementById('mxRouteBtn');
+  const resetBtn=document.getElementById('mxRouteResetBtn');
+  if(!box||!note||!btn||!resetBtn)return;
+  const TOK=[
+    {t:'The',e:[2,5]}, {t:'integral',e:[1,3]}, {t:'of',e:[0,6]}, {t:'x²',e:[4,7]},
+    {t:'equals',e:[1,5]}, {t:'x³',e:[3,6]}, {t:'over',e:[0,2]}, {t:'three',e:[2,7]}
+  ];
+  const COLORS=['#f59e0b','#3b82f6','#14b8a6','#a855f7','#22c55e','#ef4444','#0ea5e9','#64748b'];
+  let i=0;
+  function render(){
+    const shown=TOK.slice(0,i);
+    box.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">${shown.map(tk=>{
+      const [a,b]=tk.e;
+      return `<div style="padding:4px 10px;border-radius:6px;background:linear-gradient(135deg,${COLORS[a]}22 50%,${COLORS[b]}22 50%);border:1px solid var(--border);font-family:var(--mono);font-size:12px;color:var(--text2);"><b style="color:${COLORS[a]};">E${a}</b> ${tk.t} <b style="color:${COLORS[b]};">E${b}</b></div>`;
+    }).join('')}</div>
+    <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:4px;">
+      ${COLORS.map((c,k)=>{
+        const uses=shown.filter(tk=>tk.e.includes(k)).length;
+        return `<div style="padding:6px 2px;border-radius:6px;background:${c}14;border:1px solid ${c}44;text-align:center;">
+          <div style="font-family:var(--mono);font-size:10px;color:${c};">E${k}</div>
+          <div style="font-family:var(--mono);font-size:12px;color:var(--text2);">${uses}</div></div>`;
+      }).join('')}</div>`;
+    note.textContent=i===0?'Each token picks its top-2 experts per layer (this shows one layer). Press Route.'
+      :i<TOK.length?`Token ${i}: "${TOK[i-1].t}" → experts ${TOK[i-1].e.join(' + ')} — the pair varies token-by-token.`
+      :'Load roughly balances (a training-time balancing loss), and utilization is even — no expert monopolizes.';
+    btn.textContent=i<TOK.length?'Route next token →':'Restart';
+  }
+  btn.addEventListener('click',()=>{i=i>=TOK.length?0:i+1;render();});
+  resetBtn.addEventListener('click',()=>{i=0;render();});
+  render();
+})();
+
+// === QUALITY vs SERVING COST ===
+(function(){
+  const tabs=document.getElementById('mxBmTabs');
+  const box=document.getElementById('mxBmBox');
+  if(!tabs||!box)return;
+  const M=[
+    {n:'Llama 2 70B',q:69.9,cost:70,c:'#3b82f6'},
+    {n:'Mixtral 8x7B',q:70.6,cost:13,c:'#f59e0b'},
+    {n:'Mistral 7B',q:60.5,cost:7,c:'#14b8a6'}
+  ];
+  let cur=1;
+  function render(){
+    tabs.innerHTML=M.map((m,k)=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${m.n}</button>`).join('');
+    const m=M[cur];
+    box.innerHTML=`<div style="display:flex;gap:10px;">
+      <div style="flex:1;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">MMLU (approx)</div>
+        <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:${m.c};">${m.q}</div></div>
+      <div style="flex:1;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">ACTIVE COMPUTE (B params/tok)</div>
+        <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:${m.c};">${m.cost}</div></div>
+      <div style="flex:1;padding:10px;border-radius:8px;background:var(--amber-dim);border:1px solid rgba(245,158,11,0.3);text-align:center;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">QUALITY PER FLOP</div>
+        <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--amber-text);">${(m.q/m.cost).toFixed(2)}</div></div>
+    </div>
+    <div style="font-size:12.5px;color:var(--text2);line-height:1.7;margin-top:10px;">${m.n}: ${cur===1?'parity quality at ~1/5.4 the per-token compute of the 70B — the sparse win.':cur===0?'the dense reference: maximum quality ceiling, linear serving cost.':'efficient but quality-capped — the dense-small baseline.'}</div>`;
+  }
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    cur=Array.from(tabs.children).indexOf(b);render();
+  });
+  render();
+})();
+
+// === THREE AXES ===
+(function(){
+  const box=document.getElementById('mxAxBox');
+  const note=document.getElementById('mxAxNote');
+  if(!box||!note)return;
+  const AX=[
+    {n:'per active FLOP',mix:94,den:70,c:'#f59e0b',d:'Quality divided by compute actually spent per token — sparse wins by construction here.'},
+    {n:'per stored param',mix:64,den:86,c:'#3b82f6',d:'Knowledge density per parameter — dense models compress learning into every weight.'},
+    {n:'quality / serving $',mix:88,den:62,c:'#14b8a6',d:'Amortized memory + compute at realistic batch sizes — MoE sweet spot for self-hosting.'}
+  ];
+  function render(k){
+    const a=AX[k];
+    box.innerHTML=`<div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:3px;"><span>Mixtral 8x7B</span><span style="color:var(--amber-text);font-weight:600;">${a.mix}</span></div>
+      <div style="height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${a.mix}%;background:var(--amber);border-radius:4px;transition:width .6s ease;"></div></div></div>
+    <div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:3px;"><span>Dense 70B reference</span><span style="color:var(--blue-text);font-weight:600;">${a.den}</span></div>
+      <div style="height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${a.den}%;background:var(--blue);border-radius:4px;transition:width .6s ease;"></div></div></div>
+    <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">${a.d}</div>`;
+    note.textContent=`Axis: ${a.n} — illustrative values; the winner flips with the axis, which is the point.`;
+  }
+  document.getElementById('mxAx1Btn').addEventListener('click',()=>render(0));
+  document.getElementById('mxAx2Btn').addEventListener('click',()=>render(1));
+  document.getElementById('mxAx3Btn').addEventListener('click',()=>render(2));
+  render(0);
+})();
+
+
+const QUIZ_DATA=[{"q": "How many experts does each token actually use in Mixtral, and how is it chosen?", "opts": ["All 8, averaged", "Two, selected per token per layer by a softmax router (top-2)", "One, chosen by the tokenizer", "Eight, but only two contribute gradients"], "correct": 1, "explain": "Every FFN layer contains 8 experts; a router network selects the top-2 per token, and their outputs are combined with the routing weights. The selected pair can differ at each layer and each timestep."}, {"q": "What is the total vs active parameter count of Mixtral 8x7B?", "opts": ["47B total, ~13B active per token", "13B total, 47B active", "7B total, 56B active", "70B total, 70B active"], "correct": 0, "explain": "Each token has access to 47B parameters of expert storage but only uses about 13B active parameters during inference — the defining sparse-model trade."}, {"q": "Which models does Mixtral 8x7B - Instruct surpass on the paper's human benchmarks?", "opts": ["Only Llama 2 70B-chat", "GPT-3.5 Turbo, Claude-2.1, Gemini Pro, and Llama 2 70B-chat", "No closed models", "GPT-4 and Claude 3 Opus"], "correct": 1, "explain": "The instruct variant (SFT + DPO on the sparse base) outperforms GPT-3.5 Turbo, Claude-2.1, Gemini Pro, and Llama 2 70B-chat on the reported human evaluation benchmarks."}, {"q": "What license did Mistral release Mixtral under?", "opts": ["A research-only non-commercial license", "Apache 2.0 — permissive commercial use, modification, redistribution", "Proprietary with API-only access", "GPL-3 with copyleft"], "correct": 1, "explain": "Both base and instruct models are released under Apache 2.0 — among the most permissive licenses ever attached to a frontier-adjacent model, deliberately commercial-friendly."}, {"q": "What is the honest way to compare MoE models like Mixtral with dense models?", "opts": ["Always by total parameter count", "Always by active parameter count", "Name the axis first: quality per active FLOP, per stored parameter, or per serving dollar — the winner differs by axis", "Never compare them"], "correct": 2, "explain": "A routed model's parameter count is a distribution over what a token could use, not what it uses: per-FLOP quality favors sparse models, per-parameter knowledge density favors dense, and serving economics depends on batch size and memory amortization."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

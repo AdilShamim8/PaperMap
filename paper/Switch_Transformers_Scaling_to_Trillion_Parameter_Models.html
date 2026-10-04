@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Switch Transformers: Scaling to Trillion Parameter Models — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the Switch Transformers paper, with visual demos for top-1 routing, expert capacity, router z-loss stability, bfloat16 selective precision, and trillion-parameter scaling.">
+<meta name="keywords" content="Switch Transformers, Mixture of Experts, MoE, sparsity, top-1 routing, expert capacity, z-loss, bfloat16, T5, scaling, LLM">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Switch_Transformers_Scaling_to_Trillion_Parameter_Models.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Switch Transformers: Scaling to Trillion Parameter Models — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of Switch Transformers with routing demos, stability fixes, and the 1.6 trillion parameter story.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Switch_Transformers_Scaling_to_Trillion_Parameter_Models.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="Switch Transformers: Scaling to Trillion Parameter Models — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of Switch Transformers with routing demos, stability fixes, and the 1.6 trillion parameter story.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#routing">Routing</a>
+    <a class="nav-link" href="#training">Training</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">JMLR 2022</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#routing">Routing</a>
+  <a href="#training">Training</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    <em>Trillion</em>-Parameter Routing<br>Switch Transformers
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that simplified Mixture-of-Experts down to a single expert per token — and used that simplicity to scale language models past a trillion parameters while keeping the compute per token flat.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2101.03961" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">1.6T</div>
+      <div class="stat-label">Parameters (Switch-C)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2048</div>
+      <div class="stat-label">Experts per Layer</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">7×</div>
+      <div class="stat-label">Faster Pre-Training</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2021</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Committees</em> to <em>Switches</em></h2>
+  <p class="section-desc">Mixture-of-Experts is thirty years older than the LLM era. Switch Transformers earned its name by throwing away the committee and keeping the switch.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">1991</div><div class="tl-title">Mixture of Experts (Jacobs et al.)</div><div class="tl-desc">Neural nets with learned "gates" that divide labor between small expert networks — competitive learning from the connectionist era.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2017</div><div class="tl-title">Sparsely-Gated MoE (Shazeer et al.)</div><div class="tl-desc">MoE inside LSTM layers: a noisy top-k gate activates 2 of thousands of experts per token — 137B parameters, but training was unstable and communication-heavy.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2020</div><div class="tl-title">GShard (Lepikhin et al.)</div><div class="tl-desc">MoE meets the Transformer and mesh parallelism: a 600B-parameter translation model that swapped every other feed-forward block for 1-of-2048 expert routing.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2021 · Jan</div><div class="tl-title">🚀 Switch Transformers (Fedus et al.)</div><div class="tl-desc">Drop k=2 routing to k=1, add router z-loss, run experts in bfloat16. Simpler, faster, stabler — and it scales to 1.6 trillion parameters.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2022 →</div><div class="tl-title">GLaM, NLLB, Mixtral…</div><div class="tl-desc">The Switch recipe becomes the default for frontier efficiency: one-trillion-class sparse models are now routine, and open MoE releases like Mixtral 8x7B follow directly.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Why This Paper Mattered</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Before Switch, MoE was powerful but fragile: k=2 routing doubled expert bookkeeping, soft weights tangled gradients, and instabilities forced lower precision to be avoided. Switch Transformers showed that <strong>removing machinery</strong> — routing to exactly one expert — makes sparsity simultaneously <strong>cheaper, faster, and more stable</strong>. That inversion is why nearly every large sparse model since inherits its design.</p>
+      <div class="notice-card" style="margin-top:1rem;"><div class="notice-title">🧭 Where to read next</div><div class="notice-text">The <a href="./Mixtral_of_Experts.html" style="color:var(--amber-text);">Mixtral Guide</a> shows the k=2 variant of this same idea in an open 2024 model.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The <em>Dense</em> Dilemma</h2>
+  <p class="section-desc">A dense model makes every token pay for every parameter. That symmetry is what makes scaling expensive.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🧱</div>
+      <div class="problem-title">Dense: Every Token Pays for Everything</div>
+      <ul class="problem-list">
+        <li>In a dense Transformer, each token flows through 100% of the feed-forward parameters on every layer</li>
+        <li>Cost grows with capacity: a trillion-parameter dense model would need impossible compute per token</li>
+        <li>Training FLOPs, serving latency, and memory all scale with the full parameter count</li>
+        <li>You cannot buy more knowledge capacity without also buying more compute per token</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔀</div>
+      <div class="problem-title">Sparse: Different Parameters per Token</div>
+      <ul class="problem-list">
+        <li>Replace each feed-forward block with many experts and a router that picks one per token</li>
+        <li>Total parameters explode — but FLOPs per token stay constant</li>
+        <li>The router learns <em>which</em> specialist deserves each token, end-to-end with the rest of the network</li>
+        <li>Knowledge capacity and compute cost become decoupled dials</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Kitchen</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">A dense model is a kitchen where <strong>every order walks through every station</strong> — grill, pastry, sushi, whatever you asked for. A sparse model is a kitchen with a maître d' (the router) who sends each order to exactly one station (the expert). The restaurant gets more stations — more total equipment — without any single order taking longer.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The Switch: <em>Top-1</em> Routing</h2>
+  <p class="section-desc">The paper's central simplification: route each token to its single best expert — no committee, no weighted blend.</p>
+  <div class="formula-card">
+    <div class="formula-main">r = softmax(W<sub>r</sub>·x) &nbsp;·&nbsp; i = argmax(r) &nbsp;·&nbsp; y = r<sub>i</sub> · E<sub>i</sub>(x)</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">W<sub>r</sub>·x</div><div class="fp-name">Router logits</div><div class="fp-desc">A tiny linear layer scores how well each expert fits this token.</div></div>
+      <div class="formula-piece"><div class="fp-sym">argmax(r)</div><div class="fp-name">Hard selection</div><div class="fp-desc">Pick expert #i — exactly one. No k=2 blending, no noisy gating.</div></div>
+      <div class="formula-piece"><div class="fp-sym">r<sub>i</sub></div><div class="fp-name">Gating weight</div><div class="fp-desc">The expert's output is scaled by its routing probability — gradients flow to the router.</div></div>
+      <div class="formula-piece"><div class="fp-sym">E<sub>i</sub>(x)</div><div class="fp-name">Expert computation</div><div class="fp-desc">A standard feed-forward network — only the selected one runs.</div></div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Why k=1 Beats k=2</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Half the expert compute:</strong> prior MoE ran two experts per token and averaged them — Switch runs one.</li>
+        <li><strong>Simpler communication:</strong> one expert-to-device round trip per token instead of two, a major cost at scale.</li>
+        <li><strong>Cleaner gradients:</strong> routing decisions are a discrete switch scaled by one probability, which trains stably with the right regularization.</li>
+        <li><strong>Scale instead:</strong> the compute you save goes into more experts — more capacity at the same FLOPs.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The Capacity Knob</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Each expert gets a buffer of <span class="code-inline">expert_capacity = (tokens per batch / experts) × capacity_factor</span>. If one expert attracts too many tokens (a popular specialist), the overflow is <strong>dropped</strong> — that token's layer output becomes simply its residual connection. Dropped tokens are a visible training signal: too many means routing is collapsing onto a few experts. The paper keeps ~99%+ of tokens routed in healthy runs and logs the drop rate as a health metric.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ROUTING DEMO -->
+<section id="routing">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Routing <em>in Motion</em></h2>
+  <p class="section-desc">Watch tokens flow through a layer of experts — including what happens when one expert overflows its capacity.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Top-1 Router</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A batch of 6 tokens routes through 4 experts. Press <strong>Route tokens</strong> to see assignments; lower the capacity factor to starve the popular expert and watch tokens get dropped.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
+      <button class="btn-primary" id="swRouteBtn" type="button" style="font-size:13px;padding:8px 18px;">Route tokens</button>
+      <button class="btn-outline" id="swCapBtn" type="button" style="font-size:13px;padding:8px 18px;">Capacity factor: 1.0</button>
+      <span id="swDropNote" style="font-family:var(--mono);font-size:11px;color:var(--text3);"></span>
+    </div>
+    <div id="swTokenLane" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:13px;color:var(--text2);line-height:2.1;margin-bottom:1rem;"></div>
+    <div id="swExpertGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;"></div>
+  </div>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧠 What the router learns</div><div class="notice-text">Without any supervision, experts specialize — by syntax, token frequency, or task domain. The router is just a linear layer trained end-to-end.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Load balance</div><div class="notice-text">An auxiliary load-balancing loss keeps expert utilization even, so capacity never starves a hot expert.</div></div>
+    <div class="notice-card"><div class="notice-title">🪂 Dropped-token safety</div><div class="notice-text">Overflow tokens pass through via the residual path — the layer degrades gracefully instead of crashing.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TRAINING -->
+<section id="training">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Taming <em>Instability</em></h2>
+  <p class="section-desc">Sparse models used to fall over in training. Switch's fixes — a router z-loss, selective precision, and careful initialization — made bfloat16 MoE possible for the first time.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Fix 1 — Router z-loss</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Round-off error in the router's softmax blows up in bfloat16: tiny logit perturbations flip argmax decisions, which sends tokens to wrong experts, which perturbs gradients — a feedback loop. The z-loss penalizes large logits directly: <span class="code-inline">L_z = (1/B) Σ (logits²)</span>, keeping the router's arithmetic in a numerically comfortable range.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Fix 2 — Selective Precision</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Run the whole model in memory-cheap <strong>bfloat16</strong>, but keep the router — the most error-sensitive part — in <strong>float32</strong>. This hybrid is why the paper could claim the first stable large-scale sparse training with low precision formats.</p>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Router Stability Gym</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Watch 20 steps of router logits under bfloat16 round-off. Without the z-loss, logits drift and routing decisions flip; with it, the distribution stays tight.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="swZOnBtn" type="button" style="font-size:13px;padding:8px 18px;">Train with z-loss</button>
+      <button class="btn-outline" id="swZOffBtn" type="button" style="font-size:13px;padding:8px 18px;">No z-loss</button>
+    </div>
+    <div id="swZChart" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="swZVerdict" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🔧 Fix 3 — Initialization</div><div class="notice-text">Scaled-down random init for router weights avoids starting near decision boundaries where small noise flips routes.</div></div>
+    <div class="notice-card"><div class="notice-title">💧 Fix 4 — Regularization</div><div class="notice-text">Increased dropout (d=0.2 variants) helps fine-tuned sparse models that would otherwise overfit small downstream datasets.</div></div>
+    <div class="notice-card"><div class="notice-title">📈 Fix 5 — More data / longer training</div><div class="notice-text">Sparse models underperform dense ones in the under-trained regime — the quality gap disappears with sufficient training steps.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Speed <em>and</em> Scale</h2>
+  <p class="section-desc">Same compute per token, up to 7× faster pre-training — and a 1.6 trillion parameter model that actually trains.</p>
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <div class="card-label">Pre-training Speed (time to T5-level quality)</div>
+    <table class="comp-table">
+      <thead><tr><th>Model</th><th>Params</th><th>Speed vs. dense twin</th><th>Setting</th></tr></thead>
+      <tbody>
+        <tr><td>T5-Base (dense)</td><td>0.2B</td><td>1×</td><td>Same compute per token</td></tr>
+        <tr class="comp-best"><td>Switch-Base</td><td>7B</td><td class="comp-best">up to 7×</td><td>Same compute per token</td></tr>
+        <tr><td>T5-Large (dense)</td><td>0.7B</td><td>1×</td><td>Same compute per token</td></tr>
+        <tr class="comp-best"><td>Switch-Large</td><td>26B</td><td class="comp-best">up to 7×</td><td>Same compute per token</td></tr>
+        <tr><td>T5-XXL (dense)</td><td>11B</td><td>1×</td><td>Strong baseline</td></tr>
+        <tr class="comp-best"><td>Switch-C (1T)</td><td>1.6T</td><td class="comp-best">4×</td><td>Trillion-scale, C4</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px;">Speedups are wall-clock time to reach the same pre-training quality — the sparse model gets there first because more of its capacity is trained in parallel per step.</p>
+  </div>
+  <div class="two-col">
+    <div class="card" style="overflow-x:auto;">
+      <div class="card-label">Fine-tuning Quality (Base size)</div>
+      <table class="comp-table">
+        <thead><tr><th>Model</th><th>GLUE</th><th>SuperGLUE</th><th>SQuAD</th></tr></thead>
+        <tbody>
+          <tr><td>T5-Base</td><td>82.9</td><td>72.4</td><td>83.5</td></tr>
+          <tr class="comp-best"><td>Switch-Base</td><td class="comp-best">84.7</td><td class="comp-best">73.0</td><td class="comp-best">83.7</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:var(--text3);margin-top:10px;">With identical per-token compute, the sparse twin wins on downstream benchmarks too.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Distillation — Gains You Can Ship</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The trillion-parameter model is a research artifact, but its knowledge compresses: distilling Switch-Base into small <strong>dense</strong> students preserves roughly <strong>30% of the sparse model's quality gain</strong> — meaningfully better small models with none of the serving complexity. The paper even distills fine-tuned sparse checkpoints.</p>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Pre-training Speedup Race</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Time-to-quality: press start and watch the dense T5-Base and compute-matched Switch-Base race to the same loss.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="swRaceBtn" type="button" style="font-size:13px;padding:8px 18px;">Start race</button>
+    </div>
+    <div id="swRaceTrack" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="swRaceVerdict" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>Default</em> Architecture of Scale</h2>
+  <p class="section-desc">Switch Transformers turned MoE from a fragile niche into the standard way to buy knowledge capacity without buying compute.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🏭 The Switch Layer</div><div class="notice-text">The paper's layer design — replace FFN with N experts + top-1 router — is now a reusable building block in open frameworks.</div></div>
+    <div class="notice-card"><div class="notice-title">🌍 GLaM (2022)</div><div class="notice-text">1.2T parameters, activated sparsely, outperforming GPT-3 on many tasks with ~1/3 of the training energy.</div></div>
+    <div class="notice-card"><div class="notice-title">🐦 Mixtral 8x7B (2024)</div><div class="notice-text">The open-weights MoE that brought this design to everyone — <a href="./Mixtral_of_Experts.html" style="color:var(--amber-text);">read its guide</a> for the k=2 variant.</div></div>
+    <div class="notice-card"><div class="notice-title">📚 NLLB-200 & translation</div><div class="notice-text">Meta's 200-language translator is a sparsely gated MoE — the Switch lineage in production.</div></div>
+    <div class="notice-card"><div class="notice-title">🔬 Stability toolkit</div><div class="notice-text">Router z-loss and selective precision are now standard vocabulary whenever anyone trains sparse models.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Serving many experts needs expert-parallelism communication; memory footprint stays huge even though FLOPs are flat.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">1.6T Parameters ≠ 1.6T <em>Knowledge</em></h2>
+  <p class="section-desc">A sparse parameter is memory, not compute. Understanding that distinction is the key to reading every MoE claim since.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🪞</div>
+      <div class="problem-title">The Headline Illusion</div>
+      <ul class="problem-list">
+        <li>"1.6 trillion parameters" sounds like 1.6T of dense capacity — it is not</li>
+        <li>Each token touches only one expert per layer: compute per token stays T5-Base-sized</li>
+        <li>Knowledge-per-parameter is lower than a dense model of the same size</li>
+        <li>Serving costs: all 1.6T weights must sit in memory (across devices), with routing traffic between them</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🧮</div>
+      <div class="problem-title">The Honest Ledger</div>
+      <ul class="problem-list">
+        <li>Total parameters = knowledge storage; active parameters = per-token compute</li>
+        <li>Switch-C: 2048 experts per layer store 1.6T parameters; one expert runs per token per layer</li>
+        <li>The win is <strong>time-to-quality</strong>: more capacity trained in parallel, same FLOPs</li>
+        <li>Distillation is the honesty test: ~30% of the gain survives compression into dense students</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Parameter Ledger</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Compare what a token "pays" in a dense T5-Base versus the 1.6T Switch-C — flip between the memory view and the compute view.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="swLedgerMemBtn" type="button" style="font-size:13px;padding:8px 18px;">Memory view</button>
+      <button class="btn-outline" id="swLedgerFlopBtn" type="button" style="font-size:13px;padding:8px 18px;">Compute view</button>
+    </div>
+    <div id="swLedger" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="swLedgerNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Read MoE claims as <strong>"more bookshelf, not more reading speed"</strong>. The trillion parameters are shelf space for specialist knowledge the router can fetch in constant time. That is genuinely valuable — it is how modern systems hold enormous knowledge at controllable inference cost — but it is a different resource than dense scale, and the two should never be compared parameter-for-parameter.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the Switch Transformers paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Top-1 routing: each token uses exactly one expert per layer — the simplification that made MoE stable and fast.</div>
+    <div class="card-sm">✅ Constant compute per token, exploding parameter count: capacity and FLOPs decouple.</div>
+    <div class="card-sm">✅ Router z-loss + selective precision (bfloat16 model, float32 router) = first stable low-precision sparse training.</div>
+    <div class="card-sm">✅ Up to 7× faster pre-training than compute-matched dense T5 twins; 4× over T5-XXL at trillion scale.</div>
+    <div class="card-sm">✅ Switch-C: 2048 experts per layer, 1.6 trillion parameters — trained on the Colossal Clean Crawled Corpus.</div>
+    <div class="card-sm">✅ Sparse parameters are memory, not compute — distillation keeps ~30% of the quality gain in small dense models.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2101.03961" target="_blank" rel="noopener noreferrer">"Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity"</a> (Fedus et al., 2021)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2101.03961" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Attention_Is_All_You_Need.html">Transformer Guide</a>
+    <a class="footer-link" href="./T5.html">T5 Guide</a>
+    <a class="footer-link" href="./Mixtral_of_Experts.html">Mixtral of Experts Guide</a>
+    <a class="footer-link" href="./Chinchilla.html">Chinchilla Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "routing", "training", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === ROUTER DEMO ===
+(function(){
+  const lane=document.getElementById('swTokenLane');
+  const grid=document.getElementById('swExpertGrid');
+  const note=document.getElementById('swDropNote');
+  const routeBtn=document.getElementById('swRouteBtn');
+  const capBtn=document.getElementById('swCapBtn');
+  if(!lane||!grid||!note||!routeBtn||!capBtn)return;
+  const COLORS=['#f59e0b','#3b82f6','#14b8a6','#a855f7'];
+  const tokens=['the','cat','sat','on','the','mat'];
+  let cap=1.0, assigned=null;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function assign(){
+    // deterministic-ish pseudo routing: expert 2 is popular
+    const e=[0,1,2,2,0,2];
+    return e;
+  }
+  function render(){
+    if(!assigned)return;
+    const counts=[0,0,0,0];
+    const capacity=Math.max(1,Math.round(6/4*cap));
+    const drops=[];
+    const seen=[0,0,0,0];
+    lane.innerHTML=tokens.map((t,i)=>{
+      const e=assigned[i];
+      seen[e]++;
+      const dropped=seen[e]>capacity;
+      if(dropped){drops.push(i);return `<span style="opacity:0.35;text-decoration:line-through;">${t}→E${e}✗</span>`;}
+      counts[e]++;
+      return `<span style="background:${COLORS[e]}22;color:${COLORS[e]};padding:2px 8px;border-radius:6px;font-weight:600;${RM?'':'transition:all .4s;'}">${t}→E${e}</span>`;
+    }).join(' ');
+    grid.innerHTML=[0,1,2,3].map(e=>`
+      <div class="card-sm" style="border-left:3px solid ${COLORS[e]};">
+        <div style="font-family:var(--mono);font-size:11px;color:${COLORS[e]};font-weight:600;">EXPERT ${e}</div>
+        <div style="display:flex;gap:2px;margin:8px 0;">${Array.from({length:capacity+Math.max(0,counts[e]-capacity)},(_,k)=>`<div style="width:14px;height:14px;border-radius:3px;background:${k<counts[e]?COLORS[e]:'#e2e8f0'};"></div>`).join('')}</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">${counts[e]}/${capacity} slots</div>
+      </div>`).join('');
+    note.textContent=drops.length?`dropped tokens: ${drops.length} (passed via residual path)`:'all tokens routed';
+  }
+  routeBtn.addEventListener('click',()=>{assigned=assign();render();});
+  capBtn.addEventListener('click',()=>{
+    cap=cap===1.0?0.5:cap===0.5?2.0:1.0;
+    capBtn.textContent=`Capacity factor: ${cap.toFixed(1)}`;
+    render();
+  });
+})();
+
+// === ROUTER STABILITY GYM ===
+(function(){
+  const chart=document.getElementById('swZChart');
+  const verdict=document.getElementById('swZVerdict');
+  const onBtn=document.getElementById('swZOnBtn');
+  const offBtn=document.getElementById('swZOffBtn');
+  if(!chart||!verdict||!onBtn||!offBtn)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let timer=null;
+  function run(zloss){
+    if(timer)clearInterval(timer);
+    let logits=[0.8,1.1,0.9,1.0];
+    let flips=0, step=0;
+    const prev=[...logits];
+    function draw(){
+      chart.innerHTML=logits.map((l,i)=>{
+        const w=Math.max(4,Math.min(100,Math.abs(l)*22));
+        const col=l>2.2?'#ef4444':l>1.5?'#f59e0b':'#14b8a6';
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:56px;text-align:right;">expert ${i}</div>
+          <div style="flex:1;height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;">
+            <div style="height:100%;width:${w}%;background:${col};border-radius:4px;transition:width .3s ease;"></div></div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:56px;">${l.toFixed(2)}</div></div>`;
+      }).join('');
+    }
+    function stepFn(){
+      step++;
+      logits=logits.map((l,i)=>{
+        let nl=l+(Math.random()-0.5)*(zloss?0.08:0.6);
+        if(!zloss&&Math.random()<0.25)nl+= (Math.random()-0.5)*3;
+        if(zloss)nl=nl*0.92+0.4;
+        return Math.max(0.05,Math.min(4,Math.abs(nl)));
+      });
+      const top=logits.indexOf(Math.max(...logits));
+      const prevTop=prev.indexOf(Math.max(...prev));
+      if(top!==prevTop)flips++;
+      prev.splice(0,4,...logits);
+      draw();
+      verdict.textContent=`step ${step} · routing flips: ${flips}${flips>6?' — unstable! tokens re-route every few steps':''}`;
+      if(step>=20&&!RM){clearInterval(timer);}
+    }
+    draw();verdict.textContent='running 20 steps…';
+    if(RM){for(let k=0;k<20;k++)stepFn();verdict.textContent=`20 steps · routing flips: ${flips} (instant: reduced motion)`;}
+    else{timer=setInterval(stepFn,220);}
+  }
+  onBtn.addEventListener('click',()=>run(true));
+  offBtn.addEventListener('click',()=>run(false));
+})();
+
+// === SPEEDUP RACE ===
+(function(){
+  const track=document.getElementById('swRaceTrack');
+  const verdict=document.getElementById('swRaceVerdict');
+  const btn=document.getElementById('swRaceBtn');
+  if(!track||!verdict||!btn)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function bar(label,color,w,sub){
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:96px;text-align:right;">${label}</div>
+      <div style="flex:1;height:26px;background:var(--bg4);border-radius:6px;overflow:hidden;">
+        <div style="height:100%;width:${w}%;background:${color};border-radius:6px;transition:width .5s ease;"></div></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:110px;">${sub}</div></div>`;
+  }
+  function render(t){ // t in 0..1 progress of dense
+    track.innerHTML=
+      bar('T5-Base','#3b82f6',t*100,t>=1?'target quality ✓':Math.round(t*100)+'%')+
+      bar('Switch-Base','#f59e0b',Math.min(100,t*700)+'%',t*7>=1?'target quality ✓ (7× faster)':Math.round(t*700)+'%');
+    verdict.textContent=t>=1?'Same quality, Switch arrived ~7× sooner — more capacity trained in parallel, identical FLOPs per token.':'training…';
+  }
+  btn.addEventListener('click',()=>{
+    if(RM){render(1);return;}
+    let t=0;
+    const iv=setInterval(()=>{
+      t+=0.08;render(Math.min(1,t));
+      if(t>=1.02)clearInterval(iv);
+    },300);
+  });
+  render(0);
+})();
+
+// === PARAMETER LEDGER ===
+(function(){
+  const el=document.getElementById('swLedger');
+  const noteEl=document.getElementById('swLedgerNote');
+  const memBtn=document.getElementById('swLedgerMemBtn');
+  const flopBtn=document.getElementById('swLedgerFlopBtn');
+  if(!el||!noteEl||!memBtn||!flopBtn)return;
+  function row(name,val,w,color,unit){
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:110px;text-align:right;">${name}</div>
+      <div style="flex:1;height:22px;background:var(--bg4);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${w}%;background:${color};border-radius:4px;"></div></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:96px;">${val} ${unit}</div></div>`;
+  }
+  function render(mode){
+    if(mode==='mem'){
+      el.innerHTML=row('T5-Base dense','220M',2,'#3b82f6','params')+
+        row('Switch-C 1T','1.6T',100,'#f59e0b','params');
+      noteEl.textContent='MEMORY VIEW — every parameter must be stored (expert-parallel across devices). 1.6T ≈ 7,000× the bookshelf.';
+    }else{
+      el.innerHTML=row('T5-Base dense','1×',100,'#3b82f6','FLOPs/tok')+
+        row('Switch-C 1T','~1×',100,'#f59e0b','FLOPs/tok');
+      noteEl.textContent='COMPUTE VIEW — per token, one expert per layer runs: same reading speed, different library.';
+    }
+  }
+  memBtn.addEventListener('click',()=>render('mem'));
+  flopBtn.addEventListener('click',()=>render('flop'));
+  render('mem');
+})();
+
+
+const QUIZ_DATA=[{"q": "What is the central simplification of Switch Transformers?", "opts": ["Routing each token to its top-2 experts and averaging their outputs", "Routing each token to exactly one expert (top-1) per layer", "Removing the router and using round-robin expert assignment", "Sharing one expert across all layers of the network"], "correct": 1, "explain": "Switch replaces the k=2 routing of prior MoE work with hard top-1 selection: the single best expert computes the output, scaled by its routing probability. Fewer expert computations, less communication, simpler gradients."}, {"q": "How does a 1.6 trillion parameter Switch model keep compute per token constant?", "opts": ["By quantizing experts to 1-bit weights", "By only activating the experts the router selects for each token", "By processing every token with all experts in parallel hardware", "By truncating sequences to 512 tokens"], "correct": 1, "explain": "Sparsity is the trick: total parameters store knowledge, but each token activates only one expert per layer. FLOPs per token stay roughly constant while parameter count explodes."}, {"q": "What does the router z-loss fix?", "opts": ["Load imbalance across experts", "Numerical instability of router logits in low precision (bfloat16)", "Overfitting on downstream fine-tuning tasks", "Token dropping when expert capacity is exceeded"], "correct": 1, "explain": "In bfloat16, round-off error in router logits can flip argmax decisions, destabilizing training. The z-loss penalizes squared logit magnitudes, keeping router arithmetic in a numerically safe range — and it runs together with float32 router precision."}, {"q": "Approximately how much of a sparse model's fine-tuned quality gain survives distillation into small dense students?", "opts": ["None — distillation loses all MoE gains", "About 30%", "About 90%", "It doubles the gain"], "correct": 1, "explain": "The paper reports distilling Switch-Base into small dense models preserves roughly 30% of the sparse model's quality gain — enough to ship meaningful improvements without any serving complexity."}, {"q": "Why do tokens sometimes get 'dropped' in a Switch layer?", "opts": ["The router's softmax outputs zero for them", "A popular expert exceeds its capacity and overflow tokens pass via the residual path", "Dropout randomly removes tokens during training", "The z-loss zeroes out low-confidence routes"], "correct": 1, "explain": "Expert capacity = (tokens per batch / experts) x capacity factor. When an expert attracts more tokens than its buffer holds, the overflow is dropped — that token simply passes through the layer's residual connection, and the drop rate serves as a training health metric."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

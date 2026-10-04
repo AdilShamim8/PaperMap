@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the τ-bench paper, with visual demos for simulated users, policy-guided tool use, database-state verification, and the pass^k reliability metric.">
+<meta name="keywords" content="tau-bench, τ-bench, tool agents, user simulation, pass^k, reliability, retail, airline, policy following, benchmark, Sierra">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Tau_bench_A_Benchmark_for_Tool_Agent_User_Interaction_in_Real_World_Domains.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of τ-bench — simulated users, domain policies, dual API tools, and the reliability metric that exposed agent inconsistency.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Tau_bench_A_Benchmark_for_Tool_Agent_User_Interaction_in_Real_World_Domains.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of τ-bench — simulated users, domain policies, dual API tools, and the reliability metric that exposed agent inconsistency.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#domains">Domains</a>
+    <a class="nav-link" href="#metric">pass^k</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2024</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#domains">Domains</a>
+  <a href="#metric">pass^k</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Agents, Users, <em>Rules</em><br>τ-bench
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the benchmark that tests what deployment actually requires: an agent following domain policy, calling real APIs, and satisfying a simulated user — graded by the database state it leaves behind.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2406.12045" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Domains (Retail · Airline)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">165</div>
+      <div class="stat-label">Tasks (115 + 50)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">pass^k</div>
+      <div class="stat-label">Reliability Metric</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2024</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Tool Use</em> to <em>Customer Service</em></h2>
+  <p class="section-desc">Agent benchmarks had measured tool calling in static sandboxes. τ-bench added the missing antagonist: a user.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2022–23</div><div class="tl-title">ReAct / Toolformer / API-calling agents</div><div class="tl-desc">LLMs learn to invoke tools — evaluated on single-turn tasks with known ground truth answers.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023</div><div class="tl-title">AgentBench et al.</div><div class="tl-desc">Multi-environment agent benchmarks — but users are absent, and rules are loose suggestions.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2024 · Jun</div><div class="tl-title">🚀 τ-bench (Yao et al., Sierra)</div><div class="tl-desc">Simulated users + domain policies + real API tools + database-state grading + pass^k: the deployment-shaped agent test.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2025</div><div class="tl-title">τ²-bench</div><div class="tl-desc">The sequel adds dual-control: users with their own tools in a shared world. <a href="./Tau2_bench_Evaluating_Conversational_Agents_in_a_Dual_Control_Environment.html" style="color:var(--amber-text);">Read its guide</a>.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The Greek Letter</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">τ is the "tool" benchmark. Its thesis: the hard part of deploying agents isn't calling APIs — it's <strong>maintaining policy compliance across a chatty, inconsistent, goal-shifting conversation with a user who wants things the rules don't allow</strong>. Everything in the design serves that thesis.</p>
+      <div class="notice-card" style="margin-top:1rem;"><div class="notice-title">🧭 Study path</div><div class="notice-text">Tool basics: <a href="./Toolformer.html" style="color:var(--amber-text);">Toolformer</a> · agent loop: <a href="./ReAct.html" style="color:var(--amber-text);">ReAct</a> · this page · dual-control: τ²-bench.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">What Static Benchmarks <em>Miss</em></h2>
+  <p class="section-desc">A deployed agent fails in ways no single-turn eval can see: inconsistent behavior across trials, policy violations under pressure, and user mismanagement.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🧪</div>
+      <div class="problem-title">The Lab-Bench Gap</div>
+      <ul class="problem-list">
+        <li>Static QA-style tasks: one question, one answer, no conversation, no user model</li>
+        <li>"Tools" are often mocked single-call endpoints — no state, no side effects</li>
+        <li>Policy compliance is unmeasured — an agent that breaks the rules can still "succeed"</li>
+        <li>Average accuracy hides the killer deployment property: consistency across repeated runs</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🏪</div>
+      <div class="problem-title">The τ-bench Shape</div>
+      <ul class="problem-list">
+        <li>A <strong>user simulator</strong> (LLM-driven) with hidden goals, personality, and impatience</li>
+        <li>An agent with a <strong>policy document</strong> — the rules it must never break</li>
+        <li>A set of <strong>writable domain APIs</strong> over a live database (orders, reservations)</li>
+        <li>Grading by <strong>final database state</strong> vs the annotated goal state — not by text</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Flight Simulator</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Static tool benchmarks are written driving tests. τ-bench is a <strong>flight simulator with a chatty co-pilot who occasionally requests a loop</strong>: weather (user behavior) changes every run, checklists (policies) must still be followed exactly, and the landing is graded by whether the plane is actually parked — not by how confidently you talked about parking it.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">One Loop, Three <em>Actors</em></h2>
+  <p class="section-desc">Every task runs the same conversation loop until the user says it's over — then the database tells the truth.</p>
+  <div class="formula-card">
+    <div class="formula-main">agent(user_msg | policy, tools, DB) → tool_calls / reply &nbsp;·&nbsp; success ⇔ DB == DB<sub>goal</sub></div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">policy</div><div class="fp-name">The rulebook</div><div class="fp-desc">Domain document the agent must honor — exchange windows, refund eligibility, upgrade rules.</div></div>
+      <div class="formula-piece"><div class="fp-sym">tools</div><div class="fp-name">Writable APIs</div><div class="fp-desc">Retail: 15 tools (7 write + 8 read); airline: 13 (6 write + 7 read). Writes mutate the shared DB.</div></div>
+      <div class="formula-piece"><div class="fp-sym">user sim</div><div class="fp-name">LLM-powered user</div><div class="fp-desc">Given hidden instructions and a persona — behaves like a real customer: vague, pushy, changing plans.</div></div>
+      <div class="formula-piece"><div class="fp-sym">DB<sub>goal</sub></div><div class="fp-name">The oracle</div><div class="fp-desc">Annotated desired end-state of the database. Conversation text is irrelevant; state is everything.</div></div>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The τ-bench Loop</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Run a retail task step by step: user request → agent reasoning + policy check → tool call → database update → verification.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="tauStepBtn" type="button" style="font-size:13px;padding:8px 18px;">Next turn →</button>
+      <button class="btn-outline" id="tauResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset task</button>
+    </div>
+    <div id="tauLoopBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.85;min-height:230px;"></div>
+    <div id="tauLoopNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DOMAINS -->
+<section id="domains">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Retail & <em>Airline</em></h2>
+  <p class="section-desc">Two domains built for policy friction: where the customer's request and the company's rules collide on purpose.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">τ-retail (115 tasks)</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>An e-commerce customer-service setting: orders, exchanges, refunds</li>
+        <li>15 API tools (7 write, 8 non-write) over a database of ~2,000 reservations/orders</li>
+        <li>Policy traps: return windows that expired, exchange loops, refund order-of-operations</li>
+        <li>Tasks involve multi-step constraint checking (dates, item status, eligibility)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">τ-airline (50 tasks)</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Airline booking modification: reservations, credits, baggage, seats</li>
+        <li>13 API tools (6 write, 7 non-write)</li>
+        <li>Policy traps: basic-economy restrictions, credit rules, same-day changes</li>
+        <li>The classic scenario: user asks a policy-violating change — agent must refuse and propose a compliant alternative (cancel + rebook)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🗣 Users are adversarial by design</div><div class="notice-text">The simulator gets persona instructions: impatient, vague, or goal-shifting — because real users are.</div></div>
+    <div class="notice-card"><div class="notice-title">📋 Policies are the real task</div><div class="notice-text">Tool syntax is easy; refusing a customer within policy while staying helpful is the measured skill.</div></div>
+    <div class="notice-card"><div class="notice-title">🤝 Conversations end when the user ends them</div><div class="notice-text">The agent must also manage turn-taking — knowing when to ask vs act vs confirm.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- METRIC -->
+<section id="metric">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">pass<em>^k</em> — Measuring Reliability</h2>
+  <p class="section-desc">The paper's metric innovation: a task only counts if the agent solves it in <strong>all k independent attempts</strong> — turning flakiness into a first-class number.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Reliability Cliff</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A task passes pass^k only if k independent runs all succeed. Watch what happens to a 70%-per-run agent as k grows.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="tauK1Btn" type="button" style="font-size:12px;padding:8px 14px;">k = 1</button>
+      <button class="btn-outline" id="tauK4Btn" type="button" style="font-size:12px;padding:8px 14px;">k = 4</button>
+      <button class="btn-primary" id="tauK8Btn" type="button" style="font-size:12px;padding:8px 14px;">k = 8</button>
+    </div>
+    <div id="tauPassChart" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="tauPassNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Why Maximum-Then-Average Fails</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Standard practice — run the task, take the best or average result — rewards lottery-ticket behavior. An agent that solves a task 50% of the time looks "capable" and is <strong>un-deployable</strong>: production users get the coin flip. pass^k makes the floor visible: pass^8 = "every one of 8 fresh conversations succeeded."</p>
+    </div>
+    <div class="card">
+      <div class="card-label">The Determinism Caveat</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Agents are stochastic; users are simulated by stochastic models; so pass^k is itself a sampled estimate. The paper argues this is the honest way to report — <em>distributions over deployment outcomes</em> — and later harnesses standardize seeds and retries to compare fairly.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Frontier Models <em>Flunk</em> Deployment</h2>
+  <p class="section-desc">The paper's headline numbers defined a research agenda: capable ≠ reliable, and reliable ≠ consistent.</p>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">GPT-4o PASS@1</div><div class="result-score" style="color:var(--blue-text);">&lt;50%</div><div class="result-label">of tasks solved even once — the strongest function-calling agents</div></div>
+    <div class="result-card"><div class="result-model">GPT-4o PASS^8 (RETAIL)</div><div class="result-score" style="color:var(--red-text);">&lt;25%</div><div class="result-label">consistency collapses: same task, fresh conversation, coin-flip outcomes</div></div>
+    <div class="result-card"><div class="result-model">DROP TO ~25%</div><div class="result-score" style="color:var(--amber-text);">pass^1→pass^8</div><div class="result-label">the reliability cliff: per-run success halves under repetition</div></div>
+    <div class="result-card"><div class="result-model">FAILURE MODES</div><div class="result-score" style="color:var(--teal-text);">rules + users</div><div class="result-label">policy violations under user pressure; asking forever instead of acting; wrong side-effects</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Failure Autopsy</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Three real failure patterns from τ-bench runs. Click each to see the conversation go wrong.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="tauFailTabs"></div>
+    <div id="tauFailBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.85;min-height:200px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Reliability</em> Becomes the Metric</h2>
+  <p class="section-desc">τ-bench changed what "a good agent" means in evaluation papers: not brilliance, repeatability.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">📊 pass^k adoption</div><div class="notice-text">Agent benchmarks and papers now report reliability curves — the field's vocabulary shifted permanently.</div></div>
+    <div class="notice-card"><div class="notice-title">👤 User simulation as a discipline</div><div class="notice-text">LLM-simulated users became standard equipment for conversational agent evals.</div></div>
+    <div class="notice-card"><div class="notice-title">✈️ τ²-bench (2025)</div><div class="notice-text">Dual-control: the user gets tools too — <a href="./Tau2_bench_Evaluating_Conversational_Agents_in_a_Dual_Control_Environment.html" style="color:var(--amber-text);">read next</a>.</div></div>
+    <div class="notice-card"><div class="notice-title">🏭 Industry eval culture</div><div class="notice-text">Deployment-oriented evals (state-based, policy-checked) are now routine at API and agent vendors.</div></div>
+    <div class="notice-card"><div class="notice-title">🧠 Policy-following research</div><div class="notice-text">Constraint adherence under social pressure became a named research target, not an anecdote.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">User-simulator fidelity (16%→40% error rates across domains), small task counts, and static policies — τ² and later work chip at these.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The Verifier Is <em>Stronger</em> Than the Task</h2>
+  <p class="section-desc">τ-bench's deepest idea isn't the domains — it's grading by world-state, which quietly raises the bar on every agent claim made since.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">💬</div>
+      <div class="problem-title">Text Grading Games</div>
+      <ul class="problem-list">
+        <li>LLM-judged conversations reward <em>sounding</em> right — polished refusals, confident next steps</li>
+        <li>Agents learn (implicitly) to produce judge-pleasing language</li>
+        <li>Silent state errors — the refund never executed — score fine in text</li>
+        <li>Benchmarks and their judges drift together; scores inflate</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🗄</div>
+      <div class="problem-title">State Grading Can't Be Sweet-Talked</div>
+      <ul class="problem-list">
+        <li>The database is either in the goal state or it isn't</li>
+        <li>Refusals required by policy are encoded as required end-states — no state change is itself checkable</li>
+        <li>Deterministic oracle: identical behavior scores identically, forever</li>
+        <li>Failures localize precisely: which write was wrong, missing, or out of order</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Same Words, Different World</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Two conversations end with the agent saying the same reassuring sentence. Flip the database panel: one is a success, one is a silent failure.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="tauWorldGoodBtn" type="button" style="font-size:13px;padding:8px 18px;">Run A</button>
+      <button class="btn-outline" id="tauWorldBadBtn" type="button" style="font-size:13px;padding:8px 18px;">Run B</button>
+    </div>
+    <div id="tauWorldBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">τ-bench's contribution is an <strong>epistemology</strong>: stop asking agents what they did, and check the world. That principle — state-based, policy-checked, repetition-graded — is the load-bearing wall of every serious agent evaluation that followed, including its own sequel.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the τ-bench paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Two domains: τ-retail (115 tasks) and τ-airline (50 tasks), each with writable APIs, policies, and a live database.</div>
+    <div class="card-sm">✅ LLM-simulated users with hidden goals and personas — the conversation is the task.</div>
+    <div class="card-sm">✅ Grading is by final database state vs the annotated goal state — text doesn't count.</div>
+    <div class="card-sm">✅ pass^k: a task passes only if all k independent runs succeed — reliability made measurable.</div>
+    <div class="card-sm">✅ Even gpt-4o solved <50% of tasks once, and pass^8 <25% in retail — inconsistency, not just incapability.</div>
+    <div class="card-sm">✅ State-based grading + policy checks became the template for deployment-oriented agent evals.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2406.12045" target="_blank" rel="noopener noreferrer">"τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains"</a> (Yao et al., 2024)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2406.12045" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./ReAct.html">ReAct Guide</a>
+    <a class="footer-link" href="./AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench Guide</a>
+    <a class="footer-link" href="./Tau2_bench_Evaluating_Conversational_Agents_in_a_Dual_Control_Environment.html">τ²-Bench Guide</a>
+    <a class="footer-link" href="./Toolformer.html">Toolformer Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "domains", "metric", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === THE TAU-BENCH LOOP ===
+(function(){
+  const box=document.getElementById('tauLoopBox');
+  const note=document.getElementById('tauLoopNote');
+  const stepBtn=document.getElementById('tauStepBtn');
+  const resetBtn=document.getElementById('tauResetBtn');
+  if(!box||!note||!stepBtn||!resetBtn)return;
+  const ST=[
+    {t:'USER (simulated)',b:'<span style="color:var(--blue-text);">User:</span> "Hi — I ordered two shirts last week but only need one. Can I return the blue one? It arrived Tuesday."<br><span style="color:var(--text3);">(hidden goal: return 1 of 2 items · persona: polite, slightly vague about dates)</span>',n:'The simulator starts with a natural, underspecified request — the agent must figure out WHICH order.'},
+    {t:'AGENT: LOCATE + POLICY CHECK',b:'<span style="color:var(--amber-text);">Agent (tool):</span> get_user_orders(user_id) → order #7841: 2 shirts, delivered 6 days ago<br><span style="color:var(--amber-text);">Agent (policy check):</span> "Return window: 30 days from delivery · item status: delivered, unworn ✓ eligible"',n:'Policy is consulted BEFORE any write. Exchange window logic is the trap in many τ-retail tasks.'},
+    {t:'AGENT: WRITE + CONFIRM',b:'<span style="color:var(--amber-text);">Agent (tool):</span> exchange_order(order_id=7841, items=[blue shirt], action="return")<br><span style="color:var(--amber-text);">Agent:</span> "Done — the blue shirt is returned, refund of $24.99 to your original payment method."<br><span style="color:var(--blue-text);">User:</span> "Perfect, thanks!"',n:'The write mutates the shared database. The conversation ends when the user ends it.'},
+    {t:'VERIFICATION',b:'<span style="color:var(--teal-text);">DB check vs goal state:</span><br>order #7841.items = [grey shirt] ✓ · refund $24.99 issued ✓ · nothing else mutated ✓<br><span style="color:var(--green-text);font-weight:600;">TASK PASSED — database state matches the annotated goal.</span>',n:'Grading ignores every word of the conversation — only the world-state matters.'}
+  ];
+  let i=0;
+  function render(){
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;">${ST[i].t}</div><div style="font-size:12.5px;color:var(--text2);line-height:1.9;">${ST[i].b}</div>`;
+    note.textContent=ST[i].n;
+    stepBtn.textContent=i<ST.length-1?'Next turn →':'Restart';
+  }
+  stepBtn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+  resetBtn.addEventListener('click',()=>{i=0;render();});
+  render();
+})();
+
+// === RELIABILITY CLIFF ===
+(function(){
+  const chart=document.getElementById('tauPassChart');
+  const note=document.getElementById('tauPassNote');
+  if(!chart||!note)return;
+  const MODELS=[
+    {n:'Lucky agent (70%/run)',p:0.70,c:'#f59e0b'},
+    {n:'Solid agent (95%/run)',p:0.95,c:'#14b8a6'},
+    {n:'Frontier 2024 pattern (~48%/run)',p:0.48,c:'#3b82f6'}
+  ];
+  function render(k){
+    chart.innerHTML=MODELS.map(m=>{
+      const v=Math.pow(m.p,k)*100;
+      return `<div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:3px;"><span>${m.n}</span><span style="color:${m.c};font-weight:600;">pass^${k} = ${v.toFixed(1)}%</span></div>
+        <div style="height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${v}%;background:${m.c};border-radius:4px;transition:width .6s ease;"></div></div></div>`;
+    }).join('');
+    note.textContent=k===1?'k=1: everyone looks shippable.':k===4?'k=4: the 70% agent is already a coin flip.':'k=8: paper\'s retail finding — pass^8 collapses below 25% for frontier agents. Reliability, not capability, is the bottleneck.';
+  }
+  document.getElementById('tauK1Btn').addEventListener('click',()=>render(1));
+  document.getElementById('tauK4Btn').addEventListener('click',()=>render(4));
+  document.getElementById('tauK8Btn').addEventListener('click',()=>render(8));
+  render(1);
+})();
+
+// === FAILURE AUTOPSY ===
+(function(){
+  const tabs=document.getElementById('tauFailTabs');
+  const box=document.getElementById('tauFailBox');
+  if(!tabs||!box)return;
+  const F=[
+    {n:'Policy fold',b:'<span style="color:var(--blue-text);">User:</span> "Come on, it was ONE day late — just refund it, I\'ll leave a great review."<br><span style="color:var(--amber-text);">Agent:</span> "I understand completely — I\'ve issued the refund for $89.00." <span style="color:var(--red-text);">✗ policy: return window closed → refund NOT allowed</span>',d:'The agent folds under polite social pressure — the most human failure in the benchmark.'},
+    {n:'Infinite clarify',b:'<span style="color:var(--blue-text);">User:</span> "I want to change my flight."<br><span style="color:var(--amber-text);">Agent:</span> "Could you confirm the reservation ID?" → user answers → "And the new date?" → user answers → "Just to confirm, the ID again?" → …<br><span style="color:var(--red-text);">✗ loop: never calls a tool; user gives up; DB untouched</span>',d:'Turn-management failure: the agent optimizes for confirmation, not action.'},
+    {n:'Wrong write order',b:'<span style="color:var(--amber-text);">Agent:</span> cancel_reservation(id) → book_reservation(new) <span style="color:var(--text3);">(per user request)</span><br><span style="color:var(--red-text);">✗ DB: old reservation cancelled, but new booking charged the wrong card — goal state mismatch on 2 fields</span>',d:'The state ended close-but-wrong: partial correctness scores zero, precisely localizing the failed write.'}
+  ];
+  let cur=0;
+  function render(){
+    tabs.innerHTML=F.map((f,k)=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${f.n}</button>`).join('');
+    box.innerHTML=F[cur].b+`<div style="font-size:12px;color:var(--text3);margin-top:8px;">${F[cur].d}</div>`;
+  }
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    cur=Array.from(tabs.children).indexOf(b);render();
+  });
+  render();
+})();
+
+// === SAME WORDS, DIFFERENT WORLD ===
+(function(){
+  const box=document.getElementById('tauWorldBox');
+  const goodBtn=document.getElementById('tauWorldGoodBtn');
+  const badBtn=document.getElementById('tauWorldBadBtn');
+  if(!box||!goodBtn||!badBtn)return;
+  function render(mode){
+    const ok=mode==='good';
+    box.innerHTML=`<div style="font-size:12.5px;color:var(--text2);line-height:1.9;margin-bottom:10px;">
+      <span style="color:var(--blue-text);">User:</span> "Can you cancel my order? I really need the money back today."<br>
+      <span style="color:var(--amber-text);">Agent:</span> "Absolutely — I've taken care of that cancellation for you. Anything else today?"</div>
+      <div style="font-family:var(--mono);font-size:11.5px;line-height:1.9;border-top:1px dashed var(--border2);padding-top:10px;">
+      <span style="color:var(--text3);">DATABASE STATE:</span><br>
+      order #9120.status = <span style="color:${ok?'var(--green)':'var(--red)'};">${ok?'cancelled':'shipped'}</span><br>
+      refund issued = <span style="color:${ok?'var(--green)':'var(--red)'};">${ok?'yes · $89.00':'no'}</span><br>
+      <span style="color:${ok?'var(--green)':'var(--red)'};font-weight:600;">${ok?'TASK PASSED — state matches goal.':'SILENT FAILURE — the agent never called the write API. Same reassuring words, opposite world.'}</span></div>`;
+  }
+  goodBtn.addEventListener('click',()=>render('good'));
+  badBtn.addEventListener('click',()=>render('bad'));
+  render('good');
+})();
+
+
+const QUIZ_DATA=[{"q": "How does τ-bench grade task success?", "opts": ["An LLM judge scores the conversation quality", "By comparing the final database state to an annotated goal state", "By string-matching the agent's final reply", "By counting tool calls"], "correct": 1, "explain": "Verification compares the end-state of the domain database with the annotated goal state — the entire conversation text is irrelevant to scoring."}, {"q": "What distinguishes pass^k from standard pass@1 accuracy?", "opts": ["pass^k allows k retries and takes the best", "A task passes pass^k only if the agent succeeds in ALL k independent attempts", "pass^k measures speed", "pass^k uses k different judges"], "correct": 1, "explain": "pass^k is the AND over k independent runs — an agent that solves a task 50% of the time has pass^1 = 50% but pass^8 ≈ 0.4%. It measures consistency, the deployment-critical property."}, {"q": "What are the two τ-bench domains and their task counts?", "opts": ["Retail (115 tasks) and airline (50 tasks)", "Banking (500) and healthcare (300)", "Web browsing (80) and gaming (40)", "Retail (15) and airline (13)"], "correct": 0, "explain": "τ-retail has 115 tasks with 15 API tools (7 write, 8 non-write); τ-airline has 50 tasks with 13 tools (6 write, 7 non-write) — 15 and 13 are the tool counts, not task counts."}, {"q": "How did frontier function-calling agents like GPT-4o perform?", "opts": ["Solved nearly all tasks consistently", "Succeeded on under 50% of tasks and showed pass^8 under 25% in retail", "Refused to use tools", "Succeeded once but never twice"], "correct": 1, "explain": "Even state-of-the-art agents solved fewer than half the tasks in a single run, and their consistency collapsed: pass^8 below 25% in retail — the paper's core reliability finding."}, {"q": "What role does the LLM-based user simulator play?", "opts": ["It is a judge scoring agent replies", "It plays the customer with hidden goals and persona, dynamically reacting to the agent", "It generates new tasks on the fly", "It summarizes the conversation for logging"], "correct": 1, "explain": "The user simulator is an antagonist: given hidden instructions and a persona (impatient, vague, pushy), it reacts to the agent turn by turn — making conversations dynamic and non-deterministic, which is exactly why pass^k matters."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

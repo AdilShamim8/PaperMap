@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -318,7 +324,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <p class="section-desc">Reasoning spent three years as a prompting trick, then a closed product. With R1 it became an open recipe anyone can run.</p>
   <div class="two-col">
     <div class="timeline">
-      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">Chain-of-Thought prompting (Wei et al.)</div><div class="tl-desc">A few worked examples in the prompt make models reason step by step. Reasoning by imitation — of human-written traces. <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber);">Guide →</a></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">Chain-of-Thought prompting (Wei et al.)</div><div class="tl-desc">A few worked examples in the prompt make models reason step by step. Reasoning by imitation — of human-written traces. <a href="./Chain_Of_Thought_Prompting.html" style="color:var(--amber-text);">Guide →</a></div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023</div><div class="tl-title">Self-consistency & the reasoning-eval era</div><div class="tl-desc">Sample many chains and vote (self-consistency); GSM8K and MATH become the yardsticks. Reasoning is still something you prompt, not train.</div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024</div><div class="tl-title">o1 (OpenAI)</div><div class="tl-desc">Test-time reasoning arrives: think longer at inference, score dramatically higher on math and code. Proprietary recipe, closed weights.</div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2025 · Jan</div><div class="tl-title">🚀 DeepSeek-R1 (DeepSeek-AI)</div><div class="tl-desc">RL alone elicits reasoning — the famous "aha moment" emerges untrained — and the MIT-licensed weights go on to match o1 on math benchmarks.</div></div>
@@ -330,9 +336,9 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">R1-ZERO'S ENTIRE SUPERVISION</div>
         <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
-          answer correct? → <span style="color:var(--green);font-weight:600;">reward ✓</span><br>
-          reasoning inside &lt;think&gt;…&lt;/think&gt;? → <span style="color:var(--green);font-weight:600;">reward ✓</span><br>
-          human-written reasoning → <span style="color:var(--red);font-weight:600;">none. zero.</span>
+          answer correct? → <span style="color:var(--green-text);font-weight:600;">reward ✓</span><br>
+          reasoning inside &lt;think&gt;…&lt;/think&gt;? → <span style="color:var(--green-text);font-weight:600;">reward ✓</span><br>
+          human-written reasoning → <span style="color:var(--red-text);font-weight:600;">none. zero.</span>
         </div>
         <div style="font-size:12px;color:var(--text3);margin-top:8px;">Two rule-based rewards. That is the whole supervision.</div>
       </div>
@@ -387,7 +393,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div class="card-label">The Foundation — DeepSeek-V3</div>
       <p style="font-size:13px;color:var(--text2);line-height:1.8;">A <span class="highlight">Mixture-of-Experts</span> LLM: 671B total parameters, but only ~37B active per token — each token routes to a small subset of experts. Already strong on math, code, and general knowledge, it was a good enough starting point to attempt RL directly, with no reasoning fine-tune in between.</p>
       <div style="font-family:var(--mono);font-size:12px;color:var(--text2);background:var(--bg3);border-radius:var(--radius);padding:0.75rem 1rem;margin-top:0.75rem;">
-        671B total · 37B active · <span style="color:var(--amber);font-weight:600;">≈5.5% of weights fire per token</span>
+        671B total · 37B active · <span style="color:var(--amber-text);font-weight:600;">≈5.5% of weights fire per token</span>
       </div>
     </div>
     <div class="card">
@@ -412,10 +418,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-label">Interactive Demo — GRPO: The Group Is the Critic</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">One prompt, G = 5 sampled responses. Rewards are compared to the group's own mean — that dashed line is the baseline PPO would need an entire network to learn. Press <strong>Re-roll group</strong> to sample a new batch.</p>
     <div style="background:var(--bg3);border-radius:var(--radius);padding:0.75rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:1rem;line-height:1.8;">
-      <span style="color:var(--amber);font-weight:600;">PROMPT · </span>A jacket costs $40 after a 20% discount. What was the original price?
+      <span style="color:var(--amber-text);font-weight:600;">PROMPT · </span>A jacket costs $40 after a 20% discount. What was the original price?
     </div>
     <div id="grpoChart"></div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin:8px 0 1rem;">bar = reward (1 correct / 0 wrong) · <span style="color:var(--amber);">- - - dashed line = group mean</span> · A = group-relative advantage</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin:8px 0 1rem;">bar = reward (1 correct / 0 wrong) · <span style="color:var(--amber-text);">- - - dashed line = group mean</span> · A = group-relative advantage</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:0.75rem;">
       <button class="btn-primary" id="grpoRollBtn" type="button" style="font-size:13px;padding:8px 18px;">Re-roll group 🎲</button>
       <div id="grpoStats" style="font-family:var(--mono);font-size:12px;color:var(--text2);"></div>
@@ -453,7 +459,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-label">Interactive Demo — The Aha-Moment Player</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A stylized R1-Zero-style trace (shortened — real traces run for thousands of tokens). Press <strong>Next step</strong> and watch the model think… then catch itself. None of what follows was prompted or rewarded.</p>
     <div style="background:var(--bg3);border-radius:var(--radius);padding:0.75rem 1rem;font-family:var(--mono);font-size:12.5px;color:var(--text2);margin-bottom:1rem;line-height:1.8;">
-      <span style="color:var(--amber);font-weight:600;">PROMPT · </span>A train covers 240 km. The first 120 km at 60 km/h, the second 120 km at 40 km/h. What is the average speed for the whole trip?
+      <span style="color:var(--amber-text);font-weight:600;">PROMPT · </span>A train covers 240 km. The first 120 km at 60 km/h, the second 120 km at 40 km/h. What is the average speed for the whole trip?
     </div>
     <div id="ahaTrace" style="display:flex;flex-direction:column;gap:8px;min-height:56px;margin-bottom:1rem;"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:0.5rem;">
@@ -461,7 +467,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <button class="btn-outline" id="ahaResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
       <div id="ahaCounter" style="font-family:var(--mono);font-size:12px;color:var(--text3);"></div>
     </div>
-    <div id="ahaStatus" style="font-family:var(--mono);font-size:12px;color:var(--amber);min-height:20px;"></div>
+    <div id="ahaStatus" style="font-family:var(--mono);font-size:12px;color:var(--amber-text);min-height:20px;"></div>
   </div>
 
   <div class="card">
@@ -491,7 +497,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <button class="btn-primary" id="pipePlayBtn" type="button" style="font-size:13px;padding:8px 18px;">Play stage 1 ▶</button>
       <button class="btn-outline" id="pipeResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
     </div>
-    <div id="pipeStatus" style="font-family:var(--mono);font-size:12px;color:var(--amber);margin-top:0.75rem;min-height:20px;"></div>
+    <div id="pipeStatus" style="font-family:var(--mono);font-size:12px;color:var(--amber-text);margin-top:0.75rem;min-height:20px;"></div>
   </div>
 </section>
 
@@ -517,10 +523,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   </div>
 
   <div class="results-grid">
-    <div class="result-card"><div class="result-model">AIME 2024 · PASS@1</div><div class="result-score" style="color:var(--amber);">79.8</div><div class="result-label">vs 79.2 for OpenAI-o1-1217</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:79.8%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
-    <div class="result-card"><div class="result-model">MODEL SIZE (MoE)</div><div class="result-score" style="color:var(--blue);">671B</div><div class="result-label">total params · only 37B active per token</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:5.5%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:6px;">≈5.5% of weights fire per token</div></div>
-    <div class="result-card"><div class="result-model">DISTILLATION DATA</div><div class="result-score" style="color:var(--teal);">800k</div><div class="result-label">R1 samples used to train 6 open models</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
-    <div class="result-card"><div class="result-model">LICENSE</div><div class="result-score" style="color:var(--green);">MIT</div><div class="result-label">weights open for research & commerce</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">AIME 2024 · PASS@1</div><div class="result-score" style="color:var(--amber-text);">79.8</div><div class="result-label">vs 79.2 for OpenAI-o1-1217</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:79.8%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">MODEL SIZE (MoE)</div><div class="result-score" style="color:var(--blue-text);">671B</div><div class="result-label">total params · only 37B active per token</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:5.5%;animation:scaleIn .9s ease;transform-origin:left;"></div></div><div class="result-label" style="margin-top:6px;">≈5.5% of weights fire per token</div></div>
+    <div class="result-card"><div class="result-model">DISTILLATION DATA</div><div class="result-score" style="color:var(--teal-text);">800k</div><div class="result-label">R1 samples used to train 6 open models</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
+    <div class="result-card"><div class="result-model">LICENSE</div><div class="result-score" style="color:var(--green-text);">MIT</div><div class="result-label">weights open for research & commerce</div><div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div></div>
   </div>
 
   <div class="two-col">
@@ -594,7 +600,9 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
     <a class="footer-link" href="./Chain_Of_Thought_Prompting.html">Chain-of-Thought Guide</a>
     <a class="footer-link" href="./DPO.html">DPO Guide</a>
-    <a class="footer-link" href="./LLaMA.html">LLaMA Guide</a>
+    <a class="footer-link" href="./DPO.html">DPO Guide</a>
+
+    <a class="footer-link" href="./Constitutional_AI_Harmlessness_from_AI_Feedback.html">Constitutional AI Guide</a>
   </div>
     <div class="footer-contact">
     <strong>Contact Adil Shamim:</strong><br>
@@ -661,9 +669,9 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     statsEl.textContent='G=5 · mean(r) = '+mean.toFixed(2)+' · std(r) = '+std.toFixed(2);
     const above=rs.filter(r=>r>mean).length;
     if(std<1e-9){
-      verdictEl.innerHTML='<span style="color:var(--amber);font-weight:600;">⚠ Every response in this group earned the same reward</span> — advantages are all 0, so GRPO gets no learning signal from this prompt. Nothing to reinforce, nothing to suppress.';
+      verdictEl.innerHTML='<span style="color:var(--amber-text);font-weight:600;">⚠ Every response in this group earned the same reward</span> — advantages are all 0, so GRPO gets no learning signal from this prompt. Nothing to reinforce, nothing to suppress.';
     }else{
-      verdictEl.innerHTML='<strong style="color:var(--green);">'+above+' above the mean → reinforced ↑</strong> &nbsp;·&nbsp; <strong style="color:var(--red);">'+(rs.length-above)+' below the mean → suppressed ↓</strong><br>PPO would need a critic (value) network to estimate this baseline. GRPO reads it straight off the group — <span style="color:var(--amber);font-weight:600;">no critic needed.</span>';
+      verdictEl.innerHTML='<strong style="color:var(--green-text);">'+above+' above the mean → reinforced ↑</strong> &nbsp;·&nbsp; <strong style="color:var(--red-text);">'+(rs.length-above)+' below the mean → suppressed ↓</strong><br>PPO would need a critic (value) network to estimate this baseline. GRPO reads it straight off the group — <span style="color:var(--amber-text);font-weight:600;">no critic needed.</span>';
     }
   }
   rollBtn.addEventListener('click',()=>{
@@ -732,7 +740,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       nextBtn.disabled=true;
       nextBtn.style.opacity='0.6';
       nextBtn.textContent='Trace complete ✓';
-      statusEl.innerHTML='<span style="color:var(--green);">✓ Emergent, not trained:</span> verify → catch → backtrack → fix. No reward ever mentioned "wait" or "check your work".';
+      statusEl.innerHTML='<span style="color:var(--green-text);">✓ Emergent, not trained:</span> verify → catch → backtrack → fix. No reward ever mentioned "wait" or "check your work".';
     }else{
       statusEl.innerHTML='thinking… <span style="color:var(--text3);">('+s.tag+')</span> <span style="animation:pulse 1.2s ease infinite;">▍</span>';
     }
@@ -779,8 +787,8 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     playBtn.disabled=done;
     playBtn.style.opacity=done?'0.6':'1';
     if(cur===0){statusEl.textContent='4 stages idle — press Play.';statusEl.style.color='var(--text3)';}
-    else if(done){statusEl.innerHTML='✓ DeepSeek-R1 — reasoning + readability + alignment, in one open checkpoint.';statusEl.style.color='var(--green)';}
-    else{statusEl.textContent='Stage '+cur+'/4 active — '+STAGES[cur-1].t+'.';statusEl.style.color='var(--amber)';}
+    else if(done){statusEl.innerHTML='✓ DeepSeek-R1 — reasoning + readability + alignment, in one open checkpoint.';statusEl.style.color='var(--green-text)';}
+    else{statusEl.textContent='Stage '+cur+'/4 active — '+STAGES[cur-1].t+'.';statusEl.style.color='var(--amber-text)';}
   }
   playBtn.addEventListener('click',()=>{if(cur<STAGES.length){cur++;render();}});
   resetBtn.addEventListener('click',()=>{cur=0;render();});
@@ -795,7 +803,7 @@ const QUIZ_DATA=[
   {q:'What was the distillation finding?',opts:['Small models fine-tuned on ~800k R1 samples beat the same models trained with RL directly — reasoning distills better than it re-learns','Distilled models always lost to RL-trained ones at every model size','Distillation only worked for the 70B model','Distillation required pairing R1 samples with human-written CoT data'],correct:0,explain:'The team fine-tuned Qwen (1.5B–32B) and Llama (8B/70B) checkpoints on ~800k R1 samples; these distilled models outperformed running RL directly on the same small models — the big model\'s exploration gets exported for free.'},
   {q:'What was R1\'s headline result?',opts:['It scored 79.8 on MATH-500, beating o1 by 30 points','It was the first model ever trained with reinforcement learning','It scored 79.8 AIME 2024 pass@1 vs o1-1217\'s 79.2 — with open MIT-licensed weights','It matched o1-1217 but kept its weights closed'],correct:2,explain:'R1 hit 79.8 pass@1 on AIME 2024 (o1-1217: 79.2) and 97.3 on MATH-500 — frontier-level reasoning, shipped under an MIT license.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

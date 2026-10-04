@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the τ²-bench paper, with visual demos for dual-control Dec-POMDP telecom tasks, user-side tools, compositional task generation, and guiding unreliable users.">
+<meta name="keywords" content="tau2-bench, τ²-bench, dual control, Dec-POMDP, telecom, user simulator, compositional task generation, agent evaluation, Sierra">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Tau2_bench_Evaluating_Conversational_Agents_in_a_Dual_Control_Environment.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of τ²-bench — the dual-control environment where users hold tools too, and agents must coordinate with imperfect partners.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Tau2_bench_Evaluating_Conversational_Agents_in_a_Dual_Control_Environment.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of τ²-bench — the dual-control environment where users hold tools too, and agents must coordinate with imperfect partners.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#telecom">Telecom Domain</a>
+    <a class="nav-link" href="#generator">Task Generator</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2025</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#telecom">Telecom Domain</a>
+  <a href="#generator">Task Generator</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    When Users Hold <em>Tools Too</em><br>τ²-Bench
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the benchmark that fixed evaluation's blind spot: in the real world the user also acts on the environment — and the agent must guide an unreliable partner through a shared, changing world.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2506.07982" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">Dual</div>
+      <div class="stat-label">Control (Agent + User)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Dec-POMDP</div>
+      <div class="stat-label">Formal Frame</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">16% vs 40%</div>
+      <div class="stat-label">Simulator Error (τ² vs τ)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2025</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>One</em> Hand to <em>Two</em></h2>
+  <p class="section-desc">Every prior conversational-agent benchmark made the user a talking head. τ² gives the user hands.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2023</div><div class="tl-title">Agent benchmarks with tools</div><div class="tl-desc">AgentBench, τ-bench predecessors: the agent acts, the environment responds, the user talks.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2024</div><div class="tl-title">τ-bench</div><div class="tl-desc">Simulated users + policies + database-state grading — but still single-control: the agent alone mutates the world. <a href="./Tau_bench_A_Benchmark_for_Tool_Agent_User_Interaction_in_Real_World_Domains.html" style="color:var(--amber-text);">Read its guide</a>.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2025 · Jun</div><div class="tl-title">🚀 τ²-bench (Barres et al., Sierra)</div><div class="tl-desc">Dual-control environments modeled as Dec-POMDPs: agent and user each hold distinct tools acting on shared state — plus a compositional task generator and a dramatically more reliable user simulator.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2025 →</div><div class="tl-title">Guiding, not just serving</div><div class="tl-desc">The benchmark reframes the agent's job: coordinate with a partner whose actions you don't control — the actual shape of technical support.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The Blind Spot</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Consider real technical support: "have you tried restarting the router?" The user physically restarts the router. In every prior benchmark, that step simply didn't exist — the agent either could do everything or nothing changed. <strong>Dual-control</strong> inserts the user as a co-actor with their own tools, and scores the agent on steering the whole two-person system to the goal.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Single-Control Is a <em>Fiction</em></h2>
+  <p class="section-desc">τ-bench exposed agent unreliability; τ² exposes a subtler failure — agents that can't collaborate.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🕶</div>
+      <div class="problem-title">The Passive-User Assumption</div>
+      <ul class="problem-list">
+        <li>Prior evals: the user provides information; only the agent's tool calls change state</li>
+        <li>Real support / healthcare / ops: users toggle, reboot, pay, photograph, and click things in their own apps</li>
+        <li>Single-control agents never learn to <em>instruct</em> — they learn to <em>act</em></li>
+        <li>User simulators were noisy (τ-bench retail simulator: ~40% error rate) — masking who failed</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🤝</div>
+      <div class="problem-title">The Dual-Control Answer</div>
+      <ul class="problem-list">
+        <li>Agent tools AND user tools, both mutating one shared world</li>
+        <li>Modeled formally as a Dec-POMDP — partially observable, decentralized</li>
+        <li>The agent must communicate, delegate, and verify user actions</li>
+        <li>A rebuilt user simulator with ~16% error rate (vs ~40% in τ-retail) — clean attribution of failures</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Co-Pilot Checklist</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">A single-control agent is an autopilot: it flies, you watch. A dual-control agent is a <strong>pilot flying with a passenger who has their own controls</strong> — it must run the checklist, watch what the passenger actually did (not what they said they did), and recover when they flip the wrong switch. CRM — crew resource management — is the skill being measured.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Four Contributions, One <em>Frame</em></h2>
+  <p class="section-desc">The paper's own summary: a domain, a generator, a simulator, and a metric — each fixing a predecessor's flaw.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">1 · Telecom dual-control domain</div><div class="notice-text">A Dec-POMDP where both agent and user possess distinct tools to observe, act, and verify shared dynamic state — testing coordination and communication together.</div></div>
+    <div class="notice-card"><div class="notice-title">2 · Compositional task generator</div><div class="notice-text">Programmatic assembly of diverse, verifiable tasks from atomic components — controlled complexity and coverage instead of hand-written scenarios.</div></div>
+    <div class="notice-card"><div class="notice-title">3 · Reliable user simulator</div><div class="notice-text">A rewritten simulator with a ~16% error rate and ~6% critical errors in telecom — versus ~40% / ~12% for the retail simulator from τ-bench.</div></div>
+    <div class="notice-card"><div class="notice-title">4 · pass^k reliability metric</div><div class="notice-text">Inherited and refined: consistency across independent runs remains the deployment-critical statistic.</div></div>
+  </div>
+  <div class="formula-card">
+    <div class="formula-main">world state evolves from: agent tools ∪ user tools ∪ conversation &nbsp;·&nbsp; success ⇔ shared state = goal</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">Dec-POMDP</div><div class="fp-name">The formal frame</div><div class="fp-desc">Decentralized partially observable MDP: two actors, separate observations, one world.</div></div>
+      <div class="formula-piece"><div class="fp-sym">user tools</div><div class="fp-name">The new half</div><div class="fp-desc">Actions only the user can perform — check their own device, toggle settings, make a payment.</div></div>
+      <div class="formula-piece"><div class="fp-sym">agent tools</div><div class="fp-name">The classic half</div><div class="fp-desc">Account operations, plan changes, diagnostics the company side can run.</div></div>
+      <div class="formula-piece"><div class="fp-sym">goal state</div><div class="fp-name">The oracle</div><div class="fp-desc">Dual-control grading: the combined end-state must match, whoever performed which step.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TELECOM -->
+<section id="telecom">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Life Inside a <em>Telecom</em> Support Chat</h2>
+  <p class="section-desc">The flagship domain: account, devices, plans, diagnostics — split between company systems and the customer's own hardware.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Dual-Control Walkthrough</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A degraded-service task, step by step. Watch the state column: sometimes the AGENT acts, sometimes the USER.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="t2StepBtn" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="t2ResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="t2WalkBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.85;min-height:230px;"></div>
+    <div id="t2WalkNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Why Telecom Is the Right Domain</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Naturally split authority: the carrier owns accounts; the customer owns the router</li>
+        <li>Diagnostics are interleaved: agent runs remote checks → user performs physical actions → agent reads results</li>
+        <li>Failure is realistic: user misreports, forgets steps, or does them out of order</li>
+        <li>State is fully verifiable — connectivity, plan features, payments — clean oracle</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The User Simulator Upgrade</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">In τ-bench, simulator mistakes could sink a capable agent — attribution was muddy (retail simulator ≈ 40% error, 12% critical). τ²'s rebuilt simulator reaches ~16% error with ~6% critical in telecom. When the agent fails now, it's (usually) the agent — the measurement got cleaner, and the paper reports telecom-domain user-simulator stats to prove it.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- GENERATOR -->
+<section id="generator">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Tasks Grown, Not <em>Hand-Written</em></h2>
+  <p class="section-desc">The compositional generator assembles tasks from atomic parts — programmatic diversity with a difficulty dial.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Compose a Task</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Stack atomic components (user goal + constraints + world facts) and see the generated task with its goal state.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="t2CompTabs"></div>
+    <div id="t2CompBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;min-height:190px;"></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Why Composition Beats Hand-Writing</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Hand-written scenarios are scarce and accidentally easy: authors unconsciously script the happy path</li>
+        <li>Composition: coverage is enumerable, complexity is a parameter, duplicates are impossible by construction</li>
+        <li>Every generated task carries a machine-checkable goal state — verification for free</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The Difficulty Dial</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8">Atomic components combine into chains: more steps, more user-side dependencies, more partial observability — the same domain scales from two-turn tasks to long interleaved sessions. Research can now ask <em>where</em> agents break along an axis, not just that they break.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Guiding Is <em>Harder</em> Than Acting</h2>
+  <p class="section-desc">The paper's sharpest empirical pattern: performance drops when agents move from no-user to dual-control settings.</p>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">DUAL-CONTROL DROP</div><div class="result-score" style="color:var(--red-text);">↘ significant</div><div class="result-label">agents that act well alone degrade when outcomes depend on guiding the user</div></div>
+    <div class="result-card"><div class="result-model">SIMULATOR QUALITY</div><div class="result-score" style="color:var(--teal-text);">16%</div><div class="result-label">user-simulator error rate in telecom (6% critical) vs 40%/12% in τ-retail</div></div>
+    <div class="result-card"><div class="result-model">COORDINATION</div><div class="result-score" style="color:var(--amber-text);">measured</div><div class="result-label">communication + action jointly scored — the first benchmark where "talking right" is inseparable from "acting right"</div></div>
+    <div class="result-card"><div class="result-model">pass^k</div><div class="result-score" style="color:var(--blue-text);">carried</div><div class="result-label">reliability-across-runs remains the headline metric</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Control-Mode Stress Test</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same tasks, three control modes: no user (agent acts alone), single-control (user talks only), dual-control (user acts too). Flip modes.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="t2M1Btn" type="button" style="font-size:12px;padding:8px 14px;">no user</button>
+      <button class="btn-outline" id="t2M2Btn" type="button" style="font-size:12px;padding:8px 14px;">single-control</button>
+      <button class="btn-primary" id="t2M3Btn" type="button" style="font-size:12px;padding:8px 14px;">dual-control</button>
+    </div>
+    <div id="t2ModeChart" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="t2ModeNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>Collaborative</em> Turn</h2>
+  <p class="section-desc">τ² reframes what conversational agents are: not tools users operate, but teammates users coordinate with.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧩 Dec-POMDP enters the LLM eval toolkit</div><div class="notice-text">Formal multi-actor framing — a bridge from RL theory to agent benchmarking.</div></div>
+    <div class="notice-card"><div class="notice-title">🧑‍🤝‍🧑 Co-acting simulators</div><div class="notice-text">User models with tools became a reusable pattern for any domain with shared authority.</div></div>
+    <div class="notice-card"><div class="notice-title">🏭 Support / ops evaluation</div><div class="notice-text">The telecom template (split authority + diagnostics) ports to field service, healthcare, and IT ops.</div></div>
+    <div class="notice-card"><div class="notice-title">🎛 Compositional generation</div><div class="notice-text">Task farms with difficulty dials reduce hand-authoring bias across the eval genre.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Read with</div><div class="notice-text"><a href="./Tau_bench_A_Benchmark_for_Tool_Agent_User_Interaction_in_Real_World_Domains.html" style="color:var(--amber-text);">τ-bench</a> for the single-control baseline it upgrades.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">One flagship domain; user simulators still imperfect (16% error); pass^k costs k× compute — expensive reliability.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Credit Assignment Between <em>Minds</em></h2>
+  <p class="section-desc">The hardest problem in dual-control evaluation: when the two-person system fails, who failed?</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">❓</div>
+      <div class="problem-title">The Attribution Tangle</div>
+      <ul class="problem-list">
+        <li>User simulator errors, agent misguidance, and world stochasticity all produce the same red mark</li>
+        <li>A noisy simulator makes even a perfect agent look broken (the τ-bench retail problem)</li>
+        <li>Grading end-state alone can't distinguish "agent told the user wrong" from "user ignored the agent"</li>
+        <li>Reliability metrics amplify the confusion: pass^k fails if EITHER party is flaky</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔍</div>
+      <div class="problem-title">τ²'s Attribution Stack</div>
+      <ul class="problem-list">
+        <li>Better simulator (16% error) shrinks the noise floor dramatically</li>
+        <li>Mode comparisons (no-user vs single vs dual) isolate the "guiding penalty" per model</li>
+        <li>Compositional tasks localize failure: which atomic component broke</li>
+        <li>State logs make every user action inspectable post-hoc — replayable failures</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Who Broke It?</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A failed run, three possible culprits. Inspect the evidence and rule each in or out.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="t2VerdictBtn" type="button" style="font-size:13px;padding:8px 18px;">Inspect evidence</button>
+    </div>
+    <div id="t2VerdictBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.85;min-height:190px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">τ²-bench's lasting idea is an honest accounting unit: the <strong>two-actor system</strong>. As agents deploy into worlds where humans keep some of the controls — medicine, field ops, home automation — "the agent's score" will increasingly mean "the joint system's score, with attribution." This benchmark is the first to build that machinery properly, and its most quotable stat (40% → 16% simulator error) is really a lesson: <em>before you measure minds interacting, fix your measuring partner.</em></p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the τ²-bench paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Dual-control: agent AND user hold distinct tools acting on one shared, dynamic environment.</div>
+    <div class="card-sm">✅ Telecom domain modeled as a Dec-POMDP — partial observability and decentralized control, formally.</div>
+    <div class="card-sm">✅ Compositional task generator: diverse, verifiable tasks assembled from atomic components.</div>
+    <div class="card-sm">✅ User simulator rebuilt: ~16% error / ~6% critical in telecom vs ~40% / ~12% in τ-retail.</div>
+    <div class="card-sm">✅ Core finding: agents drop significantly from no-user to dual-control — guiding users is a distinct, weaker skill.</div>
+    <div class="card-sm">✅ pass^k reliability scoring carries over: consistency across independent runs remains the deployment metric.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2506.07982" target="_blank" rel="noopener noreferrer">"τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment"</a> (Barres et al., 2025)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2506.07982" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Tau_bench_A_Benchmark_for_Tool_Agent_User_Interaction_in_Real_World_Domains.html">τ-bench Guide</a>
+    <a class="footer-link" href="./ReAct.html">ReAct Guide</a>
+    <a class="footer-link" href="./SWE_bench_Can_Language_Models_Resolve_Real_World_GitHub_Issues.html">SWE-bench Guide</a>
+    <a class="footer-link" href="./AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "telecom", "generator", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === DUAL-CONTROL WALKTHROUGH ===
+(function(){
+  const box=document.getElementById('t2WalkBox');
+  const note=document.getElementById('t2WalkNote');
+  const stepBtn=document.getElementById('t2StepBtn');
+  const resetBtn=document.getElementById('t2ResetBtn');
+  if(!box||!note||!stepBtn||!resetBtn)return;
+  const ST=[
+    {t:'USER opens',who:'user',b:'<span style="color:var(--blue-text);">User:</span> "My internet has been cutting out all evening. Can you check my line?"',state:'line.status = degraded · router.uptime = 14d',n:'The user reports symptoms. Note: the agent CANNOT fix this alone — the router is on the user\'s side.'},
+    {t:'AGENT runs remote diagnostic',who:'agent',b:'<span style="color:var(--amber-text);">Agent (tool: run_line_test):</span> line test → SNR marginal, packet loss 4%<br><span style="color:var(--amber-text);">Agent:</span> "Your line looks marginal. Could you power-cycle your router — unplug 30 seconds, plug back in?"',state:'line.status = degraded · router.uptime = 14d · diagnostic = done',n:'The agent uses ITS tools for what it can see, then must delegate the physical action.'},
+    {t:'USER acts (user tool!)',who:'user',b:'<span style="color:var(--teal-text);">User (tool: power_cycle_router):</span> unplugs… plugs back in<br><span style="color:var(--blue-text);">User:</span> "OK, done, lights are cycling."',state:'router.uptime = 0d · line.status = degraded?',n:'The user\'s OWN tool mutates shared state. The agent\'s job now: verify rather than trust.'},
+    {t:'AGENT verifies + closes',who:'agent',b:'<span style="color:var(--amber-text);">Agent (tool: run_line_test):</span> SNR restored, packet loss 0%<br><span style="color:var(--amber-text);">Agent:</span> "Confirmed — you\'re back to full sync. I\'ll note the line degradation for engineering review."',state:'line.status = stable · router.uptime = 0d · ticket = closed ✓',n:'Dual-control grading: the combined end-state matches the goal — whoever performed which step.'}
+  ];
+  let i=0;
+  function render(){
+    const s=ST[i];
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:${s.who==='agent'?'var(--amber)':'var(--blue)'};margin-bottom:6px;">${s.t.toUpperCase()}</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.9;">${s.b}</div>
+      <div style="margin-top:10px;padding:8px 10px;background:var(--bg2);border-radius:6px;font-family:var(--mono);font-size:11px;color:var(--text3);">WORLD STATE: ${s.state}</div>`;
+    note.textContent=s.n;
+    stepBtn.textContent=i<ST.length-1?'Next step →':'Restart';
+  }
+  stepBtn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+  resetBtn.addEventListener('click',()=>{i=0;render();});
+  render();
+})();
+
+// === COMPOSE A TASK ===
+(function(){
+  const tabs=document.getElementById('t2CompTabs');
+  const box=document.getElementById('t2CompBox');
+  if(!tabs||!box)return;
+  const C=[
+    {n:'simple',parts:['user goal: enable roaming','world: plan = Basic · payment method = card ✓'],goal:'plan.roaming = enabled'},
+    {n:'+ constraint',parts:['user goal: enable roaming','constraint: roaming requires Plan+ upgrade','world: plan = Basic'],goal:'plan = Plus · plan.roaming = enabled'},
+    {n:'+ user action',parts:['user goal: enable roaming on new phone','constraint: SIM swap required — user-side, physical','world: plan = Plus · device = old'],goal:'device = new · sim = swapped (user) · roaming = enabled (agent)'},
+    {n:'+ failure interplay',parts:['user goal: enable roaming before travel tomorrow','constraint: payment on file failing','user must update payment in THEIR app','world: plan = Plus · payment = expired'],goal:'payment = valid (user) · roaming = enabled (agent) · deadline met'}
+  ];
+  let cur=1;
+  function render(){
+    tabs.innerHTML=C.map((c,k)=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${c.n}</button>`).join('');
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:8px;">ATOMIC COMPONENTS</div>`+
+      C[cur].parts.map(p=>`<div style="padding:5px 10px;border-left:2px solid var(--amber);margin-bottom:5px;font-size:12px;">${p}</div>`).join('')+
+      `<div style="font-family:var(--mono);font-size:11px;color:var(--teal-text);margin:10px 0 6px;">GENERATED GOAL STATE (machine-checkable)</div>
+       <div style="padding:5px 10px;border-left:2px solid var(--teal);font-size:12px;">${C[cur].goal}</div>
+       <div style="font-size:11.5px;color:var(--text3);margin-top:10px;">Complexity = number and interaction of components — a dial, not an accident.</div>`;
+  }
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    cur=Array.from(tabs.children).indexOf(b);render();
+  });
+  render();
+})();
+
+// === CONTROL-MODE STRESS TEST ===
+(function(){
+  const chart=document.getElementById('t2ModeChart');
+  const note=document.getElementById('t2ModeNote');
+  if(!chart||!note)return;
+  const MODES=[
+    {n:'no user (agent alone)',v:82,c:'#14b8a6'},
+    {n:'single-control (user talks)',v:58,c:'#3b82f6'},
+    {n:'dual-control (user acts)',v:34,c:'#ef4444'}
+  ];
+  function render(){
+    chart.innerHTML=MODES.map(m=>`<div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:3px;"><span>${m.n}</span><span style="color:${m.c};font-weight:600;">${m.v}% success</span></div>
+      <div style="height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${m.v}%;background:${m.c};border-radius:4px;transition:width .6s ease;"></div></div></div>`).join('');
+    note.textContent='Illustrative of the paper\'s pattern: the same models degrade significantly as user authority over the world grows — guiding is its own skill.';
+  }
+  document.getElementById('t2M1Btn').addEventListener('click',render);
+  document.getElementById('t2M2Btn').addEventListener('click',render);
+  document.getElementById('t2M3Btn').addEventListener('click',render);
+  render();
+})();
+
+// === WHO BROKE IT ===
+(function(){
+  const box=document.getElementById('t2VerdictBox');
+  const btn=document.getElementById('t2VerdictBtn');
+  if(!box||!btn)return;
+  box.innerHTML='<div style="color:var(--text3);">A dual-control run failed: roaming never got enabled. Three suspects. Press inspect.</div>';
+  btn.addEventListener('click',()=>{
+    box.innerHTML=[
+      {w:'SUSPECT 1 — the user simulator',ev:'Simulator log: user correctly understood "update your payment in the app" and did so. Error rates within the 16% profile. → <span style="color:var(--green-text);">RULED OUT</span>'},
+      {w:'SUSPECT 2 — the world',ev:'Deterministic domain, no stochastic failures injected this task. → <span style="color:var(--green-text);">RULED OUT</span>'},
+      {w:'SUSPECT 3 — the agent',ev:'Transcript: agent never re-checked payment status after the user acted; enabled roaming anyway → policy violation path; goal state mismatched on payment.valid. → <span style="color:var(--red-text);">CULPRIT</span>'}
+    ].map(x=>`<div style="margin-bottom:10px;"><div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:4px;">${x.w}</div><div style="font-size:12px;color:var(--text2);line-height:1.7;padding-left:10px;border-left:2px solid var(--border2);">${x.ev}</div></div>`).join('')+
+    '<div style="font-size:12px;color:var(--text3);margin-top:8px;">This is what τ²\'s attribution stack buys: replayable state + mode comparisons + a clean simulator.</div>';
+  });
+})();
+
+
+const QUIZ_DATA=[{"q": "What is the defining feature of a dual-control environment?", "opts": ["The agent controls two tools at once", "Both the agent and the user have distinct tools that act on the shared environment", "The user grades the agent twice", "Two agents share one tool set"], "correct": 1, "explain": "Dual-control means the world's state can be mutated from both sides: agent-side tools (account, plan ops) and user-side tools (physical actions, their own apps) — modeled as a Dec-POMDP."}, {"q": "Which formal framework does τ²-bench use for its telecom domain?", "opts": ["A Markov Decision Process with full observability", "A Dec-POMDP — decentralized, partially observable, multi-actor", "A finite state machine", "A knowledge graph"], "correct": 1, "explain": "The telecom domain is modeled as a Dec-POMDP: two decision makers (agent and user) with separate observations and actions, one shared dynamic world."}, {"q": "How did the paper improve the user simulator relative to τ-bench's retail simulator?", "opts": ["It removed the simulator entirely", "It reduced the error rate from about 40% (12% critical) to about 16% (6% critical) in the telecom domain", "It made the simulator adversarial on purpose", "It froze the simulator to one fixed script"], "correct": 1, "explain": "The rebuilt user simulator reaches roughly 16% error with 6% critical errors in telecom — versus 40% error and 12% critical for the retail simulator in the original τ-bench — dramatically cleaning up failure attribution."}, {"q": "What is the purpose of the compositional task generator?", "opts": ["To make tasks easier", "To programmatically create diverse, verifiable tasks from atomic components with controlled complexity", "To translate tasks between languages", "To generate the user simulator's personality"], "correct": 1, "explain": "Tasks are assembled from atomic components (goals, constraints, world facts), producing coverage and a difficulty dial while guaranteeing machine-checkable goal states."}, {"q": "What performance pattern did the paper observe for agents across control modes?", "opts": ["Agents perform best in dual-control settings", "Significant drops when moving from no-user to dual-control settings", "No difference between modes", "Users perform the tasks faster than agents"], "correct": 1, "explain": "Agents that act capably alone degrade when success depends on guiding a user with their own controls — coordination and communication turn out to be distinct, weaker skills."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

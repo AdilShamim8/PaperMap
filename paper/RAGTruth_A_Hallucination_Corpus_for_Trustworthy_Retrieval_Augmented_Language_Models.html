@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -334,10 +340,10 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">RESPONSE-LEVEL HALLUCINATION RATE</div>
         <div style="font-family:var(--mono);font-size:12.5px;line-height:2;color:var(--text2);">
-          GPT-4-0613&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--green);font-weight:600;">9.3%</span><br>
-          GPT-3.5-turbo-0613&nbsp;&nbsp;<span style="color:var(--green);font-weight:600;">10.9%</span><br>
-          Llama-2-7B-chat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--red);font-weight:600;">51.8%</span><br>
-          Mistral-7B-Instruct&nbsp;<span style="color:var(--red);font-weight:600;">57.6%</span>
+          GPT-4-0613&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--green-text);font-weight:600;">9.3%</span><br>
+          GPT-3.5-turbo-0613&nbsp;&nbsp;<span style="color:var(--green-text);font-weight:600;">10.9%</span><br>
+          Llama-2-7B-chat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--red-text);font-weight:600;">51.8%</span><br>
+          Mistral-7B-Instruct&nbsp;<span style="color:var(--red-text);font-weight:600;">57.6%</span>
         </div>
         <div style="font-size:12px;color:var(--text3);margin-top:8px;">Best model ≠ zero. Even GPT-4 hallucinates inside RAG pipelines.</div>
       </div>
@@ -380,7 +386,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-label">Interactive Demo — Span Hunt 🔍</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">You are the annotator. Read the retrieved knowledge, then click the phrase in the model's answer that you believe is the hallucinated span. Three rounds, three different RAG tasks — exactly the job RAGTruth's human annotators did.</p>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:1rem;">
-      <span id="shRound" style="font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:600;">Round 1 / 3 · 0 correct</span>
+      <span id="shRound" style="font-family:var(--mono);font-size:12px;color:var(--amber-text);font-weight:600;">Round 1 / 3 · 0 correct</span>
       <span id="shTask" class="pill pill-blue">Question Answering</span>
     </div>
     <div id="shKnowledge" style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.9;white-space:pre-line;margin-bottom:1rem;"></div>
@@ -423,12 +429,12 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card">
       <div class="card-label">The Glance Grid</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;">
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--amber);">17,790</div><div style="font-size:11px;color:var(--text3);">RAG responses</div></div>
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--amber);">14,289</div><div style="font-size:11px;color:var(--text3);">Annotated spans</div></div>
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--red);">7,664</div><div style="font-size:11px;color:var(--text3);">Hallucinated responses</div></div>
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--blue);">6</div><div style="font-size:11px;color:var(--text3);">Generating LLMs</div></div>
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--teal);">91.8%</div><div style="font-size:11px;color:var(--text3);">Response-level agreement</div></div>
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--purple);">78.8%</div><div style="font-size:11px;color:var(--text3);">Span-level agreement</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--amber-text);">17,790</div><div style="font-size:11px;color:var(--text3);">RAG responses</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--amber-text);">14,289</div><div style="font-size:11px;color:var(--text3);">Annotated spans</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--red-text);">7,664</div><div style="font-size:11px;color:var(--text3);">Hallucinated responses</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--blue-text);">6</div><div style="font-size:11px;color:var(--text3);">Generating LLMs</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--teal-text);">91.8%</div><div style="font-size:11px;color:var(--text3);">Response-level agreement</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.3rem;font-weight:600;color:var(--purple-text);">78.8%</div><div style="font-size:11px;color:var(--text3);">Span-level agreement</div></div>
       </div>
       <p style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">"Nearly 18,000 naturally generated responses from diverse LLMs using RAG" — the abstract's one-line summary of the corpus.</p>
     </div>
@@ -454,27 +460,27 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
   <div class="two-col" style="margin-bottom:1.5rem;">
     <div class="card" style="border-color:rgba(239,68,68,0.25);">
-      <div class="card-label" style="color:var(--red);">CATEGORY 1 — CONFLICT</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The response <strong style="color:var(--red);">contradicts</strong> the retrieved context. The evidence says X; the model says not-X.</p>
+      <div class="card-label" style="color:var(--red-text);">CATEGORY 1 — CONFLICT</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The response <strong style="color:var(--red-text);">contradicts</strong> the retrieved context. The evidence says X; the model says not-X.</p>
       <div class="card-sm" style="margin-bottom:10px;">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:6px;">⚠ EVIDENT CONFLICT — direct opposition</div>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">Original: "…sent about 500 of the most seriously injured people for treatment in Kathmandu already — the majority <span style="background:var(--green-dim);color:var(--green);padding:1px 5px;border-radius:4px;">by road</span>."<br>Generated: "The team <span style="background:var(--red-dim);color:var(--red);padding:1px 5px;border-radius:4px;">airlifted</span> 500 injured people…"</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--red-text);margin-bottom:6px;">⚠ EVIDENT CONFLICT — direct opposition</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">Original: "…sent about 500 of the most seriously injured people for treatment in Kathmandu already — the majority <span style="background:var(--green-dim);color:var(--green-text);padding:1px 5px;border-radius:4px;">by road</span>."<br>Generated: "The team <span style="background:var(--red-dim);color:var(--red-text);padding:1px 5px;border-radius:4px;">airlifted</span> 500 injured people…"</div>
       </div>
       <div class="card-sm">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--red);margin-bottom:6px;">🌫 SUBTLE CONFLICT — meaning shift</div>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">Original: marks that are "immoral, scandalous, or <span style="background:var(--green-dim);color:var(--green);padding:1px 5px;border-radius:4px;">disparaging</span>"<br>Generated: prohibits marks that are "immoral, scandalous, or <span style="background:var(--red-dim);color:var(--red);padding:1px 5px;border-radius:4px;">disqualified</span>."</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--red-text);margin-bottom:6px;">🌫 SUBTLE CONFLICT — meaning shift</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">Original: marks that are "immoral, scandalous, or <span style="background:var(--green-dim);color:var(--green-text);padding:1px 5px;border-radius:4px;">disparaging</span>"<br>Generated: prohibits marks that are "immoral, scandalous, or <span style="background:var(--red-dim);color:var(--red-text);padding:1px 5px;border-radius:4px;">disqualified</span>."</div>
       </div>
     </div>
     <div class="card" style="border-color:rgba(168,85,247,0.25);">
-      <div class="card-label" style="color:var(--purple);">CATEGORY 2 — BASELESS</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The response <strong style="color:var(--purple);">adds</strong> details the context never said. Not a contradiction — an invention.</p>
+      <div class="card-label" style="color:var(--purple-text);">CATEGORY 2 — BASELESS</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;">The response <strong style="color:var(--purple-text);">adds</strong> details the context never said. Not a contradiction — an invention.</p>
       <div class="card-sm" style="margin-bottom:10px;">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:6px;">⚠ EVIDENT BASELESS — fabricated detail</div>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">Original: "She had <span style="background:var(--green-dim);color:var(--green);padding:1px 5px;border-radius:4px;">no contact</span> with the surviving members of the band until the 2006 premiere…"<br>Generated: "The couple divorced in 1968, but <span style="background:var(--purple-dim);color:var(--purple);padding:1px 5px;border-radius:4px;">later reconciled</span> and attended the 2006…"</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--purple-text);margin-bottom:6px;">⚠ EVIDENT BASELESS — fabricated detail</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">Original: "She had <span style="background:var(--green-dim);color:var(--green-text);padding:1px 5px;border-radius:4px;">no contact</span> with the surviving members of the band until the 2006 premiere…"<br>Generated: "The couple divorced in 1968, but <span style="background:var(--purple-dim);color:var(--purple-text);padding:1px 5px;border-radius:4px;">later reconciled</span> and attended the 2006…"</div>
       </div>
       <div class="card-sm">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--purple);margin-bottom:6px;">🌫 SUBTLE BASELESS — invented specifics</div>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">Original: "Amazing happy hour and great people."<br>Generated: "happy hour, which is <span style="background:var(--purple-dim);color:var(--purple);padding:1px 5px;border-radius:4px;">available daily from 4 pm to 7 pm</span>."</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--purple-text);margin-bottom:6px;">🌫 SUBTLE BASELESS — invented specifics</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">Original: "Amazing happy hour and great people."<br>Generated: "happy hour, which is <span style="background:var(--purple-dim);color:var(--purple-text);padding:1px 5px;border-radius:4px;">available daily from 4 pm to 7 pm</span>."</div>
       </div>
     </div>
   </div>
@@ -482,7 +488,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card" style="overflow:hidden;">
     <div class="card-label">Interactive Demo — Conflict or Baseless Sorter</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Each statement was generated from the tiny knowledge snippet next to it. Classify the highlighted claim: does it <strong>contradict</strong> the evidence (conflict), or <strong>add</strong> something the evidence never said (baseless)?</p>
-    <div id="sortScore" style="font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:600;margin-bottom:1rem;">0 / 4 classified · 0 correct</div>
+    <div id="sortScore" style="font-family:var(--mono);font-size:12px;color:var(--amber-text);font-weight:600;margin-bottom:1rem;">0 / 4 classified · 0 correct</div>
     <div id="sortCards"></div>
   </div>
 </section>
@@ -513,28 +519,28 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="results-grid" style="margin-bottom:1.5rem;">
     <div class="result-card">
       <div class="result-model">GPT-4-0613</div>
-      <div class="result-score" style="color:var(--green);">9.3%</div>
+      <div class="result-score" style="color:var(--green-text);">9.3%</div>
       <div class="result-label">responses hallucinate</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:16%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">Strongest model in the corpus</div>
     </div>
     <div class="result-card">
       <div class="result-model">GPT-3.5-turbo-0613</div>
-      <div class="result-score" style="color:var(--teal);">10.9%</div>
+      <div class="result-score" style="color:var(--teal-text);">10.9%</div>
       <div class="result-label">responses hallucinate</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:19%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">Close behind its bigger sibling</div>
     </div>
     <div class="result-card">
       <div class="result-model">Llama-2-7B-chat</div>
-      <div class="result-score" style="color:var(--amber);">51.8%</div>
+      <div class="result-score" style="color:var(--amber-text);">51.8%</div>
       <div class="result-label">responses hallucinate</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:90%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">3,302 spans across tasks</div>
     </div>
     <div class="result-card">
       <div class="result-model">Mistral-7B-Instruct</div>
-      <div class="result-score" style="color:var(--red);">57.6%</div>
+      <div class="result-score" style="color:var(--red-text);">57.6%</div>
       <div class="result-label">responses hallucinate</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
       <div class="result-label" style="margin-top:8px;">Highest rate in the sampling study</div>
@@ -579,25 +585,25 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="results-grid" style="margin-bottom:1.5rem;">
     <div class="result-card">
       <div class="result-model">RESPONSE-LEVEL F1</div>
-      <div class="result-score" style="color:var(--amber);">78.7</div>
+      <div class="result-score" style="color:var(--amber-text);">78.7</div>
       <div class="result-label">vs 63.4 for GPT-4-turbo prompting</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:78.7%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
     <div class="result-card">
       <div class="result-model">SPAN-LEVEL F1</div>
-      <div class="result-score" style="color:var(--blue);">52.7</div>
+      <div class="result-score" style="color:var(--blue-text);">52.7</div>
       <div class="result-label">vs 28.3 for GPT-4-turbo prompting</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:52.7%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
     <div class="result-card">
       <div class="result-model">PRECISION</div>
-      <div class="result-score" style="color:var(--teal);">76.9</div>
+      <div class="result-score" style="color:var(--teal-text);">76.9</div>
       <div class="result-label">response-level, overall</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:76.9%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
     <div class="result-card">
       <div class="result-model">RECALL</div>
-      <div class="result-score" style="color:var(--purple);">80.7</div>
+      <div class="result-score" style="color:var(--purple-text);">80.7</div>
       <div class="result-label">response-level, overall</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--purple);width:80.7%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
@@ -606,7 +612,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
     <div class="card-label">Interactive Demo — Train the Detector (stepwise)</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Walk the paper's proof of concept in three stages: build the corpus, fine-tune Llama-2-13B on it, then deploy the detector on a fresh answer. Advance with the button — the scan animates stage by stage.</p>
-    <div id="tdStage" style="font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:600;margin-bottom:1rem;"></div>
+    <div id="tdStage" style="font-family:var(--mono);font-size:12px;color:var(--amber-text);font-weight:600;margin-bottom:1rem;"></div>
     <div id="tdBody" style="min-height:120px;"></div>
     <div style="display:flex;gap:8px;margin-top:1.2rem;">
       <button class="btn-primary" id="tdNext" type="button" style="font-size:13px;padding:8px 18px;">Stage 1: Build the Corpus →</button>
@@ -620,7 +626,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <p style="font-size:13px;color:var(--text2);line-height:1.8;">Generate two candidate responses, keep the one the detector flags less. For the open-source group (Llama-2-7B + Mistral-7B), the hallucination rate fell from <span class="highlight">52.4%</span> to <span class="highlight">41.1%</span> picking the cleaner response — and to <span class="highlight">19.3%</span> when only accepting responses with zero detected spans (−63.2%). Even the GPT-3.5/GPT-4 group dropped from 9.8% to 4.8%.</p>
     </div>
     <div class="card" style="border-color:rgba(239,68,68,0.2);">
-      <div class="card-label" style="color:var(--red);">What RAGTruth Did NOT Solve</div>
+      <div class="card-label" style="color:var(--red-text);">What RAGTruth Did NOT Solve</div>
       <ul class="problem-list">
         <li>Span-level detection is still weak overall — even the fine-tuned model reaches only 52.7 F1, and subtle hallucinations are harder to catch than evident ones</li>
         <li>The strict setting flags possibly-true information as hallucination (13.5% of spans) — deliberate, but not universally the right call</li>
@@ -681,7 +687,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
   <div class="card" style="overflow:hidden;margin-bottom:1.5rem;">
     <div class="card-label">Interactive Demo — Span Anatomy</div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A retrieved snippet and one RAG response. Press scan: the detector sweeps the response word by word and paints the two hallucination families — <span style="color:var(--red);font-weight:600;">conflict</span> (contradicts the evidence) and <span style="color:var(--amber);font-weight:600;">baseless</span> (nothing in the context supports it). This is the annotation scheme, and the detector's target, in one pass.</p>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A retrieved snippet and one RAG response. Press scan: the detector sweeps the response word by word and paints the two hallucination families — <span style="color:var(--red-text);font-weight:600;">conflict</span> (contradicts the evidence) and <span style="color:var(--amber-text);font-weight:600;">baseless</span> (nothing in the context supports it). This is the annotation scheme, and the detector's target, in one pass.</p>
     <div style="background:var(--bg3);border-radius:var(--radius-lg);padding:1.25rem;">
       <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px;">RETRIEVED EVIDENCE</div>
       <div style="font-size:12.5px;color:var(--text2);line-height:1.7;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:14px;">The Harbor View Hotel opened in 1998 and has 4 stars. It is located 2 km from the old town. Pets are not allowed. The hotel offers free parking and a rooftop pool, open 7:00–22:00.</div>
@@ -696,7 +702,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
       <div style="font-weight:600;font-size:14px;margin-bottom:4px;">A fine-tuned 13B beats GPT-4-turbo at zero-shot — because the task is not reasoning, it's alignment checking</div>
-      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">Span detection rewards exactly one skill: does this phrase follow from <em>these</em> words? That's a learned discrimination, not a reasoning feat — which is why the Llama-2-13B fine-tune reached 78.7 response-level F1 where prompting a frontier model fell short. The endgame the paper proved: use the detector as a selection gate (52.4% → 19.3% hallucination in the open-source group). Where this continues: <a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber);font-weight:600;text-decoration:none;">SelfCheckGPT</a> gates by sampling, FActScore gates atomically — the three papers are one strategy with different gates.</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">Span detection rewards exactly one skill: does this phrase follow from <em>these</em> words? That's a learned discrimination, not a reasoning feat — which is why the Llama-2-13B fine-tune reached 78.7 response-level F1 where prompting a frontier model fell short. The endgame the paper proved: use the detector as a selection gate (52.4% → 19.3% hallucination in the open-source group). Where this continues: <a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">SelfCheckGPT</a> gates by sampling, FActScore gates atomically — the three papers are one strategy with different gates.</div>
     </div>
   </div>
 
@@ -704,7 +710,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="notice-card"><div class="notice-title">🧾 Strict RAG setting</div><div class="notice-text">Even plausible-and-true additions are labeled hallucination without evidence support. Harsh by design: traceability is the product a trustworthy system sells.</div></div>
     <div class="notice-card"><div class="notice-title">🎨 Four span types</div><div class="notice-text">Evident conflict (flat contradiction), subtle conflict (twisted detail), evident baseless (invented from nothing), subtle baseless (plausible-but-ungrounded). Subtle spans are where detectors bleed F1.</div></div>
     <div class="notice-card"><div class="notice-title">🏭 Naturally generated</div><div class="notice-text">Spans were found in real model outputs across 6 LLMs — not adversarially authored. 43.1% is the ambient rate, not a worst case.</div></div>
-    <div class="notice-card"><div class="notice-title">🔌 The gate, not the cure</div><div class="notice-text">Detector-guided selection cuts hallucination 52.4% → 19.3% and regenerating when the gate trips is the shipped pattern — verification as a pipeline stage. The upstream half of the story is the <a href="./RAG_Retrieval_Augmented_Generation.html" style="color:var(--amber);font-weight:600;text-decoration:none;">RAG paper</a> in Track II.</div></div>
+    <div class="notice-card"><div class="notice-title">🔌 The gate, not the cure</div><div class="notice-text">Detector-guided selection cuts hallucination 52.4% → 19.3% and regenerating when the gate trips is the shipped pattern — verification as a pipeline stage. The upstream half of the story is the <a href="./RAG_Retrieval_Augmented_Generation.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">RAG paper</a> in Track II.</div></div>
   </div>
 
 </section>
@@ -819,7 +825,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   }
   submitBtn.addEventListener('click',()=>{
     if(answered)return;
-    if(selected<0){verdictEl.style.display='block';verdictEl.innerHTML='<span style="font-family:var(--mono);font-size:12px;color:var(--amber);">→ click a phrase in the answer first, then submit.</span>';return;}
+    if(selected<0){verdictEl.style.display='block';verdictEl.innerHTML='<span style="font-family:var(--mono);font-size:12px;color:var(--amber-text);">→ click a phrase in the answer first, then submit.</span>';return;}
     answered=true;
     const r=rounds[ri];
     const hit=(selected===r.correct);
@@ -829,14 +835,14 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       ch.style.pointerEvents='none';
       ch.style.background='var(--bg2)';ch.style.color='var(--text2)';ch.style.borderColor='var(--border)';
       if(j===r.correct){
-        ch.style.background='var(--amber-dim)';ch.style.color='var(--amber)';ch.style.borderColor='rgba(245,158,11,0.45)';ch.style.fontWeight='600';
+        ch.style.background='var(--amber-dim)';ch.style.color='var(--amber-text)';ch.style.borderColor='rgba(245,158,11,0.45)';ch.style.fontWeight='600';
         const b=document.createElement('span');
         b.textContent=r.type;
         b.style.cssText='font-family:var(--mono);font-size:10px;background:var(--amber);color:#000;border-radius:10px;padding:1px 7px;margin-left:6px;vertical-align:middle;font-weight:600;';
         ch.appendChild(document.createTextNode(' '));
         ch.appendChild(b);
       }else if(j===selected){
-        ch.style.background='var(--red-dim)';ch.style.color='var(--red)';ch.style.borderColor='rgba(239,68,68,0.35)';
+        ch.style.background='var(--red-dim)';ch.style.color='var(--red-text)';ch.style.borderColor='rgba(239,68,68,0.35)';
       }
     });
     verdictEl.style.display='block';
@@ -879,11 +885,11 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   items.forEach((it)=>{
     const wrap=document.createElement('div');
     wrap.style.cssText='background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem;margin-bottom:10px;';
-    wrap.innerHTML=`<div style="font-family:var(--mono);font-size:11.5px;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:8px;white-space:pre-line;"><span style="color:var(--teal);">KNOWLEDGE:</span> ${it.know}</div>
+    wrap.innerHTML=`<div style="font-family:var(--mono);font-size:11.5px;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:8px;white-space:pre-line;"><span style="color:var(--teal-text);">KNOWLEDGE:</span> ${it.know}</div>
     <div style="font-size:13.5px;color:var(--text);margin-bottom:10px;">"${it.stmt}"</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button type="button" data-choice="conflict" style="font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid rgba(239,68,68,0.35);background:var(--red-dim);color:var(--red);cursor:pointer;transition:all .15s;">⚠ Conflict</button>
-      <button type="button" data-choice="baseless" style="font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid rgba(168,85,247,0.35);background:var(--purple-dim);color:var(--purple);cursor:pointer;transition:all .15s;">🌫 Baseless</button>
+      <button type="button" data-choice="conflict" style="font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid rgba(239,68,68,0.35);background:var(--red-dim);color:var(--red-text);cursor:pointer;transition:all .15s;">⚠ Conflict</button>
+      <button type="button" data-choice="baseless" style="font-family:var(--mono);font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid rgba(168,85,247,0.35);background:var(--purple-dim);color:var(--purple-text);cursor:pointer;transition:all .15s;">🌫 Baseless</button>
     </div>
     <div class="sv" style="display:none;margin-top:10px;"></div>`;
     const btns=wrap.querySelectorAll('button');
@@ -918,11 +924,11 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     if(stage===0){
       nextBtn.textContent='Stage 2: Fine-tune Llama-2-13B →';
       bodyEl.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:10px;">
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--amber);">17,790</div><div style="font-size:11px;color:var(--text3);">responses w/ context</div></div>
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--red);">14,289</div><div style="font-size:11px;color:var(--text3);">word-level span labels</div></div>
-        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--blue);">6</div><div style="font-size:11px;color:var(--text3);">generating LLMs</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--amber-text);">17,790</div><div style="font-size:11px;color:var(--text3);">responses w/ context</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--red-text);">14,289</div><div style="font-size:11px;color:var(--text3);">word-level span labels</div></div>
+        <div class="card-sm" style="text-align:center;"><div style="font-family:var(--mono);font-size:1.2rem;font-weight:600;color:var(--blue-text);">6</div><div style="font-size:11px;color:var(--text3);">generating LLMs</div></div>
       </div>
-      <div style="${monoBox}"><span style="color:var(--amber);">TRAINING PAIR</span> (context + response → span)<br>INPUT&nbsp;&nbsp;: news "…the majority <span style="color:var(--green);">by road</span>." + response "…patients were airlifted…"<br>TARGET: <span style="background:var(--red-dim);color:var(--red);padding:1px 6px;border-radius:4px;">airlifted</span> · type: evident conflict</div>
+      <div style="${monoBox}"><span style="color:var(--amber-text);">TRAINING PAIR</span> (context + response → span)<br>INPUT&nbsp;&nbsp;: news "…the majority <span style="color:var(--green-text);">by road</span>." + response "…patients were airlifted…"<br>TARGET: <span style="background:var(--red-dim);color:var(--red-text);padding:1px 6px;border-radius:4px;">airlifted</span> · type: evident conflict</div>
       <div style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.6;">Every training example is a real RAG output, its retrieved context, and the human-annotated hallucinated span as the target.</div>`;
     }else if(stage===1){
       nextBtn.textContent='Stage 3: Deploy & scan a new answer →';
@@ -931,7 +937,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       const cons=document.getElementById('tdConsole'),bar=document.getElementById('tdBar'),f1=document.getElementById('tdF1');
       if(!cons||!bar||!f1)return;
       const lines=['> loading Llama-2-13B …','> objective: generate the annotated hallucinated span','> full fine-tune · lr 2e-5 · 1 epoch · 4× A100','> ✓ training complete — 78.7 response-level F1 on the 450-instance test set'];
-      const done=()=>{f1.textContent='78.7 F1 (vs 63.4 GPT-4-turbo prompt)';f1.style.color='var(--amber)';f1.style.fontWeight='600';};
+      const done=()=>{f1.textContent='78.7 F1 (vs 63.4 GPT-4-turbo prompt)';f1.style.color='var(--amber-text)';f1.style.fontWeight='600';};
       if(reduced){
         cons.innerHTML=lines.join('<br>');
         done();
@@ -950,7 +956,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
         {t:'Medical teams continue to monitor survivors in nearby districts.'}
       ];
       bodyEl.innerHTML=`<div id="tdScan" style="${monoBox}"></div>
-      <div id="tdScanResult" style="display:none;margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--red);font-weight:600;"></div>
+      <div id="tdScanResult" style="display:none;margin-top:10px;font-family:var(--mono);font-size:12px;color:var(--red-text);font-weight:600;"></div>
       <div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.6;">The detector reads the response with its context and emits the hallucinated span — not just a yes/no verdict.</div>`;
       const scanEl=document.getElementById('tdScan'),resEl=document.getElementById('tdScanResult');
       if(!scanEl||!resEl)return;
@@ -966,7 +972,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
         if(rows[1]){
           rows[1].style.background='var(--red-dim)';rows[1].style.opacity='1';
           const fl=rows[1].querySelector('.tdflag');
-          if(fl){fl.style.background='var(--red-dim)';fl.style.color='var(--red)';fl.style.border='1px dashed rgba(239,68,68,0.5)';fl.style.fontWeight='600';}
+          if(fl){fl.style.background='var(--red-dim)';fl.style.color='var(--red-text)';fl.style.border='1px dashed rgba(239,68,68,0.5)';fl.style.fontWeight='600';}
         }
         resEl.style.display='block';
         resEl.textContent='⚠ 1 span flagged: "airlifted to Kathmandu" — conflict with retrieved context';
@@ -1029,7 +1035,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
         clearInterval(tmr);
         const nc=hits.filter(w=>SPANS[w.textContent]&&SPANS[w.textContent].t==='conflict').length;
         const nb=hits.filter(w=>SPANS[w.textContent]&&SPANS[w.textContent].t==='baseless').length;
-        verdict.innerHTML='<div class="card-sm" style="border-left:3px solid var(--red);"><div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:4px;">SCAN COMPLETE — one response, two families, five claims unsupported</div><div style="font-size:12px;color:var(--text2);line-height:1.7;"><span style="color:var(--red);font-weight:600;">Conflict spans (3):</span> 5-star · midnight · pets — each twists a stated fact. <span style="color:var(--amber);font-weight:600;">Baseless spans (2 claims):</span> the beach distance and the pets framing — nowhere in the evidence. In RAGTruth’s annotation this response joins the 43.1%.</div></div>';
+        verdict.innerHTML='<div class="card-sm" style="border-left:3px solid var(--red);"><div style="font-size:12px;font-weight:600;color:var(--red-text);margin-bottom:4px;">SCAN COMPLETE — one response, two families, five claims unsupported</div><div style="font-size:12px;color:var(--text2);line-height:1.7;"><span style="color:var(--red-text);font-weight:600;">Conflict spans (3):</span> 5-star · midnight · pets — each twists a stated fact. <span style="color:var(--amber-text);font-weight:600;">Baseless spans (2 claims):</span> the beach distance and the pets framing — nowhere in the evidence. In RAGTruth’s annotation this response joins the 43.1%.</div></div>';
         verdict.style.display='block';
         if(!RM){verdict.classList.remove('animate-in');void verdict.offsetWidth;verdict.classList.add('animate-in');}
       }
@@ -1046,7 +1052,7 @@ const QUIZ_DATA=[
   {q:'Which model did the paper fine-tune as its proof-of-concept hallucination detector?',opts:['GPT-4','Llama-2-13B','Mistral-7B','BERT-Large'],correct:1,explain:'Llama-2-13B was fully fine-tuned on RAGTruth\'s training data (context + response in, annotated span out) and reached 78.7 response-level F1 — beating GPT-4-turbo prompting at 63.4.'},
   {q:'What is the headline lesson of the corpus?',opts:['RAG completely eliminates hallucination','Retrieval reduces but does not eliminate hallucination — 43.1% of RAG responses still contain hallucinated spans','Only small open-source models hallucinate','Human annotation is no longer needed for RAG'],correct:1,explain:'7,664 of 17,790 responses (43.1%) contain at least one hallucinated span even with retrieved context in the prompt — and even GPT-4\'s responses hallucinated 9.3% of the time. Grounded prompting still needs verification.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

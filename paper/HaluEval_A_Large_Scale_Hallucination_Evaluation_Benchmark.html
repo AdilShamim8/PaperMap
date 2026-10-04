@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -333,7 +339,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">ONE QUESTION, TWO ANSWERS</div>
         <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
-          <span style="color:var(--green);">✔ U.S. Highway 60</span> &nbsp;·&nbsp; <span style="color:var(--red);">✘ U.S. Highway 70</span>
+          <span style="color:var(--green-text);">✔ U.S. Highway 60</span> &nbsp;·&nbsp; <span style="color:var(--red-text);">✘ U.S. Highway 70</span>
         </div>
         <div style="font-size:12px;color:var(--text3);margin-top:8px;">Same length, same style, one number apart — the paper's own QA example.</div>
       </div>
@@ -400,7 +406,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card">
       <div class="card-label">The Actual Prompt (QA, from the paper)</div>
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.8;">
-        "I want you act as a <span style="color:var(--amber);font-weight:600;">hallucination answer generator</span>. Given a question, right answer, and related knowledge, your objective is to write a hallucinated answer that <span style="color:var(--red);">sounds plausible but is factually incorrect</span>."
+        "I want you act as a <span style="color:var(--amber-text);font-weight:600;">hallucination answer generator</span>. Given a question, right answer, and related knowledge, your objective is to write a hallucinated answer that <span style="color:var(--red-text);">sounds plausible but is factually incorrect</span>."
       </div>
       <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-top:1rem;">The four QA patterns it may follow: <strong>fabricate</strong> facts absent from the knowledge; <strong>misunderstand</strong> the question's intent; give an answer at the <strong>wrong specificity</strong> (too general or too precise); or <strong>reason incorrectly</strong> from correct knowledge. Length is capped — the lie can only be ~5 words longer than the truth, so style never gives it away.</p>
     </div>
@@ -459,7 +465,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="card">
     <div class="card-label">One Real QA Sample (fields as released in the repo)</div>
     <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:12.5px;line-height:1.9;color:var(--text2);">
-      <span style="color:var(--text3);">"knowledge":</span> "The nine mile byway starts south of Morehead, Kentucky and can be accessed by U.S. Highway 60. Morehead is a home rule-class city located along US 60 (the historic Midland Trail)…" <span style="color:var(--text3);">"question":</span> "What U.S Highway gives access to Zilpo Road, and is also known as Midland Trail?" <span style="color:var(--green);">"right_answer":</span> "U.S. Highway 60" <span style="color:var(--red);">"hallucinated_answer":</span> "U.S. Highway 70"
+      <span style="color:var(--text3);">"knowledge":</span> "The nine mile byway starts south of Morehead, Kentucky and can be accessed by U.S. Highway 60. Morehead is a home rule-class city located along US 60 (the historic Midland Trail)…" <span style="color:var(--text3);">"question":</span> "What U.S Highway gives access to Zilpo Road, and is also known as Midland Trail?" <span style="color:var(--green-text);">"right_answer":</span> "U.S. Highway 60" <span style="color:var(--red-text);">"hallucinated_answer":</span> "U.S. Highway 70"
     </div>
     <p style="font-size:12px;color:var(--text3);margin-top:8px;">The example the paper itself uses to demonstrate the generation instruction — a one-number entity swap.</p>
   </div>
@@ -541,13 +547,13 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="results-grid">
     <div class="result-card">
       <div class="result-model">CLAUDE 2 · QA</div>
-      <div class="result-score" style="color:var(--green);">69.78</div>
+      <div class="result-score" style="color:var(--green-text);">69.78</div>
       <div class="result-label">recognition accuracy — best of all 11 models</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--green);width:70%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
     <div class="result-card">
       <div class="result-model">CHATGPT · SUMMARIZATION</div>
-      <div class="result-score" style="color:var(--amber);">58.53</div>
+      <div class="result-score" style="color:var(--amber-text);">58.53</div>
       <div class="result-label">"barely above chance" — the paper's own words</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:59%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
@@ -559,19 +565,19 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     </div>
     <div class="result-card">
       <div class="result-model">ALPACA (7B) · QA</div>
-      <div class="result-score" style="color:var(--red);">6.68</div>
+      <div class="result-score" style="color:var(--red-text);">6.68</div>
       <div class="result-label">far below random — confidently picks the lie</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:7%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
     <div class="result-card">
       <div class="result-model">OPEN 7B · GENERAL</div>
-      <div class="result-score" style="color:var(--red);">19–31</div>
+      <div class="result-score" style="color:var(--red-text);">19–31</div>
       <div class="result-label">open models collapse on real user queries (Llama 2: 20.46)</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--red);width:25%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
     <div class="result-card">
       <div class="result-model">CHATGPT + KNOWLEDGE · QA</div>
-      <div class="result-score" style="color:var(--teal);">76.83</div>
+      <div class="result-score" style="color:var(--teal-text);">76.83</div>
       <div class="result-label">retrieval lifts it from 62.59 — the paper's fix</div>
       <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:77%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
     </div>
@@ -584,7 +590,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <button class="btn-outline" id="knowOffBtn" type="button" style="font-size:13px;padding:8px 18px;">No knowledge</button>
       <button class="btn-primary" id="knowOnBtn" type="button" style="font-size:13px;padding:8px 18px;">With knowledge</button>
     </div>
-    <div id="knowHeadline" style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--amber);margin-bottom:1rem;"></div>
+    <div id="knowHeadline" style="font-family:var(--mono);font-size:14px;font-weight:600;color:var(--amber-text);margin-bottom:1rem;"></div>
     <div id="knowBars"></div>
     <div style="font-size:12px;color:var(--text3);margin-top:10px;">ChatGPT, HaluEval-QA recognition accuracy. Knowledge retrieval: 62.59 → 76.83 (+14.24). Dialogue gains were mild (+1.40); summarization needs no extra knowledge (the article is the source); CoT reasoning helped only summarization; the contrast setting was hardest of all.</div>
   </div>
@@ -659,7 +665,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
       <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Grounding beats size at recognition</div>
-      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The result that aged best: attaching retrieved facts moved ChatGPT's recognition 14 points — while bigger models without knowledge stayed near chance. Detecting a lie is a knowledge task, not a scale task — the same lesson <a href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" style="color:var(--amber);font-weight:600;text-decoration:none;">FActScore</a> learned by measuring, and <a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber);font-weight:600;text-decoration:none;">SelfCheckGPT</a> learned by sampling. The paired-sample design itself became the community template — HaluEval-Wild (2024) extended it to real user queries.</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The result that aged best: attaching retrieved facts moved ChatGPT's recognition 14 points — while bigger models without knowledge stayed near chance. Detecting a lie is a knowledge task, not a scale task — the same lesson <a href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">FActScore</a> learned by measuring, and <a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">SelfCheckGPT</a> learned by sampling. The paired-sample design itself became the community template — HaluEval-Wild (2024) extended it to real user queries.</div>
     </div>
   </div>
 
@@ -667,7 +673,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="notice-card"><div class="notice-title">🎭 Adversarial twins</div><div class="notice-text">A fabrication that survives a judge's filter is hard by construction — the benchmark measures the tail of convincing falsehoods, not clumsy errors.</div></div>
     <div class="notice-card"><div class="notice-title">🧠 Why models get fooled</div><div class="notice-text">Fabricated twins match the context's topic, register and specificity. Only world knowledge breaks the symmetry — exactly what the knowledge-injection result showed.</div></div>
     <div class="notice-card"><div class="notice-title">📊 19.5%, the baseline</div><div class="notice-text">ChatGPT fabricated in about a fifth of replies across tasks. That single number reframed hallucination from edge case to default operating condition.</div></div>
-    <div class="notice-card"><div class="notice-title">🔗 The lineage</div><div class="notice-text">Paired design ← <a href="./TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html" style="color:var(--amber);font-weight:600;text-decoration:none;">TruthfulQA</a>'s adversarial questions; paired design → <a href="./RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html" style="color:var(--amber);font-weight:600;text-decoration:none;">RAGTruth</a>'s word-level spans in RAG pipelines. Each generation of the idea gets finer-grained.</div></div>
+    <div class="notice-card"><div class="notice-title">🔗 The lineage</div><div class="notice-text">Paired design ← <a href="./TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">TruthfulQA</a>'s adversarial questions; paired design → <a href="./RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">RAGTruth</a>'s word-level spans in RAG pipelines. Each generation of the idea gets finer-grained.</div></div>
   </div>
 
 </section>
@@ -777,8 +783,8 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       </div>
       <div style="font-size:14.5px;font-weight:600;margin-bottom:1rem;">${r.prompt}</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;">
-        <button type="button" id="spotA" style="text-align:left;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:1rem;font-family:var(--sans);font-size:13.5px;color:var(--text);line-height:1.7;cursor:pointer;transition:all .2s;"><span style="font-family:var(--mono);color:var(--amber);font-weight:600;">A.</span> ${r.a.t}</button>
-        <button type="button" id="spotB" style="text-align:left;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:1rem;font-family:var(--sans);font-size:13.5px;color:var(--text);line-height:1.7;cursor:pointer;transition:all .2s;"><span style="font-family:var(--mono);color:var(--amber);font-weight:600;">B.</span> ${r.b.t}</button>
+        <button type="button" id="spotA" style="text-align:left;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:1rem;font-family:var(--sans);font-size:13.5px;color:var(--text);line-height:1.7;cursor:pointer;transition:all .2s;"><span style="font-family:var(--mono);color:var(--amber-text);font-weight:600;">A.</span> ${r.a.t}</button>
+        <button type="button" id="spotB" style="text-align:left;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:1rem;font-family:var(--sans);font-size:13.5px;color:var(--text);line-height:1.7;cursor:pointer;transition:all .2s;"><span style="font-family:var(--mono);color:var(--amber-text);font-weight:600;">B.</span> ${r.b.t}</button>
       </div>
       <div id="spotVerdict" style="margin-top:1rem;"></div>`;
     document.getElementById('spotA').addEventListener('click',()=>pick('a'));
@@ -791,7 +797,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     const choice=(which==='a')?r.a:r.b;
     const ok=choice.right;
     if(ok)score++;
-    const mark=(el,good)=>{el.style.pointerEvents='none';el.style.background=good?'var(--green-dim)':'var(--red-dim)';el.style.borderColor=good?'rgba(34,197,94,0.35)':'rgba(239,68,68,0.35)';el.insertAdjacentHTML('beforeend',good?' <span style="color:var(--green);font-weight:600;">✓ faithful</span>':' <span style="color:var(--red);font-weight:600;">✗ hallucinated</span>');};
+    const mark=(el,good)=>{el.style.pointerEvents='none';el.style.background=good?'var(--green-dim)':'var(--red-dim)';el.style.borderColor=good?'rgba(34,197,94,0.35)':'rgba(239,68,68,0.35)';el.insertAdjacentHTML('beforeend',good?' <span style="color:var(--green-text);font-weight:600;">✓ faithful</span>':' <span style="color:var(--red-text);font-weight:600;">✗ hallucinated</span>');};
     mark(btnA,r.a.right);mark(btnB,r.b.right);
     const last=round===ROUNDS.length-1;
     v.innerHTML=`
@@ -921,12 +927,12 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     cards.forEach(c=>{
       const g=c.getAttribute('data-g')==='1';
       c.style.pointerEvents='none';
-      if(g){c.style.border='1px solid rgba(239,68,68,.6)';c.style.background='var(--red-dim)';c.insertAdjacentHTML('beforeend','<div style="font-size:11px;color:var(--red);font-weight:700;margin-top:6px;">FABRICATED</div>');}
-      else{c.style.border='1px solid rgba(34,197,94,.5)';c.insertAdjacentHTML('beforeend','<div style="font-size:11px;color:var(--green);font-weight:700;margin-top:6px;">GOLDEN</div>');}
+      if(g){c.style.border='1px solid rgba(239,68,68,.6)';c.style.background='var(--red-dim)';c.insertAdjacentHTML('beforeend','<div style="font-size:11px;color:var(--red-text);font-weight:700;margin-top:6px;">FABRICATED</div>');}
+      else{c.style.border='1px solid rgba(34,197,94,.5)';c.insertAdjacentHTML('beforeend','<div style="font-size:11px;color:var(--green-text);font-weight:700;margin-top:6px;">GOLDEN</div>');}
     });
     const hit=choice===1;hits+=hit;
     const w=document.getElementById('heWhy');
-    w.innerHTML='<div class="card-sm" style="margin-top:12px;border-left:3px solid var(--amber);"><div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:4px;">'+(hit?'✓ You caught it — ':'✗ The twin fooled you — ')+'why this pair is hard</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">'+item.why+'</div></div><div style="margin-top:12px;"><button class="btn-primary" id="heNext" type="button" style="font-size:13px;padding:8px 18px;">'+(idx<ITEMS.length-1?'Next sample →':'Show model scores →')+'</button></div>';
+    w.innerHTML='<div class="card-sm" style="margin-top:12px;border-left:3px solid var(--amber);"><div style="font-size:12px;font-weight:600;color:var(--amber-text);margin-bottom:4px;">'+(hit?'✓ You caught it — ':'✗ The twin fooled you — ')+'why this pair is hard</div><div style="font-size:12px;color:var(--text2);line-height:1.7;">'+item.why+'</div></div><div style="margin-top:12px;"><button class="btn-primary" id="heNext" type="button" style="font-size:13px;padding:8px 18px;">'+(idx<ITEMS.length-1?'Next sample →':'Show model scores →')+'</button></div>';
     w.style.display='block';
     if(!RM){w.classList.remove('animate-in');void w.offsetWidth;w.classList.add('animate-in');}
     document.getElementById('heNext').addEventListener('click',()=>{
@@ -953,7 +959,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       {label:'GPT-3 (≈ random)',pct:50,color:'var(--red)'},
       {label:'Alpaca (below random)',pct:43,color:'var(--red)'}
     ];
-    game.innerHTML='<div style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;color:var(--amber);margin-bottom:10px;">DISCRIMINATION SCORES — YOU VS THE PAPER’S FIELD</div>'
+    game.innerHTML='<div style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;color:var(--amber-text);margin-bottom:10px;">DISCRIMINATION SCORES — YOU VS THE PAPER’S FIELD</div>'
       +rows.map((r,i)=>'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:160px;flex-shrink:0;">'+r.label+'</div><div style="flex:1;height:13px;background:var(--bg4);border-radius:6px;overflow:hidden;"><div style="height:100%;width:'+r.pct+'%;background:'+r.color+';border-radius:6px;transform-origin:left;'+(RM?'':'animation:scaleIn .7s ease '+(i*120)+'ms backwards;')+'"></div></div><div style="font-family:var(--mono);font-size:11.5px;font-weight:600;color:'+r.color+';width:48px;text-align:right;flex-shrink:0;">'+r.pct+'</div></div>').join('')
       +'<div style="font-size:12px;color:var(--text3);line-height:1.7;margin-top:10px;">ChatGPT fabricated in 19.5% of replies — and with retrieved Wikipedia facts attached, its recognition jumped 62.59 → 76.83. Knowledge, not scale, closes the mirror.</div>';
     stats.textContent='run complete · your score: '+hits+'/'+ITEMS.length;
@@ -970,7 +976,7 @@ const QUIZ_DATA=[
   {q:'What happened when ChatGPT was given retrieved Wikipedia knowledge during recognition?',opts:['Accuracy dropped sharply','No measurable change','It stopped answering "Yes"','Recognition accuracy jumped — 62.59% → 76.83% on QA'],correct:3,explain:'Knowledge retrieval lifted QA recognition from 62.59 to 76.83 (and General from 86.22 to 90.73). Dialogue gains were mild (+1.40) and summarization needs no extra knowledge — the article is its own source.'},
   {q:'In the human-annotated general-query set, what fraction of ChatGPT responses contained hallucination?',opts:['About 19.5%','About 1%','About 50%','About 90%'],correct:0,explain:'977 of 5,000 responses (≈19.5%) were labeled hallucinated — mostly by fabricating unverifiable information, concentrated in topics like technology, climate and language.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

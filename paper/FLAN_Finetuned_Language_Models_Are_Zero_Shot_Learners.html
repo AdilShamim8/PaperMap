@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FLAN: Finetuned Language Models Are Zero-Shot Learners — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the FLAN paper, with visual demos for instruction tuning, task clusters, held-out zero-shot evaluation, and the template ablations behind modern instruction-tuned models.">
+<meta name="keywords" content="FLAN, instruction tuning, zero-shot learning, LaMDA, GPT-3, NLP tasks, natural instructions, finetuning, LLM">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/FLAN_Finetuned_Language_Models_Are_Zero_Shot_Learners.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="FLAN: Finetuned Language Models Are Zero-Shot Learners — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of FLAN — the instruction-tuning paper that taught 137B parameters to follow instructions before zero-shot tasks.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/FLAN_Finetuned_Language_Models_Are_Zero_Shot_Learners.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="FLAN: Finetuned Language Models Are Zero-Shot Learners — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of FLAN — the instruction-tuning paper that taught 137B parameters to follow instructions before zero-shot tasks.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#templates">Templates</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#ablations">Ablations</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">ICLR 2022</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#templates">Templates</a>
+  <a href="#results">Results</a>
+  <a href="#ablations">Ablations</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Teaching Models to <em>Follow Instructions</em><br>FLAN
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that introduced instruction tuning — finetuning a 137B model on 60+ tasks phrased as natural-language instructions so it could solve task types it had never seen, zero-shot.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2109.01652" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">137B</div>
+      <div class="stat-label">Parameters (LaMDA-PT)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">60+</div>
+      <div class="stat-label">Instruction-Tuned Tasks</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">20/25</div>
+      <div class="stat-label">Beats Zero-Shot GPT-3</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2021</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Prompts</em> to <em>Instructions</em></h2>
+  <p class="section-desc">FLAN sits at the hinge between the few-shot prompting era and the instruction-following era we live in now.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2019</div><div class="tl-title">Task-specific finetuning era</div><div class="tl-desc">BERT-style workflows: a new task meant new labels, new heads, and a new finetune. Zero-shot transfer was a curiosity.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2020</div><div class="tl-title">GPT-3 few-shot prompting (Brown et al.)</div><div class="tl-desc">175B parameters + a few examples in the prompt. Works — but every task needs hand-crafted prompt formats, and zero-shot lags badly.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2021 · Sep</div><div class="tl-title">🚀 FLAN (Wei et al.)</div><div class="tl-desc">Instruction tuning: finetune LaMDA-PT 137B on 60+ tasks verbalized as instructions. Zero-shot performance jumps on unseen task types.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2021 · Oct</div><div class="tl-title">T0 & Natural Instructions (Sanh et al.)</div><div class="tl-desc">The same idea, open-sourced at scale: T5-based T0 trained on a massive crowdsourced instruction dataset.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 →</div><div class="tl-title">InstructGPT, Flan-T5, ChatGPT…</div><div class="tl-desc">Instruction tuning merges with human-feedback alignment and becomes the default final training stage of every assistant model.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The One-Sentence Idea</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">A model that has been <strong>trained on instructions</strong> generalizes to instructions it has never seen. FLAN turned "prompt engineering against a raw language model" into "training the model to be promptable" — the ancestor of every instruction-tuned model since.</p>
+      <div class="notice-card" style="margin-top:1rem;"><div class="notice-title">🧭 Lineage note</div><div class="notice-text">FLAN tunes the base model on instructions; <a href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html" style="color:var(--amber-text);">InstructGPT</a> adds human preference data and RLHF on top of a similar recipe.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The Zero-Shot <em>Gap</em></h2>
+  <p class="section-desc">GPT-3 proved scale could learn tasks in-context — but only if you found the right magic prompt format. Zero-shot was the weakest mode of a powerful model.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🎭</div>
+      <div class="problem-title">Raw Models Are Prompt-Sensitive</div>
+      <ul class="problem-list">
+        <li>Same task, different phrasing: wildly different accuracy — raw models don't reliably "understand" a task description</li>
+        <li>Prompt engineering is hand-crafted, task-by-task, and does not transfer</li>
+        <li>Zero-shot (no examples) trails few-shot by large margins in the 175B GPT-3 evaluations</li>
+        <li>The model's objective — predict the next token — never asked it to be a helpful instruction-follower</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">📋</div>
+      <div class="problem-title">Instruction Tuning Closes the Gap</div>
+      <ul class="problem-list">
+        <li>Phrase existing supervised datasets as natural-language instructions ("Translate this sentence to German: …")</li>
+        <li>Finetune the 137B model on that mixture — no new labels, just re-phrasing</li>
+        <li>Zero-shot performance on <em>held-out task types</em> jumps by large margins</li>
+        <li>One training stage makes the model usable by anyone who can write an instruction</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Operating Manual</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">A raw pretrained model is a brilliant employee who has read the entire internet but was never told what the company does. Instruction tuning is the onboarding manual: it doesn't add capability, it adds <strong>mutual intelligibility</strong> — the employee finally knows what you mean when you ask.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Instruction Tuning, <em>Step by Step</em></h2>
+  <p class="section-desc">Three moves: verbalize datasets into instructions, group tasks into clusters, and always evaluate on clusters that were held out of tuning.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">📝 60+ datasets verbalized</div><div class="notice-text">Existing supervised NLP datasets re-written as instruction/response pairs with natural templates.</div></div>
+    <div class="notice-card"><div class="notice-title">🗂 12 task clusters</div><div class="notice-text">Datasets grouped by task type — NLI, reading comprehension, closed-book QA, translation, sentiment…</div></div>
+    <div class="notice-card"><div class="notice-title">🔒 Cluster hold-out</div><div class="notice-text">Tune on all clusters except the one being evaluated — the held-out evaluation is genuinely zero-shot at the task-<em>type</em> level.</div></div>
+    <div class="notice-card"><div class="notice-title">🤖 LaMDA-PT 137B</div><div class="notice-text">The pretrained-only base of Google's LaMDA — a decoder-only Transformer, before dialogue tuning.</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Instruction Tuning Machine</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Take a raw supervised example and verbalize it into an instruction. Flip between raw few-shot prompting and the instruction-tuned format.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="flanRawBtn" type="button" style="font-size:13px;padding:8px 18px;">Raw GPT-3 style</button>
+      <button class="btn-outline" id="flanTunedBtn" type="button" style="font-size:13px;padding:8px 18px;">Instruction-tuned</button>
+    </div>
+    <div id="flanPromptBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:2;min-height:170px;"></div>
+    <div id="flanVerdict" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TEMPLATES -->
+<section id="templates">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Templates Are the <em>Interface</em></h2>
+  <p class="section-desc">How a task gets phrased is a first-class design decision — FLAN systematically studies the choices that later papers inherited.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Three Template Decisions</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Instruction phrasing:</strong> a task template can lead with a general instruction or a concrete example; FLAN's default is instruction-first, "task name last"</li>
+        <li><strong>Response format:</strong> class labels are mapped into natural answers ("positive"/"negative", or full sentences)</li>
+        <li><strong>Number of templates:</strong> multiple phrasings per dataset reduce overfitting to a single format</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">What the Ablations Showed</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>More tuning datasets:</strong> zero-shot transfer improves as the task mixture grows — instruction diversity itself is the signal</li>
+        <li><strong>Scale matters:</strong> instruction tuning helps at 137B; smaller models benefit far less — an early "emergent ability" observation</li>
+        <li><strong>Task-cluster overlap:</strong> gains concentrate when the held-out task is related to tuned clusters — generalization is graded, not magic</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Template Flipper</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">The same sentiment example under three verbalizations. Flip through them and watch what the model must infer in each case.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="flanTplPrev" type="button" style="font-size:13px;padding:8px 18px;">← Prev template</button>
+      <button class="btn-primary" id="flanTplNext" type="button" style="font-size:13px;padding:8px 18px;">Next template →</button>
+    </div>
+    <div id="flanTplBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:2;min-height:150px;"></div>
+    <div id="flanTplNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Zero-Shot, <em>Measured Honestly</em></h2>
+  <p class="section-desc">Held-out task clusters, compared against a 175B model with 28% more parameters that never saw instructions.</p>
+  <div class="results-grid">
+    <div class="result-card">
+      <div class="result-model">HELD-OUT TASKS</div>
+      <div class="result-score" style="color:var(--amber-text);">25</div>
+      <div class="result-label">unseen benchmark datasets across 10 evaluated task clusters</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--amber);width:100%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">FLAN vs GPT-3 ZERO-SHOT</div>
+      <div class="result-score" style="color:var(--blue-text);">20/25</div>
+      <div class="result-label">datasets where 137B FLAN beats zero-shot 175B GPT-3</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--blue);width:80%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">BEATS FEW-SHOT GPT-3</div>
+      <div class="result-score" style="color:var(--teal-text);">6</div>
+      <div class="result-label">datasets where zero-shot FLAN beats few-shot GPT-3 (ANLI, RTE, BoolQ, ARC, OpenbookQA, StoryCloze)</div>
+      <div class="result-bar-wrap"><div class="result-bar" style="background:var(--teal);width:24%;animation:scaleIn .9s ease;transform-origin:left;"></div></div>
+    </div>
+    <div class="result-card">
+      <div class="result-model">TUNING COST</div>
+      <div class="result-score" style="color:var(--purple-text);">1 stage</div>
+      <div class="result-label">a finetune over existing datasets — no new human labels</div>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Cluster Hold-out Explorer</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Pick a held-out cluster and see what FLAN was (and wasn't) tuned on before facing it zero-shot.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="flanClusterTabs"></div>
+    <div id="flanClusterBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABLATIONS -->
+<section id="ablations">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">What Actually <em>Drove</em> the Gains</h2>
+  <p class="section-desc">FLAN's ablations previewed the scaling questions that the next five years of instruction-tuning research would ask.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Scale Threshold</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Instruction tuning's zero-shot gain is not linear in model size: it shines at the largest scale tested (137B), and the paper's analysis of smaller models foreshadowed the "emergent abilities" debate — a capability that switches on only past a size threshold. Later work (Flan-PaLM, 2022) confirmed the effect grows with scale.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Cluster Relatedness</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Hold out a cluster and gains shrink for task types unlike anything in tuning; hold out a <em>related</em> cluster and transfer is strong. FLAN maps generalization as <strong>graded</strong> — an honest frame that later instruction papers kept.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — The <em>Default</em> Final Stage</h2>
+  <p class="section-desc">Instruction tuning went from a 2021 experiment to the finishing move of every serious LLM training pipeline.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">💬 The Assistant Era</div><div class="notice-text">InstructGPT/ChatGPT-style systems pair instruction tuning with preference alignment — FLAN proved the instruction part alone moves zero-shot scores dramatically.</div></div>
+    <div class="notice-card"><div class="notice-title">🔥 Flan-T5 & Flan-PaLM (2022)</div><div class="notice-text">Google scaled the recipe to 1,800+ tasks with chain-of-thought data mixed in — Flan-T5 became a default open workhorse.</div></div>
+    <div class="notice-card"><div class="notice-title">🌍 T0 & Open Instruction Data</div><div class="notice-text">The open-source world answered with T0, Natural Instructions, and eventually community instruction datasets that power open assistants.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Evaluation Culture</div><div class="notice-text">Held-out cluster evaluation — FLAN's careful methodology — became the standard way to claim "zero-shot generalization" honestly.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Truthfulness, helpfulness, and calibration: instruction tuning makes models compliant, not correct — the alignment problem needed its own papers.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Study next</div><div class="notice-text">See how instruction tuning meets human preferences in the <a href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html" style="color:var(--amber-text);">InstructGPT Guide</a>.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Capabilities vs <em>Formatting</em></h2>
+  <p class="section-desc">The sharpest reading of FLAN: much of the "zero-shot gap" was never a knowledge gap — it was an interface gap.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🌫</div>
+      <div class="problem-title">The Interface Tax</div>
+      <ul class="problem-list">
+        <li>A raw LM may "know" how to classify sentiment but fail because it expects a particular format</li>
+        <li>Zero-shot scores conflate task knowledge with format inference</li>
+        <li>Prompt engineering is a patch: human-side adaptation to a fixed model</li>
+        <li>Benchmarks under-measure models that know more than they can show</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔌</div>
+      <div class="problem-title">The Tuning Dividend</div>
+      <ul class="problem-list">
+        <li>Instruction tuning moves the adaptation cost into training, once, for all users</li>
+        <li>The model's latent skills become accessible through plain language</li>
+        <li>Zero-shot FLAN beating few-shot GPT-3 on 6 datasets is the tell: format was the bottleneck</li>
+        <li>Model-side beats human-side adaptation — the economics of the whole field shifted</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Prompt Format Stress Test</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same knowledge, four formats. Watch the format tax shrink the raw model's score — then vanish after instruction tuning.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="flanStressBtn" type="button" style="font-size:13px;padding:8px 18px;">Run 4 formats</button>
+    </div>
+    <div id="flanStressChart" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="flanStressNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">FLAN is best read as an <strong>economics paper disguised as an NLP paper</strong>. It showed that a one-time training investment could permanently lower the interaction cost for every user and every task — and that "prompt sensitivity" is a property of <em>untrained interfaces</em>, not of scale itself. Every chat model since has paid that investment forward.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the FLAN paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Instruction tuning: finetune on tasks verbalized as natural instructions — no new labels needed.</div>
+    <div class="card-sm">✅ LaMDA-PT 137B, 60+ datasets, organized into 12 task clusters; evaluation always holds out the target cluster.</div>
+    <div class="card-sm">✅ Zero-shot FLAN beats zero-shot 175B GPT-3 on 20 of 25 held-out datasets — with 28% fewer parameters.</div>
+    <div class="card-sm">✅ It even beats few-shot GPT-3 on ANLI, RTE, BoolQ, AI2-ARC, OpenbookQA, and StoryCloze.</div>
+    <div class="card-sm">✅ Gains strengthen with model scale and dataset diversity — the two levers later recipes pulled harder.</div>
+    <div class="card-sm">✅ FLAN fixed the interface, not the truthfulness — alignment arrived with InstructGPT and successors.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2109.01652" target="_blank" rel="noopener noreferrer">"Finetuned Language Models Are Zero-Shot Learners"</a> (Wei et al., 2021)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2109.01652" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Language_Models_are_Few_Shot_Learners.html">GPT-3 Guide</a>
+    <a class="footer-link" href="./T5.html">T5 Guide</a>
+    <a class="footer-link" href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT Guide</a>
+    <a class="footer-link" href="./MMLU_Measuring_Massive_Multitask_Language_Understanding.html">MMLU Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "templates", "results", "ablations", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === INSTRUCTION TUNING MACHINE ===
+(function(){
+  const box=document.getElementById('flanPromptBox');
+  const verdict=document.getElementById('flanVerdict');
+  const rawBtn=document.getElementById('flanRawBtn');
+  const tunBtn=document.getElementById('flanTunedBtn');
+  if(!box||!verdict||!rawBtn||!tunBtn)return;
+  function render(mode){
+    if(mode==='raw'){
+      box.innerHTML=`<span style="color:var(--text3);">Review:</span> This movie was a masterpiece of pacing.<br><span style="color:var(--text3);">Review:</span> Two hours I will never get back.<br><span style="color:var(--text3);">Review:</span> The plot dragged but the acting saved it.<br><span style="color:var(--text3);">Classification:</span> <span style="color:var(--red-text);">___</span>`;
+      verdict.textContent='FEW-SHOT RAW: model must infer the task from examples — format guessing costs accuracy.';
+    }else{
+      box.innerHTML=`<span style="color:var(--blue-text);">Is this movie review positive or negative?</span><br><span style="color:var(--text3);">Review:</span> The plot dragged but the acting saved it.<br><span style="color:var(--text3);">Answer:</span> <span style="color:var(--green-text);">positive</span>`;
+      verdict.textContent='INSTRUCTION-TUNED: the task is stated — 137B FLAN answers plain-language instructions directly.';
+    }
+  }
+  rawBtn.addEventListener('click',()=>render('raw'));
+  tunBtn.addEventListener('click',()=>render('tuned'));
+  render('tuned');
+})();
+
+// === TEMPLATE FLIPPER ===
+(function(){
+  const box=document.getElementById('flanTplBox');
+  const note=document.getElementById('flanTplNote');
+  const prev=document.getElementById('flanTplPrev');
+  const next=document.getElementById('flanTplNext');
+  if(!box||!note||!prev||!next)return;
+  const T=[
+    {t:'Task name last',b:'<span style="color:var(--text3);">Review:</span> The plot dragged but the acting saved it.<br><span style="color:var(--blue-text);">Question: Is this movie review positive or negative?</span><br><span style="color:var(--text3);">Answer:</span> positive',n:'FLAN default: instruction-first, task name last.'},
+    {t:'Example-first',b:'<span style="color:var(--blue-text);">What is the sentiment of this review?</span><br><span style="color:var(--text3);">Review:</span> The plot dragged but the acting saved it.<br><span style="color:var(--text3);">Answer:</span> positive',n:'Direct question form — different surface, same task.'},
+    {t:'Label mapping',b:'<span style="color:var(--blue-text);">Does the reviewer recommend this movie (yes / no)?</span><br><span style="color:var(--text3);">Review:</span> The plot dragged but the acting saved it.<br><span style="color:var(--text3);">Answer:</span> yes',n:'Class labels mapped into natural answers — outputs become usable text.'}
+  ];
+  let i=0;
+  function render(){
+    box.innerHTML=T[i].b;
+    note.textContent=`Template ${i+1}/3 — ${T[i].t}: ${T[i].n}`;
+  }
+  prev.addEventListener('click',()=>{i=(i+2)%3;render();});
+  next.addEventListener('click',()=>{i=(i+1)%3;render();});
+  render();
+})();
+
+// === CLUSTER HOLD-OUT EXPLORER ===
+(function(){
+  const tabs=document.getElementById('flanClusterTabs');
+  const box=document.getElementById('flanClusterBox');
+  if(!tabs||!box)return;
+  const C=[
+    {name:'NLI',held:'ANLI · CB · RTE',related:'tuned on: reading comprehension, closed-book QA, sentiment…',note:'Related clusters were tuned; NLI itself was held out — evaluation is zero-shot at the task-type level.'},
+    {name:'Reading Comp.',held:'BoolQ · MultiRC',related:'tuned on: NLI, QA, commonsense…',note:'Strong transfer from QA-adjacent clusters.'},
+    {name:'Closed-book QA',held:'ARC · OpenbookQA · StoryCloze',related:'tuned on: NLI, translation, sentiment…',note:'Knowledge tasks: FLAN zero-shot beat few-shot GPT-3 here.'}
+  ];
+  let cur=0;
+  function render(){
+    tabs.innerHTML=C.map((c,k)=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${c.name}</button>`).join('');
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:12px;color:var(--amber-text);font-weight:600;margin-bottom:6px;">HELD-OUT (evaluated zero-shot)</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:10px;">${C[cur].held}</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--blue-text);font-weight:600;margin-bottom:6px;">TUNED ON (all other clusters)</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-bottom:10px;">${C[cur].related}</div>
+      <div style="font-size:12.5px;color:var(--text3);line-height:1.7;">${C[cur].note}</div>`;
+  }
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('button');
+    if(!b)return;
+    cur=Array.from(tabs.children).indexOf(b);
+    render();
+  });
+  render();
+})();
+
+// === FORMAT STRESS TEST ===
+(function(){
+  const chart=document.getElementById('flanStressChart');
+  const note=document.getElementById('flanStressNote');
+  const btn=document.getElementById('flanStressBtn');
+  if(!chart||!note||!btn)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const rows=[
+    {f:'Clear instruction',raw:78,tuned:92},
+    {f:'Instruction + odd labels',raw:52,tuned:90},
+    {f:'Ambiguous framing',raw:44,tuned:88},
+    {f:'Adversarial phrasing',raw:31,tuned:85}
+  ];
+  function bar(label,val,color){
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:130px;text-align:right;">${label}</div>
+      <div style="flex:1;height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:0%;background:${color};border-radius:4px;transition:width .8s ease;"></div></div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:38px;" class="sw-val"></div></div>`;
+  }
+  chart.innerHTML=rows.map(r=>`<div style="margin-bottom:12px;"><div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:2px;">${r.f}</div>${bar('raw 175B',0,'#3b82f6')}${bar('FLAN 137B',0,'#f59e0b')}</div>`).join('');
+  note.textContent='Press Run — illustrative pattern: format sensitivity in raw models, flat robustness after instruction tuning.';
+  btn.addEventListener('click',()=>{
+    const bars=chart.querySelectorAll('div[style*="width:0%"]');
+    const vals=chart.querySelectorAll('.sw-val');
+    const flat=[rows[0].raw,rows[0].tuned,rows[1].raw,rows[1].tuned,rows[2].raw,rows[2].tuned,rows[3].raw,rows[3].tuned];
+    function setAll(){bars.forEach((b,i)=>{b.style.width=flat[i]+'%';});vals.forEach((v,i)=>v.textContent=flat[i]+'%');}
+    if(RM){setAll();note.textContent='Reduced motion: bars shown at final values (illustrative).';return;}
+    setTimeout(setAll,60);
+    note.textContent='Raw model sinks as format degrades; instruction tuning buys format robustness (illustrative).';
+  });
+})();
+
+
+const QUIZ_DATA=[{"q": "What base model was FLAN built on?", "opts": ["GPT-3 175B", "LaMDA-PT, a 137B pretrained decoder-only Transformer", "T5-11B", "BERT-Large"], "correct": 1, "explain": "FLAN instruction-tunes LaMDA-PT — the pretrained-only 137B checkpoint of Google's LaMDA model, before any dialogue tuning."}, {"q": "How does FLAN make evaluation genuinely zero-shot?", "opts": ["It never finetunes the model at all", "It holds out entire task clusters, tuning only on the remaining clusters before evaluating", "It uses only unseen languages", "It evaluates with no instruction text"], "correct": 1, "explain": "Datasets are grouped into 12 task clusters; when evaluating a cluster, FLAN is tuned on all the others. The model sees no example of that task type — task-type-level zero-shot."}, {"q": "On how many of the 25 held-out datasets does zero-shot FLAN beat zero-shot GPT-3 175B?", "opts": ["5", "12", "20", "25"], "correct": 2, "explain": "FLAN surpasses zero-shot GPT-3 on 20 of 25 held-out datasets — despite having 28% fewer parameters (137B vs 175B), because the instruction-tuned interface transfers."}, {"q": "Which observation about model scale did FLAN's ablations foreshadow?", "opts": ["Instruction tuning works equally at all model sizes", "Instruction tuning's zero-shot gains are strongest at large scale — an early emergent-ability signal", "Scale hurts instruction tuning", "Only 1B models benefit from instructions"], "correct": 1, "explain": "FLAN's authors note the benefit grows with scale; the 137B model benefits far more than smaller checkpoints — an early data point for the 'emergent abilities' debate."}, {"q": "What did FLAN explicitly NOT improve?", "opts": ["Zero-shot task performance", "Prompt-format robustness", "Truthfulness and calibration", "Access to latent task knowledge"], "correct": 2, "explain": "Instruction tuning makes models better at understanding what you want — not at being correct, truthful, or calibrated. Those properties required alignment work (InstructGPT and beyond)."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

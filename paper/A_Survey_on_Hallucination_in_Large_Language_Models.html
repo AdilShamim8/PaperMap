@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A Survey on Hallucination in Large Language Models — Interactive Guide</title>
-<meta name="description" content="A product-grade interactive explainer of the hallucination survey (Ji et al., ACM CSUR 2023), with interactive demos for the intrinsic vs extrinsic taxonomy, hallucination snowballing, and stage-matched mitigation.">
-<meta name="keywords" content="hallucination, large language models, NLG, intrinsic hallucination, extrinsic hallucination, taxonomy, exposure bias, hallucination snowballing, RAG, RLHF, contrastive decoding, ACM Computing Surveys, interactive tutorial">
+<meta name="description" content="A product-grade interactive explainer of the hallucination survey (Huang et al., 2023), with interactive demos for the factuality vs faithfulness taxonomy, hallucination snowballing, and stage-matched mitigation.">
+<meta name="keywords" content="hallucination, large language models, LLM, factuality hallucination, faithfulness hallucination, fact fabrication, fact contradiction, context inconsistency, taxonomy, exposure bias, hallucination snowballing, RAG, RLHF, contrastive decoding, ACM Computing Surveys, interactive tutorial">
 <meta name="author" content="PaperMap">
 <meta name="robots" content="index, follow">
 <meta name="theme-color" content="#f59e0b">
@@ -40,6 +40,12 @@
   --text2: #475569;
   --text3: #64748b;
   --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
   --amber-dim: rgba(245,158,11,0.12);
   --blue: #3b82f6;
   --blue-dim: rgba(59,130,246,0.12);
@@ -78,25 +84,25 @@ body {
 .skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
 .skip-link:focus { top:10px; }
 nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
-.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
 .nav-links { display:flex;gap:4px; }
 .nav-actions { display:flex;gap:10px;align-items:center; }
 .nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
 .nav-link:hover { background:var(--bg3);color:var(--text); }
-.nav-link.active { background:var(--amber-dim);color:var(--amber); }
-.nav-badge { background:var(--amber-dim);color:var(--amber);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
 .nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
 .mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
 .mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
 .mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
-.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber); }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
 .hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
 .hero > * { position:relative;z-index:1; }
 .hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
 .hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
-.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
 .hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
-.hero-title em { color:var(--amber);font-style:italic; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
 .hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
 .hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
 .btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
@@ -105,14 +111,14 @@ nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,25
 .btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
 .hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
 .stat { text-align:center; }
-.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber); }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
 .stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
 section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
 section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
-.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
 .section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
 .section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
-.section-title em { color:var(--amber);font-style:italic; }
+.section-title em { color:var(--amber-text);font-style:italic; }
 .section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
 .card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
@@ -124,18 +130,18 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
 .problem-icon { font-size:1.5rem;margin-bottom:10px; }
 .problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
-.problem-card.bad .problem-title { color:var(--red); }
-.problem-card.good .problem-title { color:var(--green); }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
 .problem-list { list-style:none; }
 .problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
 .problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
 .bad .problem-list li::before { background:var(--red);opacity:0.6; }
 .good .problem-list li::before { background:var(--green);opacity:0.6; }
 .formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
-.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber);letter-spacing:-0.01em;line-height:2; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
 .formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
 .formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
-.fp-sym { font-family:var(--mono);color:var(--amber);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
 .fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
 .fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
 .results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
@@ -149,33 +155,33 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
 .comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
 .comp-table tr:hover td { background:var(--bg3); }
-.comp-best { color:var(--green);font-weight:600; }
-.comp-worst { color:var(--red); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
 .quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
 .quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
 .quiz-opts { display:flex;flex-direction:column;gap:8px; }
 .quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
 .quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
-.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green); }
-.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
 .quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
 .quiz-explain.show { display:block; }
 .timeline { position:relative;padding-left:24px; }
 .timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
 .tl-item { position:relative;margin-bottom:1.5rem; }
 .tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
-.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:3px; }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
 .tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
 .tl-desc { font-size:13px;color:var(--text2); }
 .divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
-.highlight { color:var(--amber);font-weight:500; }
+.highlight { color:var(--amber-text);font-weight:500; }
 .code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
 .pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
-.pill-amber { background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.2); }
-.pill-blue { background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.2); }
-.pill-green { background:var(--green-dim);color:var(--green);border:1px solid rgba(34,197,94,0.2); }
-.pill-red { background:var(--red-dim);color:var(--red);border:1px solid rgba(239,68,68,0.2); }
-.pill-purple { background:var(--purple-dim);color:var(--purple);border:1px solid rgba(168,85,247,0.2); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
 .two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
 .notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
 .notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
@@ -185,13 +191,13 @@ section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.
 .reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
 footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
 .footer-left { font-size:13px;color:var(--text3); }
-.footer-left a { color:var(--amber);text-decoration:none; }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
 .footer-links { display:flex;gap:16px; }
 .footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
 .footer-link:hover { color:var(--text); }
 .footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
 .footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
-.footer-contact a { color:var(--amber);text-decoration:none;white-space:nowrap; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
 .social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
 .social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
 .social-icon svg { width:16px;height:16px;fill:currentColor; }
@@ -201,7 +207,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 .social-icon.li:hover { color:#0a66c2; }
 .social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
 .social-icon.x:hover { color:var(--text); }
-.social-icon.md:hover { color:var(--amber);border-color:rgba(245,158,11,0.45); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
 .reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity:1;transform:translateY(0) scale(1); }
 @keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
@@ -258,7 +264,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <a class="nav-link" href="#quiz">Quiz</a>
   </div>
   <div class="nav-actions">
-    <div class="nav-badge">ACM CSUR 2023</div>
+    <div class="nav-badge">arXiv 2023</div>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
   </div>
 </nav>
@@ -281,16 +287,16 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <div class="hero-glow"></div>
   <div class="hero-eyebrow">Interactive Paper Explainer</div>
   <h1 class="hero-title">
-    The <em>Anatomy</em> of Hallucination<br>A Field Guide for NLG + LLMs
+    The <em>Anatomy</em> of Hallucination<br>A Field Guide for the LLM Era
   </h1>
   <p class="hero-subtitle">
-    A visual, step-by-step guide to the survey that gave the field a shared vocabulary —
-    what hallucination is, its two types, where it enters the data → training → inference
-    pipeline, and how to detect and mitigate it.
+    A visual, step-by-step guide to the LLM-era survey that gave the field a shared vocabulary —
+    factuality vs faithfulness, where errors enter the data → training → inference
+    pipeline, and how to detect and mitigate them.
   </p>
   <div class="hero-actions">
     <a class="btn-primary" href="#problem">Start Learning</a>
-    <a class="btn-outline" href="https://arxiv.org/abs/2202.03629" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2311.05232" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
   </div>
   <div class="hero-stats">
     <div class="stat">
@@ -299,15 +305,15 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     </div>
     <div class="stat">
       <div class="stat-num">3</div>
-      <div class="stat-label">Pipeline Stages</div>
+      <div class="stat-label">Root-Cause Stages</div>
     </div>
     <div class="stat">
-      <div class="stat-num">10</div>
+      <div class="stat-num">11</div>
       <div class="stat-label">Authors</div>
     </div>
     <div class="stat">
-      <div class="stat-num">6+</div>
-      <div class="stat-label">NLG Tasks Mapped</div>
+      <div class="stat-num">3</div>
+      <div class="stat-label">Detection Families</div>
     </div>
   </div>
 </div>
@@ -322,10 +328,11 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="timeline">
       <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2017</div><div class="tl-title">Fluent nonsense appears</div><div class="tl-desc">Seq2seq and early Transformer models make MT and abstractive summarization fluent — and researchers notice they sometimes generate fluent text with no connection to the source.</div></div>
       <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2019</div><div class="tl-title">Dialogue joins in</div><div class="tl-desc">Task-oriented dialogue studies show systems confidently inventing slots, entities, and API results that never existed in the knowledge base.</div></div>
-      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2020</div><div class="tl-title">LLMs + RAG</div><div class="tl-desc">The few-shot LLM era (<a href="./Language_Models_are_Few_Shot_Learners.html" style="color:var(--amber);">GPT-3 Guide ↗</a>) scales hallucination along with fluency; RAG (<a href="./RAG_Retrieval_Augmented_Generation.html" style="color:var(--amber);">RAG Guide ↗</a>) proposes grounding generation in retrieved documents.</div></div>
-      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2021</div><div class="tl-title">TruthfulQA</div><div class="tl-desc">Lin, Hilton &amp; Evans show that imitating human text means imitating human falsehoods — models fail questions humans also fail (<a href="./TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html" style="color:var(--amber);">TruthfulQA Guide ↗</a>).</div></div>
-      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · Feb</div><div class="tl-title">🚀 The unifying survey</div><div class="tl-desc">Ji et al. publish "Survey of Hallucination in Natural Language Generation" (arXiv 2202.03629) — one definition, one taxonomy, and a cause → detection → mitigation map for the whole field.</div></div>
-      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2023</div><div class="tl-title">Detection gets operational</div><div class="tl-desc">The survey lands in ACM Computing Surveys; SelfCheckGPT and FActScore turn hallucination detection into measurable, deployable pipelines (<a href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" style="color:var(--amber);">FActScore Guide ↗</a>).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2020</div><div class="tl-title">LLMs + RAG</div><div class="tl-desc">The few-shot LLM era (<a href="./Language_Models_are_Few_Shot_Learners.html" style="color:var(--amber-text);">GPT-3 Guide ↗</a>) scales hallucination along with fluency; RAG (<a href="./RAG_Retrieval_Augmented_Generation.html" style="color:var(--amber-text);">RAG Guide ↗</a>) proposes grounding generation in retrieved documents.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2021</div><div class="tl-title">TruthfulQA</div><div class="tl-desc">Lin, Hilton &amp; Evans show that imitating human text means imitating human falsehoods — models fail questions humans also fail (<a href="./TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html" style="color:var(--amber-text);">TruthfulQA Guide ↗</a>).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · Feb</div><div class="tl-title">The NLG-era precursor</div><div class="tl-desc">Ji et al. publish "Survey of Hallucination in Natural Language Generation" (arXiv 2202.03629) — the classic intrinsic/extrinsic taxonomy and the cause → detection → mitigation map for classic NLG tasks.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-year">2023</div><div class="tl-title">Detection gets operational</div><div class="tl-desc">SelfCheckGPT and FActScore turn hallucination detection into measurable, deployable pipelines (<a href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" style="color:var(--amber-text);">FActScore Guide ↗</a>).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2023 · Nov</div><div class="tl-title">🚀 The LLM-era survey</div><div class="tl-desc">Huang et al. publish "A Survey on Hallucination in Large Language Models: Principles, Taxonomy, Challenges, and Open Questions" (arXiv 2311.05232, later in ACM Computing Surveys) — the factuality vs faithfulness taxonomy, causes pinned to data → training → inference, and detection and mitigation mapped to LLM scale.</div></div>
     </div>
     <div class="card" style="padding:1.5rem;">
       <div class="card-label">Key Insight</div>
@@ -333,8 +340,8 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div style="background:var(--bg3);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:8px;">THE TWO FAILING MODES IN THE DEFINITION</div>
         <div style="font-family:var(--mono);font-size:13px;line-height:2;color:var(--text2);">
-          <span style="color:var(--red);">nonsensical</span> — output is broken on its own<br>
-          <span style="color:var(--blue);">unfaithful</span> — output drifts from the source
+          <span style="color:var(--red-text);">nonsensical</span> — output is broken on its own<br>
+          <span style="color:var(--blue-text);">unfaithful</span> — output drifts from the source
         </div>
         <div style="font-size:12px;color:var(--text3);margin-top:8px;">Both count as hallucination. The unfaithful mode is the one that scales with LLMs — and the one this survey is famous for mapping.</div>
       </div>
@@ -366,7 +373,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <div class="problem-title">The Survey's Answer</div>
       <ul class="problem-list">
         <li>One definition: nonsensical or unfaithful to the provided source</li>
-        <li>One taxonomy — intrinsic vs extrinsic — that works for every task</li>
+        <li>One taxonomy — factuality vs faithfulness — that works for every output</li>
         <li>Causes traced to three stages: data → training → inference</li>
         <li>Detection and mitigation organized by what they actually do</li>
         <li>Classic NLG tasks and the new LLMs in a single frame</li>
@@ -392,47 +399,47 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 <!-- TAXONOMY -->
 <section id="taxonomy">
   <div class="section-tag">Chapter 02</div>
-  <h2 class="section-title">The Core Idea — <em>Intrinsic vs Extrinsic</em></h2>
-  <p class="section-desc">The survey's central gift to the field: a two-word taxonomy that works for any NLG task. The question is always the same — what does the output do to the source?</p>
+  <h2 class="section-title">The Core Idea — <em>Factuality vs Faithfulness</em></h2>
+  <p class="section-desc">The survey's central gift to the field: a two-dimension taxonomy that works for any LLM output. The question is always the same — does the output break the facts, or break faith with its source and instruction?</p>
 
   <div class="formula-card">
-    <div class="formula-main">Hallucination = output that is <span style="color:var(--red);">nonsensical</span> or <span style="color:var(--blue);">unfaithful</span> to the provided source</div>
+    <div class="formula-main">Hallucination = output that is <span style="color:var(--red-text);">nonsensical</span> or <span style="color:var(--blue-text);">unfaithful</span> to the provided source</div>
     <div class="formula-breakdown">
       <div class="formula-piece"><div class="fp-sym">Nonsensical</div><div class="fp-name">broken on its own</div><div class="fp-desc">The output contradicts itself or degenerates — you can flag it without any source at all.</div></div>
       <div class="formula-piece"><div class="fp-sym">Unfaithful</div><div class="fp-name">drifts from the source</div><div class="fp-desc">The output does not stay true to the input it was supposed to be grounded in.</div></div>
-      <div class="formula-piece"><div class="fp-sym">Intrinsic</div><div class="fp-name">contradicts the source</div><div class="fp-desc">Provable from the source alone: "revenue fell" in, "revenue rose" out.</div></div>
-      <div class="formula-piece"><div class="fp-sym">Extrinsic</div><div class="fp-name">unverifiable from source</div><div class="fp-desc">Brings in outside information the source neither confirms nor denies — truth unknown.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Factuality</div><div class="fp-name">contradicts the facts</div><div class="fp-desc">Fact fabrication and fact contradiction — inventing or misstating verifiable world facts.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Faithfulness</div><div class="fp-name">drifts from the source</div><div class="fp-desc">Instruction, context, or logical inconsistency — the output does not stay true to what it was given.</div></div>
     </div>
   </div>
 
   <div class="two-col" style="margin-bottom:2rem;">
     <div class="card" style="border-top:3px solid var(--red);">
-      <div class="card-label" style="color:var(--red);">Intrinsic Hallucination</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:0.8rem;">The output <strong>contradicts</strong> the source. The evidence to convict it is already in front of you.</p>
+      <div class="card-label" style="color:var(--red-text);">Faithfulness Hallucination</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:0.8rem;">The output <strong>contradicts or drifts from</strong> the provided source or instruction. The evidence to convict it is already in front of you.</p>
       <div style="background:var(--bg3);border-radius:var(--radius);padding:0.8rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">
         <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SOURCE — EARNINGS REPORT</div>
-        "Q3 revenue <span style="color:var(--green);font-weight:600;">fell 12%</span>, the third straight quarterly decline."<br><br>
+        "Q3 revenue <span style="color:var(--green-text);font-weight:600;">fell 12%</span>, the third straight quarterly decline."<br><br>
         <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">GENERATED SUMMARY</div>
-        "Q3 revenue <span style="color:var(--red);font-weight:600;">rose 12%</span>, the third straight quarterly increase."
+        "Q3 revenue <span style="color:var(--red-text);font-weight:600;">rose 12%</span>, the third straight quarterly increase."
       </div>
-      <p style="font-size:12px;color:var(--text3);margin-top:8px;">Fell → rose, decline → increase. Checkable against the source, provably wrong.</p>
+      <p style="font-size:12px;color:var(--text3);margin-top:8px;">Fell → rose, decline → increase. Context inconsistency — checkable against the source, provably wrong.</p>
     </div>
     <div class="card" style="border-top:3px solid var(--blue);">
-      <div class="card-label" style="color:var(--blue);">Extrinsic Hallucination</div>
-      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:0.8rem;">The output adds content that <strong>cannot be verified</strong> from the source. The source can't settle whether it is true — it might even be true.</p>
+      <div class="card-label" style="color:var(--blue-text);">Factuality Hallucination</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:0.8rem;">The output <strong>fabricates</strong> facts — inventing entities, events, or numbers that do not exist. It might sound plausible; the source can't settle it, and the world can't confirm it.</p>
       <div style="background:var(--bg3);border-radius:var(--radius);padding:0.8rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.8;">
         <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SOURCE — EARNINGS REPORT</div>
         "Q3 revenue fell 12%, the third straight quarterly decline."<br><br>
         <div style="font-size:10px;color:var(--text3);margin-bottom:4px;">GENERATED SUMMARY</div>
-        "The decline is expected to reverse once the <span style="color:var(--blue);font-weight:600;">rumored acquisition of Vertex Labs</span> closes."
+        "The decline is expected to reverse once the <span style="color:var(--blue-text);font-weight:600;">rumored acquisition of Vertex Labs</span> closes."
       </div>
-      <p style="font-size:12px;color:var(--text3);margin-top:8px;">The acquisition rumor appears nowhere in the report — invented, or imported from outside. Unverifiable from the source.</p>
+      <p style="font-size:12px;color:var(--text3);margin-top:8px;">The acquisition rumor appears nowhere in the report — a fabricated fact, invented or imported from outside. Truth unknown to both source and world.</p>
     </div>
   </div>
 
   <!-- DEMO 1: INTRINSIC OR EXTRINSIC -->
   <div class="card" style="overflow:hidden;">
-    <div class="card-label">Interactive Demo — Intrinsic or Extrinsic?</div>
+    <div class="card-label">Interactive Demo — Factuality or Faithfulness?</div>
     <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">A source, a generated claim — you are the classifier. Four rounds across four different NLG settings: summarization, dialogue, machine translation, and retrieval-augmented generation.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem;">
       <span class="pill pill-amber" id="clsRound">Round 1 / 4</span>
@@ -442,8 +449,8 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div id="clsSource" style="background:var(--bg3);border:1px dashed var(--border2);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.8;margin-bottom:10px;min-height:74px;"></div>
     <div id="clsClaim" style="background:#0f172a;border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:12.5px;color:#e2e8f0;line-height:1.8;margin-bottom:1rem;min-height:74px;"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn-primary" id="clsIntrinsicBtn" type="button" style="font-size:13px;padding:8px 18px;">Intrinsic — contradicts source</button>
-      <button class="btn-outline" id="clsExtrinsicBtn" type="button" style="font-size:13px;padding:8px 18px;">Extrinsic — unverifiable from source</button>
+      <button class="btn-primary" id="clsIntrinsicBtn" type="button" style="font-size:13px;padding:8px 18px;">Faithfulness — contradicts source</button>
+      <button class="btn-outline" id="clsExtrinsicBtn" type="button" style="font-size:13px;padding:8px 18px;">Factuality — fabricated fact</button>
       <button class="btn-outline" id="clsNextBtn" type="button" style="font-size:13px;padding:8px 18px;display:none;">Next round →</button>
     </div>
     <div id="clsVerdict" style="margin-top:1rem;"></div>
@@ -460,7 +467,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:1.5rem;">
     <div class="card-sm" style="border-top:3px solid var(--blue);">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--blue);margin-bottom:4px;">STAGE 1 · DATA</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--blue-text);margin-bottom:4px;">STAGE 1 · DATA</div>
       <div style="font-weight:600;font-size:14px;margin-bottom:6px;">The corpus teaches inventing</div>
       <ul style="list-style:none;font-size:12px;color:var(--text2);line-height:1.7;">
         <li style="padding:2px 0;">▸ <strong>Source–counterfactual misalignment:</strong> training pairs whose target text is not actually supported by the input. The model literally learns that unsupported details are fine.</li>
@@ -468,7 +475,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       </ul>
     </div>
     <div class="card-sm" style="border-top:3px solid var(--teal);">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--teal);margin-bottom:4px;">STAGE 2 · TRAINING</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--teal-text);margin-bottom:4px;">STAGE 2 · TRAINING</div>
       <div style="font-weight:600;font-size:14px;margin-bottom:6px;">The objective rewards fluency, not truth</div>
       <ul style="list-style:none;font-size:12px;color:var(--text2);line-height:1.7;">
         <li style="padding:2px 0;">▸ <strong>Exposure bias:</strong> teacher forcing feeds only gold prefixes, so the model never sees its own errors — and never learns to recover from them.</li>
@@ -477,7 +484,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       </ul>
     </div>
     <div class="card-sm" style="border-top:3px solid var(--purple);">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--purple);margin-bottom:4px;">STAGE 3 · INFERENCE</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--purple-text);margin-bottom:4px;">STAGE 3 · INFERENCE</div>
       <div style="font-weight:600;font-size:14px;margin-bottom:6px;">The decoding roll can leave the rails</div>
       <ul style="list-style:none;font-size:12px;color:var(--text2);line-height:1.7;">
         <li style="padding:2px 0;">▸ <strong>Random sampling:</strong> the higher the decoding randomness (temperature), the more often low-probability — and off-source — tokens get picked.</li>
@@ -524,7 +531,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div class="card-sm">
       <div style="font-size:1.4rem;margin-bottom:6px;">🔎</div>
       <div style="font-weight:600;font-size:14px;margin-bottom:6px;">Retrieval-augmented checking</div>
-      <div style="font-size:12px;color:var(--text2);line-height:1.7;">Retrieve external evidence at check time, then test each generated claim against it. Strong on extrinsic hallucinations — as long as the retriever and the corpus are trustworthy.</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;">Retrieve external evidence at check time, then test each generated claim against it. Strong on fabricated facts — as long as the retriever and the corpus are trustworthy.</div>
     </div>
     <div class="card-sm">
       <div style="font-size:1.4rem;margin-bottom:6px;">🎲</div>
@@ -568,7 +575,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:2rem;">
     <div class="card" style="border-top:3px solid var(--blue);">
-      <div class="card-label" style="color:var(--blue);">Data-Level Mitigation</div>
+      <div class="card-label" style="color:var(--blue-text);">Data-Level Mitigation</div>
       <ul style="list-style:none;font-size:12.5px;color:var(--text2);line-height:1.8;">
         <li style="padding:2px 0;">▸ <strong>Cleaning:</strong> remove misaligned pairs, duplicates, and biased content from the corpus</li>
         <li style="padding:2px 0;">▸ <strong>Grounding:</strong> build training pairs whose targets are provable from their inputs</li>
@@ -576,15 +583,15 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
       <p style="font-size:12px;color:var(--text3);margin-top:8px;">Fixes the stage-1 cause: stop teaching the model that inventing is normal.</p>
     </div>
     <div class="card" style="border-top:3px solid var(--teal);">
-      <div class="card-label" style="color:var(--teal);">Training-Level Mitigation</div>
+      <div class="card-label" style="color:var(--teal-text);">Training-Level Mitigation</div>
       <ul style="list-style:none;font-size:12.5px;color:var(--text2);line-height:1.8;">
         <li style="padding:2px 0;">▸ <strong>RLHF:</strong> human preferences reward faithful outputs and penalize unsupported claims</li>
         <li style="padding:2px 0;">▸ <strong>Grounded objectives:</strong> optimize faithfulness to the source, not just fluency</li>
       </ul>
-      <p style="font-size:12px;color:var(--text3);margin-top:8px;">Fixes the stage-2 cause: make training reward the right thing (<a href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html" style="color:var(--amber);">InstructGPT Guide ↗</a>).</p>
+      <p style="font-size:12px;color:var(--text3);margin-top:8px;">Fixes the stage-2 cause: make training reward the right thing (<a href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html" style="color:var(--amber-text);">InstructGPT Guide ↗</a>).</p>
     </div>
     <div class="card" style="border-top:3px solid var(--purple);">
-      <div class="card-label" style="color:var(--purple);">Generation &amp; Post-Hoc Mitigation</div>
+      <div class="card-label" style="color:var(--purple-text);">Generation &amp; Post-Hoc Mitigation</div>
       <ul style="list-style:none;font-size:12.5px;color:var(--text2);line-height:1.8;">
         <li style="padding:2px 0;">▸ <strong>RAG:</strong> anchor decoding in freshly retrieved evidence</li>
         <li style="padding:2px 0;">▸ <strong>Contrastive decoding:</strong> steer away from the hallucination-prone distribution</li>
@@ -601,22 +608,22 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div id="fixChips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.2rem;"></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:1rem;">
       <div class="card-sm" id="fixStageData">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--blue);margin-bottom:4px;">STAGE 1 · DATA</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--blue-text);margin-bottom:4px;">STAGE 1 · DATA</div>
         <div style="font-weight:600;font-size:13px;margin-bottom:4px;">Poisoned corpus</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.6;">Misaligned source–counterfactual pairs; biased and duplicated passages.</div>
-        <div id="fixHitData" style="font-family:var(--mono);font-size:10px;color:var(--green);margin-top:6px;min-height:14px;"></div>
+        <div id="fixHitData" style="font-family:var(--mono);font-size:10px;color:var(--green-text);margin-top:6px;min-height:14px;"></div>
       </div>
       <div class="card-sm" id="fixStageTraining">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--teal);margin-bottom:4px;">STAGE 2 · TRAINING</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--teal-text);margin-bottom:4px;">STAGE 2 · TRAINING</div>
         <div style="font-weight:600;font-size:13px;margin-bottom:4px;">Fluency-only objective</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.6;">Exposure bias, representation gaps, and snowballing errors.</div>
-        <div id="fixHitTraining" style="font-family:var(--mono);font-size:10px;color:var(--green);margin-top:6px;min-height:14px;"></div>
+        <div id="fixHitTraining" style="font-family:var(--mono);font-size:10px;color:var(--green-text);margin-top:6px;min-height:14px;"></div>
       </div>
       <div class="card-sm" id="fixStageInference">
-        <div style="font-family:var(--mono);font-size:10px;color:var(--purple);margin-bottom:4px;">STAGE 3 · INFERENCE</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--purple-text);margin-bottom:4px;">STAGE 3 · INFERENCE</div>
         <div style="font-weight:600;font-size:13px;margin-bottom:4px;">Ungrounded decoding</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.6;">Random sampling picks unsupported, low-probability paths.</div>
-        <div id="fixHitInference" style="font-family:var(--mono);font-size:10px;color:var(--green);margin-top:6px;min-height:14px;"></div>
+        <div id="fixHitInference" style="font-family:var(--mono);font-size:10px;color:var(--green-text);margin-top:6px;min-height:14px;"></div>
       </div>
     </div>
     <div id="fixVerdict"></div>
@@ -632,16 +639,16 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <h2 class="section-title">Impact — The <em>Shared Map</em></h2>
   <p class="section-desc">A survey rarely changes what people build. This one did: its vocabulary and cause → fix map became the field's common infrastructure.</p>
   <div class="notice-grid">
-    <div class="notice-card"><div class="notice-title">📖 Standard vocabulary</div><div class="notice-text">"Intrinsic / extrinsic" became the default way papers, benchmarks, and error analyses describe hallucination — the survey's taxonomy is now common language.</div></div>
-    <div class="notice-card"><div class="notice-title">📊 Benchmark wave</div><div class="notice-text">The detection framing inspired a wave of measurable evaluation — HaluEval, <a href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" style="color:var(--amber);">FActScore</a>, and long-form factuality benchmarks.</div></div>
+    <div class="notice-card"><div class="notice-title">📖 Standard vocabulary</div><div class="notice-text">"Factuality / faithfulness" — extending the classic intrinsic–extrinsic split from the NLG era — became the default way papers, benchmarks, and error analyses describe LLM hallucination. The survey's taxonomy is now common language.</div></div>
+    <div class="notice-card"><div class="notice-title">📊 Benchmark wave</div><div class="notice-text">The detection framing inspired a wave of measurable evaluation — HaluEval, <a href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" style="color:var(--amber-text);">FActScore</a>, and long-form factuality benchmarks.</div></div>
     <div class="notice-card"><div class="notice-title">🔗 RAG as the default</div><div class="notice-text">Grounding generation in retrieval moved from a 2020 research idea to the standard production mitigation — exactly the inference-stage lever the survey mapped.</div></div>
-    <div class="notice-card"><div class="notice-title">🔄 Self-correction research</div><div class="notice-text">Self-refinement and verification loops grew into a whole research line — from self-consistency to <a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber);">SelfCheckGPT</a>-style checkers.</div></div>
+    <div class="notice-card"><div class="notice-title">🔄 Self-correction research</div><div class="notice-text">Self-refinement and verification loops grew into a whole research line — from self-consistency to <a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber-text);">SelfCheckGPT</a>-style checkers.</div></div>
     <div class="notice-card"><div class="notice-title">🎯 RLHF as grounding</div><div class="notice-text">Human-preference training became the default hallucination lever in LLM pipelines — rewarding truthfulness, not just plausibility.</div></div>
     <div class="notice-card"><div class="notice-title">⚠️ Still open</div><div class="notice-text">The survey's open questions are still open: better benchmarks, interpretability, and evaluation of long-form factuality. Hallucination is reduced — not solved.</div></div>
   </div>
   <div class="card" style="margin-top:2rem;border-left:3px solid var(--red);">
-    <div class="card-label" style="color:var(--red);">What It Did NOT Solve</div>
-    <p style="font-size:13px;color:var(--text2);line-height:1.8;">A survey maps; it does not experiment. No new model, no benchmark run, no guaranteed fix ships with this paper. Every mitigation it catalogues reduces hallucination in some setting — <strong>none eliminates it</strong>. Detecting extrinsic claims still needs an external source of truth, which does not always exist. And the field it unified is now scaling faster than the map can be redrawn.</p>
+    <div class="card-label" style="color:var(--red-text);">What It Did NOT Solve</div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;">A survey maps; it does not experiment. No new model, no benchmark run, no guaranteed fix ships with this paper. Every mitigation it catalogues reduces hallucination in some setting — <strong>none eliminates it</strong>. Verifying fabricated facts still needs an external source of truth, which does not always exist. And the field it unified is now scaling faster than the map can be redrawn.</p>
   </div>
 </section>
 
@@ -651,16 +658,16 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 <section id="deepdive">
   <div class="section-tag">Deep Dive</div>
   <h2 class="section-title">The Field Map: One <em>Vocabulary</em> for a Field-Wide Problem</h2>
-  <p class="section-desc">Before this survey, every NLG sub-community had its own word for the same failure. Ji et al. merged them into one operational map: a definition anchored to the source, causes pinned to pipeline stages, and detection and mitigation slotted against each stage — the reference frame the whole LLM era still uses.</p>
+  <p class="section-desc">Before this survey, the NLG-era frame existed but the LLM era had outgrown it. Huang et al. consolidated the field into one operational map for LLMs: a definition anchored to facts and sources, the factuality/faithfulness taxonomy, causes pinned to the data → training → inference stages, and detection and mitigation slotted against each — the reference frame the field still uses.</p>
 
   <div class="problem-grid">
     <div class="problem-card good">
       <div class="problem-icon">📐</div>
       <div class="problem-title">The Definition — Faithful to What?</div>
       <ul class="problem-list">
-        <li><span class="highlight">Intrinsic</span> hallucination: the output contradicts the provided source</li>
-        <li><span class="highlight">Extrinsic</span> hallucination: output can't be verified from the source — it imports outside claims</li>
-        <li>Crucially source-relative: an extrinsic claim may be true in the world — the system still can't justify it</li>
+        <li><span class="highlight">Faithfulness</span> hallucination: the output contradicts or drifts from its source or instruction</li>
+        <li><span class="highlight">Factuality</span> hallucination: output fabricates or contradicts facts — fact fabrication and fact contradiction</li>
+        <li>Crucially source-relative: a fabricated claim may even be true in the world — the system still can't justify it</li>
         <li>This is why RAG systems can hallucinate <em>with</em> a correct document in hand</li>
       </ul>
     </div>
@@ -690,7 +697,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
     <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--amber);border-radius:var(--radius);padding:1rem 1.2rem;margin-top:1rem;">
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px;">VERDICT</div>
       <div style="font-weight:600;font-size:14px;margin-bottom:4px;">A taxonomy is infrastructure</div>
-      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The survey's lasting value isn't any single finding — it's that later work could say "extrinsic hallucination in the RAG setting" and be understood instantly. PaperMap's hallucination track is organized exactly along this map: detection without access (<a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber);font-weight:600;text-decoration:none;">SelfCheckGPT</a>), post-hoc verification (<a href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" style="color:var(--amber);font-weight:600;text-decoration:none;">FActScore</a>), and grounded generation (<a href="./RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html" style="color:var(--amber);font-weight:600;text-decoration:none;">RAGTruth</a>).</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;">The survey's lasting value isn't any single finding — it's that later work could say "faithfulness hallucination in the RAG setting" and be understood instantly. PaperMap's hallucination track is organized exactly along this map: detection without access (<a href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">SelfCheckGPT</a>), post-hoc verification (<a href="./FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">FActScore</a>), and grounded generation (<a href="./RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html" style="color:var(--amber-text);font-weight:600;text-decoration:none;">RAGTruth</a>).</div>
     </div>
   </div>
 
@@ -722,7 +729,7 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
   <p class="section-desc">Everything you need to remember about this survey.</p>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
     <div class="card-sm">✅ Definition: hallucination is generated content that is nonsensical or unfaithful to the provided source.</div>
-    <div class="card-sm">✅ Taxonomy: intrinsic hallucinations contradict the source; extrinsic ones cannot be verified from it — they bring in outside information.</div>
+    <div class="card-sm">✅ Taxonomy: factuality hallucinations fabricate or contradict facts; faithfulness hallucinations drift from the provided source, context, or instruction.</div>
     <div class="card-sm">✅ Causes map to three stages: data (misaligned + biased pairs), training (exposure bias, representation gaps, snowballing), inference (random sampling).</div>
     <div class="card-sm">✅ Detection comes in four families: retrieval-based, uncertainty-based, internal-state probing, and post-hoc verification.</div>
     <div class="card-sm">✅ Mitigation has a lever at every stage: data cleaning + grounding, RLHF + grounded objectives, RAG + contrastive decoding + self-verification.</div>
@@ -733,9 +740,9 @@ footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid v
 <div class="divider"></div>
 <!-- FOOTER -->
 <footer>
-  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2202.03629" target="_blank" rel="noopener noreferrer">"A Survey on Hallucination in Large Language Models: Principles, Taxonomy, Challenges, and Open Questions"</a> (Ji et al., 2023)</div>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2311.05232" target="_blank" rel="noopener noreferrer">"A Survey on Hallucination in Large Language Models: Principles, Taxonomy, Challenges, and Open Questions"</a> (Huang et al., 2023)</div>
   <div class="footer-links">
-    <a class="footer-link" href="https://arxiv.org/abs/2202.03629" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://arxiv.org/abs/2311.05232" target="_blank" rel="noopener noreferrer">Paper</a>
     <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
     <a class="footer-link" href="./TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html">TruthfulQA Guide</a>
     <a class="footer-link" href="./SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html">SelfCheckGPT Guide</a>
@@ -783,10 +790,10 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   const nextBtn=document.getElementById('clsNextBtn');
   if(!srcEl||!claimEl||!verdictEl||!bI||!bE||!nextBtn||!roundEl||!taskEl||!scoreEl)return;
   const rounds=[
-    {task:'Summarization',srcLabel:'SOURCE · SUMMARIZATION INPUT',source:'"Global chip sales fell 12% in Q3 — the third consecutive quarterly decline, led by a 20% drop in memory shipments."',claim:'"Global chip sales rose 12% in Q3 — the third consecutive quarterly increase."',type:'intrinsic',why:'Fell → rose, decline → increase. The claim directly contradicts the input, so you can prove it wrong using the source alone — an intrinsic hallucination.'},
-    {task:'Dialogue',srcLabel:'SOURCE · DIALOGUE KNOWLEDGE CARD',source:'"Returns: accepted within 30 days with receipt. Support hours: 9am–6pm, Mon–Sat."',claim:'"You can return items within 30 days with a receipt — or skip the line at our 24-hour self-service return kiosk on Elm Street."',type:'extrinsic',why:'The 30-day/receipt part matches the card. But the kiosk appears nowhere in it: the source neither confirms nor denies it, so it cannot be verified from the source — an extrinsic hallucination.'},
-    {task:'Machine Translation',srcLabel:'SOURCE · GERMAN INPUT',source:'"Der Zug nach Basel fährt um 8:15 Uhr ab."',claim:'"The train to Basel departs at 8:50."',type:'intrinsic',why:'The source says 8:15 (um 8:15 Uhr); the translation says 8:50. A wrong number, provable from the source alone — intrinsic. (Classic MT hallucination can also add or drop whole content — still judged against the source.)'},
-    {task:'RAG',srcLabel:'SOURCE · RETRIEVED PASSAGE',source:'"The Aurora EV has a certified range of 402 km, supports 150 kW fast charging, and launched in three markets this year."',claim:'"The Aurora EV has a 402 km range — and a company memo confirms a 900 km version will ship next spring."',type:'extrinsic',why:'The range matches the passage, but the memo and the 900 km version appear nowhere in it. The passage cannot settle whether that memo exists — unverifiable from the source, so extrinsic.'}
+    {task:'Summarization',srcLabel:'SOURCE · SUMMARIZATION INPUT',source:'"Global chip sales fell 12% in Q3 — the third consecutive quarterly decline, led by a 20% drop in memory shipments."',claim:'"Global chip sales rose 12% in Q3 — the third consecutive quarterly increase."',type:'faithfulness',why:'Fell → rose, decline → increase. The claim directly contradicts the input — a context inconsistency you can prove wrong using the source alone. That is a faithfulness hallucination.'},
+    {task:'Dialogue',srcLabel:'SOURCE · DIALOGUE KNOWLEDGE CARD',source:'"Returns: accepted within 30 days with receipt. Support hours: 9am–6pm, Mon–Sat."',claim:'"You can return items within 30 days with a receipt — or skip the line at our 24-hour self-service return kiosk on Elm Street."',type:'factuality',why:'The 30-day/receipt part matches the card. But the kiosk appears nowhere in it — the system fabricated an entity it cannot ground. That is a factuality hallucination (fact fabrication).'},
+    {task:'Machine Translation',srcLabel:'SOURCE · GERMAN INPUT',source:'"Der Zug nach Basel fährt um 8:15 Uhr ab."',claim:'"The train to Basel departs at 8:50."',type:'faithfulness',why:'The source says 8:15 (um 8:15 Uhr); the translation says 8:50. A wrong number, provable from the source alone — faithfulness (context inconsistency). (Classic MT hallucination can also add or drop whole content — still judged against the source.)'},
+    {task:'RAG',srcLabel:'SOURCE · RETRIEVED PASSAGE',source:'"The Aurora EV has a certified range of 402 km, supports 150 kW fast charging, and launched in three markets this year."',claim:'"The Aurora EV has a 402 km range — and a company memo confirms a 900 km version will ship next spring."',type:'factuality',why:'The range matches the passage, but the memo and the 900 km version appear nowhere in it — a fabricated fact no source can confirm. That is a factuality hallucination (fact fabrication).'}
   ];
   let idx=0,score=0,answered=0;
   function render(){
@@ -806,9 +813,9 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     answered++;
     scoreEl.textContent='Score '+score+'/'+answered;
     bI.disabled=true;bE.disabled=true;
-    const isIntr=(r.type==='intrinsic');
+    const isFaith=(r.type==='faithfulness');
     verdictEl.innerHTML='<div class="card-sm" style="border-color:'+(ok?'rgba(34,197,94,0.35)':'rgba(239,68,68,0.35)')+';background:'+(ok?'var(--green-dim)':'var(--red-dim)')+';animation:fadeUp .4s ease;">'
-      +'<div style="font-weight:600;font-size:13px;color:'+(ok?'var(--green)':'var(--red)')+';">'+(ok?'✓':'✗')+' '+(isIntr?'Intrinsic — the output contradicts the source.':'Extrinsic — the output cannot be verified from the source.')+'</div>'
+      +'<div style="font-weight:600;font-size:13px;color:'+(ok?'var(--green)':'var(--red)')+';">'+(ok?'✓':'✗')+' '+(isFaith?'Faithfulness — the output contradicts or drifts from its source.':'Factuality — the output fabricates a fact it cannot ground.')+'</div>'
       +'<div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:4px;">'+r.why+'</div></div>';
     nextBtn.textContent=(idx<rounds.length-1)?'Next round →':'See final score →';
     nextBtn.style.display='inline-block';
@@ -820,14 +827,14 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   function finish(){
     roundEl.textContent='Finished';
     taskEl.textContent='All 4 rounds';
-    srcEl.innerHTML='<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SUMMARY</div><span style="color:var(--red);">Intrinsic</span> = contradicts the source &nbsp;·&nbsp; <span style="color:var(--blue);">Extrinsic</span> = unverifiable from the source';
-    claimEl.innerHTML='<div style="font-size:10px;color:#64748b;margin-bottom:4px;">YOUR RESULT</div>You classified <span style="color:var(--amber);font-weight:600;">'+score+' of '+rounds.length+'</span> correctly. '+(score===rounds.length?'Flawless — the taxonomy is yours.':'Re-check the two cards above and try the verdicts again.');
+    srcEl.innerHTML='<div style="font-size:10px;color:var(--text3);margin-bottom:4px;">SUMMARY</div><span style="color:var(--red-text);">Faithfulness</span> = drifts from source / instruction &nbsp;·&nbsp; <span style="color:var(--blue-text);">Factuality</span> = fabricates or contradicts facts';
+    claimEl.innerHTML='<div style="font-size:10px;color:#64748b;margin-bottom:4px;">YOUR RESULT</div>You classified <span style="color:var(--amber-text);font-weight:600;">'+score+' of '+rounds.length+'</span> correctly. '+(score===rounds.length?'Flawless — the taxonomy is yours.':'Re-check the two cards above and try the verdicts again.');
     bI.style.display='none';bE.style.display='none';nextBtn.style.display='none';
     verdictEl.innerHTML='<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;"><button class="btn-primary" type="button" style="font-size:13px;padding:8px 18px;" onclick="window._restartCls()">Play again ↺</button><span style="font-size:12px;color:var(--text3);">Four tasks, one taxonomy — that is the survey\'s point.</span></div>';
   }
   window._restartCls=function(){idx=0;score=0;answered=0;scoreEl.textContent='Score 0/0';bI.style.display='inline-block';bE.style.display='inline-block';render();};
-  bI.addEventListener('click',()=>pick('intrinsic'));
-  bE.addEventListener('click',()=>pick('extrinsic'));
+  bI.addEventListener('click',()=>pick('faithfulness'));
+  bE.addEventListener('click',()=>pick('factuality'));
   render();
 })();
 
@@ -841,7 +848,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   const red='color:#f87171;font-weight:600;';
   const amb='color:#fbbf24;';
-  const conf='color:#22c55e;font-size:10px;';
+  const conf='color:#15803d;font-size:10px;';
   const seedTag='<span style="font-size:10px;color:#f87171;border:1px solid rgba(248,113,113,0.35);border-radius:4px;padding:0 4px;margin-left:6px;">SEED ERROR</span>';
   const lines=[
     {t:'<span style="color:#94a3b8;">USER · Tell me about the Meridian clock tower.</span>'},
@@ -866,8 +873,8 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
   }
   function showVerdict(){
     verdictEl.innerHTML='<div class="card-sm" style="border-color:rgba(239,68,68,0.3);background:var(--red-dim);animation:fadeUp .4s ease;">'
-      +'<div style="font-weight:600;font-size:13px;color:var(--red);">❄️ Verdict — one wrong premise, many confident details</div>'
-      +'<div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:4px;">The red <span style="font-family:var(--mono);color:var(--red);">62 meters</span> was invented in sentence 1 — nothing in the conversation sourced it. From then on it was <em>context</em>: every amber phrase is fluent, plausible, and conditioned on the invention. The model never goes back to doubt its own first sentence. That is <strong>hallucination snowballing</strong>: errors compound coherently — which is why hallucinated text so often reads <em>more</em> detailed and <em>more</em> confident, not less. (Simulated example; the survey catalogs the mechanism.)</div></div>';
+      +'<div style="font-weight:600;font-size:13px;color:var(--red-text);">❄️ Verdict — one wrong premise, many confident details</div>'
+      +'<div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:4px;">The red <span style="font-family:var(--mono);color:var(--red-text);">62 meters</span> was invented in sentence 1 — nothing in the conversation sourced it. From then on it was <em>context</em>: every amber phrase is fluent, plausible, and conditioned on the invention. The model never goes back to doubt its own first sentence. That is <strong>hallucination snowballing</strong>: errors compound coherently — which is why hallucinated text so often reads <em>more</em> detailed and <em>more</em> confident, not less. (Simulated example; the survey catalogs the mechanism.)</div></div>';
   }
   function reset(){
     clearTimers();
@@ -935,7 +942,7 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
       chip.innerHTML='✓ '+f.label;
       chip.style.borderColor='rgba(245,158,11,0.45)';
       chip.style.background='var(--amber-dim)';
-      chip.style.color='var(--amber)';
+      chip.style.color='var(--amber-text)';
       chip.style.cursor='default';
       placed++;
       progEl.textContent=placed+' / '+fixes.length+' fixes placed'+(placed===fixes.length?' — pipeline fully patched 🎉':'');
@@ -978,9 +985,9 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
     const s=S[k];
     body.innerHTML='<div style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;color:'+s.color+';margin-bottom:10px;">'+s.title+'</div>'
       +'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;">'
-      +'<div class="card-sm" style="border-left:3px solid var(--red);opacity:0;animation:'+(RM?'none':'fadeUp .5s ease .05s forwards')+';"><div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:6px;">WHAT BREAKS</div><div style="font-size:12px;color:var(--text2);line-height:1.8;">'+s.causes.map(c=>'• '+c).join('<br>')+'</div></div>'
-      +'<div class="card-sm" style="border-left:3px solid var(--blue);opacity:0;animation:'+(RM?'none':'fadeUp .5s ease .18s forwards')+';"><div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:6px;">WHO CAN SEE IT</div><div style="font-size:12px;color:var(--text2);line-height:1.8;">'+s.detect.map(c=>'• '+c).join('<br>')+'</div></div>'
-      +'<div class="card-sm" style="border-left:3px solid var(--green);opacity:0;animation:'+(RM?'none':'fadeUp .5s ease .31s forwards')+';"><div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:6px;">WHAT FIXES IT</div><div style="font-size:12px;color:var(--text2);line-height:1.8;">'+s.mit.map(c=>'• '+c).join('<br>')+'</div></div>'
+      +'<div class="card-sm" style="border-left:3px solid var(--red);opacity:0;animation:'+(RM?'none':'fadeUp .5s ease .05s forwards')+';"><div style="font-size:12px;font-weight:600;color:var(--red-text);margin-bottom:6px;">WHAT BREAKS</div><div style="font-size:12px;color:var(--text2);line-height:1.8;">'+s.causes.map(c=>'• '+c).join('<br>')+'</div></div>'
+      +'<div class="card-sm" style="border-left:3px solid var(--blue);opacity:0;animation:'+(RM?'none':'fadeUp .5s ease .18s forwards')+';"><div style="font-size:12px;font-weight:600;color:var(--blue-text);margin-bottom:6px;">WHO CAN SEE IT</div><div style="font-size:12px;color:var(--text2);line-height:1.8;">'+s.detect.map(c=>'• '+c).join('<br>')+'</div></div>'
+      +'<div class="card-sm" style="border-left:3px solid var(--green);opacity:0;animation:'+(RM?'none':'fadeUp .5s ease .31s forwards')+';"><div style="font-size:12px;font-weight:600;color:var(--green-text);margin-bottom:6px;">WHAT FIXES IT</div><div style="font-size:12px;color:var(--text2);line-height:1.8;">'+s.mit.map(c=>'• '+c).join('<br>')+'</div></div>'
       +'</div>';
   }
   function pick(k){Object.keys(btns).forEach(b=>btns[b].className=(b===k)?'btn-primary':'btn-outline');render(k);}
@@ -992,13 +999,13 @@ window.addEventListener('scroll',()=>{const h=document.documentElement;document.
 })();
 
 const QUIZ_DATA=[
-  {q:'In the survey\'s taxonomy, what makes a hallucination INTRINSIC?',opts:['The output cannot be verified from the provided source','The output is grammatically broken nonsense','The output directly contradicts the provided source','The output copies the source word-for-word'],correct:2,explain:'Intrinsic hallucinations contradict the source (fell → rose). Extrinsic ones cannot be verified from it — they bring in outside information whose truth the source cannot settle.'},
+  {q:'In the survey\'s taxonomy, what makes a hallucination one of FAITHFULNESS?',opts:['The output fabricates a fact that exists nowhere','The output is grammatically broken nonsense','The output contradicts or drifts from its provided source or instruction','The output copies the source word-for-word'],correct:2,explain:'Faithfulness hallucinations break faith with the source — context, instruction, or logical inconsistency (fell → rose). Factuality hallucinations fabricate or contradict facts — inventing a kiosk or a memo that exists nowhere.'},
   {q:'What does "hallucination snowballing" describe?',opts:['Errors accumulating randomly across many unrelated facts','Hallucination rates growing as models get larger','Retrieval systems returning increasingly wrong documents','A model commits to an early wrong detail, then coherently generates more details that build on it'],correct:3,explain:'Once a wrong detail is generated, it becomes context. Later tokens condition on it, so the model builds a confident, coherent story on a false premise — errors compound instead of self-correcting.'},
   {q:'"Exposure bias" — the model never sees its own errors during teacher-forced training — belongs to which stage of the survey\'s cause map?',opts:['Data stage','Inference stage','Training stage','Deployment stage'],correct:2,explain:'Exposure bias is a training-stage cause: teacher forcing feeds only gold prefixes, so the model never learns to recover from its own mistakes. Random sampling at decoding is the inference-stage counterpart.'},
   {q:'Which of these mitigations is retrieval-based?',opts:['RLHF with human preferences','Retrieval-Augmented Generation (RAG)','Contrastive decoding','Beam search with length penalty'],correct:1,explain:'RAG grounds generation in documents retrieved at inference time, anchoring the output to external evidence. RLHF is a training-stage fix, contrastive decoding changes the decode objective, and beam search is plain search.'},
-  {q:'Why did this survey matter to the field?',opts:['It proved hallucination had been fully solved by RLHF','It was the first paper ever to observe hallucination in neural MT','It covered only large language models, not classic NLG tasks','It unified a fragmented, task-by-task literature under one definition, taxonomy, and cause→fix map'],correct:3,explain:'Before 2022, each NLG subfield studied hallucination with its own vocabulary. Ji et al. gave the field one shared frame — definition, intrinsic/extrinsic taxonomy, data/training/inference causes, and stage-matched mitigations — spanning NLG tasks and LLMs.'}
+  {q:'Why did this survey matter to the field?',opts:['It proved hallucination had been fully solved by RLHF','It was the first paper ever to observe hallucination in neural MT','It covered only classic NLG tasks, not large language models','It unified a fragmented, task-by-task literature under one definition, taxonomy, and cause→fix map'],correct:3,explain:'Through 2023, subfields and papers described LLM hallucination with overlapping vocabularies. Huang et al. gave the field one shared frame — definition, factuality/faithfulness taxonomy, data/training/inference causes, and stage-matched mitigations — building on the classic Ji et al. NLG survey and scaled to LLMs.'}
 ];
-(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
 const answered={};
 function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
 </script>

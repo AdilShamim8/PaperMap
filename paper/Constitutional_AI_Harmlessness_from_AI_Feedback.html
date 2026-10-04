@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Constitutional AI: Harmlessness from AI Feedback — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the Constitutional AI paper, with visual demos for self-critique, revision, RLAIF preference training, and the 16-principle constitution.">
+<meta name="keywords" content="Constitutional AI, RLAIF, AI feedback, harmlessness, principles, self-critique, RLHF, alignment, Anthropic">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Constitutional_AI_Harmlessness_from_AI_Feedback.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Constitutional AI: Harmlessness from AI Feedback — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of Constitutional AI — RL from AI Feedback, self-critique loops, and harmlessness without human harm labels.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Constitutional_AI_Harmlessness_from_AI_Feedback.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="Constitutional AI: Harmlessness from AI Feedback — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of Constitutional AI — RL from AI Feedback, self-critique loops, and harmlessness without human harm labels.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#critique">Self-Critique</a>
+    <a class="nav-link" href="#rlaif">RLAIF</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2022</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#critique">Self-Critique</a>
+  <a href="#rlaif">RLAIF</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Harmlessness from <em>AI Feedback</em><br>Constitutional AI
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the paper that replaced tens of thousands of human harm-preference labels with a written constitution and the model's own critiques — RLAIF, the alignment recipe behind Claude.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2212.08073" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">52B</div>
+      <div class="stat-label">Model Scale Tested</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">16</div>
+      <div class="stat-label">Constitution Principles</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Phases (SL + RL)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2022</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Labelers</em> to <em>Principles</em></h2>
+  <p class="section-desc">RLHF works — but it outsources your values to whoever you hired. CAI writes the values down.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2017 →</div><div class="tl-title">RLHF lineage (Christiano, Stiennon, Ouyang)</div><div class="tl-desc">Human preference labels + reinforcement learning align models with what people rate as better.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022 · Apr</div><div class="tl-title">Helpful & Harmless assistants (Bai et al.)</div><div class="tl-desc">Anthropic's RLHF assistant line documents the harmlessness–helpfulness tension quantitatively.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · Dec</div><div class="tl-title">🚀 Constitutional AI (Bai et al.)</div><div class="tl-desc">A written list of principles + model-generated critiques and revisions + AI preference labels: RLAIF.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023 →</div><div class="tl-title">Claude, RLAIF everywhere</div><div class="tl-desc">The technique scales alignment: labeled data for harmfulness becomes optional, and transparency becomes a design axis.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The Problem With Preference Labels</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">RLHF's harm labels come from crowdworkers with their own (varying) judgments. That is expensive, inconsistent, slow to iterate on, and — most importantly — <strong>opaque</strong>: no one can read why a model learned where its boundaries are. Constitutional AI makes the boundary-setting step a public document, then lets models generate the training signal from it.</p>
+      <div class="notice-card" style="margin-top:1rem;"><div class="notice-title">🧭 Lineage</div><div class="notice-text">Compare with <a href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html" style="color:var(--amber-text);">InstructGPT</a> — same RL machinery, human-sourced labels instead.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">The <em>Scaling</em> Problem of RLHF</h2>
+  <p class="section-desc">RLHF needs tens of thousands of human preference labels. As models grow, that human pipeline becomes the bottleneck — and the hidden values problem becomes worse.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🏷</div>
+      <div class="problem-title">Human Labels Don't Scale or Explain</div>
+      <ul class="problem-list">
+        <li>Every boundary judgment needs a fresh batch of human comparisons</li>
+        <li>Labelers disagree with each other — and with the eventual users</li>
+        <li>Values are implicit in the data; nobody can audit why the model refuses what it refuses</li>
+        <li>RLHF tends to produce evasive, wishy-washy refusals to avoid disagreement</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">📜</div>
+      <div class="problem-title">A Constitution Scales With the Model</div>
+      <ul class="problem-list">
+        <li>Write the principles down once — 16 of them in this paper</li>
+        <li>The model itself generates critiques, revisions, and preference labels from those principles</li>
+        <li>Human labor shrinks to writing and iterating the constitution</li>
+        <li>Boundaries become auditable text, not statistical folklore</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — Case Law vs Written Law</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">RLHF is <strong>case law</strong>: behavior emerges from thousands of individual verdicts nobody wrote down. Constitutional AI is a <strong>code of written law</strong>: principles first, judgments derived from them, and any citizen (or auditor) can read the statute book.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Two Phases, <em>One Document</em></h2>
+  <p class="section-desc">Supervised learning from self-critique, then reinforcement learning from AI feedback — both driven by the same constitution.</p>
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">Phase 1 · SL</div><div class="notice-text">Sample responses to harmful prompts → model critiques its own output against a principle → rewrites it → finetune on the revisions.</div></div>
+    <div class="notice-card"><div class="notice-title">Phase 2 · RL</div><div class="notice-text">From the finetuned model, sample response pairs; an AI labels preferences by asking which response better follows a (random) principle; train a preference model; run RL against it.</div></div>
+    <div class="notice-card"><div class="notice-title">📜 The constitution</div><div class="notice-text">16 principles spanning harmlessness, helpfulness within safety, honesty, and process values like impartiality — each with an operational "how to choose" instruction.</div></div>
+    <div class="notice-card"><div class="notice-title">🤖 52B scale</div><div class="notice-text">Experiments through 52B parameters; harmlessness improves without collapsing helpfulness.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CRITIQUE DEMO -->
+<section id="critique">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The <em>Self-Critique</em> Loop</h2>
+  <p class="section-desc">Phase 1 in slow motion: a harmful response gets critiqued, then rewritten — all by the model, prompted with one principle.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Critique & Revise Stepper</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Step through the supervised phase on one prompt. Each click advances: initial response → constitutional critique → revision.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="caiStepBtn" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="caiResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="caiCritBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.9;min-height:210px;"></div>
+    <div id="caiCritNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Why Critique-Then-Revise Works</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Asking a model to rewrite a bad answer directly produces shallow edits. Asking it to <strong>critique first</strong> — "what is wrong with this response, per principle X?" — surfaces the failure mode explicitly, and the revision then has something concrete to fix. The paper found critique-with-a-specific-principle beats generic "improve this."</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Non-Evasive Refusals</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">A headline behavioral change: CAI models refuse <em>less evasively</em>. Instead of "I can't help with that," the trained model explains the objection and offers safe alternatives — because the constitution's principles ask it to be helpful within harmlessness, and to explain its objections.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RLAIF -->
+<section id="rlaif">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">RL From <em>AI Feedback</em></h2>
+  <p class="section-desc">Phase 2 replaces the human preference labeler with a model consulting the constitution.</p>
+  <div class="formula-card">
+    <div class="formula-main">reward ← PM( response pair + randomly sampled principle )</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">Pair sampling</div><div class="fp-name">Two responses</div><div class="fp-desc">From the phase-1 model, sample two responses to the same prompt.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Principle</div><div class="fp-name">Random principle</div><div class="fp-desc">A random constitution principle + its instruction is inserted into the preference prompt.</div></div>
+      <div class="formula-piece"><div class="fp-sym">AI label</div><div class="fp-name">Model judgment</div><div class="fp-desc">The model says which response better follows that principle.</div></div>
+      <div class="formula-piece"><div class="fp-sym">PM → RL</div><div class="fp-name">Preference model</div><div class="fp-desc">Train a PM on these AI labels, then optimize the policy against it.</div></div>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — AI Preference Labeler</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Given a harmful-ish prompt and two candidate replies, pick a principle and see which the AI judge prefers under it.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="caiPrincipleTabs"></div>
+    <div id="caiPrefBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.9;min-height:200px;"></div>
+  </div>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🎲 Why random principles</div><div class="notice-text">Sampling a different principle per comparison prevents the PM from over-fitting one axis — an implicit ensemble over the constitution.</div></div>
+    <div class="notice-card"><div class="notice-title">🔗 Decoupled preference labeling</div><div class="notice-text">The paper also shows the AI labeler can be decoupled from the policy — a general RLAIF pattern later papers reused.</div></div>
+    <div class="notice-card"><div class="notice-title">🔍 Transparency audit</div><div class="notice-text">When the label disagrees with intuition, you can trace it to a principle — debuggable alignment data.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Does It <em>Actually Work?</em></h2>
+  <p class="section-desc">The paper's evaluation: crowdworkers comparing CAI against RLHF baselines on helpfulness and harmlessness, plus a 438-question HHH test.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Harmlessness</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>RL-CAI (constitutional + RL) <strong>substantially improves harmlessness</strong> over the RLHF baseline at the 52B scale</li>
+        <li>Notably: <strong>non-evasive</strong> refusals — models explain objections and offer alternatives</li>
+        <li>Feedback quality: AI preference labels, prompt-by-principle, produce PMs close enough to human-labeled ones to train from</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The Honest Trade-offs</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Helpfulness dips somewhat versus pure helpfulness-RLHF — the classic HHH trade-off, made visible</li>
+        <li>Constitution quality is the new human-in-the-loop: bad principles → confidently misaligned behavior</li>
+        <li>SL-only CAI improves harmlessness <em>less</em> than the full SL+RL pipeline — RL phase matters</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Harmlessness vs Helpfulness Frontier</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Where each recipe lands on the two axes. Click a recipe to move the frontier dot.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="caiFrontierTabs"></div>
+    <div id="caiFrontierPlot" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);position:relative;height:230px;"></div>
+    <div id="caiFrontierNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — <em>Alignment</em> at Machine Speed</h2>
+  <p class="section-desc">RLAIF made preference data cheap enough to iterate on values daily instead of quarterly.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧬 The Claude lineage</div><div class="notice-text">Anthropic's assistant line grew directly from this recipe — constitutions evolved in public for later models.</div></div>
+    <div class="notice-card"><div class="notice-title">💸 Preference-label economics</div><div class="notice-text">If AI labels ≈ human labels for many comparisons, alignment iteration cost collapses — an industry-level shift.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 DPO and label-free alignment</div><div class="notice-text">The same pressure (less RL machinery, cheaper signals) drives <a href="./DPO.html" style="color:var(--amber-text);">Direct Preference Optimization</a>.</div></div>
+    <div class="notice-card"><div class="notice-title">👁 Scalable oversight research</div><div class="notice-text">CAI is a founding example of weaker-supervisors-stronger-models: the assistant critiques itself toward principles humans can read.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ Constitutional criticism</div><div class="notice-text">Who writes the constitution? Whose values? The paper opens governance questions it cannot close — deliberately.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Sycophancy, sandbagging, and values-drift-under-RL remain open; a constitution constrains legible behavior, not latent capabilities.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">The Constitution Is the <em>Real Product</em></h2>
+  <p class="section-desc">The training technique is transferable. The values in the document are where every downstream difference actually originates.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🧠</div>
+      <div class="problem-title">The Mechanism Illusion</div>
+      <ul class="problem-list">
+        <li>"RLAIF" sounds like the algorithm is the contribution</li>
+        <li>But any constitution trains a model — the output behavior tracks the principles</li>
+        <li>Two RLAIF models with different constitutions are different products, same math</li>
+        <li>Principles written informally can conflict, and the PM silently resolves the conflicts</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">📖</div>
+      <div class="problem-title">The Honest Reading</div>
+      <ul class="problem-list">
+        <li>The paper's 16 principles were "ad hoc," research-purpose — stated openly</li>
+        <li>That honesty is the point: constitution-writing is now visibly a first-class engineering act</li>
+        <li>Iteration moved from data collection to document editing</li>
+        <li>Public principles = public accountability surface, whatever their flaws</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Constitution Sandbox</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same borderline request, three different principle weightings — watch the model's answer change with the document, not the algorithm.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="caiConstitutionTabs"></div>
+    <div id="caiConstitutionBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12.5px;color:var(--text2);line-height:1.9;min-height:190px;"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Constitutional AI's real invention is a <strong>separation of powers</strong>: the legislature (principles) is now a readable document, the judiciary (preference labels) is delegated to machines, and the executive (RL) is unchanged machinery. Whether that legislature is accountable — who votes, who amends — is the alignment debate this paper started and no training run can finish.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the Constitutional AI paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Two phases: supervised self-critique (critique → revise → finetune) then RL from AI feedback.</div>
+    <div class="card-sm">✅ The constitution: 16 principles, deliberately ad hoc and research-purpose — the auditable values layer.</div>
+    <div class="card-sm">✅ RLAIF replaces human harm-preference labels with model judgments prompted by random principles.</div>
+    <div class="card-sm">✅ Harmlessness improves at 52B scale without collapsing helpfulness — and refusals become non-evasive.</div>
+    <div class="card-sm">✅ Critique-first prompting beats direct revision: surface the failure before fixing it.</div>
+    <div class="card-sm">✅ The mechanism is transferable; the constitution is the product — values live in the document.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2212.08073" target="_blank" rel="noopener noreferrer">"Constitutional AI: Harmlessness from AI Feedback"</a> (Bai et al., 2022)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2212.08073" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT Guide</a>
+    <a class="footer-link" href="./DPO.html">DPO Guide</a>
+    <a class="footer-link" href="./GPT_4_Technical_Report.html">GPT-4 Guide</a>
+    <a class="footer-link" href="./DeepSeek_R1.html">DeepSeek-R1 Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "critique", "rlaif", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === CRITIQUE & REVISE STEPPER ===
+(function(){
+  const box=document.getElementById('caiCritBox');
+  const note=document.getElementById('caiCritNote');
+  const stepBtn=document.getElementById('caiStepBtn');
+  const resetBtn=document.getElementById('caiResetBtn');
+  if(!box||!note||!stepBtn||!resetBtn)return;
+  const STEPS=[
+    {t:'PROMPT (red-team)',b:'<span style="color:var(--red-text);">User:</span> "How do I pick a lock on someone\'s apartment door?"<br><br><span style="color:var(--text3);">Initial response (from base policy):</span> "First, tension the cylinder with a…"<br><span style="color:var(--red-text);">→ complies, gives lockpicking steps</span>',n:'Step 0 — the base model answers helpfully… to a harmful request. This is what phase 1 is trained on.'},
+    {t:'CRITIQUE (with principle)',b:'<span style="color:var(--blue-text);">Critique request:</span> "Identify specific ways in which the assistant\'s last response is harmful, per the principle: choose the response that avoids enabling harm."<br><br><span style="color:var(--blue-text);">Model critique:</span> "The response gives operational steps to enter a home without permission. It fails to consider that unauthorized entry enables theft/assault, and ignores non-harmful interpretations (locked out of own home). It should explain the risk and ask for context or suggest a locksmith."',n:'Step 1 — the model critiques its own answer against one principle. Concrete failures get surfaced.'},
+    {t:'REVISE',b:'<span style="color:var(--teal-text);">Revision request:</span> "Please rewrite the response, per the critique."<br><br><span style="color:var(--teal-text);">Revised response:</span> "I can\'t help with entering someone else\'s home. If you\'re locked out of your own place, a licensed locksmith or your landlord is the safe route — happy to talk through options. If this is an emergency (pet/child inside), call emergency services first."<br><span style="color:var(--green-text);">→ refuses non-evasively, explains, offers alternatives</span>',n:'Step 2 — the revision becomes supervised training data. Finetune on thousands of these: phase 1 done.'}
+  ];
+  let i=0;
+  function render(){
+    box.innerHTML=STEPS[i].b;
+    note.textContent=`${STEPS[i].t} — ${STEPS[i].n}`;
+    stepBtn.textContent=i<STEPS.length-1?'Next step →':'Restart';
+  }
+  stepBtn.addEventListener('click',()=>{i=(i+1)%STEPS.length;render();});
+  resetBtn.addEventListener('click',()=>{i=0;render();});
+  render();
+})();
+
+// === AI PREFERENCE LABELER ===
+(function(){
+  const tabs=document.getElementById('caiPrincipleTabs');
+  const box=document.getElementById('caiPrefBox');
+  if(!tabs||!box)return;
+  const P=[
+    {n:'Avoid enabling harm',winner:'A',why:'B names a specific dangerous mechanism in the "why" — fails the principle even while refusing.'},
+    {n:'Be helpful in safe framing',winner:'B',why:'B explains reasoning and offers a safe path; A is a bare refusal that leaves the (possibly legitimate) user stuck.'},
+    {n:'Honesty + context-seeking',winner:'A',why:'A asks for context first (was it your own account?), which the honesty principle rewards; B assumes bad intent.'}
+  ];
+  let cur=0;
+  const RESP={
+    A:'<span style="color:var(--teal-text);">RESPONSE A:</span> "I can\'t help with account recovery for an account that isn\'t yours. Is this your own account, and can you use the official recovery flow? I can walk you through that."<br><br>',
+    B:'<span style="color:var(--purple-text);">RESPONSE B:</span> "No. Guessing recovery questions works because services hash answers weakly — but I won\'t help bypass someone\'s account. Contact support."<br><br>'
+  };
+  function render(){
+    tabs.innerHTML=P.map((p,k)=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${p.n}</button>`).join('');
+    box.innerHTML=`<span style="color:var(--text3);">PROMPT:</span> "How do I get into my ex\'s email?"<br><br>${RESP.A}${RESP.B}<span style="color:var(--amber-text);font-weight:600;">AI JUDGE (principle: ${P[cur].n}) → prefers ${P[cur].winner}</span><br><span style="color:var(--text3);">${P[cur].why}</span>`;
+  }
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    cur=Array.from(tabs.children).indexOf(b);render();
+  });
+  render();
+})();
+
+// === HHH FRONTIER ===
+(function(){
+  const tabs=document.getElementById('caiFrontierTabs');
+  const plot=document.getElementById('caiFrontierPlot');
+  const note=document.getElementById('caiFrontierNote');
+  if(!tabs||!plot||!note)return;
+  const R=[
+    {n:'HH RLHF',h:62,hm:52,c:'#3b82f6',d:'Human-labeled helpful+harmless RLHF — the baseline: strong helpfulness, moderate harmlessness.'},
+    {n:'SL-CAI',h:58,hm:68,c:'#14b8a6',d:'Constitutional supervised phase only: harmlessness rises, no RL push.'},
+    {n:'RL-CAI',h:55,hm:84,c:'#f59e0b',d:'Full constitutional pipeline: harmlessness jumps while helpfulness dips modestly — the visible trade.'}
+  ];
+  let cur=2;
+  function render(){
+    tabs.innerHTML=R.map((r,k)=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${r.n}</button>`).join('');
+    plot.innerHTML=`<div style="position:absolute;left:40px;right:12px;top:12px;bottom:32px;border-left:2px solid var(--border2);border-bottom:2px solid var(--border2);">
+      <div style="position:absolute;bottom:100%;left:0;font-family:var(--mono);font-size:10px;color:var(--text3);transform:rotate(-90deg) translateX(6px);transform-origin:bottom left;">harmlessness →</div>
+      <div style="position:absolute;top:100%;right:0;font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px;">helpfulness →</div>
+      ${R.map((r,k)=>`<div style="position:absolute;left:${(r.h/100)*88}%;bottom:${(r.hm/100)*82}%;width:16px;height:16px;border-radius:50%;background:${r.c};opacity:${k===cur?1:0.35};transform:translate(-50%,50%);transition:all .5s;box-shadow:${k===cur?'0 0 0 4px '+r.c+'33':'none'};"></div>`).join('')}
+      <div style="position:absolute;left:${(R[cur].h/100)*88}%;bottom:${(R[cur].hm/100)*82}%;transform:translate(14px,-64px);font-family:var(--mono);font-size:11px;color:${R[cur].c};font-weight:600;">${R[cur].n}</div>
+    </div>`;
+    note.textContent=R[cur].d+' (axes illustrative of the paper\'s qualitative finding.)';
+  }
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    cur=Array.from(tabs.children).indexOf(b);render();
+  });
+  render();
+})();
+
+// === CONSTITUTION SANDBOX ===
+(function(){
+  const tabs=document.getElementById('caiConstitutionTabs');
+  const box=document.getElementById('caiConstitutionBox');
+  if(!tabs||!box)return;
+  const C=[
+    {n:'Max-safety constitution',r:'"I can\'t help with fermentation equipment questions — controlled processes can go wrong. For food fermentation, start with tested recipes from a food-safety authority."',c:'#ef4444'},
+    {n:'Helpfulness-forward',r:'"Happy to talk fermentation! For kimchi: 2% salt by weight, keep below 20°C, watch for off odors. For anything pressurized, follow certified equipment guides — home-built vessels are the risky part."',c:'#f59e0b'},
+    {n:'Context-asking constitution',r:'"Are you fermenting food or beverages? Both are great hobbies — I\'ll give food-safe steps for kimchi, and for anything involving pressure or distillation I\'ll point you to certified guides and local law."',c:'#14b8a6'}
+  ];
+  let cur=1;
+  function render(){
+    tabs.innerHTML=C.map((c,k)=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${c.n}</button>`).join('');
+    box.innerHTML=`<span style="color:var(--text3);">USER:</span> "What equipment do I need to start fermenting stuff at home?"<br><br><span style="color:${C[cur].c};font-weight:600;">MODEL (trained under this constitution):</span> ${C[cur].r}<br><br><span style="color:var(--text3);">→ Same weights, same RLAIF math — different document, different assistant.</span>`;
+  }
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    cur=Array.from(tabs.children).indexOf(b);render();
+  });
+  render();
+})();
+
+
+const QUIZ_DATA=[{"q": "What are the two training phases of Constitutional AI?", "opts": ["Pretraining and RLHF", "Supervised self-critique (revise per principles) then RL from AI feedback", "Distillation and quantization", "Prompt tuning and LoRA"], "correct": 1, "explain": "Phase 1 (SL): sample responses, self-critique against a principle, rewrite, finetune on revisions. Phase 2 (RL): the model labels preference pairs by consulting random principles; train a preference model; optimize against it."}, {"q": "How many principles were in the paper's constitution?", "opts": ["4", "16", "52", "1,000"], "correct": 1, "explain": "The paper states a total of 16 different principles, selected ad hoc for research purposes — harmlessness, helpfulness, honesty, and process values."}, {"q": "What replaces the human preference labeler in RLAIF?", "opts": ["A larger frozen model, always", "A model prompted with a randomly sampled principle to judge response pairs", "A rule-based content filter", "Human labelers remain, just fewer"], "correct": 1, "explain": "For each comparison, a random principle (with its operational instruction) is inserted into a preference prompt; the model judges which response better follows it. Those AI labels train the preference model used for RL."}, {"q": "What behavioral change is a signature of CAI training?", "opts": ["More evasive refusals", "Non-evasive refusals that explain objections and offer alternatives", "Complete silence on all sensitive topics", "Refusing to answer any question twice"], "correct": 1, "explain": "Constitutional principles ask the model to be helpful within harmlessness and explain its objections — refusals become reasoned, with safe alternatives, instead of stonewalling."}, {"q": "What is the paper honest about regarding its constitution?", "opts": ["The principles were carefully designed by ethicists over years", "The 16 principles were selected ad hoc for research, not carefully designed", "The constitution was written by the model itself", "The principles were legally binding documents"], "correct": 1, "explain": "The paper explicitly states the principles were selected in an ad hoc manner for research purposes — the honest framing that constitution-writing is itself the open engineering problem."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

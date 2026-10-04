@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWE-Bench Pro: Can AI Agents Solve Long-Horizon Software Engineering Tasks? — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the SWE-Bench Pro paper, with visual demos for long-horizon enterprise tasks, the public/held-out/commercial split, and AI-for-code economic benchmarks.">
+<meta name="keywords" content="SWE-Bench Pro, software engineering agents, long-horizon tasks, enterprise software, benchmark, commercial, held-out, Scale AI, coding agents">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/SWE_Bench_Pro_Can_AI_Agents_Solve_Long_Horizon_Software_Engineering_Tasks.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="SWE-Bench Pro: Can AI Agents Solve Long-Horizon Software Engineering Tasks? — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of SWE-Bench Pro — 1,865 enterprise-scale problems, hours-to-days tasks, and contamination-resistant held-out evaluation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/SWE_Bench_Pro_Can_AI_Agents_Solve_Long_Horizon_Software_Engineering_Tasks.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="SWE-Bench Pro: Can AI Agents Solve Long-Horizon Software Engineering Tasks? — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of SWE-Bench Pro — 1,865 enterprise-scale problems, hours-to-days tasks, and contamination-resistant held-out evaluation.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#splits">Splits</a>
+    <a class="nav-link" href="#domains">Domains</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2025</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#splits">Splits</a>
+  <a href="#domains">Domains</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Enterprise Scale, <em>Locked Away</em><br>SWE-Bench Pro
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the benchmark that took coding evaluation into the enterprise: 1,865 long-horizon problems from 41 repositories, split into public, held-out, and commercial sets — with real-world scale as contamination control.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2509.16941" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">1,865</div>
+      <div class="stat-label">Problems</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">41</div>
+      <div class="stat-label">Repositories</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3-way</div>
+      <div class="stat-label">Public · Held-out · Commercial</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2025</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Bug Fixes</em> to <em>Feature Work</em></h2>
+  <p class="section-desc">SWE-bench measured whether agents could patch a bug. Pro asks whether they can do the day-sized — and week-shaped — work companies actually pay for.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2023</div><div class="tl-title">SWE-bench</div><div class="tl-desc">2,294 real GitHub issues → verified patches. The coding-agent era's original scoreboard.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2024–25</div><div class="tl-title">The saturation scramble</div><div class="tl-desc">Agent harnesses race up SWE-bench; Verified subset cleans labels; scores inflate; contamination worries grow.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2025 · Sep</div><div class="tl-title">🚀 SWE-Bench Pro (Scale AI · CAIS)</div><div class="tl-desc">1,865 problems, 41 repositories, long-horizon tasks requiring hours-to-days of professional effort — partitioned to resist gaming.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2026 →</div><div class="tl-title">Enterprise-eval genre</div><div class="tl-desc">Commercial splits, AI-for-code economic studies, and domain-specific (Verilog, AI-research) tracks become standard practice.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">What "Pro" Actually Changes</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Three moves at once: <strong>scale up the task</strong> (long-horizon, multi-file feature and refactor work), <strong>scale up the world</strong> (business apps, B2B services, dev tools — not just Python libraries), and <strong>lock the test bank</strong> (held-out + commercial splits that agents can never train on). Each move attacks a specific way its predecessor's scores stopped meaning what they said.</p>
+      <div class="notice-card" style="margin-top:1rem;"><div class="notice-title">🧭 Read first</div><div class="notice-text"><a href="./SWE_bench_Can_Language_Models_Resolve_Real_World_GitHub_Issues.html" style="color:var(--amber-text);">SWE-bench</a> — this page builds on it directly.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Three Ways the Old Score <em>Lied</em></h2>
+  <p class="section-desc">SWE-bench's 2024-2025 score explosion was real progress wrapped in three measurement problems.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">⏱</div>
+      <div class="problem-title">Problem 1 — Task Scale</div>
+      <ul class="problem-list">
+        <li>Issue-fixing is the "small" end of software work: localized root cause, bounded patch</li>
+        <li>Real enterprise engineering: multi-day features, migrations, refactors across services</li>
+        <li>High SWE-bench scores told you little about long-horizon autonomy</li>
+        <li>"Resolved" a bug ≠ "delivered" a feature with tests and docs</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🏗</div>
+      <div class="problem-title">Problem 2 — World Domain</div>
+      <ul class="problem-list">
+        <li>12 popular open-source Python libraries: visible, well-documented, heavily discussed online</li>
+        <li>Enterprise code: proprietary, sprawling, boring, undocumented — the actual deployment surface</li>
+        <li>Popular-repo tasks live in pretraining corpora (issues, PRs, blogs) → memorization risk</li>
+        <li>Pro sources 41 actively maintained repos, including commercial ones never seen in training</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Demo vs The Job</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">SWE-bench was a great <strong>interview loop</strong>: sharp, well-specified problems in a familiar codebase. Pro is the <strong>actual onboarding ticket</strong>: an unfamiliar 500k-line monorepo, a vague JIRA-shaped description, three days of work, and a reviewer who runs the tests. Passing interviews ≠ shipping software — the benchmark measures the gap.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">Contamination Control by <em>Construction</em></h2>
+  <p class="section-desc">The paper's signature design: a three-way partition that makes the most important test data structurally un-trainable.</p>
+  <div class="formula-card">
+    <div class="formula-main">1,865 problems = 11 public repos + 12 held-out repos + 18 commercial repos</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">Public</div><div class="fp-name">Open problems</div><div class="fp-desc">Sourced from 11 repositories, freely available — the comparison and development split.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Held-out</div><div class="fp-name">Unseen repos</div><div class="fp-desc">12 repositories whose problems are NOT publicly accessible — agents cannot have memorized them.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Commercial</div><div class="fp-name">Proprietary code</div><div class="fp-desc">18 proprietary repos under formal partnership agreements; only results are released, never the tasks.</div></div>
+      <div class="formula-piece"><div class="fp-sym">long-horizon</div><div class="fp-name">Task length</div><div class="fp-desc">Problems may require hours to days for a professional software engineer — feature-scale, not bug-scale.</div></div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Same Verification DNA</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Pro inherits the family's core: executable test verification (FAIL→PASS plus regression guards) and Docker-based environments. The grading philosophy — <strong>let the repository's own tests judge the agent</strong> — is unchanged; the tasks and worlds grew around it.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Task Construction</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Problems are built from the development histories of maintained repositories — including changes with broader blast radius than bug fixes. Each ships with tests and environments reproduced up-front, so evaluation stays deterministic even as tasks get long.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SPLITS -->
+<section id="splits">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The <em>Three-Bowl</em> Design</h2>
+  <p class="section-desc">Why the split architecture is the paper's real product.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Train / Report / Trust</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Move an agent team through the three bowls: develop on public, report public+held-out, trust only commercial. Click each bowl.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;" id="sbpBowlTabs"></div>
+    <div id="sbpBowlBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧪 Public split</div><div class="notice-text">Leaderboards and iteration: open problems, reproducible by anyone with the harness.</div></div>
+    <div class="notice-card"><div class="notice-title">🔒 Held-out split</div><div class="notice-text">Unseen repos: contamination-resistant comparison — agents can't have their issues in pretraining.</div></div>
+    <div class="notice-card"><div class="notice-title">🏢 Commercial split</div><div class="notice-text">Tasks never leave the partners' environments; only aggregate results publish. The trust anchor.</div></div>
+    <div class="notice-card"><div class="notice-title">📈 Result deltas</div><div class="notice-text">Public-vs-held-out score gaps expose contamination and overfitting directly — a built-in honesty check.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DOMAINS -->
+<section id="domains">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">Not Just <em>Python</em> Anymore</h2>
+  <p class="section-desc">The repository pool spans the actual shape of industrial software.</p>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Repository Categories</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Business applications:</strong> enterprise CRUD-scale systems with long histories and migration-shaped changes</li>
+        <li><strong>B2B services:</strong> multi-service codebases where changes ripple across boundaries</li>
+        <li><strong>Developer tools:</strong> build systems, CLIs, and platforms — tools that build tools</li>
+        <li><strong>(Domain tracks)</strong> the Pro line extends into specialized tracks — e.g., hardware description (Verilog) and AI-research code</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Why Domain Spread Matters</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">A model that aces Python libraries may be pattern-matching Python library <em>conventions</em>. Business apps, services, and tooling stress different muscles: reading unfamiliar architecture, respecting invariants nobody wrote down, and producing changes that survive contact with integration tests — the actual spectrum of professional software.</p>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Task Length Ladder</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Compare a SWE-bench-style fix to three Pro-shaped tasks. Advance to see the horizon stretch.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="sbpLadderBtn" type="button" style="font-size:13px;padding:8px 18px;">Next task type →</button>
+    </div>
+    <div id="sbpLadderBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">The Long-Horizon <em>Wall</em></h2>
+  <p class="section-desc">Pro's central empirical finding: performance drops sharply as tasks stretch — even for frontier agents.</p>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">SHARP DROP</div><div class="result-score" style="color:var(--red-text);">vs SWE-bench</div><div class="result-label">frontier agents that score high on issue-fixing fall hard on Pro's long-horizon tasks</div></div>
+    <div class="result-card"><div class="result-model">HOURS → DAYS</div><div class="result-score" style="color:var(--amber-text);">effort scale</div><div class="result-label">task difficulty calibrated to professional engineer time — a new unit of measure</div></div>
+    <div class="result-card"><div class="result-model">41 REPOS</div><div class="result-score" style="color:var(--blue-text);">3-way</div><div class="result-label">public / held-out / commercial splits with score gaps revealing overfitting</div></div>
+    <div class="result-card"><div class="result-model">ECONOMICS</div><div class="result-score" style="color:var(--teal-text);">$ studied</div><div class="result-label">AI-for-code framed in cost-of-human-effort terms — benchmarks as economic instruments</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Horizon vs Resolution</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Slide along task-horizon; watch resolution decay for two agent generations (illustrative of the paper's qualitative finding).</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="sbpH1Btn" type="button" style="font-size:12px;padding:8px 14px;">bug-fix scale</button>
+      <button class="btn-outline" id="sbpH2Btn" type="button" style="font-size:12px;padding:8px 14px;">half-day feature</button>
+      <button class="btn-primary" id="sbpH3Btn" type="button" style="font-size:12px;padding:8px 14px;">multi-day feature</button>
+    </div>
+    <div id="sbpHChart" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="sbpHNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — Evaluation <em>Grows Up</em></h2>
+  <p class="section-desc">Pro's influence is institutional: contamination control, economic framing, and commercial testbeds became normal vocabulary.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🔒 Held-out eval culture</div><div class="notice-text">Public-vs-held-out score deltas are now a standard honesty metric for agent claims.</div></div>
+    <div class="notice-card"><div class="notice-title">🏢 Private testbeds</div><div class="notice-text">Benchmark tasks that never publish — results only — became an accepted trust pattern for enterprise claims.</div></div>
+    <div class="notice-card"><div class="notice-title">💰 Economic benchmarks</div><div class="notice-text">Measuring AI labor in human-engineer-hours/cost reframed "how good" as "how much of the job."</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Domain specialization</div><div class="notice-text">Verilog and AI-research tracks showed the template ports beyond Python — <a href="./Terminal_Bench_2.html" style="color:var(--amber-text);">Terminal-Bench 2.0</a> carries the same spirit to CLI work.</div></div>
+    <div class="notice-card"><div class="notice-title">🚧 What it did NOT solve</div><div class="notice-text">Task count is small; commercial results depend on partner trust; "resolves tests" still doesn't measure code review quality or maintainability.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Open harness</div><div class="notice-text">Public split + harness let anyone reproduce the open part — the reproducibility half of the trust bargain.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Benchmarks as <em>Institutions</em></h2>
+  <p class="section-desc">Pro's deepest lesson: at the frontier, the benchmark's governance design matters as much as its task design.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🔓</div>
+      <div class="problem-title">The Open-Data Endgame</div>
+      <ul class="problem-list">
+        <li>Any fully public benchmark eventually enters training corpora</li>
+        <li>Scores then measure memorization-plus-optimization, not capability</li>
+        <li>The community's decontamination rituals are leaky and unverifiable post-hoc</li>
+        <li>Trust in numbers decays on a schedule set by crawler reach</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🏛</div>
+      <div class="problem-title">The Institutional Answer</div>
+      <ul class="problem-list">
+        <li>Move the trust-critical data out of reach: held-out + commercial splits</li>
+        <li>Publish methodology and public results; keep tasks private</li>
+        <li>Let score gaps between splits diagnose contamination mathematically</li>
+        <li>Benchmarks become auditable institutions, not just datasets</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Contamination Auditor</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Compare an agent's public-split vs held-out-split performance. A wide gap is the contamination fingerprint.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="sbpAg1Btn" type="button" style="font-size:12px;padding:8px 14px;">honest agent</button>
+      <button class="btn-primary" id="sbpAg2Btn" type="button" style="font-size:12px;padding:8px 14px;">contaminated agent</button>
+    </div>
+    <div id="sbpAuditBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">SWE-Bench Pro reads best as a <strong>governance paper wearing a benchmark costume</strong>. Its tasks are harder, its worlds are broader — but the durable contribution is the proof that evaluation can be structured so that trust doesn't decay with data availability. In a field whose numbers keep getting gamed, that is the rarest kind of result.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the SWE-Bench Pro paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ 1,865 problems from 41 actively maintained repositories — business apps, B2B services, dev tools.</div>
+    <div class="card-sm">✅ Three-way split: 11 public repos, 12 held-out (unseen), 18 commercial (proprietary, results-only).</div>
+    <div class="card-sm">✅ Long-horizon: problems that may take a professional engineer hours to days — feature-scale, not bug-scale.</div>
+    <div class="card-sm">✅ Same executable-verification DNA as SWE-bench: repo tests judge the agent, in Docker environments.</div>
+    <div class="card-sm">✅ Frontier agents drop sharply versus their SWE-bench-era scores — the long-horizon wall is real.</div>
+    <div class="card-sm">✅ Public-vs-held-out score gaps operationalize contamination auditing for coding agents.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2509.16941" target="_blank" rel="noopener noreferrer">"SWE-Bench Pro: Can AI Agents Solve Long-Horizon Software Engineering Tasks?"</a> (Deng et al., 2025)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2509.16941" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./SWE_bench_Can_Language_Models_Resolve_Real_World_GitHub_Issues.html">SWE-bench Guide</a>
+    <a class="footer-link" href="./Terminal_Bench_2.html">Terminal-Bench 2.0 Guide</a>
+    <a class="footer-link" href="./AgentBench_Evaluating_LLMs_as_Agents.html">AgentBench Guide</a>
+    <a class="footer-link" href="./MMLU_Measuring_Massive_Multitask_Language_Understanding.html">MMLU Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "splits", "domains", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === THREE-BOWL DESIGN ===
+(function(){
+  const tabs=document.getElementById('sbpBowlTabs');
+  const box=document.getElementById('sbpBowlBox');
+  if(!tabs||!box)return;
+  const B=[
+    {n:'Public bowl',c:'#3b82f6',rows:[['source','11 open repositories'],['access','problems downloadable'],['use','leaderboards, iteration, harness dev'],['risk','trainable-on — score inflation possible']]},
+    {n:'Held-out bowl',c:'#f59e0b',rows:[['source','12 repositories'],['access','problems NOT publicly accessible'],['use','contamination-resistant comparison'],['risk','minimal — unseen at training time']]},
+    {n:'Commercial bowl',c:'#a855f7',rows:[['source','18 proprietary repositories (partner agreements)'],['access','tasks never leave partner environments'],['use','the trust anchor — only aggregate results released'],['risk','lowest — structurally un-gamable']]}
+  ];
+  let cur=0;
+  function render(){
+    tabs.innerHTML=B.map((b,k)=>`<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid ${k===cur?'rgba(245,158,11,0.4)':'var(--border)'};background:${k===cur?'var(--amber-dim)':'var(--bg3)'};color:${k===cur?'var(--amber)':'var(--text2)'};cursor:pointer;">${b.n}</button>`).join('');
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:${B[cur].c};font-weight:600;margin-bottom:8px;">${B[cur].n.toUpperCase()} — ${B[cur].rows.length} properties</div>`+
+      B[cur].rows.map(r=>`<div style="display:grid;grid-template-columns:110px 1fr;gap:8px;padding:6px 10px;border-left:2px solid ${B[cur].c};margin-bottom:6px;background:var(--bg2);border-radius:0 6px 6px 0;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">${r[0]}</div>
+        <div style="font-size:12.5px;color:var(--text2);">${r[1]}</div></div>`).join('')+
+      `<div style="font-size:12px;color:var(--text3);margin-top:8px;">1,865 total problems across the three bowls; verification always runs the repositories' own tests.</div>`;
+  }
+  tabs.addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    cur=Array.from(tabs.children).indexOf(b);render();
+  });
+  render();
+})();
+
+// === TASK LENGTH LADDER ===
+(function(){
+  const box=document.getElementById('sbpLadderBox');
+  const btn=document.getElementById('sbpLadderBtn');
+  if(!box||!btn)return;
+  const T=[
+    {t:'SWE-bench scale · ~1-2 hours',d:'"Index construction fails for edge case X." Root cause localized; patch spans 1-2 files; tests exist for the bug.',w:12,c:'#14b8a6'},
+    {t:'Pro scale · half-day',d:'"Add pagination to the orders service and keep the CSV export working." Multiple files, an API contract, backward compatibility, and new tests to write.',w:34,c:'#f59e0b'},
+    {t:'Pro scale · multi-day',d:'"Migrate the billing module from the legacy queue to the new event bus, zero downtime." Cross-service refactor, migration shims, observability, docs — the shape of real tickets.',w:82,c:'#a855f7'}
+  ];
+  let i=0;
+  function render(){
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:${T[i].c};margin-bottom:6px;">${T[i].t}</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.7;margin-bottom:10px;">${T[i].d}</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">effort →</div>
+        <div style="flex:1;height:14px;background:var(--bg4);border-radius:7px;overflow:hidden;"><div style="height:100%;width:${T[i].w}%;background:${T[i].c};border-radius:7px;transition:width .7s ease;"></div></div>
+        <div style="font-family:var(--mono);font-size:11px;color:${T[i].c};font-weight:600;">${['bug-scale','feature-scale','project-scale'][i]}</div></div>`;
+  }
+  btn.addEventListener('click',()=>{i=(i+1)%T.length;render();});
+  render();
+})();
+
+// === HORIZON VS RESOLUTION ===
+(function(){
+  const chart=document.getElementById('sbpHChart');
+  const note=document.getElementById('sbpHNote');
+  if(!chart||!note)return;
+  const A=[{n:'issue-fix agent era',v:[62,38,12],c:'#3b82f6'},{n:'frontier agent 2025',v:[74,52,26],c:'#f59e0b'}];
+  const H=['bug-fix scale','half-day feature','multi-day feature'];
+  function render(h){
+    chart.innerHTML=A.map(a=>`<div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:3px;"><span>${a.n}</span><span style="color:${a.c};font-weight:600;">${a.v[h]}% resolved</span></div>
+      <div style="height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${a.v[h]}%;background:${a.c};border-radius:4px;transition:width .6s ease;"></div></div></div>`).join('');
+    note.textContent=`Horizon: ${H[h]} — illustrative of the paper's core finding: resolution decays sharply as task horizon grows, even for frontier agents.`;
+  }
+  document.getElementById('sbpH1Btn').addEventListener('click',()=>render(0));
+  document.getElementById('sbpH2Btn').addEventListener('click',()=>render(1));
+  document.getElementById('sbpH3Btn').addEventListener('click',()=>render(2));
+  render(0);
+})();
+
+// === CONTAMINATION AUDITOR ===
+(function(){
+  const box=document.getElementById('sbpAuditBox');
+  const a1=document.getElementById('sbpAg1Btn');
+  const a2=document.getElementById('sbpAg2Btn');
+  if(!box||!a1||!a2)return;
+  function render(mode){
+    const honest=mode==='honest';
+    const pub=honest?58:71, held=honest?55:41, comm=honest?51:38;
+    const gap=pub-held;
+    box.innerHTML=[['public split',pub,'#3b82f6'],['held-out split',held,'#f59e0b'],['commercial split',comm,'#a855f7']].map(r=>`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);width:120px;text-align:right;">${r[0]}</div>
+        <div style="flex:1;height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${r[1]}%;background:${r[2]};border-radius:4px;transition:width .7s ease;"></div></div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--text2);width:34px;">${r[1]}%</div></div>`).join('')+
+      `<div style="font-family:var(--mono);font-size:12px;margin-top:10px;color:${honest?'var(--green)':'var(--red)'};font-weight:600;">${honest?'gap = 3 points — performance is capability, not memorization.':`gap = ${gap} points — the contamination fingerprint: strong where data was visible, weak where it wasn't.`}</div>`;
+  }
+  a1.addEventListener('click',()=>render('honest'));
+  a2.addEventListener('click',()=>render('contaminated'));
+  render('honest');
+})();
+
+
+const QUIZ_DATA=[{"q": "How many problems and repositories does SWE-Bench Pro contain?", "opts": ["2,294 problems from 12 repositories", "1,865 problems from 41 repositories", "500 problems from 20 repositories", "10,000 problems from 100 repositories"], "correct": 1, "explain": "SWE-Bench Pro contains 1,865 problems sourced from 41 actively maintained repositories spanning business applications, B2B services, and developer tools."}, {"q": "What is the purpose of the three-way partition (public / held-out / commercial)?", "opts": ["To charge different prices per split", "Contamination control: held-out and commercial tasks can't be memorized or trained on", "To make evaluation faster", "To separate programming languages"], "correct": 1, "explain": "Public (11 repos) enables open iteration; held-out (12 repos) is inaccessible so agents can't have seen it; commercial (18 proprietary repos) publishes only results — together they make the trust-critical measurements structurally un-gamable."}, {"q": "What scale of engineering effort do Pro tasks represent?", "opts": ["Single-line fixes", "Tasks that may require hours to days for a professional software engineer", "Whole-year projects", "Only documentation changes"], "correct": 1, "explain": "Pro is explicitly designed around long-horizon tasks — feature-scale and refactor-scale work calibrated to hours-to-days of professional effort, unlike the bug-scale tasks of its predecessor."}, {"q": "What empirical pattern does the paper document for frontier agents?", "opts": ["They beat humans on multi-day tasks", "A sharp performance drop relative to their SWE-bench-era scores as horizon grows", "They refuse to use tools", "No difference between public and held-out splits"], "correct": 1, "explain": "Resolution decays sharply as task horizon stretches — the long-horizon wall — even for agents that look strong on issue-fixing benchmarks."}, {"q": "How can the splits detect contamination or overfitting?", "opts": ["By timing inference", "By comparing scores on public vs held-out problems — a large gap is the contamination fingerprint", "By counting tokens used", "By asking agents if they remember tasks"], "correct": 1, "explain": "If an agent performs much better on public problems than on held-out ones, part of its public score reflects memorization or benchmark-specific tuning — the score delta operationalizes the audit."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>

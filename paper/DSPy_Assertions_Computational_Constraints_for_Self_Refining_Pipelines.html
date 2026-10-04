@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSPy Assertions: Computational Constraints for Self-Refining Pipelines — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the DSPy Assertions paper, with visual demos for hard vs soft constraints, the self-refinement loop, backtracking, and constraint compliance results.">
+<meta name="keywords" content="DSPy Assertions, constraints, self-refinement, LM pipelines, backtracking, suggestions, compliance, programming constructs, reliability">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/DSPy_Assertions_Computational_Constraints_for_Self_Refining_Pipelines.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="DSPy Assertions: Computational Constraints for Self-Refining Pipelines — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of DSPy Assertions — the programming construct that lets LM pipelines check themselves and retry when they violate constraints.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/DSPy_Assertions_Computational_Constraints_for_Self_Refining_Pipelines.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="DSPy Assertions: Computational Constraints for Self-Refining Pipelines — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of DSPy Assertions — the programming construct that lets LM pipelines check themselves and retry when they violate constraints.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#assert-vs-suggest">Assert vs Suggest</a>
+    <a class="nav-link" href="#refinement">Self-Refinement</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#deepdive">Deep Dive</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#assert-vs-suggest">Assert vs Suggest</a>
+  <a href="#refinement">Self-Refinement</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#deepdive">Deep Dive</a>
+  <a href="#quiz">Quiz</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Pipelines That <em>Check Themselves</em><br>DSPy Assertions
+  </h1>
+  <p class="hero-subtitle">
+    A visual, step-by-step guide to the programming construct that gives compiled LM pipelines a conscience: declare constraints, catch violations, and self-refine — with compliance and quality rising together.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2312.13382" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">164%</div>
+      <div class="stat-label">More Constraint Passing</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">+37%</div>
+      <div class="stat-label">Quality Responses</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Constraint Types</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Year Published</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Wishes</em> to <em>Checks</em></h2>
+  <p class="section-desc">Programmers express constraints with types and asserts. LM pipelines needed the same vocabulary — with retries built in.</p>
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2023 · Oct</div><div class="tl-title">DSPy — pipelines as programs</div><div class="tl-desc">Signatures + Modules + compilers: LM pipelines become optimizable code. <a href="./DSPy_Compiling_Declarative_Language_Model_Calls_into_Self_Improving_Pipelines.html" style="color:var(--amber-text);">Read its guide</a>.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023 · Dec</div><div class="tl-title">🚀 LM Assertions (Singhvi et al., Stanford + Berkeley)</div><div class="tl-desc">The missing control construct: hard Asserts and soft Suggestions embedded in pipelines, with runtime self-refinement via backtracking.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2024–25</div><div class="tl-title">Reliability plumbing era</div><div class="tl-desc">Constraints, validators, and retry loops become standard in DSPy and adjacent frameworks — guardrails as first-class code.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The One-Sentence Idea</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;"Software has asserts; LLM pipelines had <em>hopes</em>. Assertions give them checks: a constraint is a Python expression over a stage's output; when it fails, the pipeline <strong>rewinds to the offending stage and retries with the failure feedback injected into the prompt</strong> — the model corrects itself, or the escalation continues.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Constraints Lived in <em>Prose</em></h2>
+  <p class="section-desc">Before Assertions, "the output must be valid JSON with exactly three bullet points" was a sentence inside a prompt — enforced by nothing.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🙏</div>
+      <div class="problem-title">Praying in the Prompt</div>
+      <ul class="problem-list">
+        <li>Constraints phrased as prose: ignored at exactly the rate the model finds convenient</li>
+        <li>Validation happened downstream — by the user, in production, at 2am</li>
+        <li>Fixing violations meant prompt tweaks and prayers, not mechanisms</li>
+        <li>Optimizers (DSPy's own!) tuned for the metric while violating soft constraints silently</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">✅</div>
+      <div class="problem-title">Constraints as Code</div>
+      <ul class="problem-list">
+        <li>Express constraints as boolean expressions over stage outputs — typed, testable, versioned</li>
+        <li>Runtime enforcement with automatic backtracking to the failing stage</li>
+        <li>Failure feedback injected into the retry: the model sees WHAT it violated</li>
+        <li>Soft constraints (Suggestions) bias and refine without hard failure</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-label">Analogy — The Spell-Checker vs The Style Guide</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Prose constraints are a <strong>style guide mailed to the author</strong> — consulted at the author's discretion. Assertions are a <strong>spell-checker inside the editor</strong>: every violation is caught the moment it's typed, and the cursor jumps back to fix it. The document leaves the room clean.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CORE IDEA -->
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">One Construct, Two <em>Flavors</em></h2>
+  <p class="section-desc">The paper defines exactly two primitives — and their difference is a policy knob, not a syntax change.</p>
+  <div class="formula-card">
+    <div class="formula-main">Assert(condition, message) &nbsp;·&nbsp; Suggest(condition, message)</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">Assert</div><div class="fp-name">Hard constraint</div><div class="fp-desc">Violation escalates: retry with feedback → … → pipeline failure. Contract semantics.</div></div>
+      <div class="formula-piece"><div class="fp-sym">Suggest</div><div class="fp-name">Soft constraint</div><div class="fp-desc">Violation triggers refinement, but execution proceeds even if never satisfied. Preference semantics.</div></div>
+      <div class="formula-piece"><div class="fp-sym">condition</div><div class="fp-name">Any Python predicate</div><div class="fp-desc">Over the stage's outputs: types, counts, regexes, cross-field consistency, even LM-judged properties.</div></div>
+      <div class="formula-piece"><div class="fp-sym">message</div><div class="fp-name">The feedback</div><div class="fp-desc">On retry, this text is injected so the model knows exactly what to fix — targeted self-correction.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ASSERT VS SUGGEST -->
+<section id="assert-vs-suggest">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Hard vs Soft, <em>Lived</em></h2>
+  <p class="section-desc">The same violated condition under both flavors — watch the control flow diverge.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Two Escalation Paths</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-outline" id="daHardBtn" type="button" style="font-size:13px;padding:8px 18px;">Assert (hard)</button>
+      <button class="btn-primary" id="daSoftBtn" type="button" style="font-size:13px;padding:8px 18px;">Suggest (soft)</button>
+    </div>
+    <div id="daPathBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;min-height:210px;"></div>
+    <div id="daPathNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🔧 Where each belongs</div><div class="notice-text">Assert: schemas, required fields, cross-stage contracts. Suggest: style, tone, length, "prefer X" — quality nudges.</div></div>
+    <div class="notice-card"><div class="notice-title">🔀 Composition with compilation</div><div class="notice-text">Assertions participate in optimization: teleprompted programs keep constraints across bootstrapping — demos that violate are rejected.</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Simple Input/Output (SIO) refinement</div><div class="notice-text">The paper's minimal refinement mode: feed back the input + constraint text, ask for corrected output — no fancy machinery needed to work.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- REFINEMENT -->
+<section id="refinement">
+  <div class="section-tag">Chapter 04</div>
+  <h2 class="section-title">The <em>Backtracking</em> Loop</h2>
+  <p class="section-desc">Under the hood: a control-flow transform on the pipeline graph — failure propagation with feedback injection.</p>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Backtracking Stepper</div>
+    <p style="font-size:13px;color:var(--text2);margin:0 0 1rem;">A generation stage violates a cross-field constraint. Step through: detection → rewind → feedback retry → pass.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="daStepBtn" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="daResetBtn" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="daStepBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:var(--text2);line-height:1.9;min-height:220px;"></div>
+    <div id="daStepNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">What Makes It "Self"-Refinement</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">No human in the loop and no external judge: the pipeline evaluates its own outputs with ordinary Python predicates, then asks the <em>same model</em> to repair its own violation with the message as guidance. Retries escalate with history — second attempts see the first failure.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">The Termination Question</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Hard asserts bound retries (then fail loudly — the contract matters more than completion). Soft suggestions always terminate: refinement is best-effort, and the pipeline proceeds with the best attempt. This asymmetry is the paper's design wisdom: <strong>strictness where correctness is contractual, tolerance where it is preferential.</strong></p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Compliance <em>and</em> Quality — Together</h2>
+  <p class="section-desc">Four case studies in the paper; the headline is the rare double win.</p>
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">CONSTRAINT COMPLIANCE</div><div class="result-score" style="color:var(--amber-text);">+164%</div><div class="result-label">passing imposed rules more often — the direct effect of, well, checking</div></div>
+    <div class="result-card"><div class="result-model">RESPONSE QUALITY</div><div class="result-score" style="color:var(--teal-text);">+37%</div><div class="result-label">more high-quality responses — refinement helps the task itself, not just the rules</div></div>
+    <div class="result-card"><div class="result-model">CASE STUDIES</div><div class="result-score" style="color:var(--blue-text);">4</div><div class="result-label">text generation tasks with structural + semantic constraints (incl. multi-hop QA pipelines)</div></div>
+    <div class="result-card"><div class="result-model">COST</div><div class="result-score" style="color:var(--purple-text);">retries only</div><div class="result-label">overhead proportional to violation rate — compliant outputs cost the same</div></div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Compliance Ledger</div>
+    <p style="font-size:13px;color:var(--text2);margin:0 0 1rem;">100 outputs through a constrained pipeline: baseline vs assertions. Press run.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="daLedgerBtn" type="button" style="font-size:13px;padding:8px 18px;">Run 100 outputs</button>
+    </div>
+    <div id="daLedgerBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+    <div id="daLedgerNote" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- IMPACT -->
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Impact — Guardrails Become <em>Code</em></h2>
+  <p class="section-desc">Assertions normalized the idea that reliability constructs belong in the programming model, not the prompt.</p>
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🧱 Framework plumbing</div><div class="notice-text">Validators/retry loops are now standard in DSPy and cousins — the paper's construct shipped as infrastructure.</div></div>
+    <div class="notice-card"><div class="notice-title">🔁 The refinement lineage</div><div class="notice-text">Self-refinement and self-correction research (Self-Refine, CRITIC, constitutional retries) shares this runtime-check DNA. <a href="./Self_Consistency.html" style="color:var(--amber-text);">Self-Consistency</a> is the sampling-side cousin.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Testable LLM behavior</div><div class="notice-text">Constraints turn "the model should never…" into a runnable test — CI for LM pipelines became conceivable.</div></div>
+    <div class="notice-card"><div class="notice-title">🎓 Pedagogy</div><div class="notice-text">"Program the checks, don't prompt the hopes" entered the standard advice for production LLM engineering.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Constraint quality is still human-written; retries cost latency; constraints can conflict with the metric (optimization tension persists).</div></div>
+    <div class="notice-card"><div class="notice-title">🧭 Study path</div><div class="notice-text"><a href="./DSPy_Compiling_Declarative_Language_Model_Calls_into_Self_Improving_Pipelines.html" style="color:var(--amber-text);">DSPy</a> first — this page is its reliability layer.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DEEP DIVE -->
+<section id="deepdive">
+  <div class="section-tag">Deep Dive</div>
+  <h2 class="section-title">Whose <em>Rules</em> Are These?</h2>
+  <p class="section-desc">The construct is clean; the governance question it opens is not — and the paper is candid about constraint design being a first-class engineering act.</p>
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">📏</div>
+      <div class="problem-title">The Hidden Spec Problem</div>
+      <ul class="problem-list">
+        <li>Assertions encode a spec — and specs are written by whoever writes asserts</li>
+        <li>Hard constraints can mask failures: "100% compliant, 0% useful" via over-rejection</li>
+        <li>Constraint-induced retries bias outputs toward constraint-friendly modes — subtle distribution shift</li>
+        <li>Conflicting soft suggestions resolve silently — whose preference wins?</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔍</div>
+      <div class="problem-title">The Visibility Dividend</div>
+      <ul class="problem-list">
+        <li>Unlike prose prompts, constraints are inspectable, diffable, and testable artifacts</li>
+        <li>Retry counts are metrics: violation hot-spots localize where the model or spec is weak</li>
+        <li>Hard/soft split forces explicit classification of every rule — contract or preference?</li>
+        <li>The spec became reviewable code — the precondition for governing it at all</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Constraint Triage</div>
+    <p style="font-size:13px;color:var(--text2);margin:0 0 1rem;">Classify each rule: hard Assert or soft Suggest? Click through six real-world rules.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn-primary" id="daTriageBtn" type="button" style="font-size:13px;padding:8px 18px;">Next rule →</button>
+    </div>
+    <div id="daTriageBox" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);"></div>
+  </div>
+  <div class="card">
+    <div class="card-label">Verdict</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">DSPy Assertions' real contribution is a <strong>separation of concerns</strong> for the reliability layer: WHAT must hold (constraints as reviewable code), HOW failures are handled (backtracking + feedback), and WHEN to be strict (the hard/soft split). The construct is small; the discipline it enables — specs you can read, tests that actually run, hot-spots you can measure — is the beginning of software engineering proper for LM systems.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from the DSPy Assertions paper.</p>
+  <div id="quizContainer"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TAKEAWAYS -->
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ LM Assertions: Python predicates over stage outputs, embedded in DSPy pipelines as first-class constructs.</div>
+    <div class="card-sm">✅ Two flavors — Assert (hard, contract) vs Suggest (soft, preference) — one syntax, different escalation policy.</div>
+    <div class="card-sm">✅ Violations trigger backtracking: the failing stage retries with the violation message injected as feedback.</div>
+    <div class="card-sm">✅ Across four case studies: up to 164% more constraint passing AND up to 37% more high-quality responses.</div>
+    <div class="card-sm">✅ Constraints compose with compilation — bootstrapped demonstrations that violate rules are rejected.</div>
+    <div class="card-sm">✅ Specs become code: inspectable, diffable, testable — reliability engineering for LM pipelines.</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2312.13382" target="_blank" rel="noopener noreferrer">"DSPy Assertions: Computational Constraints for Self-Refining Pipelines"</a> (Singhvi et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2312.13382" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./DSPy_Compiling_Declarative_Language_Model_Calls_into_Self_Improving_Pipelines.html">DSPy Guide</a>
+    <a class="footer-link" href="./Self_Consistency.html">Self-Consistency Guide</a>
+    <a class="footer-link" href="./Chain_Of_Thought_Prompting.html">Chain-of-Thought Guide</a>
+    <a class="footer-link" href="./ReAct.html">ReAct Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "assert-vs-suggest", "refinement", "results", "impact", "deepdive", "quiz"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+
+// === TWO ESCALATION PATHS ===
+(function(){
+  const box=document.getElementById('daPathBox');
+  const note=document.getElementById('daPathNote');
+  const hardBtn=document.getElementById('daHardBtn');
+  const softBtn=document.getElementById('daSoftBtn');
+  if(!box||!note||!hardBtn||!softBtn)return;
+  function render(mode){
+    const hard=mode==='hard';
+    box.innerHTML=`<span style="color:var(--text3);">CONSTRAINT:</span> len(output.bullets) == 3 and output.bullets is List[str]<br><br>
+    <span style="color:var(--text3);">STAGE OUTPUT:</span> bullets = ["Set up the repo", "Write tests", "Ship", "Post-mortem"]  <span style="color:var(--red-text);">— 4 items ✗</span><br><br>
+    ${hard
+      ?`<span style="color:var(--red-text);font-weight:600;">ASSERT FAILS →</span><br>retry 1: feedback "3 bullets required" → still 4 ✗<br>retry 2: 3 bullets ✓ → pipeline continues<br><span style="color:var(--text3);">(if retries exhausted: pipeline FAILS — the contract wins)</span>`
+      :`<span style="color:var(--amber-text);font-weight:600;">SUGGEST FAILS →</span><br>refinement 1: "prefer exactly 3 bullets" → 4 items (kept, best-effort)<br>refinement 2: 3 bullets ✓ → cleaner output used<br><span style="color:var(--text3);">(either way, execution proceeds — the preference nudged, not enforced)</span>`}`;
+    note.textContent=hard
+      ?'Hard path: strictness escalates until the contract holds or the pipeline fails loudly. Use for schemas and cross-stage invariants.'
+      :'Soft path: refinement is best-effort; the pipeline never dies for a preference. Use for style, tone, and quality nudges.';
+  }
+  hardBtn.addEventListener('click',()=>render('hard'));
+  softBtn.addEventListener('click',()=>render('soft'));
+  render('soft');
+})();
+
+// === BACKTRACKING STEPPER ===
+(function(){
+  const box=document.getElementById('daStepBox');
+  const note=document.getElementById('daStepNote');
+  const btn=document.getElementById('daStepBtn');
+  const reset=document.getElementById('daResetBtn');
+  if(!box||!note||!btn||!reset)return;
+  const ST=[
+    {t:'stage executes',b:'<span style="color:var(--amber-text);">GenerateAnswer("facts, question → answer")</span><br>output: "The flight departs at 9:40 AM, arrival 11:05 AM."<br><span style="color:var(--text3);">context facts: departure 9:40 AM, arrival 12:15 PM</span>',n:'A pipeline stage runs and produces output. Note: the arrival time contradicts the facts.'},
+    {t:'constraint check',b:'<span style="color:var(--teal-text);">Assert(answer_is_consistent_with(facts)) → False ✗</span><br><span style="color:var(--red-text);">violation: arrival time 11:05 AM does not match facts (12:15 PM)</span>',n:'A Python predicate inspects the output against upstream data — a cross-stage contract, not a style wish.'},
+    {t:'backtrack + feedback',b:'<span style="color:var(--purple-text);">control rewinds to GenerateAnswer</span><br>retry prompt += "IMPORTANT: your last answer violated: arrival time 11:05 AM does not match facts (12:15 PM). Fix only this."<br>output: "…departs 9:40 AM, arriving 12:15 PM." ✓',n:'The failure message is injected into the retry — targeted self-correction by the same model. Retry 2 sees retry 1\'s mistake.'},
+    {t:'pass & continue',b:'<span style="color:var(--green-text);">Assert → True ✓</span> · pipeline continues downstream<br><span style="color:var(--text3);">ledger: 1 violation, 1 retry, 0 human interventions</span>',n:'Self-refinement complete: the pipeline caught, diagnosed, and repaired its own error.'}
+  ];
+  let i=0;
+  function render(){
+    box.innerHTML=`<div style="font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:6px;">${ST[i].t.toUpperCase()}</div><div style="font-size:12.5px;color:var(--text2);line-height:1.9;">${ST[i].b}</div>`;
+    note.textContent=ST[i].n;
+    btn.textContent=i<ST.length-1?'Next step →':'Restart';
+  }
+  btn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+  reset.addEventListener('click',()=>{i=0;render();});
+  render();
+})();
+
+// === COMPLIANCE LEDGER ===
+(function(){
+  const box=document.getElementById('daLedgerBox');
+  const note=document.getElementById('daLedgerNote');
+  const btn=document.getElementById('daLedgerBtn');
+  if(!box||!note||!btn)return;
+  const RM=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function render(mode){
+    const base=mode==='base';
+    const rows=base
+      ?[{n:'constraint passing',v:61,c:'#3b82f6'},{n:'high-quality responses',v:55,c:'#3b82f6'}]
+      :[{n:'constraint passing',v:96,c:'#f59e0b'},{n:'high-quality responses',v:75,c:'#f59e0b'}];
+    box.innerHTML=rows.map(r=>`<div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:3px;"><span>${r.n}</span><span style="color:${r.c};font-weight:600;">${r.v}/100</span></div>
+      <div style="height:20px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${r.v}%;background:${r.c};border-radius:4px;transition:width .8s ease;"></div></div></div>`).join('')+
+      `<div style="font-size:12px;color:var(--text3);">${base?'Baseline: prose-constrained prompting.':'With assertions + refinement: retries only on violation — compliant outputs cost nothing extra. (illustrative of the 164%/37% direction)'}</div>`;
+    note.textContent=mode==='base'?'Mode: baseline (no runtime checks).':'Mode: DSPy Assertions.';
+  }
+  btn.addEventListener('click',()=>{
+    render('base');
+    setTimeout(()=>{if(!RM)render('assert');},1400);
+  });
+  render('assert');
+})();
+
+// === CONSTRAINT TRIAGE ===
+(function(){
+  const box=document.getElementById('daTriageBox');
+  const btn=document.getElementById('daTriageBtn');
+  if(!box||!btn)return;
+  const R=[
+    {r:'Response must be parseable as JSON matching the declared schema.',a:'Assert',why:'A contract: downstream code parses it or breaks. Structural, binary, hard.'},
+    {r:'Prefer concise answers under 150 words.',a:'Suggest',why:'A preference: longer answers still work. Length is quality-flavored, not contract-flavored.'},
+    {r:'The cited quote must appear verbatim in the retrieved passage.',a:'Assert',why:'Faithfulness contract: a fabricated "quote" is a correctness violation, not a style issue.'},
+    {r:'Prefer a friendly, encouraging tone.',a:'Suggest',why:'Tone is preference — enforced tone becomes robotic; suggestion refines gracefully.'},
+    {r:'Every tool call must be a real function in the registry.',a:'Assert',why:'An interface contract: hallucinated function names break execution, period.'},
+    {r:'Consider adding concrete examples when explaining concepts.',a:'Suggest',why:'Pedagogical preference: helpful, contextual, and correctly soft.'}
+  ];
+  let i=0;
+  function render(){
+    const x=R[i];
+    const hard=x.a==='Assert';
+    box.innerHTML=`<div style="font-size:13px;color:var(--text2);margin-bottom:10px;font-style:italic;">"${x.r}"</div>
+      <div style="display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;color:${hard?'var(--red)':'var(--amber)'};background:var(--bg2);padding:4px 12px;border-radius:20px;border:1px solid ${hard?'rgba(239,68,68,0.4)':'rgba(245,158,11,0.4)'};">
+        <strong>${x.a}</strong> · ${hard?'contract':'preference'}</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:10px;line-height:1.7;">${x.why}</div>`;
+  }
+  btn.addEventListener('click',()=>{i=(i+1)%R.length;render();});
+  render();
+})();
+
+
+const QUIZ_DATA=[{"q": "What are the two constraint primitives introduced by the paper?", "opts": ["Assert (hard) and Suggest (soft)", "Loop and If", "Validate and Sanitize", "Check and Balance"], "correct": 0, "explain": "Assert is a hard constraint whose violation escalates retries and can fail the pipeline; Suggest is a soft constraint that triggers refinement but never blocks execution — contract vs preference semantics."}, {"q": "What happens when an assertion fails at runtime?", "opts": ["The pipeline silently drops the output", "Control backtracks to the offending stage and retries with the failure message injected as feedback", "The model is retrained immediately", "The user is emailed"], "correct": 1, "explain": "Backtracking rewinds execution to the failing module and retries with the violation message included — the model sees exactly what it broke and self-corrects; retries escalate until the constraint holds or (for hard asserts) the pipeline fails."}, {"q": "What improvements did the paper report across its four case studies?", "opts": ["Only compliance improved", "Up to 164% more constraint passing AND up to 37% more high-quality responses", "Neither metric moved", "Quality dropped but compliance rose"], "correct": 1, "explain": "LM Assertions improve both constraint compliance (up to 164% more rule passing) and downstream task performance (up to 37% more high-quality responses) — refinement helps the task, not just the rules."}, {"q": "How do assertions interact with DSPy's compiler/optimizers?", "opts": ["They disable optimization entirely", "Constraints are respected during bootstrapping — candidate demonstrations that violate rules are rejected, so the optimized pipeline keeps the constraints", "Optimizers delete the asserts", "They only run in production"], "correct": 1, "explain": "Assertions integrate with compilation: teleprompted programs carry their constraints through optimization, and bootstrapped traces that violate them are filtered — the reliability layer survives the build."}, {"q": "What is the design wisdom in the hard/soft split?", "opts": ["All constraints should be hard", "All constraints should be soft", "Be strict where correctness is contractual, tolerant where it is preferential", "The split is purely syntactic"], "correct": 2, "explain": "Schemas, faithfulness, and interface contracts deserve hard failure; tone, style, and length deserve graceful refinement. The classification itself forces teams to decide what each rule really is."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
