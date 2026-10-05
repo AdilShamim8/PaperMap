@@ -1,6 +1,6 @@
 # PaperMap — Paper Section Guide & Contribution System
 
-This document explains everything about PaperMap's **Paper Section**: what it is, how the 61 papers are organized into a curriculum, and exactly how to add or update a paper explainer so it stays consistent with the library. Read it once, top to bottom, before opening your first pull request.
+This document explains everything about PaperMap's **Paper Section**: what it is, how the 114 papers are organized into a curriculum, and exactly how to add or update a paper explainer so it stays consistent with the library. Read it once, top to bottom, before opening your first pull request.
 
 ---
 
@@ -17,7 +17,7 @@ The Paper Section is the heart of PaperMap: a growing collection of **interactiv
 - A **5-question quiz** with explanations
 - A **Key Takeaways** reference section
 
-The library currently contains **61 papers organized into 11 categories** — a guided path from the original 2017 Transformer to modern agent memory, multi-agent systems, and efficient inference. The homepage also ships a **live search box** (top of the Paper Library) that filters all 61 explainers by title, author, topic, and tag.
+The library currently contains **114 unique papers (115 numbered entries) organized into 12 categories** — a guided path from the original 2017 Transformer to modern agent memory, multi-agent systems, and efficient inference. The homepage also ships a **live search box** (top of the Paper Library) that filters all 114 explainers by title, author, topic, and tag.
 
 ## 2. How Papers Are Organized
 
@@ -38,7 +38,7 @@ The curriculum is ordered so each category builds on the last. Papers are groupe
 | **XI** | LM Programming & Reliability | DSPy (2023) · DSPy Assertions (2023)
 
 
-**On the homepage**, the Paper Library section renders: a **live search box** (filters every paper card by title, author, description, and tags; `/` focuses it, `Esc` clears it), a quick-navigation chip row for the 11 categories, a curriculum overview map, and one subsection per category containing its paper cards. When you add a paper, it must be placed in the correct category — never appended to the end of the grid. If you add a paper, also update the search placeholder's paper count.
+**On the homepage**, the Paper Library section renders: a **live search box** (filters every paper card by title, author, description, and tags; `/` focuses it, `Esc` clears it), a quick-navigation chip row for the 12 categories, a curriculum overview map, and one subsection per category containing its paper cards. When you add a paper, it must be placed in the correct category — never appended to the end of the grid. If you add a paper, also update the search placeholder's paper count.
 
 **Study-pair rule.** Some papers are explicitly designed to be read together (Scaling Laws → Chinchilla; SelfCheckGPT → FActScore; MemGPT → LongMemEval; CAMEL → MetaGPT → Magentic-One). If your paper corrects, extends, or directly follows another paper, cross-link both explainers in the body and footer — the homepage marks these pairs with the `study-pair` element.
 
@@ -137,7 +137,7 @@ Component rules:
 1. **Research-accurate**: every number, model size, and benchmark score must come from the original paper (or be marked `~` approximate). When unsure, state it qualitatively — never invent a number.
 2. **Honest results sections**: say what the paper did NOT solve too (e.g., GPT-2 was far from SOTA on translation; ReAct alone underperforms CoT on some QA).
 3. **Beginner-friendly**: explain jargon on first use; use analogies in "Key Insight" cards.
-4. **Deep-knowledge standard**: the core 61 explainers carry an extra **Deep Dive** section (see §9) — expert-level analysis (mechanistic detail, honest limitations, follow-up literature) beyond the paper summary. New pages in the core curriculum should aim for the same depth: not "what the paper says" but "what an expert would tell you after reading it twice."
+4. **Deep-knowledge standard**: the core explainers carry an extra **Deep Dive** section (see §9) — expert-level analysis (mechanistic detail, honest limitations, follow-up literature) beyond the paper summary. New pages in the core curriculum should aim for the same depth: not "what the paper says" but "what an expert would tell you after reading it twice."
 5. **English**, concise sentences, ~600–950 lines of HTML per page.
 6. Credit the original authors — explainers are educational derivatives; the footer always cites the paper and links to it.
 
@@ -161,7 +161,7 @@ Component rules:
 Updates to an existing explainer must **improve in place** — never redesign the page, never rename the file, never break outbound or inbound links.
 
 1. **What counts as an update**: fixing an inaccurate number, adding a Deep Dive section, adding a new demo or visualization, refreshing the "Impact" section with follow-up work, improving quiz explanations, adding cross-links to newer papers.
-2. **Deep Dive section pattern** (used on all 61 core papers):
+2. **Deep Dive section pattern** (used across the core library):
    - One unnumbered section with `id="deepdive"`, placed late in the page (typically between the impact section and the quiz) and registered in the desktop nav, mobile menu, **and** the NAV ACTIVE ids array — in document order.
    - Title format: `Deep Dive: <topic>` with the standard `section-tag` + `section-title` + `section-desc` opening.
    - Content: expert-level analysis — the mechanistic "why", honest limitations, comparisons with follow-up literature — using the page's existing components (`problem-grid` bad/good, `two-col`, `notice-grid`, `card-sm`).
