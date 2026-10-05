@@ -14,6 +14,7 @@ Current status: **114 unique papers (115 numbered entries — RAGTruth is cross-
 ## Live Library
 
 - [Homepage](https://papermap.vercel.app/)
+- [Deployed on GitHub](https://adilshamim8.github.io/PaperMap/)
 
 ### Category I — LLM Foundations & Evolution <sub>19 entries</sub>
 - [Attention Is All You Need](https://papermap.vercel.app/paper/Attention_Is_All_You_Need.html) · 2017 ★
