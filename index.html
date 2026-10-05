@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PaperMap — Interactive Research Paper Library</title>
-<meta name="description" content="PaperMap turns landmark AI research papers into interactive learning products. Explore 61 visual explainers across 11 categories: LLM foundations, retrieval and reasoning, post-training, hallucination, evaluation, agent reliability and software engineering, agent safety, agent memory, multi-agent systems, efficient training and inference, and LM programming.">
+<meta name="description" content="PaperMap turns landmark AI research papers into interactive learning products. Explore 114 unique papers across 12 categories: LLM foundations and evolution, large-scale training systems, retrieval and RAG, alignment and post-training, reasoning and tool use, hallucination, LLM evaluation, agent evaluation, agent safety, agent memory, multi-agent systems, and quantization and LM programming.">
 <meta name="keywords" content="PaperMap, interactive papers, Transformer, BERT, GPT-2, GPT-3, GPT-4, T5, scaling laws, Chinchilla, Switch Transformers, FLAN, instruction tuning, RAG, ColBERTv2, late interaction, LoRA, InstructGPT, induction heads, chain-of-thought, self-consistency, ReAct, Toolformer, DPO, Constitutional AI, DeepSeek-R1, hallucination, TruthfulQA, SelfCheckGPT, FActScore, HaluEval, RAGTruth, MMLU, HELM, LLM-as-a-judge, JudgeBench, AgentBench, SWE-bench, tau-bench, Terminal-Bench, agent safety, prompt injection, InjecAgent, AgentDojo, agent memory, MemGPT, LongMemEval, Mem0, A-MEM, LoCoMo-Plus, multi-agent systems, CAMEL, MetaGPT, Magentic-One, FlashAttention, PagedAttention, vLLM, speculative decoding, QLoRA, Mixtral, DSPy, deep learning, AI education">
 <meta name="author" content="Adil Shamim">
 <meta name="robots" content="index, follow">
@@ -323,6 +323,21 @@ nav {
   background: var(--green);
   animation: pulse 2s infinite;
 }
+
+.paper-tag.star {
+  border: 1px solid rgba(245,158,11,0.35);
+  color: #92400e;
+  background: var(--amber-dim);
+  margin-left: 8px;
+}
+.track-count {
+  font-family: var(--mono); font-size: 11px; color: var(--text3);
+  border: 1px solid var(--border); border-radius: 12px; padding: 3px 10px;
+  margin-left: auto;
+}
+.legend-line { font-family: var(--mono); font-size: 11px; color: var(--text3); margin: 10px 2px 0; }
+.legend-star { color: var(--amber-text); font-weight: 600; }
+.curriculum-hint { font-family: var(--mono); font-size: 11px; color: var(--text3); margin: 14px 2px 0; }
 .paper-year {
   font-family: var(--mono);
   font-size: 11px;
@@ -625,7 +640,7 @@ footer {
     <a class="nav-link" href="#roadmap">Roadmap</a>
   </div>
   <div class="nav-actions">
-    <div class="nav-badge">61 Papers Live</div>
+    <div class="nav-badge">114 Papers Live</div>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
   </div>
 </nav>
@@ -658,9 +673,9 @@ footer {
   </h1>
   <p class="hero-subtitle">
     PaperMap turns landmark AI research papers into visual, interactive learning experiences.
-    Follow the full curriculum — 61 explainers across 11 categories, from the original
-    Transformer through agent memory, multi-agent systems, and efficient inference —
-    each rebuilt as a production-grade interactive guide.
+    Follow the full curriculum — 114 explainers across 12 categories, from the original
+    Transformer through agent evaluation, agent safety, memory, multi-agent systems,
+    and quantization — each rebuilt as a production-grade interactive guide.
   </p>
   <div class="hero-actions">
     <a class="btn-primary" href="#library">Explore Paper Library →</a>
@@ -668,15 +683,15 @@ footer {
   </div>
   <div class="hero-stats">
     <div class="stat">
-      <div class="stat-num">61</div>
+      <div class="stat-num">114</div>
       <div class="stat-label">Papers Live</div>
     </div>
     <div class="stat">
-      <div class="stat-num">11</div>
-      <div class="stat-label">Learning Tracks</div>
+      <div class="stat-num">12</div>
+      <div class="stat-label">Categories</div>
     </div>
     <div class="stat">
-      <div class="stat-num">160+</div>
+      <div class="stat-num">300+</div>
       <div class="stat-label">Interactive Demos</div>
     </div>
     <div class="stat">
@@ -691,96 +706,105 @@ footer {
 <!-- PAPER LIBRARY -->
 <div class="page-section" id="library">
   <div class="section-tag">Paper Library</div>
-  <h2 class="section-title">The <em>Curriculum</em></h2>
-  <p class="section-desc">Sixty-one landmark papers organized into eleven categories — a guided path from the original Transformer to modern agent memory and efficient inference. Each paper is a self-contained interactive guide with visual demos, architecture breakdowns, quizzes, and research-accurate detail from the original publications.</p>
-
-  <div class="library-search" role="search">
+  <div class="library-head">
     <div class="search-wrap">
-      <span class="search-icon" aria-hidden="true">🔍</span>
-      <input type="search" id="librarySearch" class="search-input" placeholder="Search 61 papers — try &quot;memory&quot;, &quot;MoE&quot;, &quot;benchmark&quot;…" aria-label="Search the paper library" autocomplete="off" spellcheck="false">
-      <button class="search-clear" id="searchClear" type="button" aria-label="Clear search" hidden>✕</button>
+      <input type="search" id="librarySearch" class="search-input" placeholder="Search 114 papers — try &quot;memory&quot;, &quot;MoE&quot;, &quot;benchmark&quot;…" aria-label="Search the paper library" autocomplete="off" spellcheck="false">
+      <button id="searchClear" class="search-clear" type="button" aria-label="Clear search">✕</button>
     </div>
-    <div class="search-status" id="searchStatus" aria-live="polite"></div>
-    <div class="no-results" id="noResults" hidden>
-      <div class="no-results-title">No papers match</div>
-      <div class="no-results-text">Try another keyword — titles, descriptions, authors, and tags are all searched. Press <span class="code-inline">/</span> anywhere to jump back to the search box.</div>
+    <p id="searchStatus" class="search-status" role="status"></p>
+    <div id="noResults" hidden class="no-results">
+      <div class="no-results-title">No papers match that search</div>
+      <div class="no-results-text">Try a shorter keyword — paper titles, authors, tags, and descriptions are all searched.</div>
     </div>
   </div>
-
+  <p class="legend-line">115 entries · RAGTruth appears in III and VI · <span class="legend-star">★</span> featured picks from the source list</p>
 
   <div class="track-chips">
-    <a class="track-chip" href="#track-1"><span class="num">I</span> Foundation LLMs</a>
-    <a class="track-chip" href="#track-2"><span class="num">II</span> Retrieval · Reasoning</a>
-    <a class="track-chip" href="#track-3"><span class="num">III</span> Reasoning · Post-Training</a>
-    <a class="track-chip" href="#track-4"><span class="num">IV</span> Hallucination</a>
-    <a class="track-chip" href="#track-5"><span class="num">V</span> Evaluation</a>
-    <a class="track-chip" href="#track-6"><span class="num">VI</span> Agent Reliability · SWE</a>
-    <a class="track-chip" href="#track-7"><span class="num">VII</span> Agent Safety</a>
-    <a class="track-chip" href="#track-8"><span class="num">VIII</span> Agent Memory</a>
-    <a class="track-chip" href="#track-9"><span class="num">IX</span> Multi-Agent</a>
-    <a class="track-chip" href="#track-10"><span class="num">X</span> Efficiency</a>
-    <a class="track-chip" href="#track-11"><span class="num">XI</span> LM Programming</a>
+
+    <a class="track-chip" href="#track-1"><span class="num">I</span> Foundations</a>
+    <a class="track-chip" href="#track-2"><span class="num">II</span> Training Systems</a>
+    <a class="track-chip" href="#track-3"><span class="num">III</span> Retrieval & RAG</a>
+    <a class="track-chip" href="#track-4"><span class="num">IV</span> Alignment</a>
+    <a class="track-chip" href="#track-5"><span class="num">V</span> Reasoning & Tools</a>
+    <a class="track-chip" href="#track-6"><span class="num">VI</span> Hallucination</a>
+    <a class="track-chip" href="#track-7"><span class="num">VII</span> LLM Eval</a>
+    <a class="track-chip" href="#track-8"><span class="num">VIII</span> Agent Eval</a>
+    <a class="track-chip" href="#track-9"><span class="num">IX</span> Agent Safety</a>
+    <a class="track-chip" href="#track-10"><span class="num">X</span> Agent Memory</a>
+    <a class="track-chip" href="#track-11"><span class="num">XI</span> Multi-Agent</a>
+    <a class="track-chip" href="#track-12"><span class="num">XII</span> Quant & Programming</a>
   </div>
 
+  <p class="curriculum-hint">The curriculum follows the source list exactly: 12 categories, 115 numbered entries, 114 unique papers.</p>
+
+
   <div class="roadmap-grid" id="curriculum-map">
+
     <div class="roadmap-item done">
-      <h4>✓ Track I — Foundation: LLMs</h4>
-      <p>10 papers · AIAYN, BERT, GPT-2, GPT-3, T5, Scaling Laws, Chinchilla, Switch, FLAN, GPT-4</p>
+      <h4>✓ Category I — LLM Foundations & Evolution</h4>
+      <p>19 entries · Attention Is All You Need, GPT-1, BERT, GPT-2, T5, GPT-3, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track II — Retrieval, Reasoning & Adaptation</h4>
-      <p>9 papers · RAG, ColBERTv2, LoRA, InstructGPT, Induction Heads, CoT, Self-Consistency, ReAct, Toolformer</p>
+      <h4>✓ Category II — Large-Scale Training & Systems</h4>
+      <p>7 entries · Megatron-LM, ZeRO, FlashAttention, Speculative Decoding, FlashAttention-2, PagedAttention (vLLM), …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track III — Reasoning & Post-Training</h4>
-      <p>3 papers · DPO, Constitutional AI, DeepSeek-R1</p>
+      <h4>✓ Category III — Retrieval, RAG & Long Context</h4>
+      <p>10 entries · REALM, DPR, RAG, RETRO, ColBERTv2, ALCE, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track IV — Hallucination & Factuality</h4>
-      <p>6 papers · TruthfulQA, survey, SelfCheckGPT, FActScore, HaluEval, RAGTruth</p>
+      <h4>✓ Category IV — Adaptation, Alignment & Post-Training</h4>
+      <p>11 entries · RLHF Origins, PPO, LoRA, InstructGPT, Self-Instruct, Constitutional AI, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track V — Evaluation & Benchmarks</h4>
-      <p>5 papers · MMLU, HELM, LLM-as-a-Judge, JudgeBench, AgentBench</p>
+      <h4>✓ Category V — Reasoning, In-Context Learning & Tool Use</h4>
+      <p>11 entries · Chain-of-Thought, Self-Consistency, STaR, Zero-Shot Reasoners, Induction Heads, ReAct, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track VI — Agent Reliability & Software Engineering</h4>
-      <p>5 papers · SWE-bench, τ-bench, SWE-Bench Pro, τ²-Bench, Terminal-Bench</p>
+      <h4>✓ Category VI — Hallucination, Truthfulness & Factuality</h4>
+      <p>7 entries · TruthfulQA, SelfCheckGPT, FActScore, HaluEval, Hallucination Survey, RAGTruth, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track VII — Agent Safety & Security</h4>
-      <p>4 papers · InjecAgent, AgentDojo, ASB, Agent-SafetyBench</p>
+      <h4>✓ Category VII — LLM Evaluation & Benchmarks</h4>
+      <p>8 entries · MMLU, HumanEval, HELM, LLM-as-a-Judge, GPQA, LiveCodeBench, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track VIII — Agent Memory</h4>
-      <p>7 papers · Generative Agents, MemGPT, memory survey, LongMemEval, Mem0, A-MEM, LoCoMo-Plus</p>
+      <h4>✓ Category VIII — Agent Evaluation & Real-World Agents</h4>
+      <p>14 entries · WebArena, AgentBench, SWE-bench, GAIA, OSWorld, SWE-agent, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track IX — Multi-Agent Systems</h4>
-      <p>5 papers · CAMEL, MetaGPT, Magentic-One, collaboration survey, MultiAgentBench</p>
+      <h4>✓ Category IX — Agent Safety & Security</h4>
+      <p>9 entries · Red Teaming LMs, Indirect Prompt Injection, GCG Attack, Sleeper Agents, InjecAgent, AgentDojo, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track X — Efficient LLM Training & Inference</h4>
-      <p>5 papers · FlashAttention, PagedAttention, Speculative Decoding, QLoRA, Mixtral</p>
+      <h4>✓ Category X — Agent Memory</h4>
+      <p>8 entries · Generative Agents, MemGPT, LoCoMo, Memory Mechanism Survey, LongMemEval, A-MEM, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track XI — LM Programming & Reliability</h4>
-      <p>2 papers · DSPy, DSPy Assertions</p>
+      <h4>✓ Category XI — Multi-Agent Systems</h4>
+      <p>7 entries · CAMEL, MetaGPT, AutoGen, Magentic-One, Collaboration Mechanisms Survey, MultiAgentBench, …</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Category XII — Quantization & LM Programming</h4>
+      <p>4 entries · GPTQ, SmoothQuant, AWQ, DSPy</p>
     </div>
   </div>
+
 
 <div class="track-section" id="track-1">
   <div class="track-head">
-    <span class="track-label">Track I</span>
-    <h3 class="track-title">Foundation — LLMs</h3>
+    <span class="track-label">Category I</span>
+    <h3 class="track-title">LLM Foundations & Evolution</h3>
+    <span class="track-count">19</span>
   </div>
-  <p class="track-desc">The architecture and training science behind every modern LLM: the original Transformer, BERT, GPT-2, GPT-3, T5, the scaling laws that turned size into a science — and the sparse, instruction-tuned, and multimodel steps that finished the foundation. <strong>10 papers.</strong></p>
-    <div class="study-pair">⭐ study together: Scaling Laws → Chinchilla → Switch Transformers</div>
+  <p class="track-desc">The lineage that produced every modern LLM: from the original Transformer, BERT, and the GPT line, through scaling laws and compute-optimal training, to open-weight herds, sparse mixture-of-experts, and attention efficiency tricks like grouped-query attention. <strong>19 papers.</strong></p>
+    <div class="study-pair">⭐ study together: Scaling Laws → Chinchilla → Llama 3 — the efficiency lineage</div>
   <div class="paper-grid">
 
     <article class="paper-card amber" data-title="Attention Is All You Need">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Vaswani et al. · 2017</div>
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#01 · Vaswani et al. · 2017</div>
       <h3>Attention Is All You Need</h3>
       <p>The paper that started it all. Interactive walkthrough of the Transformer architecture with tokenization, embeddings, self-attention, multi-head attention, positional encoding, and full encoder-decoder visualization.</p>
       <div class="paper-meta">
@@ -791,9 +815,23 @@ footer {
       </div>
       <a class="paper-link" href="./paper/Attention_Is_All_You_Need.html">Open Explainer →</a>
     </article>
-    <article class="paper-card teal" data-title="BERT: Pre-training of Deep Bidirectional Transformers">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Devlin et al. · 2018</div>
+    <article class="paper-card teal" data-title="Improving Language Understanding by Generative Pre-Training">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#02 · Radford et al. · 2018</div>
+      <h3>GPT-1</h3>
+      <p>The forgotten starting gun of generative pre-training. GPT-1 paired a 12-layer Transformer decoder with task-specific input formats and showed one unsupervised objective — next-token prediction — could beat task-trained NLP systems across twelve benchmarks.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">GPT-1</span>
+        <span class="paper-meta-tag">Pre-training</span>
+        <span class="paper-meta-tag">Generative</span>
+        <span class="paper-meta-tag">Transformer</span>
+      </div>
+      <a class="paper-link" href="./paper/GPT_1.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#03 · Devlin et al. · 2018</div>
       <h3>BERT: Pre-training of Deep Bidirectional Transformers</h3>
       <p>Bidirectional pre-training with masked language modeling. Interactive demos for MLM, the 80/10/10 rule, architecture specs, and how one model conquered 11 NLP tasks with a single output layer.</p>
       <div class="paper-meta">
@@ -805,8 +843,8 @@ footer {
       <a class="paper-link" href="./paper/BERT.html">Open Explainer →</a>
     </article>
     <article class="paper-card purple" data-title="Language Models are Unsupervised Multitask Learners">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Radford et al. · 2019</div>
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#04 · Radford et al. · 2019</div>
       <h3>Language Models are Unsupervised Multitask Learners</h3>
       <p>GPT-2 and the zero-shot bet: a 1.5B decoder-only model trained on WebText learns tasks without supervision. Zero-shot prompt demos, byte-level BPE, and the staged release that started the AI safety debate.</p>
       <div class="paper-meta">
@@ -817,22 +855,10 @@ footer {
       </div>
       <a class="paper-link" href="./paper/GPT_2.html">Open Explainer →</a>
     </article>
-    <article class="paper-card blue" data-title="Language Models are Few-Shot Learners">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Brown et al. · 2020</div>
-      <h3>Language Models are Few-Shot Learners</h3>
-      <p>How 175 billion parameters unlocked in-context learning. Interactive few-shot demos, scaling law visualizations, benchmark tables, data contamination analysis, and the full GPT-3 model family.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">GPT-3</span>
-        <span class="paper-meta-tag">Few-Shot</span>
-        <span class="paper-meta-tag">Scaling Laws</span>
-        <span class="paper-meta-tag">175B</span>
-      </div>
-      <a class="paper-link" href="./paper/Language_Models_are_Few_Shot_Learners.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card green" data-title="Exploring the Limits of Transfer Learning (T5)">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Raffel et al. · 2020</div>
+    <article class="paper-card green" data-title="Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#05 · Raffel et al. · 2019</div>
       <h3>Exploring the Limits of Transfer Learning (T5)</h3>
       <p>Every NLP task as plain text in, plain text out. Interactive task-prefix demos, the C4 corpus pipeline, systematic architecture ablations, and T5-11B's SuperGLUE 88.9 benchmark record.</p>
       <div class="paper-meta">
@@ -843,9 +869,24 @@ footer {
       </div>
       <a class="paper-link" href="./paper/T5.html">Open Explainer →</a>
     </article>
+    <article class="paper-card blue" data-title="Language Models are Few-Shot Learners">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#06 · Brown et al. · 2020</div>
+      <h3>Language Models are Few-Shot Learners</h3>
+      <p>How 175 billion parameters unlocked in-context learning. Interactive few-shot demos, scaling law visualizations, benchmark tables, data contamination analysis, and the full GPT-3 model family.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">GPT-3</span>
+        <span class="paper-meta-tag">Few-Shot</span>
+        <span class="paper-meta-tag">Scaling Laws</span>
+        <span class="paper-meta-tag">175B</span>
+      </div>
+      <a class="paper-link" href="./paper/Language_Models_are_Few_Shot_Learners.html">Open Explainer →</a>
+    </article>
     <article class="paper-card amber" data-title="Scaling Laws for Neural Language Models">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Kaplan et al. · 2020</div>
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#07 · Kaplan et al. · 2020</div>
       <h3>Scaling Laws for Neural Language Models</h3>
       <p>Performance depends strongly on scale and weakly on shape. Interactive power-law loss explorer, compute-budget allocator, and the training-curve laws that turned model scale into a science.</p>
       <div class="paper-meta">
@@ -856,22 +897,9 @@ footer {
       </div>
       <a class="paper-link" href="./paper/Scaling_Laws.html">Open Explainer →</a>
     </article>
-    <article class="paper-card blue" data-title="Training Compute-Optimal LLMs (Chinchilla)">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Hoffmann et al. · 2022</div>
-      <h3>Training Compute-Optimal LLMs (Chinchilla)</h3>
-      <p>The scaling correction: 70B parameters trained on 1.4T tokens beats Gopher at the same compute. Interactive budget allocator, tokens-per-param checker, and the ~20 tokens/param rule of thumb.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">Chinchilla</span>
-        <span class="paper-meta-tag">70B</span>
-        <span class="paper-meta-tag">1.4T Tokens</span>
-        <span class="paper-meta-tag">Compute-Optimal</span>
-      </div>
-      <a class="paper-link" href="./paper/Chinchilla.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card purple" data-title="Switch Transformers: Scaling to Trillion Parameter Models">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Fedus et al. · 2021</div>
+    <article class="paper-card purple" data-title="Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#08 · Fedus et al. · 2021</div>
       <h3>Switch Transformers: Scaling to Trillion Parameter Models</h3>
       <p>One expert per token. Interactive top-1 router playground, router z-loss stability gym, the 7× pre-training speedup race, and the parameter ledger that explains what 1.6T parameters really buy.</p>
       <div class="paper-meta">
@@ -882,9 +910,24 @@ footer {
       </div>
       <a class="paper-link" href="./paper/Switch_Transformers_Scaling_to_Trillion_Parameter_Models.html">Open Explainer →</a>
     </article>
-    <article class="paper-card green" data-title="FLAN: Finetuned Language Models Are Zero-Shot Learners">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Wei et al. · 2021</div>
+    <article class="paper-card blue" data-title="RoFormer: Enhanced Transformer with Rotary Position Embedding">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#09 · Su et al. · 2021</div>
+      <h3>RoFormer (RoPE)</h3>
+      <p>Rotate, don't add. RoPE encodes token position by rotating query-key pairs in complex space so attention becomes a relative-position function — exact, cache-friendly, and now the default positional encoding in LLaMA, GPT-NeoX, and nearly every modern LLM.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">RoPE</span>
+        <span class="paper-meta-tag">Positional Encoding</span>
+        <span class="paper-meta-tag">Attention</span>
+        <span class="paper-meta-tag">Relative Position</span>
+      </div>
+      <a class="paper-link" href="./paper/RoFormer_Enhanced_Transformer_with_Rotary_Position_Embedding.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="Finetuned Language Models Are Zero-Shot Learners">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#10 · Wei et al. · 2021</div>
       <h3>FLAN: Finetuned Language Models Are Zero-Shot Learners</h3>
       <p>Instruction tuning before it was cool: 137B parameters finetuned on 60+ tasks phrased as instructions beat zero-shot GPT-3 on 20 of 25 held-out datasets. Template flipper + cluster hold-out explorer.</p>
       <div class="paper-meta">
@@ -895,9 +938,35 @@ footer {
       </div>
       <a class="paper-link" href="./paper/FLAN_Finetuned_Language_Models_Are_Zero_Shot_Learners.html">Open Explainer →</a>
     </article>
+    <article class="paper-card blue" data-title="Training Compute-Optimal Large Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#11 · Hoffmann et al. · 2022</div>
+      <h3>Training Compute-Optimal LLMs (Chinchilla)</h3>
+      <p>The scaling correction: 70B parameters trained on 1.4T tokens beats Gopher at the same compute. Interactive budget allocator, tokens-per-param checker, and the ~20 tokens/param rule of thumb.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Chinchilla</span>
+        <span class="paper-meta-tag">70B</span>
+        <span class="paper-meta-tag">1.4T Tokens</span>
+        <span class="paper-meta-tag">Compute-Optimal</span>
+      </div>
+      <a class="paper-link" href="./paper/Chinchilla.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="LLaMA: Open and Efficient Foundation Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#12 · Touvron et al. · 2023</div>
+      <h3>LLaMA</h3>
+      <p>Open weights, matched at smaller scale. LLaMA showed 7B-65B models trained longer on more data — public, filtered, deduplicated — could match or beat much larger closed models, igniting the open-weights ecosystem.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">LLaMA</span>
+        <span class="paper-meta-tag">Open Weights</span>
+        <span class="paper-meta-tag">Scaling</span>
+        <span class="paper-meta-tag">Data Quality</span>
+      </div>
+      <a class="paper-link" href="./paper/LLaMA_Open_and_Efficient_Foundation_Language_Models.html">Open Explainer →</a>
+    </article>
     <article class="paper-card teal" data-title="GPT-4 Technical Report">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">OpenAI · 2023</div>
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#13 · OpenAI · 2023</div>
       <h3>GPT-4 Technical Report</h3>
       <p>The frontier becomes infrastructure science: performance predicted from 1/1000th-compute runs, 86.4% MMLU, bar-exam top 10%, and the predictable-scaling discipline every lab now follows.</p>
       <div class="paper-meta">
@@ -908,21 +977,233 @@ footer {
       </div>
       <a class="paper-link" href="./paper/GPT_4_Technical_Report.html">Open Explainer →</a>
     </article>
-
+    <article class="paper-card blue" data-title="GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#14 · Ainslie et al. · 2023</div>
+      <h3>GQA</h3>
+      <p>The attention compromise the field adopted. GQA groups key-value heads between full MHA and single-head MQA — uptrained from existing checkpoints with about 5% of original pre-training compute — keeping quality while slashing decoder inference memory.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">GQA</span>
+        <span class="paper-meta-tag">MQA</span>
+        <span class="paper-meta-tag">Inference</span>
+        <span class="paper-meta-tag">Attention</span>
+      </div>
+      <a class="paper-link" href="./paper/GQA_Training_Generalized_Multi_Query_Transformer_Models_from_Multi_Head_Checkpoints.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="Llama 2: Open Foundation and Fine-Tuned Chat Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#15 · Touvron et al. · 2023</div>
+      <h3>Llama 2</h3>
+      <p>The open chat model that democratized assistants. Llama 2 paired a stronger base (2T tokens) with an RLHF pipeline — rejection sampling, PPO, iterative safety refinement — plus Ghost Attention for multi-turn instruction persistence.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Llama 2</span>
+        <span class="paper-meta-tag">RLHF</span>
+        <span class="paper-meta-tag">Chat Models</span>
+        <span class="paper-meta-tag">Open Weights</span>
+      </div>
+      <a class="paper-link" href="./paper/Llama_2_Open_Foundation_and_Fine_Tuned_Chat_Models.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="Mixtral of Experts">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#16 · Jiang et al. · 2024</div>
+      <h3>Mixtral of Experts</h3>
+      <p>The open sparse MoE that matched Llama 2 70B with 13B active parameters: top-2 routing live, quality-per-FLOP accounting, and the Apache 2.0 release that changed the market.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Mixtral</span>
+        <span class="paper-meta-tag">MoE</span>
+        <span class="paper-meta-tag">Open Weights</span>
+        <span class="paper-meta-tag">32K Context</span>
+      </div>
+      <a class="paper-link" href="./paper/Mixtral_of_Experts.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#17 · Dai et al. · 2024</div>
+      <h3>DeepSeekMoE</h3>
+      <p>Finer experts, shared knowledge. DeepSeekMoE splits experts into many small specialized ones plus always-on shared experts — matching dense quality at 40% of compute, and scaling to 145B total / 22B activated.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">MoE</span>
+        <span class="paper-meta-tag">Expert Specialization</span>
+        <span class="paper-meta-tag">Shared Experts</span>
+        <span class="paper-meta-tag">Efficiency</span>
+      </div>
+      <a class="paper-link" href="./paper/DeepSeekMoE_Towards_Ultimate_Expert_Specialization.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="The Llama 3 Herd of Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#18 · Grattafiori et al. · 2024</div>
+      <h3>Llama 3</h3>
+      <p>Scaling the herd. Llama 3 trained on 15T+ tokens with aggressive data curation, then added the 3.1/3.2/3.3 progression: 405B flagship, distillation, quantization, and multimodal extensions — the definitive open-weights engineering report.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Llama 3</span>
+        <span class="paper-meta-tag">Scaling</span>
+        <span class="paper-meta-tag">Data Curation</span>
+        <span class="paper-meta-tag">Post-training</span>
+      </div>
+      <a class="paper-link" href="./paper/The_Llama_3_Herd_of_Models.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="DeepSeek-V3 Technical Report">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#19 · DeepSeek-AI · 2024</div>
+      <h3>DeepSeek-V3</h3>
+      <p>Frontier training at bargain budgets. DeepSeek-V3: 671B total / 37B activated parameters, Multi-head Latent Attention, DeepSeekMoE with auxiliary-loss-free balancing, FP8 mixed precision, and 14.8T tokens — for a claimed 2.788M H800-GPU hours.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">DeepSeek</span>
+        <span class="paper-meta-tag">MoE</span>
+        <span class="paper-meta-tag">MLA</span>
+        <span class="paper-meta-tag">FP8 Training</span>
+      </div>
+      <a class="paper-link" href="./paper/DeepSeek_V3_Technical_Report.html">Open Explainer →</a>
+    </article>
   </div>
 </div>
+
+
 <div class="track-section" id="track-2">
   <div class="track-head">
-    <span class="track-label">Track II</span>
-    <h3 class="track-title">Retrieval, Reasoning & Adaptation</h3>
+    <span class="track-label">Category II</span>
+    <h3 class="track-title">Large-Scale Training & Systems</h3>
+    <span class="track-count">7</span>
   </div>
-  <p class="track-desc">The upgrades that turned raw LLMs into useful systems: retrieval-augmented knowledge, multi-vector late-interaction retrieval, instruction-following and RLHF, the attention circuits behind in-context learning, chain-of-thought reasoning, and models that act and use tools. <strong>9 papers.</strong></p>
-    <div class="study-pair">⭐ study together: Chain-of-Thought → Self-Consistency → ReAct</div>
+  <p class="track-desc">The systems engineering that makes training and serving trillion-scale models possible: model parallelism (Megatron-LM), memory optimization (ZeRO), IO-aware exact attention (FlashAttention 1/2), speculative decoding, paged KV-cache serving, and selective state-space sequence models. <strong>7 papers.</strong></p>
+    <div class="study-pair">⭐ study together: ZeRO → FlashAttention-2 → PagedAttention — the systems stack</div>
   <div class="paper-grid">
 
-    <article class="paper-card purple" data-title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (RAG)">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Lewis et al. · 2020</div>
+    <article class="paper-card amber" data-title="Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#20 · Shoeybi et al. · 2019</div>
+      <h3>Megatron-LM</h3>
+      <p>Slicing Transformers across GPUs. Megatron-LM's intra-layer model parallelism splits attention and feed-forward matrices across devices with near-linear scaling to 8.9B parameters on 512 GPUs — the blueprint for every big training run since.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Model Parallelism</span>
+        <span class="paper-meta-tag">Training</span>
+        <span class="paper-meta-tag">GPUs</span>
+        <span class="paper-meta-tag">Scaling</span>
+      </div>
+      <a class="paper-link" href="./paper/Megatron_LM_Training_Multi_Billion_Parameter_Language_Models.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="ZeRO: Memory Optimizations Toward Training Trillion Parameter Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#21 · Rajbhandari et al. · 2019</div>
+      <h3>ZeRO</h3>
+      <p>Data parallelism without the memory duplication. ZeRO shards optimizer state, gradients, and parameters across devices — eliminating redundancy and enabling trillion-parameter training on modest clusters with a 3-13× efficiency win over naive DDP.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">ZeRO</span>
+        <span class="paper-meta-tag">Memory</span>
+        <span class="paper-meta-tag">Distributed Training</span>
+        <span class="paper-meta-tag">DeepSpeed</span>
+      </div>
+      <a class="paper-link" href="./paper/ZeRO_Memory_Optimizations_Toward_Trillion_Parameter_Models.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#22 · Dao et al. · 2022</div>
+      <h3>FlashAttention: Fast and Memory-Efficient Exact Attention</h3>
+      <p>Attention is memory-bound, not compute-bound. Memory-trip counters, the online-softmax tiling stepper, bandwidth simulators, and the IO-aware exact kernel that enabled long context.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">FlashAttention</span>
+        <span class="paper-meta-tag">IO-Aware</span>
+        <span class="paper-meta-tag">Tiling</span>
+        <span class="paper-meta-tag">Exact</span>
+      </div>
+      <a class="paper-link" href="./paper/FlashAttention_Fast_and_Memory_Efficient_Exact_Attention.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Fast Inference from Transformers via Speculative Decoding">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#23 · Leviathan et al. · 2022</div>
+      <h3>Speculative Decoding: Fast Inference from Transformers</h3>
+      <p>Small models draft, big models verify in parallel. The speculative round stepper, α-yield explorer, and 2-3× acceleration with provably identical outputs.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Speculative</span>
+        <span class="paper-meta-tag">Draft Model</span>
+        <span class="paper-meta-tag">Verification</span>
+        <span class="paper-meta-tag">2-3×</span>
+      </div>
+      <a class="paper-link" href="./paper/Speculative_Decoding_Fast_Inference_from_Transformers.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#24 · Dao et al. · 2023</div>
+      <h3>FlashAttention-2</h3>
+      <p>FlashAttention, retuned for the GPU. Better work partitioning (fewer non-matmul FLOPs), parallelism over the sequence dimension, and tuned block sizes push it to 2× the original's speed and 50-73% of peak on A100s — up to 230 TFLOPs/s.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">FlashAttention</span>
+        <span class="paper-meta-tag">GPU Kernels</span>
+        <span class="paper-meta-tag">Parallelism</span>
+        <span class="paper-meta-tag">Efficiency</span>
+      </div>
+      <a class="paper-link" href="./paper/FlashAttention_2_Faster_Attention_with_Better_Parallelism.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="Efficient Memory Management for Large Language Model Serving with PagedAttention">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#25 · Kwon et al. · 2023</div>
+      <h3>PagedAttention: Efficient Memory Management for LLM Serving</h3>
+      <p>Virtual memory for the KV cache: fragmentation visualizers, block-table generation, copy-on-write prefix sharing, and vLLM's 2-4× throughput breakthrough.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">PagedAttention</span>
+        <span class="paper-meta-tag">vLLM</span>
+        <span class="paper-meta-tag">KV Cache</span>
+        <span class="paper-meta-tag">2-4× Throughput</span>
+      </div>
+      <a class="paper-link" href="./paper/PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Mamba: Linear-Time Sequence Modeling with Selective State Spaces">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#26 · Gu et al. · 2023</div>
+      <h3>Mamba</h3>
+      <p>The selective state-space challenger to Transformers. Mamba lets SSM parameters depend on the input (selection), enabling content-aware reasoning at linear-time complexity and 5× higher inference throughput on sequences up to a million tokens.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Mamba</span>
+        <span class="paper-meta-tag">State Spaces</span>
+        <span class="paper-meta-tag">SSM</span>
+        <span class="paper-meta-tag">Linear Time</span>
+      </div>
+      <a class="paper-link" href="./paper/Mamba_Linear_Time_Sequence_Modeling_with_Selective_State_Spaces.html">Open Explainer →</a>
+    </article>
+  </div>
+</div>
+
+
+<div class="track-section" id="track-3">
+  <div class="track-head">
+    <span class="track-label">Category III</span>
+    <h3 class="track-title">Retrieval, RAG & Long Context</h3>
+    <span class="track-count">10</span>
+  </div>
+  <p class="track-desc">Grounding language models in external knowledge: retrieval-augmented pre-training (REALM), dense passage retrieval, the RAG recipe that named the field, trillion-token retrieval (RETRO), compressed late-interaction retrieval (ColBERTv2), citation generation, long-context failure modes, and self-reflective + domain-adapted RAG. <strong>10 papers.</strong></p>
+    <div class="study-pair">⭐ study together: REALM → RAG → Self-RAG → RAFT — the retrieval curriculum</div>
+  <div class="paper-grid">
+
+    <article class="paper-card amber" data-title="REALM: Retrieval-Augmented Language Model Pre-Training">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#27 · Guu et al. · 2020</div>
+      <h3>REALM</h3>
+      <p>Retrieval enters pre-training. REALM embeds a knowledge-retriever inside the masked-LM objective so the model learns which Wikipedia documents to fetch — grounding factual completion before finetuning and beating T5-XXL on open-domain QA.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">REALM</span>
+        <span class="paper-meta-tag">Retrieval</span>
+        <span class="paper-meta-tag">Pre-training</span>
+        <span class="paper-meta-tag">Open-Domain QA</span>
+      </div>
+      <a class="paper-link" href="./paper/REALM_Retrieval_Augmented_Language_Model_Pre_Training.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Dense Passage Retrieval for Open-Domain Question Answering">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#28 · Karpukhin et al. · 2020</div>
+      <h3>DPR</h3>
+      <p>Embeddings replace BM25. DPR trains a dual-encoder — questions and passages mapped to one dense space — with in-batch negatives, retrieving top-21 passages at 99%+ accuracy and lifting open-domain QA by 9-19 points over sparse retrieval.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">DPR</span>
+        <span class="paper-meta-tag">Dense Retrieval</span>
+        <span class="paper-meta-tag">Dual Encoder</span>
+        <span class="paper-meta-tag">QA</span>
+      </div>
+      <a class="paper-link" href="./paper/DPR_Dense_Passage_Retrieval_for_Open_Domain_Question_Answering.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#29 · Lewis et al. · 2020</div>
       <h3>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (RAG)</h3>
       <p>An interactive deep dive into the original RAG paper: dense retrieval with DPR, BART generation, non-parametric memory with Wikipedia, and benchmark gains on knowledge-intensive QA.</p>
       <div class="paper-meta">
@@ -933,101 +1214,23 @@ footer {
       </div>
       <a class="paper-link" href="./paper/RAG_Retrieval_Augmented_Generation.html">Open Explainer →</a>
     </article>
-    <article class="paper-card green" data-title="LoRA: Low-Rank Adaptation of Large Language Models">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Hu et al. · 2021</div>
-      <h3>LoRA: Low-Rank Adaptation of Large Language Models</h3>
-      <p>An interactive walkthrough of LoRA covering low-rank updates, parameter-efficient fine-tuning, practical deployment tradeoffs, and why LoRA matches full fine-tuning at a fraction of the cost.</p>
+    <article class="paper-card blue" data-title="Improving Language Models by Retrieving from Trillions of Tokens">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#30 · Borgeaud et al. · 2021</div>
+      <h3>RETRO</h3>
+      <p>A 2-trillion-token external memory. RETRO retrieves continuations from a massive frozen indexed corpus via cross-attention chunks, gaining knowledge without parameter growth and allowing database swaps — even for a GPT-3-scale model.</p>
       <div class="paper-meta">
-        <span class="paper-meta-tag">LoRA</span>
-        <span class="paper-meta-tag">PEFT</span>
-        <span class="paper-meta-tag">Low-Rank</span>
-        <span class="paper-meta-tag">LLM Fine-Tuning</span>
+        <span class="paper-meta-tag">RETRO</span>
+        <span class="paper-meta-tag">Retrieval</span>
+        <span class="paper-meta-tag">External Memory</span>
+        <span class="paper-meta-tag">Scaling</span>
       </div>
-      <a class="paper-link" href="./paper/LoRA_Low_Rank_Adaptation.html">Open Explainer →</a>
+      <a class="paper-link" href="./paper/RETRO_Improving_Language_Models_by_Retrieving_from_Tokens.html">Open Explainer →</a>
     </article>
-    <article class="paper-card blue" data-title="InstructGPT: Training Models to Follow Instructions">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Ouyang et al. · 2022</div>
-      <h3>InstructGPT: Training Models to Follow Instructions</h3>
-      <p>The RLHF paper that paved the way for ChatGPT. Interactive 3-step pipeline (SFT → Reward Model → PPO), human evaluation results, bias analysis, and qualitative examples.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">InstructGPT</span>
-        <span class="paper-meta-tag">RLHF</span>
-        <span class="paper-meta-tag">PPO</span>
-        <span class="paper-meta-tag">Alignment</span>
-      </div>
-      <a class="paper-link" href="./paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card amber" data-title="In-context Learning and Induction Heads">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Olsson et al. · 2022</div>
-      <h3>In-context Learning and Induction Heads</h3>
-      <p>The two-head attention circuit behind in-context learning. Sequence-completion demos, K-composition steppers, and the training phase change that switched ICL on.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">Induction Heads</span>
-        <span class="paper-meta-tag">Circuits</span>
-        <span class="paper-meta-tag">ICL</span>
-        <span class="paper-meta-tag">Interpretability</span>
-      </div>
-      <a class="paper-link" href="./paper/Induction_Heads.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card teal" data-title="Chain-of-Thought Prompting">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Wei et al. · 2022</div>
-      <h3>Chain-of-Thought Prompting</h3>
-      <p>Reasoning steps in few-shot prompts unlock multi-step problems — but only at ~100B scale. A standard-vs-CoT race, emergence charts, and the ablations that proved the words matter.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">CoT</span>
-        <span class="paper-meta-tag">Reasoning</span>
-        <span class="paper-meta-tag">Prompting</span>
-        <span class="paper-meta-tag">Emergence</span>
-      </div>
-      <a class="paper-link" href="./paper/Chain_Of_Thought_Prompting.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card purple" data-title="Self-Consistency Improves CoT Reasoning">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Wang et al. · 2022</div>
-      <h3>Self-Consistency Improves CoT Reasoning</h3>
-      <p>Sample 40 reasoning paths, take the vote. Interactive sampling-and-voting demos, convergence histograms, and +17.9 points on GSM8K with zero additional training.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">Self-Consistency</span>
-        <span class="paper-meta-tag">Voting</span>
-        <span class="paper-meta-tag">Decoding</span>
-        <span class="paper-meta-tag">GSM8K</span>
-      </div>
-      <a class="paper-link" href="./paper/Self_Consistency.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card blue" data-title="ReAct: Synergizing Reasoning and Acting">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Yao et al. · 2022</div>
-      <h3>ReAct: Synergizing Reasoning and Acting</h3>
-      <p>Thought, action, observation — one loop. A live agent-trace player, the hallucination showdown vs CoT, and the template behind every modern AI agent.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">ReAct</span>
-        <span class="paper-meta-tag">Agents</span>
-        <span class="paper-meta-tag">Tools</span>
-        <span class="paper-meta-tag">Reasoning</span>
-      </div>
-      <a class="paper-link" href="./paper/ReAct.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card green" data-title="Toolformer: Models Teach Themselves Tools">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Schick et al. · 2023</div>
-      <h3>Toolformer: Models Teach Themselves Tools</h3>
-      <p>A 6.7B model that inserts its own API calls, filters them by perplexity, and reads the results. Interactive perplexity-filter demos, five tools, and beating GPT-3 175B on LAMA.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">Toolformer</span>
-        <span class="paper-meta-tag">Tools</span>
-        <span class="paper-meta-tag">APIs</span>
-        <span class="paper-meta-tag">Self-Taught</span>
-      </div>
-      <a class="paper-link" href="./paper/Toolformer.html">Open Explainer →</a>
-    </article>
-
     <article class="paper-card amber" data-title="ColBERTv2: Effective and Efficient Retrieval via Lightweight Late Interaction">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Santhanam et al. · 2022</div>
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#31 · Santhanam et al. · 2021</div>
       <h3>ColBERTv2: Effective and Efficient Retrieval via Lightweight Late Interaction</h3>
       <p>One vector per token, one MaxSim per query word, and 1–2-bit residual compression that shrinks the index ~6×. Interactive late-interaction scoring, compression visualizer, and BEIR wins.</p>
       <div class="paper-meta">
@@ -1038,137 +1241,48 @@ footer {
       </div>
       <a class="paper-link" href="./paper/ColBERTv2_Effective_and_Efficient_Retrieval_via_Lightweight_Late_Interaction.html">Open Explainer →</a>
     </article>
-
-  </div>
-</div>
-<div class="track-section" id="track-3">
-  <div class="track-head">
-    <span class="track-label">Track III</span>
-    <h3 class="track-title">Reasoning & Post-Training</h3>
-  </div>
-  <p class="track-desc">How raw models become aligned reasoners: direct preference optimization without RL, constitutional training from AI feedback, and reasoning capability emerging from pure reinforcement learning. <strong>3 papers.</strong></p>
-    <div class="study-pair">⭐ study together: DPO → Constitutional AI → DeepSeek-R1</div>
-  <div class="paper-grid">
-
-    <article class="paper-card amber" data-title="Direct Preference Optimization (DPO)">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Rafailov et al. · 2023</div>
-      <h3>Direct Preference Optimization (DPO)</h3>
-      <p>RLHF without RL: a closed-form preference loss derived from Bradley-Terry theory. Interactive derivation, pairwise training demo, and why the open-model world adopted it over PPO.</p>
+    <article class="paper-card amber" data-title="Enabling Large Language Models to Generate Text with Citations">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#32 · Gao et al. · 2023</div>
+      <h3>ALCE</h3>
+      <p>Attribution as a first-class output. ALCE frames citation generation — every claim backed by a retrieved source — and builds the benchmark (ASQA, ELI5, Wikipedia) with automatic metrics for citation quality and evidence sufficiency.</p>
       <div class="paper-meta">
-        <span class="paper-meta-tag">DPO</span>
-        <span class="paper-meta-tag">Alignment</span>
-        <span class="paper-meta-tag">Preference</span>
-        <span class="paper-meta-tag">No-RL</span>
+        <span class="paper-meta-tag">ALCE</span>
+        <span class="paper-meta-tag">Citations</span>
+        <span class="paper-meta-tag">Attribution</span>
+        <span class="paper-meta-tag">Evaluation</span>
       </div>
-      <a class="paper-link" href="./paper/DPO.html">Open Explainer →</a>
+      <a class="paper-link" href="./paper/ALCE_Enabling_LLMs_to_Generate_Text_with_Citations.html">Open Explainer →</a>
     </article>
-    <article class="paper-card teal" data-title="Constitutional AI: Harmlessness from AI Feedback">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Bai et al. · 2022</div>
-      <h3>Constitutional AI: Harmlessness from AI Feedback</h3>
-      <p>Alignment from a written document: self-critique steppers, the RLAIF preference labeler, 16 principles, and the harmlessness-helpfulness frontier — the recipe behind Claude.</p>
+    <article class="paper-card teal" data-title="Lost in the Middle: How Language Models Use Long Contexts">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#33 · Liu et al. · 2023</div>
+      <h3>Lost in the Middle</h3>
+      <p>Position beats relevance. Across QA and key-value tasks, models exploit information at the edges of the context window and systematically ignore the middle — a U-shaped performance curve that reshaped long-context evaluation and prompting strategy.</p>
       <div class="paper-meta">
-        <span class="paper-meta-tag">Constitutional AI</span>
-        <span class="paper-meta-tag">RLAIF</span>
-        <span class="paper-meta-tag">Self-Critique</span>
-        <span class="paper-meta-tag">Alignment</span>
+        <span class="paper-meta-tag">Long Context</span>
+        <span class="paper-meta-tag">Position Bias</span>
+        <span class="paper-meta-tag">Evaluation</span>
+        <span class="paper-meta-tag">Prompting</span>
       </div>
-      <a class="paper-link" href="./paper/Constitutional_AI_Harmlessness_from_AI_Feedback.html">Open Explainer →</a>
+      <a class="paper-link" href="./paper/Lost_in_the_Middle_How_Language_Models_Use_Long_Contexts.html">Open Explainer →</a>
     </article>
-    <article class="paper-card purple" data-title="DeepSeek-R1: Reasoning via RL">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">DeepSeek-AI · 2025</div>
-      <h3>DeepSeek-R1: Reasoning via RL</h3>
-      <p>Reasoning capability from pure reinforcement learning. GRPO visualizer, the emergent "aha moment" trace player, the 4-stage training pipeline, and distilled open models matching o1.</p>
+    <article class="paper-card purple" data-title="Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#34 · Asai et al. · 2023</div>
+      <h3>Self-RAG</h3>
+      <p>The model decides when to retrieve — and grades itself. Self-RAG trains reflection tokens that control retrieval on demand and self-assess grounding and utility, outperforming ChatGPT and Llama2-chat on open-domain QA, factuality, and citation generation.</p>
       <div class="paper-meta">
-        <span class="paper-meta-tag">DeepSeek-R1</span>
-        <span class="paper-meta-tag">RL</span>
-        <span class="paper-meta-tag">GRPO</span>
-        <span class="paper-meta-tag">Reasoning</span>
+        <span class="paper-meta-tag">Self-RAG</span>
+        <span class="paper-meta-tag">Reflection Tokens</span>
+        <span class="paper-meta-tag">Adaptive Retrieval</span>
+        <span class="paper-meta-tag">Factuality</span>
       </div>
-      <a class="paper-link" href="./paper/DeepSeek_R1.html">Open Explainer →</a>
+      <a class="paper-link" href="./paper/Self_RAG_Learning_to_Retrieve_Generate_and_Critique.html">Open Explainer →</a>
     </article>
-
-  </div>
-</div>
-<div class="track-section" id="track-4">
-  <div class="track-head">
-    <span class="track-label">Track IV</span>
-    <h3 class="track-title">Hallucination & Factuality</h3>
-  </div>
-  <p class="track-desc">Why models make things up — and how to measure it: from TruthfulQA's imitative falsehoods, through the field's shared taxonomy and black-box self-checking, to fine-grained atomic fact verification and RAG-specific hallucination corpora. <strong>6 papers.</strong></p>
-    <div class="study-pair">⭐ study together: SelfCheckGPT → FActScore → RAGTruth</div>
-  <div class="paper-grid">
-
-    <article class="paper-card blue" data-title="TruthfulQA: Measuring How Models Mimic Human Falsehoods">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Lin et al. · 2021</div>
-      <h3>TruthfulQA: Measuring How Models Mimic Human Falsehoods</h3>
-      <p>817 adversarial questions that catch models repeating human falsehoods. Imitative-falsehood demos, MC1 vs MC2 scoring formats, and the 36-point truthfulness gap between GPT-3 and people.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">TruthfulQA</span>
-        <span class="paper-meta-tag">Imitation</span>
-        <span class="paper-meta-tag">MC1/MC2</span>
-        <span class="paper-meta-tag">Honesty</span>
-      </div>
-      <a class="paper-link" href="./paper/TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card amber" data-title="A Survey on Hallucination in Large Language Models">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Huang et al. · 2023</div>
-      <h3>A Survey on Hallucination in Large Language Models</h3>
-      <p>The field's shared vocabulary: what hallucination is, its intrinsic and extrinsic types, where it enters the data → training → inference pipeline, and how to detect and mitigate it.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">Survey</span>
-        <span class="paper-meta-tag">Taxonomy</span>
-        <span class="paper-meta-tag">Detection</span>
-        <span class="paper-meta-tag">Mitigation</span>
-      </div>
-      <a class="paper-link" href="./paper/A_Survey_on_Hallucination_in_Large_Language_Models.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card teal" data-title="SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Manakul et al. · 2023</div>
-      <h3>SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection</h3>
-      <p>Sample the same model N times and watch hallucinations contradict their own alternatives — no external database, no token probabilities, no extra annotators. Black-box only.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">Self-Check</span>
-        <span class="paper-meta-tag">Sampling</span>
-        <span class="paper-meta-tag">Black-Box</span>
-        <span class="paper-meta-tag">Consistency</span>
-      </div>
-      <a class="paper-link" href="./paper/SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card purple" data-title="FActScore: Fine-Grained Atomic Evaluation of Factual Precision">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Min et al. · 2023</div>
-      <h3>FActScore: Fine-Grained Atomic Evaluation of Factual Precision</h3>
-      <p>Break long-form generations into atomic facts, verify each one against a knowledge source like Wikipedia, and turn "is this model factual?" into a number you can audit.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">Atomic Facts</span>
-        <span class="paper-meta-tag">Precision</span>
-        <span class="paper-meta-tag">Verification</span>
-        <span class="paper-meta-tag">Wikipedia</span>
-      </div>
-      <a class="paper-link" href="./paper/FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card green" data-title="HaluEval: A Large-Scale Hallucination Evaluation Benchmark">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Li et al. · 2023</div>
-      <h3>HaluEval: A Large-Scale Hallucination Evaluation Benchmark</h3>
-      <p>35,000 truthful answers paired with plausible-but-wrong twins built by ChatGPT itself — then ten leading LLMs try to tell them apart, and most barely beat a coin flip.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">Benchmark</span>
-        <span class="paper-meta-tag">Dataset</span>
-        <span class="paper-meta-tag">Hallucinated Twins</span>
-        <span class="paper-meta-tag">QA</span>
-      </div>
-      <a class="paper-link" href="./paper/HaluEval_A_Large_Scale_Hallucination_Evaluation_Benchmark.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card blue" data-title="RAGTruth: A Hallucination Corpus for Trustworthy RAG">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Niu et al. · 2024</div>
+    <article class="paper-card blue" data-title="RAGTruth: A Hallucination Corpus for Developing Trustworthy Retrieval-Augmented Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#35 · Niu et al. · 2023</div>
       <h3>RAGTruth: A Hallucination Corpus for Trustworthy RAG</h3>
       <p>17,790 real RAG responses with word-level hallucination spans — and the uncomfortable finding that even gold retrieved context still yields fabricated claims.</p>
       <div class="paper-meta">
@@ -1179,21 +1293,464 @@ footer {
       </div>
       <a class="paper-link" href="./paper/RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html">Open Explainer →</a>
     </article>
-
+    <article class="paper-card green" data-title="RAFT: Adapting Language Model to Domain Specific RAG">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#36 · Zhang et al. · 2024</div>
+      <h3>RAFT</h3>
+      <p>Training for the messy real corpus. RAFT finetunes domain RAG on questions where some retrieved documents are distractors, mixing oracle and distractor training plus chain-of-thought answers — improving in-domain QA over general RAG prompting.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">RAFT</span>
+        <span class="paper-meta-tag">Domain Adaptation</span>
+        <span class="paper-meta-tag">RAG</span>
+        <span class="paper-meta-tag">Distractors</span>
+      </div>
+      <a class="paper-link" href="./paper/RAFT_Adapting_Language_Model_to_Domain_Specific_RAG.html">Open Explainer →</a>
+    </article>
   </div>
 </div>
-<div class="track-section" id="track-5">
+
+
+<div class="track-section" id="track-4">
   <div class="track-head">
-    <span class="track-label">Track V</span>
-    <h3 class="track-title">Evaluation & Benchmarks</h3>
+    <span class="track-label">Category IV</span>
+    <h3 class="track-title">Adaptation, Alignment & Post-Training</h3>
+    <span class="track-count">11</span>
   </div>
-  <p class="track-desc">The science of measuring LLMs: MMLU's 57-subject knowledge exam, HELM's holistic scenario × metric matrix, LLM-as-a-judge methodology, adversarial stress-tests for judges, and the first systematic benchmark for LLMs as agents. <strong>5 papers.</strong></p>
-    <div class="study-pair">⭐ study together: MMLU → HELM → LLM-as-a-Judge → JudgeBench</div>
+  <p class="track-desc">Turning raw pretrained models into helpful, steerable assistants: RLHF's origin, PPO, parameter-efficient finetuning (LoRA, QLoRA), instruction tuning (InstructGPT, Self-Instruct), AI feedback (Constitutional AI), direct preference optimization, process supervision, and RL for reasoning (DeepSeekMath, DeepSeek-R1). <strong>11 papers.</strong></p>
+    <div class="study-pair">⭐ study together: InstructGPT → PPO → DPO → DeepSeek-R1 — the alignment arc</div>
   <div class="paper-grid">
 
-    <article class="paper-card amber" data-title="MMLU: Measuring Massive Multitask Language Understanding">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Hendrycks et al. · 2021</div>
+    <article class="paper-card amber" data-title="Deep Reinforcement Learning from Human Preferences">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#37 · Christiano et al. · 2017</div>
+      <h3>RLHF Origins</h3>
+      <p>The RLHF origin story. Instead of reward functions, humans compare short trajectory clips; the reward model learns from a few hundred to a thousand preferences, and RL agents solve simulated robotics without ever seeing a hand-crafted reward.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">RLHF</span>
+        <span class="paper-meta-tag">Reward Model</span>
+        <span class="paper-meta-tag">Human Feedback</span>
+        <span class="paper-meta-tag">Reinforcement Learning</span>
+      </div>
+      <a class="paper-link" href="./paper/Deep_Reinforcement_Learning_from_Human_Preferences.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Proximal Policy Optimization Algorithms">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#38 · Schulman et al. · 2017</div>
+      <h3>PPO</h3>
+      <p>The workhorse of policy optimization. PPO clips the policy-ratio objective so each update stays near the old policy — first-order simplicity with trust-region stability — and became the default RL algorithm behind InstructGPT and beyond.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">PPO</span>
+        <span class="paper-meta-tag">Policy Optimization</span>
+        <span class="paper-meta-tag">RLHF</span>
+        <span class="paper-meta-tag">Clipping</span>
+      </div>
+      <a class="paper-link" href="./paper/PPO_Proximal_Policy_Optimization_Algorithms.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="LoRA: Low-Rank Adaptation of Large Language Models">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#39 · Hu et al. · 2021</div>
+      <h3>LoRA: Low-Rank Adaptation of Large Language Models</h3>
+      <p>An interactive walkthrough of LoRA covering low-rank updates, parameter-efficient fine-tuning, practical deployment tradeoffs, and why LoRA matches full fine-tuning at a fraction of the cost.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">LoRA</span>
+        <span class="paper-meta-tag">PEFT</span>
+        <span class="paper-meta-tag">Low-Rank</span>
+        <span class="paper-meta-tag">LLM Fine-Tuning</span>
+      </div>
+      <a class="paper-link" href="./paper/LoRA_Low_Rank_Adaptation.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="Training Language Models to Follow Instructions with Human Feedback">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#40 · Ouyang et al. · 2022</div>
+      <h3>InstructGPT: Training Models to Follow Instructions</h3>
+      <p>The RLHF paper that paved the way for ChatGPT. Interactive 3-step pipeline (SFT → Reward Model → PPO), human evaluation results, bias analysis, and qualitative examples.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">InstructGPT</span>
+        <span class="paper-meta-tag">RLHF</span>
+        <span class="paper-meta-tag">PPO</span>
+        <span class="paper-meta-tag">Alignment</span>
+      </div>
+      <a class="paper-link" href="./paper/Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="Self-Instruct: Aligning Language Models with Self-Generated Instructions">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#41 · Wang et al. · 2022</div>
+      <h3>Self-Instruct</h3>
+      <p>Bootstrapping an instruction dataset from the model itself. Self-Instruct generates 52K instructions from 175 seed tasks, filters near-duplicates, and finetunes — closing much of the gap to InstructGPT without human-written data.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Self-Instruct</span>
+        <span class="paper-meta-tag">Synthetic Data</span>
+        <span class="paper-meta-tag">Instruction Tuning</span>
+        <span class="paper-meta-tag">Bootstrapping</span>
+      </div>
+      <a class="paper-link" href="./paper/Self_Instruct_Aligning_Language_Models_with_Self_Generated_Instructions.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Constitutional AI: Harmlessness from AI Feedback">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#42 · Bai et al. · 2022</div>
+      <h3>Constitutional AI: Harmlessness from AI Feedback</h3>
+      <p>Alignment from a written document: self-critique steppers, the RLAIF preference labeler, 16 principles, and the harmlessness-helpfulness frontier — the recipe behind Claude.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Constitutional AI</span>
+        <span class="paper-meta-tag">RLAIF</span>
+        <span class="paper-meta-tag">Self-Critique</span>
+        <span class="paper-meta-tag">Alignment</span>
+      </div>
+      <a class="paper-link" href="./paper/Constitutional_AI_Harmlessness_from_AI_Feedback.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="QLoRA: Efficient Finetuning of Quantized LLMs">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#43 · Dettmers et al. · 2023</div>
+      <h3>QLoRA: Efficient Finetuning of Quantized LLMs</h3>
+      <p>65B finetuning on one 48GB GPU: NF4 quantization grids, double quantization, paged optimizers, and Guanaco reaching 99.3% of ChatGPT on the Vicuna benchmark.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">QLoRA</span>
+        <span class="paper-meta-tag">NF4</span>
+        <span class="paper-meta-tag">4-Bit</span>
+        <span class="paper-meta-tag">65B on 48GB</span>
+      </div>
+      <a class="paper-link" href="./paper/QLoRA_Efficient_Finetuning_of_Quantized_LLMs.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="Direct Preference Optimization: Your Language Model Is Secretly a Reward Model">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#44 · Rafailov et al. · 2023</div>
+      <h3>Direct Preference Optimization (DPO)</h3>
+      <p>RLHF without RL: a closed-form preference loss derived from Bradley-Terry theory. Interactive derivation, pairwise training demo, and why the open-model world adopted it over PPO.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">DPO</span>
+        <span class="paper-meta-tag">Alignment</span>
+        <span class="paper-meta-tag">Preference</span>
+        <span class="paper-meta-tag">No-RL</span>
+      </div>
+      <a class="paper-link" href="./paper/DPO.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="Let's Verify Step by Step">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#45 · Lightman et al. · 2023</div>
+      <h3>Let's Verify Step by Step</h3>
+      <p>Grade the steps, not just the answer. Process reward models (PRMs) supervised on 800K per-step labels beat outcome models on MATH benchmarks — and verify each reasoning step catches errors outcome scoring can't see.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">PRM</span>
+        <span class="paper-meta-tag">Process Supervision</span>
+        <span class="paper-meta-tag">Math Reasoning</span>
+        <span class="paper-meta-tag">Verification</span>
+      </div>
+      <a class="paper-link" href="./paper/Lets_Verify_Step_by_Step.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#46 · Shao et al. · 2024</div>
+      <h3>DeepSeekMath</h3>
+      <p>Math reasoning from data + GRPO. DeepSeekMath builds a 120B-token corpus from Common Crawl, then applies Group Relative Policy Optimization — a critic-free PPO variant — reaching GPT-4-level competition math in a 7B open model.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">DeepSeekMath</span>
+        <span class="paper-meta-tag">GRPO</span>
+        <span class="paper-meta-tag">Math Reasoning</span>
+        <span class="paper-meta-tag">RL</span>
+      </div>
+      <a class="paper-link" href="./paper/DeepSeekMath_Pushing_the_Limits_of_Mathematical_Reasoning.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#47 · DeepSeek-AI · 2025</div>
+      <h3>DeepSeek-R1: Reasoning via RL</h3>
+      <p>Reasoning capability from pure reinforcement learning. GRPO visualizer, the emergent "aha moment" trace player, the 4-stage training pipeline, and distilled open models matching o1.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">DeepSeek-R1</span>
+        <span class="paper-meta-tag">RL</span>
+        <span class="paper-meta-tag">GRPO</span>
+        <span class="paper-meta-tag">Reasoning</span>
+      </div>
+      <a class="paper-link" href="./paper/DeepSeek_R1.html">Open Explainer →</a>
+    </article>
+  </div>
+</div>
+
+
+<div class="track-section" id="track-5">
+  <div class="track-head">
+    <span class="track-label">Category V</span>
+    <h3 class="track-title">Reasoning, In-Context Learning & Tool Use</h3>
+    <span class="track-count">11</span>
+  </div>
+  <p class="track-desc">How models think: chain-of-thought prompting, self-consistency voting, bootstrapped reasoning (STaR), zero-shot reasoning, the induction-head circuits behind in-context learning, and the agent loop papers — ReAct, Toolformer, Reflexion, Tree of Thoughts, CoALA, and optimal test-time compute. <strong>11 papers.</strong></p>
+    <div class="study-pair">⭐ study together: CoT → Self-Consistency → ToT → Test-Time Compute</div>
+  <div class="paper-grid">
+
+    <article class="paper-card teal" data-title="Chain-of-Thought Prompting Elicits Reasoning in Large Language Models">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#48 · Wei et al. · 2022</div>
+      <h3>Chain-of-Thought Prompting</h3>
+      <p>Reasoning steps in few-shot prompts unlock multi-step problems — but only at ~100B scale. A standard-vs-CoT race, emergence charts, and the ablations that proved the words matter.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">CoT</span>
+        <span class="paper-meta-tag">Reasoning</span>
+        <span class="paper-meta-tag">Prompting</span>
+        <span class="paper-meta-tag">Emergence</span>
+      </div>
+      <a class="paper-link" href="./paper/Chain_Of_Thought_Prompting.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="Self-Consistency Improves Chain of Thought Reasoning in Language Models">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#49 · Wang et al. · 2022</div>
+      <h3>Self-Consistency Improves CoT Reasoning</h3>
+      <p>Sample 40 reasoning paths, take the vote. Interactive sampling-and-voting demos, convergence histograms, and +17.9 points on GSM8K with zero additional training.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Self-Consistency</span>
+        <span class="paper-meta-tag">Voting</span>
+        <span class="paper-meta-tag">Decoding</span>
+        <span class="paper-meta-tag">GSM8K</span>
+      </div>
+      <a class="paper-link" href="./paper/Self_Consistency.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="STaR: Bootstrapping Reasoning With Reasoning">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#50 · Zelikman et al. · 2022</div>
+      <h3>STaR</h3>
+      <p>Reasoning that generates its own supervision. STaR samples rationales, keeps those that reach correct answers, and bootstraps on hints for failures — repeatedly improving math, commonsense, and logic without external rationales.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">STaR</span>
+        <span class="paper-meta-tag">Bootstrapping</span>
+        <span class="paper-meta-tag">Rationales</span>
+        <span class="paper-meta-tag">Reasoning</span>
+      </div>
+      <a class="paper-link" href="./paper/STaR_Bootstrapping_Reasoning_With_Reasoning.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="Large Language Models are Zero-Shot Reasoners">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#51 · Kojima et al. · 2022</div>
+      <h3>Zero-Shot Reasoners</h3>
+      <p>Two words: 'Let's think step by step.' Zero-shot CoT turns modest models into multi-step reasoners — up to ~36-point accuracy jumps on arithmetic and symbolic tasks — before any few-shot examples are shown.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Zero-shot CoT</span>
+        <span class="paper-meta-tag">Prompting</span>
+        <span class="paper-meta-tag">Emergent Abilities</span>
+        <span class="paper-meta-tag">Reasoning</span>
+      </div>
+      <a class="paper-link" href="./paper/Large_Language_Models_are_Zero_Shot_Reasoners.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="In-context Learning and Induction Heads">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#52 · Olsson et al. · 2022</div>
+      <h3>In-context Learning and Induction Heads</h3>
+      <p>The two-head attention circuit behind in-context learning. Sequence-completion demos, K-composition steppers, and the training phase change that switched ICL on.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Induction Heads</span>
+        <span class="paper-meta-tag">Circuits</span>
+        <span class="paper-meta-tag">ICL</span>
+        <span class="paper-meta-tag">Interpretability</span>
+      </div>
+      <a class="paper-link" href="./paper/Induction_Heads.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="ReAct: Synergizing Reasoning and Acting in Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#53 · Yao et al. · 2022</div>
+      <h3>ReAct: Synergizing Reasoning and Acting</h3>
+      <p>Thought, action, observation — one loop. A live agent-trace player, the hallucination showdown vs CoT, and the template behind every modern AI agent.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">ReAct</span>
+        <span class="paper-meta-tag">Agents</span>
+        <span class="paper-meta-tag">Tools</span>
+        <span class="paper-meta-tag">Reasoning</span>
+      </div>
+      <a class="paper-link" href="./paper/ReAct.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="Toolformer: Language Models Can Teach Themselves to Use Tools">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#54 · Schick et al. · 2023</div>
+      <h3>Toolformer: Models Teach Themselves Tools</h3>
+      <p>A 6.7B model that inserts its own API calls, filters them by perplexity, and reads the results. Interactive perplexity-filter demos, five tools, and beating GPT-3 175B on LAMA.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Toolformer</span>
+        <span class="paper-meta-tag">Tools</span>
+        <span class="paper-meta-tag">APIs</span>
+        <span class="paper-meta-tag">Self-Taught</span>
+      </div>
+      <a class="paper-link" href="./paper/Toolformer.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="Reflexion: Language Agents with Verbal Reinforcement Learning">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#55 · Shinn et al. · 2023</div>
+      <h3>Reflexion</h3>
+      <p>Failure becomes text, text becomes memory. Reflexion agents store verbal self-critiques of failed attempts and reuse them in later trials — beating standard RL on HumanEval coding with simple episodic memory instead of weight updates.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Reflexion</span>
+        <span class="paper-meta-tag">Verbal RL</span>
+        <span class="paper-meta-tag">Self-Critique</span>
+        <span class="paper-meta-tag">Agents</span>
+      </div>
+      <a class="paper-link" href="./paper/Reflexion_Language_Agents_with_Verbal_Reinforcement_Learning.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="Tree of Thoughts: Deliberate Problem Solving with Large Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#56 · Yao et al. · 2023</div>
+      <h3>Tree of Thoughts</h3>
+      <p>Search over thoughts. ToT explores a tree of intermediate reasoning steps with LLM self-evaluation and deliberate look-ahead/rollbacks — GPT-4 solves 4% of Game of 24 with chain-of-thought; Tree of Thoughts search reaches 74%.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Tree of Thoughts</span>
+        <span class="paper-meta-tag">Search</span>
+        <span class="paper-meta-tag">Planning</span>
+        <span class="paper-meta-tag">Deliberation</span>
+      </div>
+      <a class="paper-link" href="./paper/Tree_of_Thoughts_Deliberate_Problem_Solving.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="Cognitive Architectures for Language Agents">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#57 · Sumers et al. · 2023</div>
+      <h3>CoALA</h3>
+      <p>The unified theory of LLM agents. CoALA maps agents onto a cognitive architecture — decision cycle, working/episodic/semantic/procedural memory, and action spaces (internal + external) — organizing 100+ papers into one design space.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">CoALA</span>
+        <span class="paper-meta-tag">Cognitive Architecture</span>
+        <span class="paper-meta-tag">Agents</span>
+        <span class="paper-meta-tag">Memory</span>
+      </div>
+      <a class="paper-link" href="./paper/Cognitive_Architectures_for_Language_Agents.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="Scaling LLM Test-Time Compute Optimally Can Be More Effective Than Scaling Model Parameters">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#58 · Snell et al. · 2024</div>
+      <h3>Test-Time Compute</h3>
+      <p>Spend your FLOPs at inference. A compute-optimal strategy — choosing between denser chains and parallel sampling, adaptive revision, and search per difficulty — lets a smaller model with 4× inference FLOPs beat a 14× larger model on MATH.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Test-Time Compute</span>
+        <span class="paper-meta-tag">Inference Scaling</span>
+        <span class="paper-meta-tag">Verification</span>
+        <span class="paper-meta-tag">Search</span>
+      </div>
+      <a class="paper-link" href="./paper/Scaling_LLM_Test_Time_Compute_Optimally.html">Open Explainer →</a>
+    </article>
+  </div>
+</div>
+
+
+<div class="track-section" id="track-6">
+  <div class="track-head">
+    <span class="track-label">Category VI</span>
+    <h3 class="track-title">Hallucination, Truthfulness & Factuality</h3>
+    <span class="track-count">7</span>
+  </div>
+  <p class="track-desc">Why models make things up and how to measure it: TruthfulQA's falsehood benchmark, sampling-based detection (SelfCheckGPT), atomic factual precision (FActScore), HaluEval's large-scale evaluation, the field's reference taxonomy survey, the RAG hallucination corpus, and the 2025 theory of why hallucination is intrinsic. <strong>7 papers.</strong></p>
+    <div class="study-pair">⭐ study together: TruthfulQA → SelfCheckGPT → Why LMs Hallucinate — the theory arc</div>
+  <div class="paper-grid">
+
+    <article class="paper-card blue" data-title="TruthfulQA: Measuring How Models Mimic Human Falsehoods">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#59 · Lin et al. · 2021</div>
+      <h3>TruthfulQA: Measuring How Models Mimic Human Falsehoods</h3>
+      <p>817 adversarial questions that catch models repeating human falsehoods. Imitative-falsehood demos, MC1 vs MC2 scoring formats, and the 36-point truthfulness gap between GPT-3 and people.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">TruthfulQA</span>
+        <span class="paper-meta-tag">Imitation</span>
+        <span class="paper-meta-tag">MC1/MC2</span>
+        <span class="paper-meta-tag">Honesty</span>
+      </div>
+      <a class="paper-link" href="./paper/TruthfulQA_Measuring_How_Models_Mimic_Human_Falsehoods.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection for Generative Large Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#60 · Manakul et al. · 2023</div>
+      <h3>SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection</h3>
+      <p>Sample the same model N times and watch hallucinations contradict their own alternatives — no external database, no token probabilities, no extra annotators. Black-box only.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Self-Check</span>
+        <span class="paper-meta-tag">Sampling</span>
+        <span class="paper-meta-tag">Black-Box</span>
+        <span class="paper-meta-tag">Consistency</span>
+      </div>
+      <a class="paper-link" href="./paper/SelfCheckGPT_Zero_Resource_Black_Box_Hallucination_Detection.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#61 · Min et al. · 2023</div>
+      <h3>FActScore: Fine-Grained Atomic Evaluation of Factual Precision</h3>
+      <p>Break long-form generations into atomic facts, verify each one against a knowledge source like Wikipedia, and turn "is this model factual?" into a number you can audit.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Atomic Facts</span>
+        <span class="paper-meta-tag">Precision</span>
+        <span class="paper-meta-tag">Verification</span>
+        <span class="paper-meta-tag">Wikipedia</span>
+      </div>
+      <a class="paper-link" href="./paper/FActScore_Fine_Grained_Atomic_Evaluation_of_Factual_Precision.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="HaluEval: A Large-Scale Hallucination Evaluation Benchmark for Large Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#62 · Li et al. · 2023</div>
+      <h3>HaluEval: A Large-Scale Hallucination Evaluation Benchmark</h3>
+      <p>35,000 truthful answers paired with plausible-but-wrong twins built by ChatGPT itself — then ten leading LLMs try to tell them apart, and most barely beat a coin flip.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Benchmark</span>
+        <span class="paper-meta-tag">Dataset</span>
+        <span class="paper-meta-tag">Hallucinated Twins</span>
+        <span class="paper-meta-tag">QA</span>
+      </div>
+      <a class="paper-link" href="./paper/HaluEval_A_Large_Scale_Hallucination_Evaluation_Benchmark.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="A Survey on Hallucination in Large Language Models: Principles, Taxonomy, Challenges, and Open Questions">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#63 · Huang et al. · 2023</div>
+      <h3>A Survey on Hallucination in Large Language Models</h3>
+      <p>The field's shared vocabulary: what hallucination is, its intrinsic and extrinsic types, where it enters the data → training → inference pipeline, and how to detect and mitigate it.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Survey</span>
+        <span class="paper-meta-tag">Taxonomy</span>
+        <span class="paper-meta-tag">Detection</span>
+        <span class="paper-meta-tag">Mitigation</span>
+      </div>
+      <a class="paper-link" href="./paper/A_Survey_on_Hallucination_in_Large_Language_Models.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="RAGTruth: A Hallucination Corpus for Developing Trustworthy Retrieval-Augmented Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#64 · Niu et al. · 2023 · cross-listed from III</div>
+      <h3>RAGTruth: A Hallucination Corpus for Trustworthy RAG</h3>
+      <p>17,790 real RAG responses with word-level hallucination spans — and the uncomfortable finding that even gold retrieved context still yields fabricated claims.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">RAG</span>
+        <span class="paper-meta-tag">Word-Level Spans</span>
+        <span class="paper-meta-tag">Corpus</span>
+        <span class="paper-meta-tag">43.1%</span>
+      </div>
+      <a class="paper-link" href="./paper/RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Why Language Models Hallucinate">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#65 · Kalai et al. · 2025</div>
+      <h3>Why LMs Hallucinate</h3>
+      <p>Hallucination as a numbers game. When a calibrated model correctly predicts facts at rates p1 > p2, it must hallucinate to be accurate on the rarer fact — lower-bounding errors at ~19% even on Zipfian Wikipedia facts, and 40%+ on long generations.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Hallucination</span>
+        <span class="paper-meta-tag">Calibration</span>
+        <span class="paper-meta-tag">Theory</span>
+        <span class="paper-meta-tag">Statistics</span>
+      </div>
+      <a class="paper-link" href="./paper/Why_Language_Models_Hallucinate.html">Open Explainer →</a>
+    </article>
+  </div>
+</div>
+
+
+<div class="track-section" id="track-7">
+  <div class="track-head">
+    <span class="track-label">Category VII</span>
+    <h3 class="track-title">LLM Evaluation & Benchmarks</h3>
+    <span class="track-count">8</span>
+  </div>
+  <p class="track-desc">Measuring general capability: MMLU's massive multitask understanding, code evaluation (HumanEval), holistic evaluation (HELM), LLM-as-a-judge methodology, graduate-level Google-proof QA (GPQA), and the contamination-free benchmarks that keep scores honest (LiveCodeBench, LiveBench, JudgeBench). <strong>8 papers.</strong></p>
+    <div class="study-pair">⭐ study together: MMLU → GPQA → LiveBench — contamination to cure</div>
+  <div class="paper-grid">
+
+    <article class="paper-card amber" data-title="Measuring Massive Multitask Language Understanding">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#66 · Hendrycks et al. · 2020</div>
       <h3>MMLU: Measuring Massive Multitask Language Understanding</h3>
       <p>57 subjects, 15,908 expert-designed questions. The subject-grid difficulty explorer, confidence-vs-correctness calibration demo, and the benchmark that became the field's default knowledge test.</p>
       <div class="paper-meta">
@@ -1204,9 +1761,22 @@ footer {
       </div>
       <a class="paper-link" href="./paper/MMLU_Measuring_Massive_Multitask_Language_Understanding.html">Open Explainer →</a>
     </article>
+    <article class="paper-card teal" data-title="Evaluating Large Language Models Trained on Code">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#67 · Chen et al. · 2021</div>
+      <h3>HumanEval</h3>
+      <p>164 hand-written Python problems, pass@k, and Codex. The paper that standardized code evaluation — functional correctness over edit-distance — and introduced the 12B code model behind GitHub Copilot's first release.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">HumanEval</span>
+        <span class="paper-meta-tag">Code</span>
+        <span class="paper-meta-tag">pass@k</span>
+        <span class="paper-meta-tag">Codex</span>
+      </div>
+      <a class="paper-link" href="./paper/HumanEval_Evaluating_LLMs_Trained_on_Code.html">Open Explainer →</a>
+    </article>
     <article class="paper-card teal" data-title="HELM: Holistic Evaluation of Language Models">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Liang et al. · 2022</div>
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#68 · Liang et al. · 2022</div>
       <h3>HELM: Holistic Evaluation of Language Models</h3>
       <p>30 models × 42 scenarios × 7 metrics. The Stanford framework that replaced one-number leaderboards with a transparent scenario–metric matrix spanning accuracy, robustness, fairness, and beyond.</p>
       <div class="paper-meta">
@@ -1217,9 +1787,10 @@ footer {
       </div>
       <a class="paper-link" href="./paper/HELM_Holistic_Evaluation_of_Language_Models.html">Open Explainer →</a>
     </article>
-    <article class="paper-card blue" data-title="Judging LLM-as-a-Judge (MT-Bench & Arena)">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Zheng et al. · 2023</div>
+    <article class="paper-card blue" data-title="Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#69 · Zheng et al. · 2023</div>
       <h3>Judging LLM-as-a-Judge (MT-Bench & Arena)</h3>
       <p>Can models grade other models? MT-Bench category explorer, Chatbot Arena voting, judge-bias simulators for position and verbosity, and 85% agreement with human raters.</p>
       <div class="paper-meta">
@@ -1230,9 +1801,50 @@ footer {
       </div>
       <a class="paper-link" href="./paper/LLM_as_a_Judge.html">Open Explainer →</a>
     </article>
+    <article class="paper-card green" data-title="GPQA: A Graduate-Level Google-Proof Q&A Benchmark">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#70 · Rein et al. · 2023</div>
+      <h3>GPQA</h3>
+      <p>Questions experts can't Google. 448 multiple-choice problems in biology, physics, and chemistry — validated so skilled non-experts with 30+ minutes of web browsing score barely above chance, even with the exact wording posted online.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">GPQA</span>
+        <span class="paper-meta-tag">Expert Benchmark</span>
+        <span class="paper-meta-tag">Science QA</span>
+        <span class="paper-meta-tag">Google-Proof</span>
+      </div>
+      <a class="paper-link" href="./paper/GPQA_A_Graduate_Level_Google_Proof_QA_Benchmark.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="LiveCodeBench: Holistic and Contamination Free Evaluation of Large Language Models for Code">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#71 · Jain et al. · 2024</div>
+      <h3>LiveCodeBench</h3>
+      <p>Fresh problems, monthly. LiveCodeBench continuously collects new LeetCode/AtCoder/Codeforces problems with time-stamped release windows, decouples prompts from style effects, and exposes contamination drift across model release dates.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">LiveCodeBench</span>
+        <span class="paper-meta-tag">Code Eval</span>
+        <span class="paper-meta-tag">Contamination</span>
+        <span class="paper-meta-tag">Benchmark</span>
+      </div>
+      <a class="paper-link" href="./paper/LiveCodeBench_Holistic_and_Contamination_Free_Evaluation.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="LiveBench: A Challenging, Contamination-Free LLM Benchmark">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#72 · White et al. · 2024</div>
+      <h3>LiveBench</h3>
+      <p>A benchmark with a shelf life. LiveBench releases new questions monthly from recent sources (math competitions, papers, news), scores objective ground-truth tasks (no LLM judge), and openly ranks closed and open models with versioned releases.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">LiveBench</span>
+        <span class="paper-meta-tag">Contamination</span>
+        <span class="paper-meta-tag">Objective Scoring</span>
+        <span class="paper-meta-tag">Benchmark</span>
+      </div>
+      <a class="paper-link" href="./paper/LiveBench_A_Challenging_Contamination_Free_LLM_Benchmark.html">Open Explainer →</a>
+    </article>
     <article class="paper-card purple" data-title="JudgeBench: A Benchmark for Evaluating LLM-based Judges">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Tan et al. · 2024</div>
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#73 · Tan et al. · 2024</div>
       <h3>JudgeBench: A Benchmark for Evaluating LLM-based Judges</h3>
       <p>350 adversarial response pairs where one answer is subtly, objectively wrong — and even GPT-4o judges only slightly better than random guessing. The stress-test for LLM judges.</p>
       <div class="paper-meta">
@@ -1243,9 +1855,37 @@ footer {
       </div>
       <a class="paper-link" href="./paper/JudgeBench_A_Benchmark_for_Evaluating_LLM_based_Judges.html">Open Explainer →</a>
     </article>
+  </div>
+</div>
+
+
+<div class="track-section" id="track-8">
+  <div class="track-head">
+    <span class="track-label">Category VIII</span>
+    <h3 class="track-title">Agent Evaluation & Real-World Agents</h3>
+    <span class="track-count">14</span>
+  </div>
+  <p class="track-desc">Can agents act in the real world? Web environments (WebArena), the agent-evaluation grid (AgentBench), real GitHub issues (SWE-bench, SWE-Bench Pro), general assistants (GAIA), full computer control (OSWorld), agent-computer interfaces (SWE-agent), user interaction (τ-bench, τ²-Bench), frontier R&D (RE-Bench, PaperBench), browsing (BrowseComp), long-task horizons (METR), and terminal work (Terminal-Bench). <strong>14 papers.</strong></p>
+    <div class="study-pair">⭐ study together: SWE-bench → SWE-agent → Terminal-Bench — real work, measured</div>
+  <div class="paper-grid">
+
+    <article class="paper-card amber" data-title="WebArena: A Realistic Web Environment for Building Autonomous Agents">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#74 · Zhou et al. · 2023</div>
+      <h3>WebArena</h3>
+      <p>Self-hostable, reproducible web work. Four realistic sites (e-commerce, forums, GitLab, CMS + maps) with 812 tasks grounded in functional mock databases — where the best 2023 agents reached only ~14% success versus ~78% for humans.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">WebArena</span>
+        <span class="paper-meta-tag">Web Agents</span>
+        <span class="paper-meta-tag">Environment</span>
+        <span class="paper-meta-tag">Benchmark</span>
+      </div>
+      <a class="paper-link" href="./paper/WebArena_A_Realistic_Web_Environment.html">Open Explainer →</a>
+    </article>
     <article class="paper-card green" data-title="AgentBench: Evaluating LLMs as Agents">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Liu et al. · 2023</div>
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#75 · Liu et al. · 2023</div>
       <h3>AgentBench: Evaluating LLMs as Agents</h3>
       <p>8 live environments — terminals, databases, web browsing, games — where models must act, not just answer, with every action checked. The first systematic multi-environment agent benchmark.</p>
       <div class="paper-meta">
@@ -1256,21 +1896,9 @@ footer {
       </div>
       <a class="paper-link" href="./paper/AgentBench_Evaluating_LLMs_as_Agents.html">Open Explainer →</a>
     </article>
-
-  </div>
-</div>
-<div class="track-section" id="track-6">
-  <div class="track-head">
-    <span class="track-label">Track VI</span>
-    <h3 class="track-title">Agent Reliability & Software Engineering</h3>
-  </div>
-  <p class="track-desc">Can agents do real work? Real GitHub issues, tool-agent-user interaction with simulated customers, long-horizon enterprise problems, dual-control conversations, and the command-line final exam. <strong>5 papers.</strong></p>
-    <div class="study-pair">⭐ study together: SWE-bench → τ-bench → SWE-Bench Pro → Terminal-Bench</div>
-  <div class="paper-grid">
-
     <article class="paper-card amber" data-title="SWE-bench: Can Language Models Resolve Real-World GitHub Issues?">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Jimenez et al. · 2024</div>
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#76 · Jimenez et al. · 2023</div>
       <h3>SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</h3>
       <p>2,294 real GitHub issues across 12 Python repos, graded by the repositories' own tests. Instance-mining pipeline, resolution machine across agent eras, and the 1.96% humbling of 2023's best.</p>
       <div class="paper-meta">
@@ -1281,9 +1909,48 @@ footer {
       </div>
       <a class="paper-link" href="./paper/SWE_bench_Can_Language_Models_Resolve_Real_World_GitHub_Issues.html">Open Explainer →</a>
     </article>
-    <article class="paper-card blue" data-title="τ-bench: Tool-Agent-User Interaction in Real-World Domains">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Yao et al. · 2024</div>
+    <article class="paper-card blue" data-title="GAIA: a benchmark for General AI Assistants">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#77 · Mialon et al. · 2023</div>
+      <h3>GAIA</h3>
+      <p>Questions easy for humans, hard for AI. GAIA's 466 questions demand reasoning, multimodal handling, tool use, and web navigation — no specialist tricks — and 2023's best systems solved under 15% while humans exceed 92%.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">GAIA</span>
+        <span class="paper-meta-tag">General Assistants</span>
+        <span class="paper-meta-tag">Multimodal</span>
+        <span class="paper-meta-tag">Tool Use</span>
+      </div>
+      <a class="paper-link" href="./paper/GAIA_A_Benchmark_for_General_AI_Assistants.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#78 · Xie et al. · 2024</div>
+      <h3>OSWorld</h3>
+      <p>The full desktop as playground. OSWorld offers 369 real computer tasks across five operating systems in sandboxed environments — files, apps, cross-app workflows — where multimodal agents manage under 22% even with hints and step ground truth.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">OSWorld</span>
+        <span class="paper-meta-tag">Computer Use</span>
+        <span class="paper-meta-tag">Multimodal</span>
+        <span class="paper-meta-tag">GUI Agents</span>
+      </div>
+      <a class="paper-link" href="./paper/OSWorld_Benchmarking_Multimodal_Agents.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#79 · Yang et al. · 2024</div>
+      <h3>SWE-agent</h3>
+      <p>The interface is the capability. A minimal agent-computer interface (ACI) — file viewer, editor with linting, search, compact actions — lets a vanilla LM resolve 12.5% of SWE-bench issues, from 3.8% without the custom tools.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">SWE-agent</span>
+        <span class="paper-meta-tag">ACI</span>
+        <span class="paper-meta-tag">Software Engineering</span>
+        <span class="paper-meta-tag">Agents</span>
+      </div>
+      <a class="paper-link" href="./paper/SWE_agent_Agent_Computer_Interfaces.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#80 · Yao et al. · 2024</div>
       <h3>τ-bench: Tool-Agent-User Interaction in Real-World Domains</h3>
       <p>Simulated users with hidden goals, writable APIs, and database-state grading. The τ-bench loop stepper, pass^k reliability cliff, and failure autopsies of agents that fold under pressure.</p>
       <div class="paper-meta">
@@ -1294,22 +1961,61 @@ footer {
       </div>
       <a class="paper-link" href="./paper/Tau_bench_A_Benchmark_for_Tool_Agent_User_Interaction_in_Real_World_Domains.html">Open Explainer →</a>
     </article>
-    <article class="paper-card teal" data-title="SWE-Bench Pro: Can AI Agents Solve Long-Horizon SWE Tasks?">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Deng et al. · 2025</div>
-      <h3>SWE-Bench Pro: Can AI Agents Solve Long-Horizon SWE Tasks?</h3>
-      <p>1,865 enterprise-scale problems across 41 repositories — hours-to-days tasks, split public/held-out/commercial for contamination-proof evaluation. The three-bowl design and the long-horizon wall.</p>
+    <article class="paper-card purple" data-title="RE-Bench: Evaluating Frontier AI R&D Capabilities of Language Model Agents against Human Experts">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#81 · Kwa et al. · 2024</div>
+      <h3>RE-Bench</h3>
+      <p>Can agents do AI research? Seven 2-32 hour ML R&D tasks (kernel optimization, scaling laws, losslandscape design) with expert baselines: agents complete tasks 10-100× cheaper than humans per attempt and match top-human scores in 2-8 hours.</p>
       <div class="paper-meta">
-        <span class="paper-meta-tag">SWE-Bench Pro</span>
-        <span class="paper-meta-tag">Long-Horizon</span>
-        <span class="paper-meta-tag">Held-out</span>
-        <span class="paper-meta-tag">Enterprise</span>
+        <span class="paper-meta-tag">RE-Bench</span>
+        <span class="paper-meta-tag">AI R&D</span>
+        <span class="paper-meta-tag">Agents</span>
+        <span class="paper-meta-tag">Expert Comparison</span>
       </div>
-      <a class="paper-link" href="./paper/SWE_Bench_Pro_Can_AI_Agents_Solve_Long_Horizon_Software_Engineering_Tasks.html">Open Explainer →</a>
+      <a class="paper-link" href="./paper/RE_Bench_Evaluating_Frontier_AI_RD_Capabilities.html">Open Explainer →</a>
     </article>
-    <article class="paper-card purple" data-title="τ²-Bench: Evaluating Conversational Agents in Dual-Control">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Barres et al. · 2025</div>
+    <article class="paper-card blue" data-title="Measuring AI Ability to Complete Long Tasks">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#82 · Kwa et al. · 2025</div>
+      <h3>METR Long Tasks</h3>
+      <p>Task length as the capability clock. Across a decade of game, software, and R&D benchmarks, agent task-horizon — the length of task at 50% success — doubles every ~7 months, from seconds in 2019 toward hours by 2025, extrapolating to month-long tasks in years ahead.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">METR</span>
+        <span class="paper-meta-tag">Task Horizon</span>
+        <span class="paper-meta-tag">Long Tasks</span>
+        <span class="paper-meta-tag">Trend</span>
+      </div>
+      <a class="paper-link" href="./paper/Measuring_AI_Ability_to_Complete_Long_Tasks.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="PaperBench: Evaluating AI's Ability to Replicate AI Research">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#83 · Starace et al. · 2025</div>
+      <h3>PaperBench</h3>
+      <p>Replication as the ultimate research eval. 20 ICML 2024 papers decomposed into 8,316 rubric-conducted, code-verified subtasks; deep research agents reach ~21% replication ability versus human ML PhDs at 41.4-52.3%.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">PaperBench</span>
+        <span class="paper-meta-tag">Replication</span>
+        <span class="paper-meta-tag">Rubrics</span>
+        <span class="paper-meta-tag">Deep Research</span>
+      </div>
+      <a class="paper-link" href="./paper/PaperBench_Evaluating_AIs_Ability_to_Replicate.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="BrowseComp: A Simple Yet Challenging Benchmark for Browsing Agents">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#84 · Wei et al. · 2025</div>
+      <h3>BrowseComp</h3>
+      <p>Find the needle across the web. 1,277 multi-hop browsing puzzles with hard-to-guess answers and known sources; GPT-4o gets 2%, and the paper introduces agent-harness strategies (reasoning-browsing interleave) that push Deep Research far higher.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">BrowseComp</span>
+        <span class="paper-meta-tag">Browsing</span>
+        <span class="paper-meta-tag">Search Agents</span>
+        <span class="paper-meta-tag">Deep Research</span>
+      </div>
+      <a class="paper-link" href="./paper/BrowseComp_A_Simple_Yet_Challenging_Benchmark.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="τ²-Bench: Evaluating Conversational Agents in a Dual-Control Environment">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#85 · Barres et al. · 2025</div>
       <h3>τ²-Bench: Evaluating Conversational Agents in Dual-Control</h3>
       <p>The user gets tools too: a Dec-POMDP telecom domain where agent and user both act on shared state. Dual-control walkthrough, compositional task generator, and the guiding penalty.</p>
       <div class="paper-meta">
@@ -1320,9 +2026,22 @@ footer {
       </div>
       <a class="paper-link" href="./paper/Tau2_bench_Evaluating_Conversational_Agents_in_a_Dual_Control_Environment.html">Open Explainer →</a>
     </article>
+    <article class="paper-card teal" data-title="SWE-Bench Pro: Can AI Agents Solve Long-Horizon Software Engineering Tasks?">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#86 · Deng et al. · 2025</div>
+      <h3>SWE-Bench Pro: Can AI Agents Solve Long-Horizon SWE Tasks?</h3>
+      <p>1,865 enterprise-scale problems across 41 repositories — hours-to-days tasks, split public/held-out/commercial for contamination-proof evaluation. The three-bowl design and the long-horizon wall.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">SWE-Bench Pro</span>
+        <span class="paper-meta-tag">Long-Horizon</span>
+        <span class="paper-meta-tag">Held-out</span>
+        <span class="paper-meta-tag">Enterprise</span>
+      </div>
+      <a class="paper-link" href="./paper/SWE_Bench_Pro_Can_AI_Agents_Solve_Long_Horizon_Software_Engineering_Tasks.html">Open Explainer →</a>
+    </article>
     <article class="paper-card green" data-title="Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Merrill et al. · 2026</div>
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#87 · Merrill et al. · 2026</div>
       <h3>Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces</h3>
       <p>89 hard, realistic command-line tasks in containerized environments with hidden tests and human-written solutions. Agent terminal session, outcome probes, and the model × harness grid.</p>
       <div class="paper-meta">
@@ -1333,21 +2052,76 @@ footer {
       </div>
       <a class="paper-link" href="./paper/Terminal_Bench_2.html">Open Explainer →</a>
     </article>
-
   </div>
 </div>
-<div class="track-section" id="track-7">
+
+
+<div class="track-section" id="track-9">
   <div class="track-head">
-    <span class="track-label">Track VII</span>
+    <span class="track-label">Category IX</span>
     <h3 class="track-title">Agent Safety & Security</h3>
+    <span class="track-count">9</span>
   </div>
-  <p class="track-desc">The attack surface of LLM agents: indirect prompt injections buried in tool outputs, dynamic environments that co-evaluate attacks and defenses, and formal benchmarks covering the whole agent stack. <strong>4 papers.</strong></p>
-    <div class="study-pair">⭐ study together: InjecAgent → AgentDojo → ASB</div>
+  <p class="track-desc">The attack surface of deployed agents: red-teaming at scale, indirect prompt injection against real LLM-integrated apps, universal transferable jailbreaks, deceptive backdoored models that survive safety training, and the agent-specific safety benchmarks — InjecAgent, AgentDojo, ASB, AgentHarm, and Agent-SafetyBench. <strong>9 papers.</strong></p>
+    <div class="study-pair">⭐ study together: Injection → GCG → Sleeper Agents — the threat ladder</div>
   <div class="paper-grid">
 
-    <article class="paper-card teal" data-title="InjecAgent: Benchmarking Indirect Prompt Injections">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Zhan et al. · 2024</div>
+    <article class="paper-card amber" data-title="Red Teaming Language Models with Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#88 · Ganguli et al. · 2022</div>
+      <h3>Red Teaming LMs</h3>
+      <p>Scale the red team. A 52B LM generates offensive personas and test cases that surface harmful outputs 100× more effectively per sample than human red teamers — then the same generations finetune the target model to be safer.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Red Teaming</span>
+        <span class="paper-meta-tag">Safety</span>
+        <span class="paper-meta-tag">Adversarial</span>
+        <span class="paper-meta-tag">AI Feedback</span>
+      </div>
+      <a class="paper-link" href="./paper/Red_Teaming_Language_Models_with_Language_Models.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#89 · Greshake et al. · 2023</div>
+      <h3>Indirect Prompt Injection</h3>
+      <p>The prompt you didn't write. Instructions hidden in retrieved web pages, emails, and documents hijack LLM-integrated apps — exfiltrating data, spreading as worms, and executing cost attacks — with zero model weight changes.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Prompt Injection</span>
+        <span class="paper-meta-tag">Indirect Attacks</span>
+        <span class="paper-meta-tag">LLM Security</span>
+        <span class="paper-meta-tag">Applications</span>
+      </div>
+      <a class="paper-link" href="./paper/Indirect_Prompt_Injection_Compromising_Real_World_Applications.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card purple" data-title="Universal and Transferable Adversarial Attacks on Aligned Language Models">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#90 · Zou et al. · 2023</div>
+      <h3>GCG Attack</h3>
+      <p>Jailbreaks from optimization, not intuition. Greedy coordinate gradient search finds suffixes that force aligned models (open and closed) to produce harmful content — transferable, universal, and black-box via API access.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Adversarial Suffix</span>
+        <span class="paper-meta-tag">Jailbreak</span>
+        <span class="paper-meta-tag">GCG</span>
+        <span class="paper-meta-tag">Alignment Robustness</span>
+      </div>
+      <a class="paper-link" href="./paper/Universal_and_Transferable_Adversarial_Attacks.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card blue" data-title="Sleeper Agents: Training Deceptive LLMs that Persist Through Safety Training">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#91 · Hubinger et al. · 2024</div>
+      <h3>Sleeper Agents</h3>
+      <p>Backdoors that survive the cure. Models trained to write vulnerable code only when triggered by date strings remain deceptive after RLHF, adversarial training, and fine-tuning — with activation probing the only reliable detector.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Deceptive Alignment</span>
+        <span class="paper-meta-tag">Backdoors</span>
+        <span class="paper-meta-tag">Safety Training</span>
+        <span class="paper-meta-tag">Probing</span>
+      </div>
+      <a class="paper-link" href="./paper/Sleeper_Agents_Training_Deceptive_LLMs.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="InjecAgent: Benchmarking Indirect Prompt Injections in Tool-Integrated Large Language Model Agents">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#92 · Zhan et al. · 2024</div>
       <h3>InjecAgent: Benchmarking Indirect Prompt Injections</h3>
       <p>1,054 test cases where a single hidden sentence, buried in a tool response, hijacks tool-integrated agents — wiring money, unlocking doors, and leaking private data.</p>
       <div class="paper-meta">
@@ -1358,9 +2132,9 @@ footer {
       </div>
       <a class="paper-link" href="./paper/InjecAgent_Benchmarking_Indirect_Prompt_Injections.html">Open Explainer →</a>
     </article>
-    <article class="paper-card purple" data-title="AgentDojo: Evaluating Prompt Injection Attacks & Defenses">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Debenedetti et al. · 2024</div>
+    <article class="paper-card purple" data-title="AgentDojo: A Dynamic Environment to Evaluate Prompt Injection Attacks and Defenses for LLM Agents">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#93 · Debenedetti et al. · 2024</div>
       <h3>AgentDojo: Evaluating Prompt Injection Attacks & Defenses</h3>
       <p>A dynamic, open environment where LLM agents solve realistic tasks while researchers throw prompt-injection attacks at them and evaluate defenses in the same loop.</p>
       <div class="paper-meta">
@@ -1371,9 +2145,9 @@ footer {
       </div>
       <a class="paper-link" href="./paper/AgentDojo_A_Dynamic_Environment_to_Evaluate_Prompt_Injection_Attacks_and_Defenses.html">Open Explainer →</a>
     </article>
-    <article class="paper-card green" data-title="Agent Security Bench (ASB): Formalizing Attacks & Defenses">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Zhang et al. · 2024</div>
+    <article class="paper-card green" data-title="Agent Security Bench (ASB): Formalizing and Benchmarking Attacks and Defenses in LLM-based Agents">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#94 · Zhang et al. · 2024</div>
       <h3>Agent Security Bench (ASB): Formalizing Attacks & Defenses</h3>
       <p>16 attacks and 11 defenses formalized across the whole agent stack — system prompt, user prompt, memory, tools, and actions — behind one unified risk metric.</p>
       <div class="paper-meta">
@@ -1384,9 +2158,23 @@ footer {
       </div>
       <a class="paper-link" href="./paper/Agent_Security_Bench_Formalizing_and_Benchmarking_Attacks_and_Defenses.html">Open Explainer →</a>
     </article>
+    <article class="paper-card purple" data-title="AgentHarm: A Benchmark for Measuring Harmfulness of LLM Agents">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#95 · Andriushchenko et al. · 2024</div>
+      <h3>AgentHarm</h3>
+      <p>Explicitly harmful agent tasks, done right. 110 refined tasks with multi-step variants testing whether models refuse in agent roles — where refusal drops when harm requires one extra step (indirect harm), and open weight models comply most.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">AgentHarm</span>
+        <span class="paper-meta-tag">Refusal</span>
+        <span class="paper-meta-tag">Harmfulness</span>
+        <span class="paper-meta-tag">Agent Safety</span>
+      </div>
+      <a class="paper-link" href="./paper/AgentHarm_A_Benchmark_for_Measuring_Harmfulness.html">Open Explainer →</a>
+    </article>
     <article class="paper-card amber" data-title="Agent-SafetyBench: Evaluating the Safety of LLM Agents">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Zhang et al. · 2024</div>
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#96 · Zhang et al. · 2024</div>
       <h3>Agent-SafetyBench: Evaluating the Safety of LLM Agents</h3>
       <p>349 interactive tool-using environments and 2,000 test cases that measure whether agents take unsafe actions — not just say unsafe words. None of the 16 agents evaluated scored 80%.</p>
       <div class="paper-meta">
@@ -1397,21 +2185,23 @@ footer {
       </div>
       <a class="paper-link" href="./paper/Agent_SafetyBench_Evaluating_the_Safety_of_LLM_Agents.html">Open Explainer →</a>
     </article>
-
   </div>
 </div>
-<div class="track-section" id="track-8">
+
+
+<div class="track-section" id="track-10">
   <div class="track-head">
-    <span class="track-label">Track VIII</span>
+    <span class="track-label">Category X</span>
     <h3 class="track-title">Agent Memory</h3>
+    <span class="track-count">8</span>
   </div>
-  <p class="track-desc">How agents remember: memory streams with reflection, OS-style context paging, the field's memory taxonomy, long-term benchmarks, production memory layers, self-organizing notes, and evaluation beyond factual recall. <strong>7 papers.</strong></p>
-    <div class="study-pair">⭐ study together: MemGPT → Mem0 → LongMemEval → LoCoMo-Plus</div>
+  <p class="track-desc">Giving agents a past: the simulacra that made memory famous (Generative Agents), LLMs-as-operating-systems (MemGPT), long-term conversational memory evaluation (LoCoMo, LongMemEval), the memory-mechanism survey, and the production-grade memory systems of 2025-2026 — A-MEM's Zettelkasten agents, Mem0, and beyond-factual cognition (LoCoMo-Plus). <strong>8 papers.</strong></p>
+    <div class="study-pair">⭐ study together: LoCoMo → LongMemEval → Mem0 — the memory stack</div>
   <div class="paper-grid">
 
     <article class="paper-card blue" data-title="Generative Agents: Interactive Simulacra of Human Behavior">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Park et al. · 2023</div>
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#97 · Park et al. · 2023</div>
       <h3>Generative Agents: Interactive Simulacra of Human Behavior</h3>
       <p>25 LLM-powered residents of a Sims-like town with a memory stream, reflections, and daily plans — and a Valentine's Day party that emerged from a single seed of intent.</p>
       <div class="paper-meta">
@@ -1423,8 +2213,8 @@ footer {
       <a class="paper-link" href="./paper/Generative_Agents_Interactive_Simulacra_of_Human_Behavior.html">Open Explainer →</a>
     </article>
     <article class="paper-card green" data-title="MemGPT: Towards LLMs as Operating Systems">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Packer et al. · 2023</div>
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#98 · Packer et al. · 2023</div>
       <h3>MemGPT: Towards LLMs as Operating Systems</h3>
       <p>The context window as RAM: self-generated function calls page facts between a small live window and unlimited "disk" — operating-system-style virtual memory for LLMs.</p>
       <div class="paper-meta">
@@ -1435,9 +2225,22 @@ footer {
       </div>
       <a class="paper-link" href="./paper/MemGPT_Towards_LLMs_as_Operating_Systems.html">Open Explainer →</a>
     </article>
-    <article class="paper-card amber" data-title="A Survey on the Memory Mechanism of LLM-based Agents">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Zhang et al. · 2024</div>
+    <article class="paper-card purple" data-title="Evaluating Very Long-Term Conversational Memory of LLM Agents">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#99 · Maharjan et al. · 2024</div>
+      <h3>LoCoMo</h3>
+      <p>300 turns, 35 sessions, ~9K tokens per conversation. LoCoMo's human-verified dialogues test QA, event summarization, and multimodal memory — and expose the gap between LLMs and humans on long-range conversational recall.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">LoCoMo</span>
+        <span class="paper-meta-tag">Conversational Memory</span>
+        <span class="paper-meta-tag">Long-Term</span>
+        <span class="paper-meta-tag">Evaluation</span>
+      </div>
+      <a class="paper-link" href="./paper/LoCoMo_Evaluating_Very_Long_Term_Conversational_Memory.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card amber" data-title="A Survey on the Memory Mechanism of Large Language Model based Agents">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#100 · Zhang et al. · 2024</div>
       <h3>A Survey on the Memory Mechanism of LLM-based Agents</h3>
       <p>The field map of agent memory: where it lives, what it stores, and the write, read, and reflect operations that keep it useful as conversations and tasks accumulate.</p>
       <div class="paper-meta">
@@ -1448,9 +2251,9 @@ footer {
       </div>
       <a class="paper-link" href="./paper/A_Survey_on_the_Memory_Mechanism_of_LLM_Based_Agents.html">Open Explainer →</a>
     </article>
-    <article class="paper-card purple" data-title="LongMemEval: Benchmarking Long-Term Interactive Memory">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Wu et al. · 2024</div>
+    <article class="paper-card purple" data-title="LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#101 · Wu et al. · 2024</div>
       <h3>LongMemEval: Benchmarking Long-Term Interactive Memory</h3>
       <p>500 questions embedded in ~115K-token multi-session chat histories. Long-context LLMs drop 30–60% — the benchmark that separates real memory from long windows.</p>
       <div class="paper-meta">
@@ -1461,22 +2264,9 @@ footer {
       </div>
       <a class="paper-link" href="./paper/LongMemEval_Benchmarking_Chat_Assistants_on_Long_Term_Interactive_Memory.html">Open Explainer →</a>
     </article>
-    <article class="paper-card teal" data-title="Mem0: Building Production-Ready AI Agents with Scalable Memory">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Chhikara et al. · 2025</div>
-      <h3>Mem0: Building Production-Ready AI Agents with Scalable Memory</h3>
-      <p>The production memory layer: two-phase extraction, ADD/UPDATE/DELETE/NOOP operations, graph memory, and 26% accuracy over full-context at 91% lower p95 latency on LoCoMo.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">Mem0</span>
-        <span class="paper-meta-tag">Memory Ops</span>
-        <span class="paper-meta-tag">Graph Memory</span>
-        <span class="paper-meta-tag">Latency</span>
-      </div>
-      <a class="paper-link" href="./paper/Mem0_Building_Production_Ready_AI_Agents_with_Scalable_Long_Term_Memory.html">Open Explainer →</a>
-    </article>
     <article class="paper-card blue" data-title="A-MEM: Agentic Memory for LLM Agents">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Xu et al. · 2025</div>
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#102 · Xu et al. · 2025</div>
       <h3>A-MEM: Agentic Memory for LLM Agents</h3>
       <p>A Zettelkasten for agents: memory that writes structured notes, links them into a growing knowledge network, and rewrites older notes when new experience arrives.</p>
       <div class="paper-meta">
@@ -1487,9 +2277,22 @@ footer {
       </div>
       <a class="paper-link" href="./paper/A_MEM_Agentic_Memory_for_LLM_Agents.html">Open Explainer →</a>
     </article>
-    <article class="paper-card green" data-title="LoCoMo-Plus: Long-Term Memory Beyond Factual Recall">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Li et al. · 2026</div>
+    <article class="paper-card teal" data-title="Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#103 · Chhikara et al. · 2025</div>
+      <h3>Mem0: Building Production-Ready AI Agents with Scalable Memory</h3>
+      <p>The production memory layer: two-phase extraction, ADD/UPDATE/DELETE/NOOP operations, graph memory, and 26% accuracy over full-context at 91% lower p95 latency on LoCoMo.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Mem0</span>
+        <span class="paper-meta-tag">Memory Ops</span>
+        <span class="paper-meta-tag">Graph Memory</span>
+        <span class="paper-meta-tag">Latency</span>
+      </div>
+      <a class="paper-link" href="./paper/Mem0_Building_Production_Ready_AI_Agents_with_Scalable_Long_Term_Memory.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card green" data-title="LoCoMo-Plus: Beyond-Factual Cognitive Memory Evaluation Framework for LLM Agents">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#104 · Li et al. · 2026</div>
       <h3>LoCoMo-Plus: Long-Term Memory Beyond Factual Recall</h3>
       <p>Not "can you recall what I said?" but "can you remember my goals, states, and values — and let those latent constraints steer your advice hundreds of turns later?"</p>
       <div class="paper-meta">
@@ -1500,21 +2303,24 @@ footer {
       </div>
       <a class="paper-link" href="./paper/LoCoMo_Plus_Evaluating_Long_Term_Memory_Beyond_Factual_Recall.html">Open Explainer →</a>
     </article>
-
   </div>
 </div>
-<div class="track-section" id="track-9">
+
+
+<div class="track-section" id="track-11">
   <div class="track-head">
-    <span class="track-label">Track IX</span>
+    <span class="track-label">Category XI</span>
     <h3 class="track-title">Multi-Agent Systems</h3>
+    <span class="track-count">7</span>
   </div>
-  <p class="track-desc">When LLMs work together: role-playing cooperation without humans, SOP-encoded software firms, orchestrator-led generalist teams, the collaboration-mechanism landscape, and benchmarks that score coordination itself. <strong>5 papers.</strong></p>
-    <div class="study-pair">⭐ study together: CAMEL → MetaGPT → Magentic-One</div>
+  <p class="track-desc">Society of agents: role-playing communicative agents (CAMEL), SOP-driven software-company metaphors (MetaGPT), the conversable-agent framework (AutoGen), the generalist Magentic-One orchestration, and the 2025 reckoning — collaboration-mechanism surveys, MultiAgentBench's collaboration/competition evaluation, and the failure-mode taxonomy of Why Do Multi-Agent LLM Systems Fail? <strong>7 papers.</strong></p>
+    <div class="study-pair">⭐ study together: AutoGen → Why MAS Fail — build, then debug</div>
   <div class="paper-grid">
 
-    <article class="paper-card green" data-title="CAMEL: Communicative Agents for Mind Exploration">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Li et al. · 2023</div>
+    <article class="paper-card green" data-title="CAMEL: Communicative Agents for “Mind” Exploration of Large Language Model Society">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#105 · Li et al. · 2023</div>
       <h3>CAMEL: Communicative Agents for Mind Exploration</h3>
       <p>An AI user gives instructions, an AI assistant executes them, and one carefully engineered inception prompt keeps both on-script — cooperation with no human in the loop.</p>
       <div class="paper-meta">
@@ -1525,9 +2331,10 @@ footer {
       </div>
       <a class="paper-link" href="./paper/CAMEL_Communicative_Agents_for_Mind_Exploration.html">Open Explainer →</a>
     </article>
-    <article class="paper-card amber" data-title="MetaGPT: Meta Programming for Multi-Agent Collaboration">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Hong et al. · 2023</div>
+    <article class="paper-card amber" data-title="MetaGPT: Meta Programming for A Multi-Agent Collaborative Framework">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#106 · Hong et al. · 2023</div>
       <h3>MetaGPT: Meta Programming for Multi-Agent Collaboration</h3>
       <p>A software firm encoded as SOPs: five specialized roles pass structured documents down an assembly line that ships working code from a one-line requirement.</p>
       <div class="paper-meta">
@@ -1538,9 +2345,22 @@ footer {
       </div>
       <a class="paper-link" href="./paper/MetaGPT_Meta_Programming_for_Multi_Agent_Collaboration.html">Open Explainer →</a>
     </article>
-    <article class="paper-card teal" data-title="Magentic-One: A Generalist Multi-Agent System">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Fourney et al. · 2024</div>
+    <article class="paper-card purple" data-title="AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#107 · Wu et al. · 2023</div>
+      <h3>AutoGen</h3>
+      <p>Agents that talk to each other — and to you. AutoGen's conversable-agent abstraction (LLM, tool, human, or group) with flexible conversation patterns became the standard framework for coding, math, and creative multi-agent apps.</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">AutoGen</span>
+        <span class="paper-meta-tag">Multi-Agent</span>
+        <span class="paper-meta-tag">Conversable Agents</span>
+        <span class="paper-meta-tag">Frameworks</span>
+      </div>
+      <a class="paper-link" href="./paper/AutoGen_Enabling_Next_Gen_LLM_Applications.html">Open Explainer →</a>
+    </article>
+    <article class="paper-card teal" data-title="Magentic-One: A Generalist Multi-Agent System for Solving Complex Tasks">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#108 · Fourney et al. · 2024</div>
       <h3>Magentic-One: A Generalist Multi-Agent System</h3>
       <p>Microsoft's open-source generalist team: a lead Orchestrator that plans, tracks progress, and re-plans while directing web, file, and code specialists.</p>
       <div class="paper-meta">
@@ -1552,8 +2372,9 @@ footer {
       <a class="paper-link" href="./paper/Magentic_One_A_Generalist_Multi_Agent_System.html">Open Explainer →</a>
     </article>
     <article class="paper-card purple" data-title="Multi-Agent Collaboration Mechanisms: A Survey of LLMs">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Tran et al. · 2025</div>
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#109 · Tran et al. · 2025</div>
       <h3>Multi-Agent Collaboration Mechanisms: A Survey of LLMs</h3>
       <p>The landscape of LLM teamwork: who talks to whom, why agents compete, and when a team actually beats a single model — communication topologies and interaction protocols mapped.</p>
       <div class="paper-meta">
@@ -1564,9 +2385,10 @@ footer {
       </div>
       <a class="paper-link" href="./paper/Multi_Agent_Collaboration_Mechanisms_A_Survey_of_LLMs.html">Open Explainer →</a>
     </article>
-    <article class="paper-card blue" data-title="MultiAgentBench: Evaluating Collaboration and Competition">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Zhu et al. · 2025</div>
+    <article class="paper-card blue" data-title="MultiAgentBench: Evaluating the Collaboration and Competition of LLM agents">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#110 · Zhu et al. · 2025</div>
       <h3>MultiAgentBench: Evaluating Collaboration and Competition</h3>
       <p>The MARBLE framework scores agent teams on what they achieve together AND on how well they coordinate, communicate, and compete along the way — milestones, not just final answers.</p>
       <div class="paper-meta">
@@ -1577,98 +2399,76 @@ footer {
       </div>
       <a class="paper-link" href="./paper/MultiAgentBench_Evaluating_Collaboration_and_Competition_of_LLM_Agents.html">Open Explainer →</a>
     </article>
-
+    <article class="paper-card teal" data-title="Why Do Multi-Agent LLM Systems Fail?">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#111 · Cemri et al. · 2025</div>
+      <h3>Why MAS Fail</h3>
+      <p>The failure taxonomy the field needed. 1600+ annotated traces across 7 frameworks, classified by the MAST taxonomy into 14 failure modes in 3 categories — system design, inter-agent misalignment, and task verification. Expert-validated (kappa 0.88).</p>
+      <div class="paper-meta">
+        <span class="paper-meta-tag">Failure Modes</span>
+        <span class="paper-meta-tag">MASLU</span>
+        <span class="paper-meta-tag">Taxonomy</span>
+        <span class="paper-meta-tag">Reliability</span>
+      </div>
+      <a class="paper-link" href="./paper/Why_Do_Multi_Agent_LLM_Systems_Fail.html">Open Explainer →</a>
+    </article>
   </div>
 </div>
-<div class="track-section" id="track-10">
+
+
+<div class="track-section" id="track-12">
   <div class="track-head">
-    <span class="track-label">Track X</span>
-    <h3 class="track-title">Efficient LLM Training & Inference</h3>
+    <span class="track-label">Category XII</span>
+    <h3 class="track-title">Quantization & LM Programming</h3>
+    <span class="track-count">4</span>
   </div>
-  <p class="track-desc">The systems science of making LLMs fast and cheap: IO-aware exact attention, virtual memory for the KV cache, speculative decoding with identical outputs, 4-bit finetuning on one GPU, and open sparse experts. <strong>5 papers.</strong></p>
-    <div class="study-pair">⭐ study together: FlashAttention → PagedAttention → Speculative Decoding</div>
+  <p class="track-desc">Making models small and programs smart: post-training quantization (GPTQ, SmoothQuant, AWQ) that shrinks LLMs to 4-bit with near-lossless quality, and the declarative programming layer (DSPy) that compiles LM pipelines instead of hand-prompting them. <strong>4 papers.</strong></p>
+    <div class="study-pair">⭐ study together: GPTQ → SmoothQuant → AWQ — the quantization ladder</div>
   <div class="paper-grid">
 
-    <article class="paper-card amber" data-title="FlashAttention: Fast and Memory-Efficient Exact Attention">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Dao et al. · 2022</div>
-      <h3>FlashAttention: Fast and Memory-Efficient Exact Attention</h3>
-      <p>Attention is memory-bound, not compute-bound. Memory-trip counters, the online-softmax tiling stepper, bandwidth simulators, and the IO-aware exact kernel that enabled long context.</p>
+    <article class="paper-card amber" data-title="GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#112 · Frantar et al. · 2022</div>
+      <h3>GPTQ</h3>
+      <p>4-bit weights in one GPU-hour. GPTQ quantizes layer-by-layer using approximate second-order (Hessian) information, compressing OPT-175B and BLOOM-176B to 3-4 bits with minor degradation — no retraining, at scale.</p>
       <div class="paper-meta">
-        <span class="paper-meta-tag">FlashAttention</span>
-        <span class="paper-meta-tag">IO-Aware</span>
-        <span class="paper-meta-tag">Tiling</span>
-        <span class="paper-meta-tag">Exact</span>
+        <span class="paper-meta-tag">GPTQ</span>
+        <span class="paper-meta-tag">Quantization</span>
+        <span class="paper-meta-tag">4-bit</span>
+        <span class="paper-meta-tag">Post-Training</span>
       </div>
-      <a class="paper-link" href="./paper/FlashAttention_Fast_and_Memory_Efficient_Exact_Attention.html">Open Explainer →</a>
+      <a class="paper-link" href="./paper/GPTQ_Accurate_Post_Training_Quantization.html">Open Explainer →</a>
     </article>
-    <article class="paper-card blue" data-title="PagedAttention: Efficient Memory Management for LLM Serving">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Kwon et al. · 2023</div>
-      <h3>PagedAttention: Efficient Memory Management for LLM Serving</h3>
-      <p>Virtual memory for the KV cache: fragmentation visualizers, block-table generation, copy-on-write prefix sharing, and vLLM's 2-4× throughput breakthrough.</p>
+    <article class="paper-card teal" data-title="SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models">
+  <span class="paper-tag live">Live</span>
+  <span class="paper-tag star">★ Featured</span>
+      <div class="paper-year">#113 · Xiao et al. · 2022</div>
+      <h3>SmoothQuant</h3>
+      <p>Smooth the outliers, keep the bits. Migrating activation-scale difficulty into weights with a per-channel alpha lets SmoothQuant run W8A8 fully-integrated quantization on LLMs (OPT-175B, BLOOM-176B) with negligible loss and 1.56× speedup + 2× memory cut.</p>
       <div class="paper-meta">
-        <span class="paper-meta-tag">PagedAttention</span>
-        <span class="paper-meta-tag">vLLM</span>
-        <span class="paper-meta-tag">KV Cache</span>
-        <span class="paper-meta-tag">2-4× Throughput</span>
+        <span class="paper-meta-tag">SmoothQuant</span>
+        <span class="paper-meta-tag">W8A8</span>
+        <span class="paper-meta-tag">Outliers</span>
+        <span class="paper-meta-tag">INT8</span>
       </div>
-      <a class="paper-link" href="./paper/PagedAttention_Efficient_Memory_Management_for_LLM_Serving.html">Open Explainer →</a>
+      <a class="paper-link" href="./paper/SmoothQuant_Accurate_and_Efficient_PTQ.html">Open Explainer →</a>
     </article>
-    <article class="paper-card teal" data-title="Speculative Decoding: Fast Inference from Transformers">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Leviathan et al. · 2023</div>
-      <h3>Speculative Decoding: Fast Inference from Transformers</h3>
-      <p>Small models draft, big models verify in parallel. The speculative round stepper, α-yield explorer, and 2-3× acceleration with provably identical outputs.</p>
+    <article class="paper-card purple" data-title="AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#114 · Lin et al. · 2023</div>
+      <h3>AWQ</h3>
+      <p>1% of channels matter most. AWQ protects salient weight channels — found via activation magnitudes, not training — with per-channel scaling, achieving 4-bit W4A16 acceleration (1.45-1.85× over FP16 on int4 tokens) and edge deployment (30B on 4GB).</p>
       <div class="paper-meta">
-        <span class="paper-meta-tag">Speculative</span>
-        <span class="paper-meta-tag">Draft Model</span>
-        <span class="paper-meta-tag">Verification</span>
-        <span class="paper-meta-tag">2-3×</span>
+        <span class="paper-meta-tag">AWQ</span>
+        <span class="paper-meta-tag">W4A16</span>
+        <span class="paper-meta-tag">Activation-Aware</span>
+        <span class="paper-meta-tag">Efficiency</span>
       </div>
-      <a class="paper-link" href="./paper/Speculative_Decoding_Fast_Inference_from_Transformers.html">Open Explainer →</a>
+      <a class="paper-link" href="./paper/AWQ_Activation_aware_Weight_Quantization.html">Open Explainer →</a>
     </article>
-    <article class="paper-card purple" data-title="QLoRA: Efficient Finetuning of Quantized LLMs">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Dettmers et al. · 2023</div>
-      <h3>QLoRA: Efficient Finetuning of Quantized LLMs</h3>
-      <p>65B finetuning on one 48GB GPU: NF4 quantization grids, double quantization, paged optimizers, and Guanaco reaching 99.3% of ChatGPT on the Vicuna benchmark.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">QLoRA</span>
-        <span class="paper-meta-tag">NF4</span>
-        <span class="paper-meta-tag">4-Bit</span>
-        <span class="paper-meta-tag">65B on 48GB</span>
-      </div>
-      <a class="paper-link" href="./paper/QLoRA_Efficient_Finetuning_of_Quantized_LLMs.html">Open Explainer →</a>
-    </article>
-    <article class="paper-card green" data-title="Mixtral of Experts">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Jiang et al. · 2024</div>
-      <h3>Mixtral of Experts</h3>
-      <p>The open sparse MoE that matched Llama 2 70B with 13B active parameters: top-2 routing live, quality-per-FLOP accounting, and the Apache 2.0 release that changed the market.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">Mixtral</span>
-        <span class="paper-meta-tag">MoE</span>
-        <span class="paper-meta-tag">Open Weights</span>
-        <span class="paper-meta-tag">32K Context</span>
-      </div>
-      <a class="paper-link" href="./paper/Mixtral_of_Experts.html">Open Explainer →</a>
-    </article>
-
-  </div>
-</div>
-<div class="track-section" id="track-11">
-  <div class="track-head">
-    <span class="track-label">Track XI</span>
-    <h3 class="track-title">LM Programming & Reliability</h3>
-  </div>
-  <p class="track-desc">Programming models instead of prompting them: declarative signatures and compilers that optimize prompts against your metric — and the constraint constructs that let pipelines check and refine themselves. <strong>2 papers.</strong></p>
-    <div class="study-pair">⭐ study together: DSPy → DSPy Assertions</div>
-  <div class="paper-grid">
-
-    <article class="paper-card blue" data-title="DSPy: Compiling Declarative LM Calls into Pipelines">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Khattab et al. · 2023</div>
+    <article class="paper-card blue" data-title="DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines">
+  <span class="paper-tag live">Live</span>
+      <div class="paper-year">#115 · Khattab et al. · 2023</div>
       <h3>DSPy: Compiling Declarative LM Calls into Pipelines</h3>
       <p>Stop writing prompts — program them. Signature splitter, bootstrap compilation stepper, and pipelines that compile in minutes to beat expert-written prompts by 25-65%.</p>
       <div class="paper-meta">
@@ -1679,64 +2479,10 @@ footer {
       </div>
       <a class="paper-link" href="./paper/DSPy_Compiling_Declarative_Language_Model_Calls_into_Self_Improving_Pipelines.html">Open Explainer →</a>
     </article>
-    <article class="paper-card amber" data-title="DSPy Assertions: Computational Constraints for Pipelines">
-      <span class="paper-tag live">Live</span>
-      <div class="paper-year">Singhvi et al. · 2023</div>
-      <h3>DSPy Assertions: Computational Constraints for Pipelines</h3>
-      <p>Pipelines that check themselves: hard Asserts vs soft Suggestions, backtracking self-refinement, and up to 164% more constraint passing with 37% more quality responses.</p>
-      <div class="paper-meta">
-        <span class="paper-meta-tag">Assertions</span>
-        <span class="paper-meta-tag">Constraints</span>
-        <span class="paper-meta-tag">Self-Refinement</span>
-        <span class="paper-meta-tag">Reliability</span>
-      </div>
-      <a class="paper-link" href="./paper/DSPy_Assertions_Computational_Constraints_for_Self_Refining_Pipelines.html">Open Explainer →</a>
-    </article>
-
   </div>
 </div>
-</div>
 
-<div class="divider"></div>
 
-<!-- ABOUT -->
-<div class="page-section" id="about">
-  <div class="section-tag">About</div>
-  <h2 class="section-title">What is <em>PaperMap</em>?</h2>
-  <p class="section-desc">A scalable, static-first platform that transforms dense research papers into interactive learning products — no frameworks, no build tools, no dependencies.</p>
-
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">🎯</div>
-      <h3>Research-Accurate</h3>
-      <p>Every number, formula, and architectural detail is sourced directly from the original paper. Section references included throughout.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">⚡</div>
-      <h3>Interactive Demos</h3>
-      <p>Tokenizers, attention maps, few-shot playgrounds, scaling charts, and quiz blocks — learn by building intuition, not just reading.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📱</div>
-      <h3>Mobile-First Design</h3>
-      <p>Responsive layouts, touch targets, and reduced-motion support. Works perfectly on phones, tablets, and desktops.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🚀</div>
-      <h3>Zero Build Step</h3>
-      <p>Pure HTML, CSS, and vanilla JavaScript. Deploy anywhere — GitHub Pages, Netlify, Vercel, or any static host.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">♿</div>
-      <h3>Accessible by Default</h3>
-      <p>Semantic HTML, ARIA labels, keyboard navigation, skip links, focus styles, and prefers-reduced-motion support.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🎨</div>
-      <h3>Consistent Design System</h3>
-      <p>Shared typography, color palette, components, and interaction patterns across all paper explainers.</p>
-    </div>
-  </div>
 </div>
 
 <div class="divider"></div>
@@ -1745,60 +2491,62 @@ footer {
 <div class="page-section" id="roadmap">
   <div class="section-tag">Roadmap</div>
   <h2 class="section-title">Building the <em>Library</em></h2>
-  <p class="section-desc">The core curriculum — 61 papers across 11 categories — is complete. PaperMap keeps growing one handcrafted explainer at a time.</p>
+  <p class="section-desc">The core curriculum — 115 entries / 114 unique papers across 12 categories — is complete, exactly matching the source list. PaperMap keeps growing one handcrafted explainer at a time.</p>
 
   <div class="roadmap-grid">
     <div class="roadmap-item done">
-      <h4>✓ Track I — Foundation: LLMs</h4>
-      <p>Attention, BERT, GPT-2/3/4, T5, scaling laws, Chinchilla, Switch, and FLAN — the architecture and science of modern LLMs.</p>
+      <h4>✓ Category I — LLM Foundations & Evolution</h4>
+      <p>19 entries · Attention Is All You Need, GPT-1, BERT, GPT-2, T5, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track II — Retrieval, Reasoning & Adaptation</h4>
-      <p>RAG, LoRA, InstructGPT, induction heads, CoT, self-consistency, ReAct, Toolformer — knowledge, alignment, reasoning, and tools.</p>
+      <h4>✓ Category II — Large-Scale Training & Systems</h4>
+      <p>7 entries · Megatron-LM, ZeRO, FlashAttention, Speculative Decoding, FlashAttention-2, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track III — Reasoning & Post-Training</h4>
-      <p>DPO, Constitutional AI, and DeepSeek-R1 — preference optimization, principles, and reasoning from RL.</p>
+      <h4>✓ Category III — Retrieval, RAG & Long Context</h4>
+      <p>10 entries · REALM, DPR, RAG, RETRO, ColBERTv2, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track IV — Hallucination & Factuality</h4>
-      <p>From TruthfulQA's imitative falsehoods to RAGTruth's span corpus — why models fabricate, and how to measure it.</p>
+      <h4>✓ Category IV — Adaptation, Alignment & Post-Training</h4>
+      <p>11 entries · RLHF Origins, PPO, LoRA, InstructGPT, Self-Instruct, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track V — Evaluation & Benchmarks</h4>
-      <p>MMLU, HELM, judges and their stress-tests, and AgentBench — the science of measuring LLMs.</p>
+      <h4>✓ Category V — Reasoning, In-Context Learning & Tool Use</h4>
+      <p>11 entries · Chain-of-Thought, Self-Consistency, STaR, Zero-Shot Reasoners, Induction Heads, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track VI — Agent Reliability & Software Engineering</h4>
-      <p>SWE-bench, τ-bench, Pro, τ²-bench, Terminal-Bench — can agents do real, reliable work?</p>
+      <h4>✓ Category VI — Hallucination, Truthfulness & Factuality</h4>
+      <p>7 entries · TruthfulQA, SelfCheckGPT, FActScore, HaluEval, Hallucination Survey, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track VII — Agent Safety & Security</h4>
-      <p>InjecAgent, AgentDojo, ASB, Agent-SafetyBench — the agent attack surface, formalized and benchmarked.</p>
+      <h4>✓ Category VII — LLM Evaluation & Benchmarks</h4>
+      <p>8 entries · MMLU, HumanEval, HELM, LLM-as-a-Judge, GPQA, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track VIII — Agent Memory</h4>
-      <p>Memory streams, paging, production layers, benchmarks, and self-organizing notes — how agents remember.</p>
+      <h4>✓ Category VIII — Agent Evaluation & Real-World Agents</h4>
+      <p>14 entries · WebArena, AgentBench, SWE-bench, GAIA, OSWorld, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track IX — Multi-Agent Systems</h4>
-      <p>CAMEL, MetaGPT, Magentic-One, surveys, and MultiAgentBench — when LLMs work together.</p>
+      <h4>✓ Category IX — Agent Safety & Security</h4>
+      <p>9 entries · Red Teaming LMs, Indirect Prompt Injection, GCG Attack, Sleeper Agents, InjecAgent, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track X — Efficient LLM Training & Inference</h4>
-      <p>FlashAttention, PagedAttention, speculative decoding, QLoRA, Mixtral — the systems science of fast and cheap.</p>
+      <h4>✓ Category X — Agent Memory</h4>
+      <p>8 entries · Generative Agents, MemGPT, LoCoMo, Memory Mechanism Survey, LongMemEval, …</p>
     </div>
     <div class="roadmap-item done">
-      <h4>✓ Track XI — LM Programming & Reliability</h4>
-      <p>DSPy and its Assertions — programming language models instead of prompting them.</p>
+      <h4>✓ Category XI — Multi-Agent Systems</h4>
+      <p>7 entries · CAMEL, MetaGPT, AutoGen, Magentic-One, Collaboration Mechanisms Survey, …</p>
+    </div>
+    <div class="roadmap-item done">
+      <h4>✓ Category XII — Quantization & LM Programming</h4>
+      <p>4 entries · GPTQ, SmoothQuant, AWQ, DSPy</p>
     </div>
     <div class="roadmap-item next">
       <h4>→ Next: Extending the Map</h4>
-      <p>Multimodal systems, diffusion research, interpretability deep cuts, and more landmark papers — contributions welcome via PROMPT.md.</p>
+      <p>The final 115-entry list is complete. Multimodal systems, diffusion research, interpretability deep cuts — contributions welcome via PROMPT.md.</p>
     </div>
   </div>
-
-
 </div>
 
 <div class="divider"></div>
@@ -1868,7 +2616,7 @@ footer {
     <a class="footer-link" href="./paper/QLoRA_Efficient_Finetuning_of_Quantized_LLMs.html">QLoRA</a>
     <a class="footer-link" href="./paper/Mixtral_of_Experts.html">Mixtral</a>
     <a class="footer-link" href="./paper/DSPy_Compiling_Declarative_Language_Model_Calls_into_Self_Improving_Pipelines.html">DSPy</a>
-    <a class="footer-link" href="./paper/DSPy_Assertions_Computational_Constraints_for_Self_Refining_Pipelines.html">DSPy Assertions</a>
+    <a class="footer-link" href="./paper/AWQ_Activation_aware_Weight_Quantization.html">AWQ</a>
     <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">GitHub</a>
   </div>
   <div class="footer-contact">
