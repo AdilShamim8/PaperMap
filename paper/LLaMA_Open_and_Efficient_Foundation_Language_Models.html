@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLaMA — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of LLaMA, with interactive demos for the public-data-only bet, dataset mixture, model-scale ladder, and the open-weights ecosystem it ignited.">
+<meta name="keywords" content="LLaMA, open weights, foundation models, public data, Chinchilla, scaling, Meta AI, Touvron">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/LLaMA_Open_and_Efficient_Foundation_Language_Models.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="LLaMA — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of LLaMA — 7B to 65B models trained on trillions of public tokens where LLaMA-13B outperforms GPT-3 175B on most benchmarks.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/LLaMA_Open_and_Efficient_Foundation_Language_Models.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="LLaMA — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of LLaMA — 7B to 65B models trained on trillions of public tokens where LLaMA-13B outperforms GPT-3 175B on most benchmarks.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#method">Efficiency</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+    <a class="nav-link" href="#takeaways">Takeaways</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#method">Efficiency</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#takeaways">Takeaways</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Open Weights, <em>Trained Longer</em><br>LLaMA
+  </h1>
+  <p class="hero-subtitle">
+    A 2023 counter-argument in model form: skip proprietary data, train smaller models on more public tokens — and LLaMA-13B outperforms GPT-3 (175B) on most benchmarks.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2302.13971" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">7B → 65B</div>
+      <div class="stat-label">Model sizes</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1.0T → 1.4T</div>
+      <div class="stat-label">Training tokens</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Public data</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Research release</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">The <em>Compute</em> Rebalance</h2>
+  <p class="section-desc">Chinchilla moved the optimum; LLaMA cashed it in with public data and a research-license release.</p>
+
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2020</div><div class="tl-title">GPT-3 and the moat</div><div class="tl-desc">175B parameters trained on filtered web-scale corpora; access only via API — capability locked behind a frontier-lab wall.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2022</div><div class="tl-title">Chinchilla rebalance</div><div class="tl-desc">Hoffmann et al. showed models were under-trained: same compute, more tokens, smaller model wins — the training recipe, not just size, was the lever.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">Feb 2023</div><div class="tl-title">🚀 LLaMA</div><div class="tl-desc">Meta AI releases 7B/13B/33B/65B models trained on trillions of tokens from entirely public sources — state-of-the-art at each size, weights to researchers.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">Mar 2023+</div><div class="tl-title">The leak and the boom</div><div class="tl-desc">Within a week of the weights leaking, the community fine-tuned them on a single GPU — Alpaca, Vicuna, and the open-weights ecosystem detonated.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023-25</div><div class="tl-title">Open goes frontier</div><div class="tl-desc">Llama 2 (chat + commercial), Llama 3, Mistral, DeepSeek — the lineage LLaMA started now competes with closed models.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The Bet that Aged Perfectly</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">LLaMA's two wagers: (1) <strong>public data suffices</strong> — carefully filtered Common Crawl, C4, GitHub, Wikipedia, books, and arXiv beat proprietary corpora when curated; (2) <strong>train past Chinchilla-optimal</strong> — the models spend more tokens per parameter than the compute-optimal point because <em>inference</em> cost, not training cost, dominates a deployed model's life. Smaller-but-longer-trained models are cheaper forever.</p>
+    </div>
+
+  </div>
+</section>
+<div class="divider"></div>
+
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Frontier = <em>Locked</em></h2>
+  <p class="section-desc">The 2022 status quo: the best models were closed, their data recipes secret, and smaller players priced out.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🔒</div>
+      <div class="problem-title">The Closed Frontier</div>
+      <ul class="problem-list">
+          <li>GPT-3-class models were API-only: no weights, no data recipe, no scrutiny of training mix</li>
+          <li>Proprietary web-scale datasets were unreplicable, so open models trailed by a visible margin</li>
+          <li>Research on interpretability, safety, and efficiency needed weight access that licenses forbade</li>
+          <li>Every deployment paid frontier-API pricing for capabilities an open model might carry</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🔓</div>
+      <div class="problem-title">The LLaMA Answer</div>
+      <ul class="problem-list">
+          <li>7B-65B models trained exclusively on public, documented, filterable sources</li>
+          <li>Token budgets stretched to 1-1.4T — past Chinchilla-optimal, buying inference efficiency</li>
+          <li>State-of-the-art results at every size; 13B beats GPT-3 175B on most benchmarks</li>
+          <li>Weights released to the research community (non-commercial license at first)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Analogy — The Published Recipe</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Closed 2022 models were <strong>restaurant dishes</strong> — delicious, recipe secret. LLaMA published the cookbook: here is the shopping list (public data), here is the oven schedule (token budget), here is how each portion size (7B-65B) turns out. Anyone with a kitchen can now cook — and millions did.</p>
+
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The <em>Data</em> Is the Moat</h2>
+  <p class="section-desc">Everything public, everything filtered, everything documented — the mixture is the paper's most-copied table.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The public mixture</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Common Crawl</strong> — 67% of the mixture; 5 pipelines of dedup + heuristics (line length, symbol ratios) + low-quality-page classifiers</li>
+        <li><strong>C4</strong> — 15%; Common Crawl cleaned of boilerplate, non-English pages filtered</li>
+        <li><strong>GitHub</strong> — 4.5%; permissive licenses only, quality filters, file-level dedup</li>
+        <li><strong>Wikipedia + books + ArXiv</strong> — high-density knowledge and reasoning, 11% combined</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The architecture deltas</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>RoPE</strong> positional encoding instead of learned absolutes</li>
+        <li><strong>SwiGLU</strong> activations replacing ReLU/GELU in the FFN</li>
+        <li><strong>RMSNorm</strong> instead of LayerNorm — fewer statistics, faster training</li>
+        <li>Efficient attention implementation for long contexts — plus context length 2k</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Scale Ladder</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Press run to see the parameter ladder LLaMA climbed — and where GPT-3 and PaLM sat. 13B outperforming 175B is the whole thesis in one chart.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="llamad0Run" type="button" style="font-size:13px;padding:8px 18px;">Compare scales</button>
+    </div>
+    <div id="llamad0Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="method">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Chinchilla, <em>Deliberately</em> Ignored</h2>
+  <p class="section-desc">The compute-optimal point optimizes one thing; deployment optimizes another.</p>
+
+  <div class="card">
+    <div class="card-label">Why Train Past the Optimum</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Chinchilla&apos;s law minimizes <em>training</em> compute for a target loss. LLaMA&apos;s 7B and 13B consume ~20× the compute-optimal token count — because after deployment, a model is <strong>inferred billions of times and trained once</strong>. A smaller model at slightly worse loss is dramatically cheaper to serve, distill, and fine-tune. The paper reports the 65B model trained in 21 days on 2,048 A100-80GB GPUs — everything reproducible in principle from public parts.</p>
+  </div>
+
+    <div id="llamad1Tabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Public Data Mixture</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">The mixture behind every open model since. Tab through the components and their cleaning pipelines.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+
+    </div>
+    <div id="llamad1Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">State of the Art per <em>Size Class</em></h2>
+  <p class="section-desc">The ladder of four sizes turned one release into an entire ecosystem's substrate.</p>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">LLAMA-13B vs GPT-3</div><div class="result-score" style="color:var(--green);">outperforms</div><div class="result-label">on most benchmarks — at 13× fewer parameters</div></div>
+    <div class="result-card"><div class="result-model">LLAMA-65B</div><div class="result-score" style="color:var(--amber);">competitive</div><div class="result-label">with Chinchilla-70B and PaLM-540B</div></div>
+    <div class="result-card"><div class="result-model">DATA</div><div class="result-score" style="color:var(--teal);">100% public</div><div class="result-label">Common Crawl, C4, GitHub, Wikipedia, books, arXiv</div></div>
+    <div class="result-card"><div class="result-model">RELEASE</div><div class="result-score" style="color:var(--blue);">weights</div><div class="result-label">research community license — the ecosystem's big bang</div></div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Fine-Tune on One GPU</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">How a leaked 7B model became an ecosystem in ten days — the affordability chain LLaMA's efficiency unlocked.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="llamad2Next" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="llamad2Reset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="llamad2Box" style="background:#0f172a;padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:#e2e8f0;line-height:1.8;min-height:220px;"></div>
+    <div id="llamad2Note" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+
+  <div class="card" style="overflow-x:auto;">
+    <table class="comp-table">
+      <thead><tr><th>LLaMA</th><th>7B</th><th>13B</th><th>33B</th><th>65B</th></tr></thead>
+      <tbody>
+        <tr><td>Training tokens</td><td>1.0T</td><td>1.0T</td><td>1.4T</td><td>1.4T</td></tr>
+        <tr><td>A100 GPU days (paper)</td><td>~82k</td><td>~135k</td><td>~530k</td><td>~860k</td></tr>
+        <tr><td>Beats GPT-3 175B</td><td>—</td><td class="comp-best">yes — most benchmarks</td><td class="comp-best">yes</td><td class="comp-best">yes — vs Chinchilla-70B / PaLM-540B class</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px">Token budgets and device counts from the paper's training table. The 13B 'beats GPT-3' claim is the abstract's headline: state-of-the-art per size class using public data only.</p>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Legacy — The <em>Big Bang</em> of Open Weights</h2>
+  <p class="section-desc">A research release with a non-commercial license still restructured the entire industry.</p>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">💥 The ecosystem detonation</div><div class="notice-text">Leaked weights + Alpaca's $600 data + QLoRA fine-tuning produced a functional open assistant in two weeks — proving open-weights viability at ChatGPT speed.</div></div>
+    <div class="notice-card"><div class="notice-title">📜 Llama 2's commercial turn</div><div class="notice-text">Meta's next release (entry #15) added a chat-tuned, commercially usable license — the direct descendant that made open models deployable products.</div></div>
+    <div class="notice-card"><div class="notice-title">🔬 Research access at scale</div><div class="notice-text">Interpretability, safety, quantization, and finetuning research all accelerated once weight access was table stakes for academics.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 The data-recipe publication</div><div class="notice-text">Documenting the mixture (CC 67% / C4 15% / code 4.5% / knowledge 11%) gave every later lab a reproducible starting point instead of guesswork.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">A research-only license, a 2k context window, no chat alignment, no safety training — LLaMA was raw substrate, not a product; and the leak that seeded the ecosystem was, itself, a governance failure.</div></div>
+    <div class="notice-card"><div class="notice-title">🛤 Read next</div><div class="notice-text">The lineage: <a href="./Llama_2_Open_Foundation_and_Fine_Tuned_Chat_Models.html" style="color:var(--amber-text);">Llama 2</a> · <a href="./The_Llama_3_Herd_of_Models.html" style="color:var(--amber-text);">Llama 3</a> · <a href="./Chinchilla.html" style="color:var(--amber-text);">Chinchilla</a></div></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from LLaMA.</p>
+
+  <div id="quizContainer"></div>
+</section>
+<div class="divider"></div>
+
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ 7B-65B models, trained exclusively on public data, state-of-the-art in each size class.</div>
+    <div class="card-sm">✅ LLaMA-13B outperforms GPT-3 175B on most benchmarks — 13× fewer parameters.</div>
+    <div class="card-sm">✅ Trained past Chinchilla-optimal on purpose: inference, not training, dominates deployment cost.</div>
+    <div class="card-sm">✅ The published data mixture and architecture deltas (RoPE, SwiGLU, RMSNorm) became the open-LLM canon.</div>
+    <div class="card-sm">✅ Research-licensed weights that leaked seeded Alpaca, Vicuna, and the entire open ecosystem.</div>
+    <div class="card-sm">✅ Read it as the moment 'frontier' stopped meaning 'closed'.</div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2302.13971" target="_blank" rel="noopener noreferrer">"LLaMA: Open and Efficient Foundation Language Models"</a> (Touvron et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2302.13971" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Llama_2_Open_Foundation_and_Fine_Tuned_Chat_Models.html">Llama 2 Guide</a>
+    <a class="footer-link" href="./Chinchilla.html">Chinchilla Guide</a>
+    <a class="footer-link" href="./The_Llama_3_Herd_of_Models.html">Llama 3 Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "method", "results", "impact", "quiz", "takeaways"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === BARS DEMO ===
+(function(){
+const box=document.getElementById('llamad0Box');
+const btn=document.getElementById('llamad0Run');
+if(!box||!btn)return;
+const D={"rows": [["LLaMA 7B", 7, "var(--teal)"], ["LLaMA 13B", 13, "var(--green)"], ["LLaMA 33B", 33, "var(--amber)"], ["LLaMA 65B", 65, "var(--purple)"], ["GPT-3 175B", 175, "var(--blue)"], ["PaLM 540B", 540, "var(--red)"]], "unit": "B params", "caption": "Parameter counts from the papers. LLaMA-13B outperforms GPT-3 (175B) on most benchmarks — the compute-optimal inversion in action.", "scale": 540};
+box.innerHTML='<div style="font-family:var(--mono);font-size:12px;color:var(--text3);">Press the button to grow the bars.</div>';
+btn.addEventListener('click',()=>{
+box.innerHTML=D.rows.map(function(r){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'+
+'<div style="font-family:var(--mono);font-size:11px;color:var(--text2);flex:0 0 172px;text-align:right;">'+r[0]+'</div>'+
+'<div style="flex:1;height:16px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div data-w="'+Math.max(2,r[1]/D.scale*100)+'%" style="height:100%;width:0;border-radius:4px;background:'+r[2]+';transition:width .7s ease;"></div></div>'+
+'<div style="font-family:var(--mono);font-size:11px;color:var(--text2);flex:0 0 64px;">'+r[1]+D.unit+'</div></div>';}).join('')+
+(D.caption?'<div style="font-size:11.5px;color:var(--text3);margin-top:8px;">'+D.caption+'</div>':'');
+const rm=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+box.querySelectorAll('div[data-w]').forEach(function(el,k){if(rm){el.style.width=el.dataset.w;}else{setTimeout(function(){el.style.width=el.dataset.w;},60+k*110);}});
+});
+})();
+
+// === TABS DEMO ===
+(function(){
+const wrap=document.getElementById('llamad1Tabs');
+const box=document.getElementById('llamad1Box');
+if(!wrap||!box)return;
+const T=[{"n": "Common Crawl · 67%", "cells": [["Share", "67%"], ["Pipelines", "5"], ["Dedup", "fuzzy"]], "d": "Five CC snapshots, each run through dedup, heuristic line/symbol filtering, and a fast classifier that scores page quality — the 'CCNet' era machinery."}, {"n": "C4 · 15%", "cells": [["Share", "15%"], ["Cleaning", "boilerplate"], ["Lang", "EN-focus"]], "d": "The Raffel et al. corpus: Common Crawl stripped of boilerplate and non-English text — the same C4 T5 trained on, reused as a known-quantity chunk."}, {"n": "Code · 4.5%", "cells": [["Share", "4.5%"], ["Source", "GitHub"], ["License", "permissive"]], "d": "Public GitHub repos under permissive licenses, quality-filtered and deduplicated — the ingredient later blamed and praised for code capability."}, {"n": "Knowledge · 11%", "cells": [["Share", "~11%"], ["Sources", "3"], ["Density", "high"]], "d": "Wikipedia in 20 languages, Project Gutenberg + Books3 books, and ArXiv — compact, high-quality, and exactly where factual capability is cheapest."}];
+let cur=0;
+function render(){
+wrap.innerHTML=T.map(function(t,k){return '<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid '+(k===cur?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(k===cur?'var(--amber-dim)':'var(--bg3)')+';color:'+(k===cur?'var(--amber-text)':'var(--text2)')+';cursor:pointer;">'+t.n+'</button>';}).join('');
+box.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">'+T[cur].cells.map(function(c){return '<div style="flex:1;min-width:120px;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);">'+c[0]+'</div><div style="font-family:var(--mono);font-size:17px;color:var(--amber-text);font-weight:600;">'+c[1]+'</div></div>';}).join('')+'</div>'+
+'<div style="font-size:12px;color:var(--text2);line-height:1.7;">'+T[cur].d+'</div>';
+}
+wrap.addEventListener('click',function(e){const b=e.target.closest('button');if(!b)return;cur=Array.from(wrap.children).indexOf(b);render();});
+render();
+})();
+
+// === STEPS DEMO ===
+(function(){
+const box=document.getElementById('llamad2Box');
+const note=document.getElementById('llamad2Note');
+const btn=document.getElementById('llamad2Next');
+const rst=document.getElementById('llamad2Reset');
+if(!box||!note||!btn||!rst)return;
+const ST=[{"label": "day 0 — weights arrive", "html": "<span style=\"color:#f59e0b;\">EVENT:</span> LLaMA weights leak from a 4chan board<br><br>7B model · fp16 ≈ 14 GB VRAM<br>fits a single consumer RTX 3090 (24 GB)<br><br><span style=\"color:#94a3b8;\">the 'you need a datacenter' assumption dies</span>", "note": "The 7B size was chosen for research accessibility — it accidentally became the perfect hobbyist fine-tune target."}, {"label": "day 3 — the cheap instruction data", "html": "Stanford releases <span style=\"color:#22c55e;\">Alpaca</span>: 52K self-instruct-style instruction pairs<br><br>generated for under $600 of API calls<br><br><span style=\"color:#94a3b8;\">data was always the expensive part — now it wasn't</span>", "note": "Self-Instruct (entry #41) supplied the recipe: the model generates its own training data."}, {"label": "day 7 — quantization enters", "html": "4-bit quantization (GPTQ / bitsandbytes) drops the model to ~4 GB<br><br>runs on laptops; fine-tuning via QLoRA (entry #43) fits a single GPU<br><br><span style=\"color:#94a3b8;\">model + data + training all commodity-scale</span>", "note": "Category XII papers (GPTQ, AWQ, QLoRA) completed the affordability chain."}, {"label": "day 10+ — the ecosystem", "html": "Vicuna · Koala · WizardLM · OpenAssistant · llama.cpp<br><br>leaderboards, chat UIs, 100k+ GitHub stars<br><br><span style=\"color:#22c55e;\">open-weights AI as a mass phenomenon begins here</span>", "note": "None of this is in the paper — and all of it is because of the paper."}];
+let i=0;
+function render(){box.innerHTML='<div style="color:#f59e0b;font-size:11px;margin-bottom:6px;">'+ST[i].label.toUpperCase()+'</div>'+ST[i].html;note.textContent=ST[i].note;btn.textContent=i<ST.length-1?'Next step →':'Restart';}
+btn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+rst.addEventListener('click',()=>{i=0;render();});
+render();
+})();
+
+
+const QUIZ_DATA=[{"q": "What is LLaMA's headline claim about data?", "opts": ["It used a proprietary web crawl licensed from a search engine", "State-of-the-art models can be trained using publicly available datasets exclusively", "Data diversity matters less than parameter count", "It trained only on Wikipedia and books to avoid contamination"], "correct": 1, "explain": "The abstract's core claim: no proprietary or inaccessible datasets — Common Crawl, C4, GitHub, Wikipedia, books, and arXiv suffice for state-of-the-art per size class."}, {"q": "Which LLaMA model outperforms GPT-3 (175B) on most benchmarks?", "opts": ["LLaMA-7B", "LLaMA-13B", "LLaMA-33B", "LLaMA-65B only"], "correct": 1, "explain": "LLaMA-13B outperforms GPT-3 on most benchmarks — the flagship result for the 'smaller, trained longer, public data' thesis."}, {"q": "Why did LLaMA train on more tokens than Chinchilla-optimal?", "opts": ["To reach the compute-optimal loss exactly", "Because inference cost dominates a deployed model's lifetime — smaller models at more tokens are cheaper to serve", "Public data is cheaper than parameters", "To overfit the training distribution"], "correct": 1, "explain": "The compute-optimal point minimizes training cost; deployment optimizes total cost. Over-training a smaller model buys permanently cheaper inference."}, {"q": "Which architectural change did LLaMA adopt over the original Transformer?", "opts": ["Learned absolute position embeddings", "RoPE + SwiGLU + RMSNorm", "Bidirectional attention", "Removed layer normalization"], "correct": 1, "explain": "LLaMA's head and body modernizations: rotary position embeddings, SwiGLU activations, and RMSNorm — the combination later open models inherited as the default."}, {"q": "What happened after LLaMA's release that reshaped the industry?", "opts": ["It was immediately commercialized by Meta", "The weights leaked and the community built the open fine-tune ecosystem (Alpaca, Vicuna, …) within weeks", "It was withdrawn for licensing issues", "Nothing — adoption waited for Llama 2"], "correct": 1, "explain": "The leak plus Alpaca's cheap instruction data plus single-GPU fine-tuning demonstrated open-weights viability — the origin of the modern open-LLM ecosystem."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
