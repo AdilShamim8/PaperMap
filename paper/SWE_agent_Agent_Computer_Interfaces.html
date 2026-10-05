@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SWE-agent — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of SWE-agent, with playable demos for the ACI concept, interface design choices, and the SWE-bench performance lift.">
+<meta name="keywords" content="SWE-agent, ACI, agent-computer interface, software engineering, SWE-bench, tools, interface design, code agents">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/SWE_agent_Agent_Computer_Interfaces.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="SWE-agent — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of SWE-agent — the Agent-Computer Interface thesis: a minimal, LM-friendly file/search/edit toolset lifts SWE-bench resolution from 3.8% (no ACI) to 12.5%, approaching human-engineer levels.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/SWE_agent_Agent_Computer_Interfaces.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="SWE-agent — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of SWE-agent — the Agent-Computer Interface thesis: a minimal, LM-friendly file/search/edit toolset lifts SWE-bench resolution from 3.8% (no ACI) to 12.5%, approaching human-engineer levels.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#method">Doctrine</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+    <a class="nav-link" href="#takeaways">Takeaways</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2024</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#method">Doctrine</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#takeaways">Takeaways</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    The Interface <em>Is</em> the Capability<br>SWE-agent
+  </h1>
+  <p class="hero-subtitle">
+    Same model, same problems, same benchmark — 3.8% solved. Design the tools around the model's needs (an Agent-Computer Interface), and the identical setup solves 12.5%. Interface engineering as capability engineering.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2405.15793" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">12.5%</div>
+      <div class="stat-label">SWE-bench resolved (vs 3.8%)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Core ACI tools</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">~92%</div>
+      <div class="stat-label">Human level reference</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2024</div>
+      <div class="stat-label">Yang et al. (Princeton)</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">Tools Were <em>Scaffolding</em></h2>
+  <p class="section-desc">The quiet assumption: interfaces are plumbing. This paper measured them as the product.</p>
+
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2023</div><div class="tl-title">SWE-bench arrives</div><div class="tl-desc">Jimenez et al. (entry #76) publish real GitHub-issue resolution: models alone solve a few percent — the gap is framed as a model problem.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2023</div><div class="tl-title">ReAct-era tool use</div><div class="tl-desc">Agents get tool access — but tools are designed for humans: full-file reads, terminal firehoses, cryptic errors (entries #53, #54).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">May 2024</div><div class="tl-title">🚀 SWE-agent</div><div class="tl-desc">Yang et al.: treat LMs as a new user class with distinct needs — design the file viewer, editor, search, and actions around LM failure modes. The ACI thesis, measured.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2024+</div><div class="tl-title">Interface engineering era</div><div class="tl-desc">SWE-agent-style interfaces (linting editors, bounded views, clean errors) become standard scaffolding for OpenHands, Devin-class products, and the coding-agent industry.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">LMs Are a New <em>User Class</em></div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The paper&apos;s framing: humans needed IDEs — bounded file views, syntax-aware editing, searchable context, readable errors — because raw terminals exceed human cognition. <strong>LMs have the same problem, differently parameterized</strong>: context windows that drown in 2,000-line files, no proprioception for cursor state, catastrophic edits that humans would never make (breaking 20 functions at once). The Agent-Computer Interface (ACI) is the IDE re-designed for this user: <strong>browsable 100-line windows, guarded edits with lint checks, bounded search, minimal-action grammar</strong> — plus guardrails (lint-test before submission, confirm-file-exists). The measurement: an agent with a designed ACI solves <strong>12.5%</strong> of SWE-bench; the same agent without it, <strong>3.8%</strong>.</p>
+    </div>
+
+  </div>
+</section>
+<div class="divider"></div>
+
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Tools Built for <em>Somebody Else</em></h2>
+  <p class="section-desc">The default: give models human interfaces, then blame the model.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon"> 🧰</div>
+      <div class="problem-title">The Mismatched Toolkit</div>
+      <ul class="problem-list">
+          <li>cat dumps 2,000 lines into a context built for 8k tokens — attention drowns</li>
+          <li>sed/regex editing: one bad pattern silently breaks a whole file — no lint, no preview</li>
+          <li>Terminal errors arrive as walls of stack trace — the actionable line buried</li>
+          <li>Humans compensate with IDEs and habits; agents inherit the raw tools and the failure modes</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon"> 🎛</div>
+      <div class="problem-title">The ACI Answer</div>
+      <ul class="problem-list">
+          <li>Design tools around documented LM failure modes — the agent as a new end-user class</li>
+          <li>Bounded views: 100-line file windows with on-demand scrolling/search</li>
+          <li>Guarded edits: edit-with-line-search, automatic linter pass, edit-window context</li>
+          <li>Minimal grammar + guardrails: few actions, every action confirmable and reversible-looking</li>
+          <li>Measured: 3.8% → 12.5% on SWE-bench — interface design as capability</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Analogy — The Left-Handed <em>Keyboard</em></div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">An interface built for a different user isn't neutral — it's a tax. Type on a keyboard designed for someone else's hand shape and every keystroke costs accuracy; hand the same person a keyboard molded to THEIR hands and speed appears 'out of nowhere'. SWE-agent's claim: 9 points of SWE-bench accuracy were hiding in the keyboard, not the typist.</p>
+
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The <em>ACI</em> Design Rules</h2>
+  <p class="section-desc">Four principles, each mapping to a measured failure mode.</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">1️⃣ Bounded observation</div><div class="notice-text">Files open in ~100-line windows; search returns bounded snippets. The agent sees a desk, not the warehouse.</div></div>
+    <div class="notice-card"><div class="notice-title">2️⃣ Guarded actions</div><div class="notice-text">Edits require line-level targeting; a linter runs on every change — broken code is caught at the moment of creation, not at test time.</div></div>
+    <div class="notice-card"><div class="notice-title">3️⃣ Minimal grammar</div><div class="notice-text">A handful of composite actions (open, search, edit, submit) instead of the full shell space — fewer degrees of freedom, fewer catastrophic moves.</div></div>
+    <div class="notice-card"><div class="notice-title">4️⃣ Feedback loops</div><div class="notice-text">Every action returns an informative, compact result — errors the agent can act on immediately. Interface as conversation, not firehose.</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The agent loop</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Issue prompt → agent explores: search, open windows, read context</li>
+        <li>Localize the fault → guarded edit → linter feedback → iterate</li>
+        <li>Run tests when confident → submit a diff (git-style patch)</li>
+        <li>Everything through the 4-tool ACI — no raw shell</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The measured result</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>GPT-4 + SWE-agent ACI: <strong>12.5%</strong> of SWE-bench issues resolved</li>
+        <li>Same model, no custom interface: <strong>3.8%</strong> — the interface delta isolated</li>
+        <li>Ablations: removing lint-on-edit or bounded views degrades measurably — every rule earns its place</li>
+        <li>Approaches the human-engineer resolution reference on the same benchmark slice</li>
+      </ul>
+    </div>
+  </div>
+
+    <div id="sweagentd0Tabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Same Edit, Two Interfaces</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Tab through one buggy-file repair under the raw terminal and the ACI — watch the failure modes flip.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+
+    </div>
+    <div id="sweagentd0Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="method">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The <em>Thesis</em> Generalized</h2>
+  <p class="section-desc">Why ACI outgrew SWE-bench — the idea became a discipline.</p>
+
+  <div class="card">
+    <div class="card-label">From Scaffold to Doctrine</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The ACI concept reframed agent engineering: <strong>the tool layer is a design surface with measurable capability consequences</strong> — not plumbing, not a constant. It explains WebArena&apos;s brittleness (entry #74), OSWorld&apos;s grounding wars (entry #78), and the harness effects of Terminal-Bench (entry #87): when the same model scores wildly differently across interfaces, &quot;model capability&quot; was never the right unit. Post-SWE-agent, every serious agent framework ships a designed ACI — and interface ablations became standard practice.</p>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Agent Loop, Through the ACI</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Follow one issue from prompt to submitted patch — every step through the four-tool interface.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="sweagentd1Next" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="sweagentd1Reset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="sweagentd1Box" style="background:#0f172a;padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:#e2e8f0;line-height:1.8;min-height:220px;"></div>
+    <div id="sweagentd1Note" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">3.8 → 12.5: <em>Interface</em> Points</h2>
+  <p class="section-desc">The ablation that made interface engineering a discipline.</p>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">NO CUSTOM INTERFACE</div><div class="result-score" style="color:var(--red);">3.8%</div><div class="result-label">same model, same benchmark</div></div>
+    <div class="result-card"><div class="result-model">WITH SWE-AGENT ACI</div><div class="result-score" style="color:var(--green);">12.5%</div><div class="result-label">+8.7 points from interface design</div></div>
+    <div class="result-card"><div class="result-model">ACI PRINCIPLES</div><div class="result-score" style="color:var(--teal);">4</div><div class="result-label">bounded views · guarded edits · minimal grammar · feedback</div></div>
+    <div class="result-card"><div class="result-model">TOOLSET SIZE</div><div class="result-score" style="color:var(--amber);">4 tools</div><div class="result-label">search · view · edit · submit</div></div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Interface Ablation</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Press run for the isolated interface effect — the same model with and without a designed tool layer.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="sweagentd2Run" type="button" style="font-size:13px;padding:8px 18px;">Show the delta</button>
+    </div>
+    <div id="sweagentd2Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+  <div class="card" style="overflow-x:auto;">
+    <table class="comp-table">
+      <thead><tr><th>Interface element</th><th>Raw terminal (default)</th><th>SWE-agent ACI</th></tr></thead>
+      <tbody>
+        <tr><td>File viewing</td><td>cat (whole file)</td><td class="comp-best">100-line windows + scroll/search</td></tr>
+        <tr><td>Editing</td><td>sed/regex, blind</td><td class="comp-best">targeted edit + lint-on-change</td></tr>
+        <tr><td>Search</td><td>grep firehose</td><td class="comp-best">bounded, ranked snippets</td></tr>
+        <tr><td>Action space</td><td>full shell</td><td class="comp-best">minimal composite grammar</td></tr>
+        <tr><td>SWE-bench resolved</td><td>3.8%</td><td class="comp-best">12.5%</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px">Each row is a design decision; the last row is their measured, isolated sum.</p>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Legacy — <em>Interface</em> Engineering</h2>
+  <p class="section-desc">ACI became a permanent word in the agent vocabulary — and its measured doctrine.</p>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title"> 🧰 The coding-agent skeleton</div><div class="notice-text">Lint-guarded editors, bounded viewers, and minimal action grammars shipped into OpenHands, Devin-class products, and every serious SWE scaffold — SWE-agent&apos;s tools, industrialized.</div></div>
+    <div class="notice-card"><div class="notice-title"> 📐 The measurement methodology</div><div class="notice-text">Interface ablations (same model, different tools) became the standard way to attribute agent performance — the paper&apos;s experimental template.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🧠 The 'new user class' frame</div><div class="notice-text">Designing for LM cognition as a distinct user profile spread beyond code — computer-use agents (entry #78) and harness engineering (entry #87) are ACI thinking on other surfaces.</div></div>
+    <div class="notice-card"><div class="notice-title"> ⚠️ What it did NOT solve</div><div class="notice-text">12.5% is still far from human-level on the full benchmark; the ACI is hand-designed (the paper open-questions automated ACI design); and interface gains can mask model limits — a designed crutch is still a crutch.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🛤 Read next</div><div class="notice-text">The chain: <a href='./SWE_bench_Can_Language_Models_Resolve_Real_World_GitHub_Issues.html' style='color:var(--amber-text);'>SWE-bench</a> · <a href='./SWE_Bench_Pro_Can_AI_Agents_Solve_Long_Horizon_Software_Engineering_Tasks.html' style='color:var(--amber-text);'>SWE-Bench Pro</a> · <a href='./Terminal_Bench_2.html' style='color:var(--amber-text);'>Terminal-Bench</a></div></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from SWE-agent.</p>
+
+  <div id="quizContainer"></div>
+</section>
+<div class="divider"></div>
+
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ ACI = tools designed for LM cognition as a new user class: bounded, guarded, minimal, informative.</div>
+    <div class="card-sm">✅ The measured delta: 3.8% → 12.5% SWE-bench resolution from interface design alone.</div>
+    <div class="card-sm">✅ Core tools: search, 100-line viewer, lint-guarded edit, submit — no raw shell.</div>
+    <div class="card-sm">✅ Every rule maps to a documented LM failure mode (context drowning, silent breakage).</div>
+    <div class="card-sm">✅ Interface ablation became the standard attribution method for agent performance.</div>
+    <div class="card-sm">✅ Read it as the moment scaffolding became product engineering.</div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2405.15793" target="_blank" rel="noopener noreferrer">"SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering"</a> (Yang et al., 2024)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2405.15793" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./SWE_bench_Can_Language_Models_Resolve_Real_World_GitHub_Issues.html">SWE-bench Guide</a>
+    <a class="footer-link" href="./SWE_Bench_Pro_Can_AI_Agents_Solve_Long_Horizon_Software_Engineering_Tasks.html">SWE-Bench Pro Guide</a>
+    <a class="footer-link" href="./Terminal_Bench_2.html">Terminal-Bench Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "method", "results", "impact", "quiz", "takeaways"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === TABS DEMO ===
+(function(){
+const wrap=document.getElementById('sweagentd0Tabs');
+const box=document.getElementById('sweagentd0Box');
+if(!wrap||!box)return;
+const T=[{"n": "locate the bug · raw", "cells": [["Tool", "grep"], ["Output", "300 lines"], ["Context", "destroyed"]], "d": "grep TODO src/ → a wall of results; the agent opens the wrong file and reads 1,800 lines — attention diluted, the actual bug drowned in transit."}, {"n": "locate the bug · ACI", "cells": [["Tool", "search"], ["Output", "bounded"], ["Context", "preserved"]], "d": "search TODO in src/ → ranked snippets with file:line; open(src/utils.py, 40-140) — a 100-line window containing the fault. The desk, not the warehouse."}, {"n": "edit · raw", "cells": [["Tool", "sed"], ["Guard", "none"], ["Failure", "silent"]], "d": "sed -i 's/x==1/x=1/' — assignment typo introduced in 14 places; nothing lints; the bug ships to test time as a mystery failure."}, {"n": "edit · ACI", "cells": [["Tool", "guarded edit"], ["Guard", "lint-on-change"], ["Failure", "caught"]], "d": "edit(src/utils.py, line 87, replace) — the linter runs instantly, flags the syntax slip, the agent fixes it before moving on. Broken code never survives its birth."}];
+let cur=0;
+function render(){
+wrap.innerHTML=T.map(function(t,k){return '<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid '+(k===cur?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(k===cur?'var(--amber-dim)':'var(--bg3)')+';color:'+(k===cur?'var(--amber-text)':'var(--text2)')+';cursor:pointer;">'+t.n+'</button>';}).join('');
+box.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">'+T[cur].cells.map(function(c){return '<div style="flex:1;min-width:120px;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);">'+c[0]+'</div><div style="font-family:var(--mono);font-size:17px;color:var(--amber-text);font-weight:600;">'+c[1]+'</div></div>';}).join('')+'</div>'+
+'<div style="font-size:12px;color:var(--text2);line-height:1.7;">'+T[cur].d+'</div>';
+}
+wrap.addEventListener('click',function(e){const b=e.target.closest('button');if(!b)return;cur=Array.from(wrap.children).indexOf(b);render();});
+render();
+})();
+
+// === STEPS DEMO ===
+(function(){
+const box=document.getElementById('sweagentd1Box');
+const note=document.getElementById('sweagentd1Note');
+const btn=document.getElementById('sweagentd1Next');
+const rst=document.getElementById('sweagentd1Reset');
+if(!box||!note||!btn||!rst)return;
+const ST=[{"label": "the issue", "html": "&quot;Tests fail for parse_config() when the file has<br>CRLF line endings — fix it.&quot;<br><br><span style='color:#94a3b8;'>a real SWE-bench-shaped task: localize, edit, verify</span>", "note": "The loop begins — and the interface decides its odds."}, {"label": "explore (bounded)", "html": "search(&quot;parse_config&quot;) → 3 files, ranked<br>open(config/parser.py, 1-100)<br>open(…, 101-200)<br><br><span style='color:#94a3b8;'>windows, not firehoses — context stays alive</span>", "note": "Observation rule #1: the agent sees a desk."}, {"label": "localize + edit (guarded)", "html": "found: splitlines() without newline arg at line 143<br>edit(line 143, replace splitlines() → splitlines&#40;)... )<br>→ linter: OK ✓<br><br><span style='color:#22c55e;'>errors caught at creation, not at submission</span>", "note": "Guarded action rule #2: lint-on-edit."}, {"label": "verify", "html": "run tests: 41 pass, the 3 failing ones now pass<br><br><span style='color:#94a3b8;'>the loop closes inside the interface — confidence before submission</span>", "note": "Feedback rule #4: informative, compact, actionable."}, {"label": "submit", "html": "git-style diff submitted → SWE-bench grader:<br><span style='color:#22c55e;'>RESOLVED ✓</span><br><br><span style='color:#94a3b8;'>12.5% of all issues this way — vs 3.8% without the ACI<br>(same model, same everything else)</span>", "note": "The interface delta: +8.7 points — the paper's entire thesis in one diff."}];
+let i=0;
+function render(){box.innerHTML='<div style="color:#f59e0b;font-size:11px;margin-bottom:6px;">'+ST[i].label.toUpperCase()+'</div>'+ST[i].html;note.textContent=ST[i].note;btn.textContent=i<ST.length-1?'Next step →':'Restart';}
+btn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+rst.addEventListener('click',()=>{i=0;render();});
+render();
+})();
+
+// === BARS DEMO ===
+(function(){
+const box=document.getElementById('sweagentd2Box');
+const btn=document.getElementById('sweagentd2Run');
+if(!box||!btn)return;
+const D={"rows": [["No custom interface", 3.8, "var(--red)"], ["SWE-agent ACI", 12.5, "var(--green)"], ["Human engineers (reference)", 92, "var(--blue)"]], "unit": "% SWE-bench resolved", "caption": "Figures from the paper (GPT-4 agent; human reference on the benchmark's audit slice). The distance between red and green is interface design — nothing else changed.", "scale": 100};
+box.innerHTML='<div style="font-family:var(--mono);font-size:12px;color:var(--text3);">Press the button to grow the bars.</div>';
+btn.addEventListener('click',()=>{
+box.innerHTML=D.rows.map(function(r){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">'+
+'<div style="font-family:var(--mono);font-size:11px;color:var(--text2);flex:0 0 172px;text-align:right;">'+r[0]+'</div>'+
+'<div style="flex:1;height:16px;background:var(--bg4);border-radius:4px;overflow:hidden;"><div data-w="'+Math.max(2,r[1]/D.scale*100)+'%" style="height:100%;width:0;border-radius:4px;background:'+r[2]+';transition:width .7s ease;"></div></div>'+
+'<div style="font-family:var(--mono);font-size:11px;color:var(--text2);flex:0 0 64px;">'+r[1]+D.unit+'</div></div>';}).join('')+
+(D.caption?'<div style="font-size:11.5px;color:var(--text3);margin-top:8px;">'+D.caption+'</div>':'');
+const rm=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+box.querySelectorAll('div[data-w]').forEach(function(el,k){if(rm){el.style.width=el.dataset.w;}else{setTimeout(function(){el.style.width=el.dataset.w;},60+k*110);}});
+});
+})();
+
+
+const QUIZ_DATA=[{"q": "What is an Agent-Computer Interface (ACI)?", "opts": ["A GPU passthrough layer", "Tools and interactions designed around LMs' specific needs and failure modes — the IDE equivalent for a new user class", "A security sandbox", "A prompt template"], "correct": 1, "explain": "The paper frames LMs as end users with distinct cognitive constraints — bounded views, guarded edits, minimal grammar, and informative feedback are their IDE."}, {"q": "What performance lift does the designed ACI produce on SWE-bench?", "opts": ["None", "From 3.8% (no custom interface) to 12.5% resolved — same model and benchmark", "From 0% to 100%", "Only speed, not accuracy"], "correct": 1, "explain": "The isolated interface effect: +8.7 points attributable purely to tool-layer design."}, {"q": "Why does the ACI run a linter after every edit?", "opts": ["To slow the agent down", "To catch broken code at the moment of creation — preventing silent multi-location damage from propagating to test time", "Style compliance only", "It replaces tests"], "correct": 1, "explain": "Guarded actions: errors surfaced immediately are cheap to fix; errors discovered at submission are expensive or fatal."}, {"q": "Which design rule addresses context-window drowning?", "opts": ["Minimal grammar", "Bounded observation — 100-line file windows and ranked search snippets instead of whole-file dumps", "Feedback loops", "Guardrails"], "correct": 1, "explain": "The agent sees a desk, not the warehouse: windows and snippets keep the relevant context alive."}, {"q": "What broader lesson did the ACI thesis teach the field?", "opts": ["Models don't matter", "Interface design is measurable capability engineering — same model, different tools, wildly different results; tool layers deserve design and ablation", "Terminals are optimal", "Bigger prompts solve everything"], "correct": 1, "explain": "When identical models diverge across interfaces, 'model capability' was the wrong unit — the tool layer became a first-class design surface."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
