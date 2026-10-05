@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Llama 3 — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of the Llama 3 herd, with interactive demos for the 15T+ token data engine, the 128K long-context extension, and the post-training recipe.">
+<meta name="keywords" content="Llama 3, 405B, 128K context, multilingual, tool use, data curation, scaling laws, distillation, GQA, Meta">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/The_Llama_3_Herd_of_Models.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Llama 3 — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of Llama 3 — a herd of multilingual, coding, reasoning, tool-using models up to a 405B dense Transformer with 128K context, with quality comparable to leading models like GPT-4.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/The_Llama_3_Herd_of_Models.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="Llama 3 — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of Llama 3 — a herd of multilingual, coding, reasoning, tool-using models up to a 405B dense Transformer with 128K context, with quality comparable to leading models like GPT-4.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#method">Post-Training</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+    <a class="nav-link" href="#takeaways">Takeaways</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2024</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#method">Post-Training</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#takeaways">Takeaways</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    The <em>Herd</em> Report<br>Llama 3
+  </h1>
+  <p class="hero-subtitle">
+    The most complete open-weights engineering report of its era: multilingual, coding, reasoning, and tool-native models — topped by a 405B dense Transformer with a 128K context window, released with pre-trained and post-trained weights.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2407.21783" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">405B</div>
+      <div class="stat-label">Flagship dense model</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">128K</div>
+      <div class="stat-label">Context window</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">15T+</div>
+      <div class="stat-label">Pre-training tokens</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2024-25</div>
+      <div class="stat-label">The 3.x progression</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">One Paper, <em>Many</em> Models</h2>
+  <p class="section-desc">Llama 3 is a herd: base models, instruct models, safety guardrails, and multimodal — one report for the whole program.</p>
+
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">Feb 2023</div><div class="tl-title">LLaMA — the substrate</div><div class="tl-desc">Public-data base models prove open viability (entry #12).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">Jul 2023</div><div class="tl-title">Llama 2 — the assistant</div><div class="tl-desc">RLHF-tuned chat models + commercial license (entry #15).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">Apr 2024</div><div class="tl-title">Llama 3 8B & 70B</div><div class="tl-desc">First wave: 15T+ tokens, strong post-training, major multilingual gains; the 70B closes on closed-source mid-tier.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">Jul 2024</div><div class="tl-title">🚀 The herd paper</div><div class="tl-desc">The full report: 405B flagship (dense, 128K context), quality comparable to GPT-4-class on many tasks, plus Llama Guard 3 and compositional image/video/speech experiments.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024-25</div><div class="tl-title">3.1 / 3.2 / 3.3</div><div class="tl-desc">The herd grows: 128K contexts fleet-wide, distilled small models, quantized and multimodal variants — one paper's program, extended.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The Engineering Report Genre</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Llama 3's real artifact is not a model but a <strong>documented production system</strong>: a data engine that mines and deduplicates at 15T+ scale, scaling-law observations in the Chinchilla-revised regime, a long-context extension protocol (progressive RoPE rescaling on 128K data), a rejection-sampling+DPO post-training stack, and honest negative results (distillation that didn't transfer, the 'scaling down' trade-offs). Comparable quality to leading models like GPT-4 on a plethora of tasks — with the recipe attached.</p>
+    </div>
+
+  </div>
+</section>
+<div class="divider"></div>
+
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Open Quality at <em>Frontier</em> Class</h2>
+  <p class="section-desc">The 2024 question: can a fully published pipeline produce GPT-4-class quality with weights public?</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🏔</div>
+      <div class="problem-title">The Frontier Gap</div>
+      <ul class="problem-list">
+          <li>Closed models led on multilinguality, long context, reasoning, and tool use simultaneously</li>
+          <li>Open recipes published bits and pieces — data engine, post-training, evaluation — never one whole system</li>
+          <li>405B-class training with reproducible curation was unproven in public</li>
+          <li>Safety tooling (guard models) shipped separately from capability releases</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🐑</div>
+      <div class="problem-title">The Herd Answer</div>
+      <ul class="problem-list">
+          <li>405B dense Transformer, 128K context, GQA — trained on 15T+ tokens from a fully documented data engine</li>
+          <li>Post-training: SFT, rejection sampling, and DPO across dialogue/safety/reasoning/code domains</li>
+          <li>Native multilinguality, coding, reasoning, and tool usage from the base model up</li>
+          <li>Llama Guard 3 + compositional multimodal experiments in the same report — the program, not just the model</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Analogy — The Farm, Not the Animal</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Closed 2024 releases were <strong>prize cattle at a county fair</strong> — impressive, single, and behind rails. The Llama 3 paper is a <strong>working farm</strong>: the breeding program (data engine), the feeding schedule (token budget), the training regimen (post-training), the veterinary plan (Guard 3), and the stud book (3.1/3.2/3.3 lineages) — with the animals themselves handed over.</p>
+
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The <em>Data Engine</em></h2>
+  <p class="section-desc">Fifteen trillion tokens is a curation problem, not a download problem.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Pipeline stages</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>Heuristic filters</strong> — language ID, length, repetition, toxicity screens</li>
+        <li><strong>Model-quality classifiers</strong> — fast trained scorers decide page-level keep/drop</li>
+        <li><strong>Massive dedup</strong> — URL-, document-, and fuzzy-dedup across the whole corpus</li>
+        <li><strong>Domain reweighting</strong> — deliberate upsampling of code, math, multilingual, and knowledge-heavy domains</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Architecture & scale facts</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>405B dense Transformer — deliberately dense (not MoE) for training simplicity and inference quality</li>
+        <li>128K context via progressive long-context extension stages (RoPE rescaling on curated long documents)</li>
+        <li>GQA on all sizes; tokenizer with 128K vocabulary (upsampled from prior 32K)</li>
+        <li>Scaling-law studies across 8B→70B→405B runs to extrapolate flagship training decisions</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — From Web to 15T Tokens</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Walk one page through the data engine — the part of the paper every later lab copied.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="llama3d0Next" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="llama3d0Reset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="llama3d0Box" style="background:#0f172a;padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:#e2e8f0;line-height:1.8;min-height:220px;"></div>
+    <div id="llama3d0Note" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="method">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Post-Training and the <em>Extension</em> Program</h2>
+  <p class="section-desc">The recipe behind the instruct herd — and how 8K became 128K without retraining from scratch.</p>
+
+  <div class="card">
+    <div class="card-label">From Base to Herd</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Post-training runs per model: supervised fine-tuning on curated dialogue/reasoning/code data, then <strong>rejection sampling</strong> (best-of-N SFT rounds) plus <strong>direct preference optimization</strong> (entry #44) — PPO largely retired from this pipeline. The long-context program grows 8K → 128K in stages, each stage mixing long documents with general data to avoid near-context forgetting. The report closes with the compositional multimodal experiments (image, video, speech added onto the frozen base) and the honest failures — including knowledge-distillation attempts that underperformed data distillation.</p>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — 8K → 128K Context Extension</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Slide through the long-context growth stages — each stage re-trains on longer documents mixed with general data so nothing is forgotten.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <input type="range" id="llama3d1Range" min="0" max="4" value="0" step="1" aria-label="8K → 128K Context Extension" style="width:100%;max-width:420px;accent-color:var(--amber);">
+    </div>
+    <div id="llama3d1Lab" style="font-family:var(--mono);font-size:12px;color:var(--amber-text);font-weight:600;margin-bottom:8px;"></div>    <div id="llama3d1Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+    <div id="llama3d1Cap" style="font-size:11.5px;color:var(--text3);margin-top:10px;">Stage names simplified; the principle — progressive rescaling with curriculum mixing and short-context regression checks — is the paper's.</div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Comparable to <em>Leading</em> Models</h2>
+  <p class="section-desc">The paper's own claim, backed by an extensive empirical evaluation — with weights to check it against.</p>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">405B DENSE</div><div class="result-score" style="color:var(--blue);">128K ctx</div><div class="result-label">the largest fully-documented open Transformer of its day</div></div>
+    <div class="result-card"><div class="result-model">QUALITY</div><div class="result-score" style="color:var(--amber);">GPT-4-class</div><div class="result-label">comparable on a plethora of tasks, per the paper's evaluation</div></div>
+    <div class="result-card"><div class="result-model">DATA ENGINE</div><div class="result-score" style="color:var(--teal);">15T+ tokens</div><div class="result-label">fully documented curation, dedup, and reweighting</div></div>
+    <div class="result-card"><div class="result-model">SAFETY</div><div class="result-score" style="color:var(--green);">Guard 3</div><div class="result-label">input/output safety model released alongside the herd</div></div>
+  </div>
+
+    <div id="llama3d2Tabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Herd Family Tree</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">What actually shipped, per release wave. Tab through the program the paper documents.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+
+    </div>
+    <div id="llama3d2Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+  <div class="card" style="overflow-x:auto;">
+    <table class="comp-table">
+      <thead><tr><th>Llama 3 milestone</th><th>Release</th><th>Models</th><th>Signature change</th></tr></thead>
+      <tbody>
+        <tr><td>Llama 3</td><td>Apr 2024</td><td>8B · 70B</td><td>15T+ tokens; new tokenizer; strong multilingual base</td></tr>
+        <tr><td>Llama 3.1</td><td>Jul 2024</td><td>8B · 70B · 405B</td><td>128K context; the herd paper; open frontier claim</td></tr>
+        <tr><td>Llama 3.2</td><td>Sep 2024</td><td>1B · 3B + multimodal 11B · 90B</td><td>Distilled small models; vision added compositionally</td></tr>
+        <tr><td>Llama 3.3</td><td>Dec 2024</td><td>70B</td><td>Flagship-class quality at 70B via post-training alone</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--text3);margin-top:10px">The progression table the community watched live — each row is the same herd paper, extended.</p>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Legacy — The <em>Reference</em> Release</h2>
+  <p class="section-desc">For two years, 'the open frontier' meant Llama 3-class weights and this paper's recipes.</p>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🌍 Open frontier-quality weights</div><div class="notice-text">A fully documented 405B/128K model comparable to leading closed models on many tasks reset the open-closed boundary — every open lab benchmarked against it.</div></div>
+    <div class="notice-card"><div class="notice-title">🏭 The data-engine genre</div><div class="notice-text">The paper's curation pipeline became the public template for 15T-scale data work — filters, classifiers, dedup, and reweighting as first-class engineering.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Post-training without PPO</div><div class="notice-text">The herd's rejection-sampling + DPO stack mainstreamed PPO-free alignment at frontier scale (DPO, entry #44, going industrial).</div></div>
+    <div class="notice-card"><div class="notice-title">📐 The negative results</div><div class="notice-text">Failed distillation branches and documented trade-offs taught the field as much as the wins — the report is honest where marketing would not be.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Multilinguality remains uneven across languages; long-context evaluation was young (Lost in the Middle, entry #33); tool use was trained but agent-level reliability lagged (the VIII category); and the herd paper evaluates its own models — the standard caveat applies.</div></div>
+    <div class="notice-card"><div class="notice-title">🛤 Read next</div><div class="notice-text">The context problem it inherited: <a href="./Lost_in_the_Middle_How_Language_Models_Use_Long_Contexts.html" style="color:var(--amber-text);">Lost in the Middle</a> · the alignment stack: <a href="./DPO.html" style="color:var(--amber-text);">DPO</a> · the efficiency frontier: <a href="./DeepSeek_V3_Technical_Report.html" style="color:var(--amber-text);">DeepSeek-V3</a></div></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from Llama 3.</p>
+
+  <div id="quizContainer"></div>
+</section>
+<div class="divider"></div>
+
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ A herd, not a model: 8B-405B base + instruct models, Guard 3, and multimodal experiments in one report.</div>
+    <div class="card-sm">✅ Flagship: 405B dense, 128K context, GQA, 15T+ curated tokens — quality comparable to leading models like GPT-4 on many tasks.</div>
+    <div class="card-sm">✅ The data engine (filters → quality classifiers → dedup → reweighting) is the paper's most-copied export.</div>
+    <div class="card-sm">✅ Long context grew 8K → 128K via staged rescaling with curriculum mixing and regression checks.</div>
+    <div class="card-sm">✅ Post-training went PPO-free: SFT + rejection sampling + DPO at frontier scale.</div>
+    <div class="card-sm">✅ The 3.1/3.2/3.3 progression turned one release into a program — distilled, quantized, multimodal, and 70B-flagship variants.</div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2407.21783" target="_blank" rel="noopener noreferrer">"The Llama 3 Herd of Models"</a> (Grattafiori et al., 2024)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2407.21783" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./DPO.html">DPO Guide</a>
+    <a class="footer-link" href="./Lost_in_the_Middle_How_Language_Models_Use_Long_Contexts.html">Lost in the Middle Guide</a>
+    <a class="footer-link" href="./DeepSeek_V3_Technical_Report.html">DeepSeek-V3 Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "method", "results", "impact", "quiz", "takeaways"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === STEPS DEMO ===
+(function(){
+const box=document.getElementById('llama3d0Box');
+const note=document.getElementById('llama3d0Note');
+const btn=document.getElementById('llama3d0Next');
+const rst=document.getElementById('llama3d0Reset');
+if(!box||!note||!btn||!rst)return;
+const ST=[{"label": "raw web crawl", "html": "trillion-scale web dump<br><br><span style=\"color:#94a3b8;\">content: gold + garbage (spam, boilerplate, machine-generated dregs)</span><br><span style=\"color:#94a3b8;\">naive use would poison every benchmark</span>", "note": "Quality at 15T scale is a filtering problem first."}, {"label": "heuristic screens", "html": "language ID → length → repetition ratio → symbol/word filters → toxicity screens<br><br><span style=\"color:#94a3b8;\">cheap, parallel, first-pass removal</span>", "note": "Stage one is pure throughput: kill the obviously unusable."}, {"label": "learned quality scoring", "html": "model-based classifiers score every page<br><br>fast-scorer keeps/drops at scale<br><span style=\"color:#94a3b8;\">trained on human quality judgments — the actual taste step</span>", "note": "This is where '15T+' stops being a volume claim and becomes a quality claim."}, {"label": "dedup + reweight", "html": "URL-dedup → document-dedup → fuzzy (MinHash) dedup<br><br>domain reweighting: ↑code ↑math ↑multilingual ↑knowledge<br><br><span style=\"color:#22c55e;\">the training mix becomes a design decision, printed in the paper</span>", "note": "Dedup controls contamination; reweighting shapes what the herd is good at."}];
+let i=0;
+function render(){box.innerHTML='<div style="color:#f59e0b;font-size:11px;margin-bottom:6px;">'+ST[i].label.toUpperCase()+'</div>'+ST[i].html;note.textContent=ST[i].note;btn.textContent=i<ST.length-1?'Next step →':'Restart';}
+btn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+rst.addEventListener('click',()=>{i=0;render();});
+render();
+})();
+
+// === SLIDER DEMO ===
+(function(){
+const range=document.getElementById('llama3d1Range');
+const lab=document.getElementById('llama3d1Lab');
+const box=document.getElementById('llama3d1Box');
+if(!range||!lab||!box)return;
+const D={"labels": ["8K (base)", "16K stage", "32K stage", "64K stage", "128K (3.1 fleet-wide)"], "frames": ["<div style=\"font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);\">context: <span style=\"color:var(--text3);\">8K tokens</span><br>rope base: standard<br>training: general mix only</div>", "<div style=\"font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);\">context: <span style=\"color:var(--amber-text);\">16K</span> · rope rescaled<br>long documents ≈ mixed with general data<br>near-context quality guarded at every step</div>", "<div style=\"font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);\">context: <span style=\"color:var(--amber-text);\">32K</span> · progressive rescaling<br>needle-retrieval + long-doc QA monitored<br>each stage only ships if short-context scores hold</div>", "<div style=\"font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);\">context: <span style=\"color:var(--amber-text);\">64K</span> · mixed curriculum<br>emphasis on genuinely long documents (codebases, books, papers)<br>not padded fragments</div>", "<div style=\"font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);\">context: <span style=\"color:var(--green-text);font-weight:600;\">128K tokens</span><br>fleet-wide in 3.1 (8B → 405B)<br>the paper&apos;s protocol, applied to every model in the herd</div>"]};
+function render(){const i=parseInt(range.value,10)||0;lab.textContent=D.labels[i];box.innerHTML=D.frames[i];}
+range.addEventListener('input',render);
+render();
+})();
+
+// === TABS DEMO ===
+(function(){
+const wrap=document.getElementById('llama3d2Tabs');
+const box=document.getElementById('llama3d2Box');
+if(!wrap||!box)return;
+const T=[{"n": "core herd · 3.1", "cells": [["Dense", "8/70/405B"], ["Context", "128K"], ["Post-train", "SFT+RS+DPO"]], "d": "The paper's flagship generation: base and instruct models across three scales, with the 405B as the dense flagship and quality comparable to leading models on a plethora of tasks."}, {"n": "distilled · 3.2", "cells": [["Small", "1B/3B"], ["Multimodal", "11/90B"], ["Method", "distill+quant"]], "d": "3.2 adds on-device models (distilled from the 70B/405B generation signals) and compositional vision variants — plus quantization for the small herd."}, {"n": "efficiency · 3.3", "cells": [["Flagship class", "70B"], ["Cost", "~1/5"], ["Method", "post-training only"]], "d": "3.3 pushes flagship-class instruction quality into the 70B via post-training advances alone — the herd's 'same quality, smaller animal' move."}, {"n": "safety · Guard 3", "cells": [["Type", "classifier"], ["Covers", "in+out"], ["Ships", "with herd"]], "d": "Llama Guard 3 guards prompts and generations; the paper integrates it into the herd's system-level safety story rather than leaving it as an external tool."}];
+let cur=0;
+function render(){
+wrap.innerHTML=T.map(function(t,k){return '<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid '+(k===cur?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(k===cur?'var(--amber-dim)':'var(--bg3)')+';color:'+(k===cur?'var(--amber-text)':'var(--text2)')+';cursor:pointer;">'+t.n+'</button>';}).join('');
+box.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">'+T[cur].cells.map(function(c){return '<div style="flex:1;min-width:120px;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);">'+c[0]+'</div><div style="font-family:var(--mono);font-size:17px;color:var(--amber-text);font-weight:600;">'+c[1]+'</div></div>';}).join('')+'</div>'+
+'<div style="font-size:12px;color:var(--text2);line-height:1.7;">'+T[cur].d+'</div>';
+}
+wrap.addEventListener('click',function(e){const b=e.target.closest('button');if(!b)return;cur=Array.from(wrap.children).indexOf(b);render();});
+render();
+})();
+
+
+const QUIZ_DATA=[{"q": "What is the largest model in the Llama 3 herd?", "opts": ["A 405B-parameter dense Transformer", "A 1.6T sparse MoE", "A 70B MoE", "A 175B dense model"], "correct": 0, "explain": "The flagship is a dense Transformer with 405B parameters and a context window of up to 128K tokens — dense was a deliberate simplicity/quality choice."}, {"q": "Which capabilities does the paper say Llama 3 supports natively?", "opts": ["Only English chat", "Multilinguality, coding, reasoning, and tool usage", "Only code and math", "Only image generation"], "correct": 1, "explain": "The herd is natively multilingual and trained for coding, reasoning, and tool usage — plus compositional image/video/speech experiments in the report."}, {"q": "How did the models grow from 8K to 128K context?", "opts": ["They were retrained from scratch at 128K", "Progressive long-context extension: staged RoPE rescaling trained on long documents mixed with general data", "By interpolating at inference time only", "By switching to linear attention"], "correct": 1, "explain": "Llama 3's long-context program extends training in stages with curated long documents, monitoring short-context quality at every step."}, {"q": "Which post-training stack did the herd use at scale?", "opts": ["PPO only", "Supervised fine-tuning + rejection sampling + DPO", "No post-training", "Only distillation from closed models"], "correct": 1, "explain": "The herd's industrial pipeline centers on SFT, best-of-N rejection sampling rounds, and direct preference optimization — PPO largely retired."}, {"q": "What safety model ships with the herd?", "opts": ["None", "Constitutional AI", "Llama Guard 3 for input and output safety", "A separate guard model from another lab"], "correct": 2, "explain": "The release includes Llama Guard 3, guarding both prompts and generations — safety tooling published as part of the same program."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
