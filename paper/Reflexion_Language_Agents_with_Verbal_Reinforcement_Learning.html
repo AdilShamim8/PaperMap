@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflexion — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of Reflexion, with playable demos for the verbal feedback loop, episodic memory buffers, and the 91% HumanEval result.">
+<meta name="keywords" content="Reflexion, verbal reinforcement learning, episodic memory, self-reflection, agents, HumanEval, trial and error, Shinn">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Reflexion_Language_Agents_with_Verbal_Reinforcement_Learning.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Reflexion — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of Reflexion — agents that store verbal self-reflections on failures in episodic memory and reuse them, reaching 91% pass@1 on HumanEval and surpassing GPT-4's 80%.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Reflexion_Language_Agents_with_Verbal_Reinforcement_Learning.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="Reflexion — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of Reflexion — agents that store verbal self-reflections on failures in episodic memory and reuse them, reaching 91% pass@1 on HumanEval and surpassing GPT-4's 80%.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#method">Why</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+    <a class="nav-link" href="#takeaways">Takeaways</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#method">Why</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#takeaways">Takeaways</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Fails, Writes It <em>Down</em>,<br>Tries Again<br>Reflexion
+  </h1>
+  <p class="hero-subtitle">
+    Instead of updating weights from trial and error, the agent converts failures into natural-language lessons, stores them in episodic memory, and reads them before the next attempt — 91% pass@1 on HumanEval, past GPT-4's 80%.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2303.11366" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">91%</div>
+      <div class="stat-label">HumanEval pass@1</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">80% → passed</div>
+      <div class="stat-label">GPT-4 baseline</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Weight updates</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Shinn et al.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">Trial and Error, <em>Without</em> Gradients</h2>
+  <p class="section-desc">Agents learn from retries — the question was always where the learning lives.</p>
+
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2022</div><div class="tl-title">Agents need experience</div><div class="tl-desc">LLM agents (ReAct, entry #53) act in environments but repeat their mistakes: the prompt resets, the lesson evaporates.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022</div><div class="tl-title">RL's cost problem</div><div class="tl-desc">Classical trial-and-error learning = fine-tuning: thousands of samples, expensive gradients, catastrophic-forgetting risk (the paper's framing).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">Mar 2023</div><div class="tl-title">🚀 Reflexion</div><div class="tl-desc">Shinn et al.: feedback converted to TEXT — the agent reflects on failure, stores the lesson in a memory buffer, and conditions the next trial on it. No training, just an outer loop.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023+</div><div class="tl-title">Memory-based learning spreads</div><div class="tl-desc">Voyager's skill libraries, Memp prompts, agent long-term memory (the X category) — the pattern: experience as retrievable text.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024+</div><div class="tl-title">Verifier feedback loops</div><div class="tl-desc">Self-correction and test-time iteration (entry #58) inherit the structure: signal → summary → retry, with the model's weights untouched.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Reinforcement in <em>Words</em></div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The paper's equivalence claim: verbal feedback can play the role of the reward signal, and episodic memory can play the role of the parameter update. Concretely — after a failed episode, a language evaluator (self-assessment, unit tests, heuristics, or the environment) produces feedback; the agent <strong>verbally reflects</strong> on what went wrong into a concrete lesson (&quot;the off-by-one came from indexing after the append&quot;); the lesson enters an <strong>episodic memory buffer</strong>; the next trial&apos;s prompt includes it. Learning accumulates <em>across episodes in text</em> — transferable, inspectable, and free of gradients.</p>
+    </div>
+
+  </div>
+</section>
+<div class="divider"></div>
+
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Agents That <em>Forget</em> Their Mistakes</h2>
+  <p class="section-desc">The retry problem: experience that never persists.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon"> 🔁</div>
+      <div class="problem-title">The Amnesiac Loop</div>
+      <ul class="problem-list">
+          <li>LLM agents retry a task; each attempt starts from the same prompt — identical mistakes recur</li>
+          <li>Fine-tuning on failures is expensive: many samples, gradient surgery, forgetting risks</li>
+          <li>Sparse scalar rewards say THAT it failed, not WHY — unusable as direct conditioning</li>
+          <li>Environment feedback (stack traces, test output) is noisy, long, and unstructured</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon"> 🪞</div>
+      <div class="problem-title">The Reflexion Answer</div>
+      <ul class="problem-list">
+          <li>Convert feedback to language: reflect on the failure trace → a short, specific lesson</li>
+          <li>Store lessons in an episodic memory buffer (size-limited, task-scoped)</li>
+          <li>Condition the next attempt on the accumulated lessons — the prompt grows wiser, not the weights</li>
+          <li>Works with multiple feedback sources: scalar values, free-form text, internally simulated self-critique</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Analogy — The <em>Pilot's</em> Logbook</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">A gradient-based agent is a pilot whose <strong>brain rewires after each rough landing</strong> — effective, expensive, slightly dangerous. A Reflexion agent keeps a <strong>logbook</strong>: after each rough flight, they write 'wind shear on approach at runway 27 — come in 5 knots hotter' and <strong>read the logbook before every takeoff</strong>. The pilot's brain is untouched; the practice compounds. And you can audit every lesson — try that with a Hessian.</p>
+
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The <em>Outer</em> Loop</h2>
+  <p class="section-desc">Four stations around the episode: act, evaluate, reflect, remember.</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">1️⃣ Act</div><div class="notice-text">The agent attempts the task (coding, decision-making, reasoning) inside an environment — action, execution, result.</div></div>
+    <div class="notice-card"><div class="notice-title">2️⃣ Evaluate</div><div class="notice-text">A feedback source grades the attempt: unit tests (coding), environment heuristics, scalar scores, or the model&apos;s own self-critique.</div></div>
+    <div class="notice-card"><div class="notice-title">3️⃣ Reflect</div><div class="notice-text">Given the trace + feedback, the agent writes a CONCRETE lesson: what failed, why, and what to change — short, specific, natural language.</div></div>
+    <div class="notice-card"><div class="notice-title">4️⃣ Remember &amp; retry</div><div class="notice-text">The lesson joins the episodic memory buffer; the next attempt&apos;s prompt carries the accumulated lessons. Repeat until success or budget.</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The headline: HumanEval 91%</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Reflexion + GPT-4 reaches <strong>91% pass@1</strong> on HumanEval coding</li>
+        <li>Surpassing the then-SOTA GPT-4 baseline at <strong>80%</strong> — without any weight updates</li>
+        <li>Feedback source there: Python execution + unit tests — real, verifiable signals</li>
+        <li>Ablations show the lesson QUALITY matters: generic reflections underperform concrete ones</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Task spread + limits</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Sequential decision-making (AlfWorld), decision-making (HotpotQA-style), language reasoning — consistent gains over a baseline agent</li>
+        <li>Memory buffer is size-limited — lessons get evicted; long-horizon accumulation needs management</li>
+        <li>Reflection can rationalize instead of diagnose — the same model grades its own homework (when self-feedback)</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — One Bug, Two Episodes</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Follow a failing coding episode through reflection into a memory buffer, then watch the retry inherit the lesson.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="reflexd0Next" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="reflexd0Reset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="reflexd0Box" style="background:#0f172a;padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:#e2e8f0;line-height:1.8;min-height:220px;"></div>
+    <div id="reflexd0Note" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="method">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">Why <em>Verbal</em> Works</h2>
+  <p class="section-desc">The information-theoretic argument hiding in the design.</p>
+
+  <div class="card">
+    <div class="card-label">From Signal to Summary</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">A failing unit test carries a stack trace — hundreds of tokens of noise around one causal insight. Fine-tuning on the raw signal would need many samples to distill the pattern; a language model can compress it <strong>in one pass</strong> into the operative sentence. The reflection is a <em>lossy-but-causal</em> compression of experience: exactly the part worth carrying forward. That compression choice is also the risk — a model that compresses the wrong cause into the lesson will repeat the right mistake — which is why externally-graded feedback (tests, environments) outperforms pure self-reflection in the paper&apos;s ablations.</p>
+  </div>
+
+    <div id="reflexd1Tabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Feedback Sources Compared</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Tab through the feedback types Reflexion can consume — and their reliability gradient.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+
+    </div>
+    <div id="reflexd1Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">91% <em>Without</em> Training</h2>
+  <p class="section-desc">The number that made the field take memory-based learning seriously.</p>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">HUMANEVAL pass@1</div><div class="result-score" style="color:var(--green);">91%</div><div class="result-label">surpassing GPT-4's 80% SOTA</div></div>
+    <div class="result-card"><div class="result-model">WEIGHT UPDATES</div><div class="result-score" style="color:var(--amber);">zero</div><div class="result-label">learning lives in the prompt's memory</div></div>
+    <div class="result-card"><div class="result-model">TASK FAMILIES</div><div class="result-score" style="color:var(--teal);">3+</div><div class="result-label">decision-making, coding, language reasoning</div></div>
+    <div class="result-card"><div class="result-model">FEEDBACK TYPES</div><div class="result-score" style="color:var(--blue);">scalar + text</div><div class="result-label">external or internally simulated</div></div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Reflexion vs Fine-Tuning</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Both are 'learning from experience.' Press reveal for the honest comparison the paper set up.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="reflexd2Go" type="button" style="font-size:13px;padding:8px 18px;">Reveal</button>
+    </div>
+    <div id="reflexd2Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Legacy — Memory <em>Is</em> Learning</h2>
+  <p class="section-desc">Reflexion is the founding document of the agent-memory category.</p>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title"> 🗂 Category X's origin story</div><div class="notice-text">The paper made 'episodic memory of lessons' a named, studied mechanism — the direct ancestor of MemGPT-style management and the memory systems of entries #97-104.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🧪 Self-correction as standard</div><div class="notice-text">Retry-with-insight loops became the default agent architecture pattern (Voyager, SWE-agent recovery, test-time iteration — entry #58's foundation).</div></div>
+    <div class="notice-card"><div class="notice-title"> 💬 The verbal-RL thesis</div><div class="notice-text">'Feedback as language' reframed reward engineering: what to tell the model, not just what number to give it — now visible in every verifier-feedback design.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🏆 The 91% datapoint</div><div class="notice-text">Beating GPT-4's HumanEval SOTA without training made the engineering world notice: prompt-side accumulation is a real learning channel.</div></div>
+    <div class="notice-card"><div class="notice-title"> ⚠️ What it did NOT solve</div><div class="notice-text">Self-reflection rationalizes (the model grades its own homework); memory buffers are short-lived and task-scoped; lessons don't compose into transferable skills; and long horizons need the memory management the X-category papers later supply.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🛤 Read next</div><div class="notice-text">The memory lineage: <a href='./MemGPT_Towards_LLMs_as_Operating_Systems.html' style='color:var(--amber-text);'>MemGPT</a> · <a href='./A_MEM_Agentic_Memory_for_LLM_Agents.html' style='color:var(--amber-text);'>A-MEM</a> · <a href='./ReAct.html' style='color:var(--amber-text);'>ReAct</a></div></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from Reflexion.</p>
+
+  <div id="quizContainer"></div>
+</section>
+<div class="divider"></div>
+
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Reflexion converts failure feedback into verbal lessons stored in episodic memory — no weight updates.</div>
+    <div class="card-sm">✅ The loop: act → evaluate (tests/environment/self) → reflect → remember → retry, wiser each pass.</div>
+    <div class="card-sm">✅ 91% pass@1 on HumanEval — past GPT-4's 80% — the result that legitimized memory-based learning.</div>
+    <div class="card-sm">✅ Works with scalar, free-form, external, or internally simulated feedback; external wins on reliability.</div>
+    <div class="card-sm">✅ Reflection = lossy-but-causal compression of experience into portable text.</div>
+    <div class="card-sm">✅ Read it as the origin point of the entire agent-memory category (Category X).</div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2303.11366" target="_blank" rel="noopener noreferrer">"Reflexion: Language Agents with Verbal Reinforcement Learning"</a> (Shinn et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2303.11366" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./ReAct.html">ReAct Guide</a>
+    <a class="footer-link" href="./MemGPT_Towards_LLMs_as_Operating_Systems.html">MemGPT Guide</a>
+    <a class="footer-link" href="./A_MEM_Agentic_Memory_for_LLM_Agents.html">A-MEM Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "method", "results", "impact", "quiz", "takeaways"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === STEPS DEMO ===
+(function(){
+const box=document.getElementById('reflexd0Box');
+const note=document.getElementById('reflexd0Note');
+const btn=document.getElementById('reflexd0Next');
+const rst=document.getElementById('reflexd0Reset');
+if(!box||!note||!btn||!rst)return;
+const ST=[{"label": "episode 1 · the attempt", "html": "task: &quot;implement binary search&quot;<br><br>agent writes code → executes<br><br><span style='color:#ef4444;'>FAIL: infinite loop on empty array</span><br><span style='color:#94a3b8;'>trace: while lo &lt;= hi with hi = −1 never exits…</span>", "note": "Ordinary failure — the moment where most agents amnesia-reset."}, {"label": "evaluate", "html": "feedback source: unit tests + execution trace<br><br><span style='color:#94a3b8;'>the raw signal is long, noisy, mostly irrelevant — one causal fact inside</span>", "note": "Reflexion accepts scalar scores, free-form text, or self-critique — here it's the test suite."}, {"label": "reflect — compress to the lesson", "html": "the agent writes:<br>&quot;<span style='color:#f59e0b;'>The binary search fails when the array is empty<br>because hi starts at len−1 = −1 and the loop<br>condition lo &lt;= hi is still true. Guard with<br>if not arr: return −1 before the loop.</span>&quot;<br><br><span style='color:#94a3b8;'>one pass: 300 tokens of trace → 40 tokens of cause</span>", "note": "The compression is the learning — lossy, causal, portable."}, {"label": "remember", "html": "lesson appended to episodic memory buffer:<br>[/episode 1/ binary search: guard empty input…]<br><br><span style='color:#94a3b8;'>buffer is size-limited; entries persist across the task&apos;s retries</span>", "note": "Memory is the parameter update — inspectable, editable, evictable."}, {"label": "episode 2 · the retry", "html": "prompt = task + lessons from memory<br><br>agent writes code — with the guard<br><br><span style='color:#22c55e;'>PASS ✓</span><br><span style='color:#22c55e;'>HumanEval pattern: 91% pass@1, GPT-4 baseline 80%</span>", "note": "Same weights, wiser prompt — the entire method in one retry."}];
+let i=0;
+function render(){box.innerHTML='<div style="color:#f59e0b;font-size:11px;margin-bottom:6px;">'+ST[i].label.toUpperCase()+'</div>'+ST[i].html;note.textContent=ST[i].note;btn.textContent=i<ST.length-1?'Next step →':'Restart';}
+btn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+rst.addEventListener('click',()=>{i=0;render();});
+render();
+})();
+
+// === TABS DEMO ===
+(function(){
+const wrap=document.getElementById('reflexd1Tabs');
+const box=document.getElementById('reflexd1Box');
+if(!wrap||!box)return;
+const T=[{"n": "unit tests / execution", "cells": [["Type", "external"], ["Reliability", "high"], ["Cost", "cheap"]], "d": "Coding tasks: pass/fail plus traces. Objective, causal, machine-checkable — the paper's strongest results ride on it."}, {"n": "environment heuristics", "cells": [["Type", "external"], ["Reliability", "medium"], ["Domain", "AlfWorld etc."]], "d": "Game-style environments supply sparse signals (goal reached? steps taken?) — Reflexion converts them to diagnostic text before storing."}, {"n": "self-critique", "cells": [["Type", "internal"], ["Reliability", "mixed"], ["Cost", "model calls"]], "d": "The model grades its own output — flexible, needed when nothing external exists, and exactly where rationalization risk concentrates (the ablations' honest note)."}, {"n": "scalar scores", "cells": [["Type", "either"], ["Reliability", "low as text"], ["Use", "gating"]], "d": "Raw numbers say THAT, not WHY — useful as triggers for reflection (and budget control), not as lessons themselves."}];
+let cur=0;
+function render(){
+wrap.innerHTML=T.map(function(t,k){return '<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid '+(k===cur?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(k===cur?'var(--amber-dim)':'var(--bg3)')+';color:'+(k===cur?'var(--amber-text)':'var(--text2)')+';cursor:pointer;">'+t.n+'</button>';}).join('');
+box.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">'+T[cur].cells.map(function(c){return '<div style="flex:1;min-width:120px;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);">'+c[0]+'</div><div style="font-family:var(--mono);font-size:17px;color:var(--amber-text);font-weight:600;">'+c[1]+'</div></div>';}).join('')+'</div>'+
+'<div style="font-size:12px;color:var(--text2);line-height:1.7;">'+T[cur].d+'</div>';
+}
+wrap.addEventListener('click',function(e){const b=e.target.closest('button');if(!b)return;cur=Array.from(wrap.children).indexOf(b);render();});
+render();
+})();
+
+// === REVEAL DEMO ===
+(function(){
+const box=document.getElementById('reflexd2Box');
+const btn=document.getElementById('reflexd2Go');
+if(!box||!btn)return;
+const D={"before": "<div style='font-family:var(--mono);font-size:12px;line-height:2.2;color:var(--text2);'>fine-tuning: experience → gradients → weights<br>Reflexion: experience → language → memory<br><br>same input, different substrate —<br><span style='color:var(--text3);'>press reveal for the trade table</span></div>", "after": "<div style='font-family:var(--mono);font-size:12px;line-height:2.1;color:var(--text2);'>samples needed: thousands vs episodes<br>cost per lesson: a training run vs one model call<br>persistence: permanent vs buffer-evicted<br>inspectability: no vs every lesson readable<br>transfer: task-general weights vs task-scoped text<br>forgetting risk: catastrophic vs none (reset = wipe)<br><br><span style='color:var(--green-text);'>complementary, not competing — production agents<br>now do both: RLHF-era weights + Reflexion-style loops</span></div>"};
+box.innerHTML=D.before;
+btn.addEventListener('click',function(){box.innerHTML=D.after;});
+})();
+
+
+const QUIZ_DATA=[{"q": "What does a Reflexion agent store in its episodic memory buffer?", "opts": ["Raw observation-action pairs", "Verbal self-reflections — concrete natural-language lessons derived from feedback", "Model gradients", "Full execution traces only"], "correct": 1, "explain": "The agent reflects on failure (with test/environment feedback) into a short specific lesson, which conditions the next attempt."}, {"q": "What is Reflexion's headline HumanEval result?", "opts": ["91% pass@1, surpassing the previous SOTA GPT-4 that achieves 80%", "60% pass@1", "It matches GPT-4 exactly", "No coding results were reported"], "correct": 0, "explain": "91% pass@1 with GPT-4 — beating the then state of the art (GPT-4 at 80%) without updating any weights."}, {"q": "Why does the paper call this 'verbal reinforcement learning'?", "opts": ["Because it uses PPO on text", "Because verbal feedback plays the reward's role and episodic memory plays the parameter update's role", "Because the environment speaks", "Because humans write the lessons"], "correct": 1, "explain": "The mapping: signal → language, experience accumulation → memory buffer — learning dynamics without gradient mechanics."}, {"q": "Which feedback source proved most reliable in the paper's ablations?", "opts": ["Pure self-critique", "External, verifiable signals like unit tests and execution traces", "Random feedback", "Scalar scores only"], "correct": 1, "explain": "External checks give causal, objective feedback; self-reflection works but rationalizes more — the ablation's honest finding."}, {"q": "What is the main memory-management constraint in Reflexion?", "opts": ["Lessons persist forever", "The episodic buffer is size-limited, so lessons get evicted — long-horizon accumulation needs management", "Memory is stored in the weights", "It cannot store more than one lesson"], "correct": 1, "explain": "The buffer is task-scoped and finite — the limitation the later memory-system papers (MemGPT, A-MEM, Mem0) were built to address."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
