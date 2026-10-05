@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Self-RAG — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of Self-RAG, with playable demos for reflection tokens, on-demand retrieval, and self-critique of grounding and utility.">
+<meta name="keywords" content="Self-RAG, reflection tokens, adaptive retrieval, self-critique, grounding, utility, hallucination, citations">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Self_RAG_Learning_to_Retrieve_Generate_and_Critique.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Self-RAG — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of Self-RAG — reflection tokens let the model decide when to retrieve, then grade its own grounding and usefulness, outperforming ChatGPT and Llama2-chat on open-domain QA and factuality.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Self_RAG_Learning_to_Retrieve_Generate_and_Critique.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="Self-RAG — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of Self-RAG — reflection tokens let the model decide when to retrieve, then grade its own grounding and usefulness, outperforming ChatGPT and Llama2-chat on open-domain QA and factuality.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#method">Results</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+    <a class="nav-link" href="#takeaways">Takeaways</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2023</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#method">Results</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#takeaways">Takeaways</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Retrieve When <em>You</em> Need It<br>Self-RAG
+  </h1>
+  <p class="hero-subtitle">
+    Standard RAG retrieves on every query whether or not it helps. Self-RAG trains the model to decide — and to grade its own answers with reflection tokens for support and usefulness.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2310.11511" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Reflection token types</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">On-demand</div>
+      <div class="stat-label">Retrieval</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">ChatGPT-level</div>
+      <div class="stat-label">Factuality gains</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2023</div>
+      <div class="stat-label">Asai et al.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Always-On</em> to <em>On-Demand</em> Retrieval</h2>
+  <p class="section-desc">RAG fixed hallucination at the cost of versatility — Self-RAG made retrieval a decision.</p>
+
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2020-22</div><div class="tl-title">RAG's trade-off</div><div class="tl-desc">Retrieve-and-generate (entry #29) grounds answers but retrieves indiscriminately — pop-culture queries get Wikipedia, code questions get web noise.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022</div><div class="tl-title">The versatility cost</div><div class="tl-desc">Forcing fixed retrieved passages into every prompt degrades chat quality and can inject unhelpful context — noted across the RAG literature.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">Oct 2023</div><div class="tl-title">🚀 Self-RAG</div><div class="tl-desc">Asai et al.: the model itself emits reflection tokens — retrieve-or-not, is-relevant, is-supported, is-useful — trained via a critic teacher and interleaved with generation.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2023+</div><div class="tl-title">Self-critique lineage</div><div class="tl-desc">Constitutional AI-style self-evaluation, verifier tokens, and process supervision (entry #45) share the DNA: models grading their own outputs.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024+</div><div class="tl-title">Adaptive RAG standard</div><div class="tl-desc">Production systems route easy queries to parametric answers and hard ones to retrieval — Self-RAG's decision learned rather than hand-coded.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Four Tokens, <em>Four</em> Judgments</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Self-RAG interleaves special <strong>reflection tokens</strong> with ordinary output: <em>[Retrieve?]</em> (is retrieval needed?), <em>[IsRel]</em> (is the passage relevant?), <em>[IsSup]</em> (is the claim supported by it?), and <em>[IsUse]</em> (is the response useful?). Training uses a critic model (GPT-4-annotated data distilled into the LLM) so the generator learns to make these calls itself — turning a fixed pipeline into a learned policy.</p>
+    </div>
+
+  </div>
+</section>
+<div class="divider"></div>
+
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">RAG's <em>Indiscriminate</em> Habit</h2>
+  <p class="section-desc">The costs nobody budgeted: retrieval for everything, relevance un-checked, quality un-graded.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">🔁</div>
+      <div class="problem-title">Always-Retrieve RAG</div>
+      <ul class="problem-list">
+          <li>Retrieval fires on every query regardless of need — 'hello' fetches web pages</li>
+          <li>A fixed number of passages injected whether relevant or not — context pollution</li>
+          <li>No mechanism checks whether generations are actually supported by retrieved evidence</li>
+          <li>Diminished versatility: chatty and creative queries suffer under forced grounding</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🪞</div>
+      <div class="problem-title">The Self-RAG Answer</div>
+      <ul class="problem-list">
+          <li>[Retrieve?] token: the model decides, per segment, whether to fetch</li>
+          <li>[IsRel] / [IsSup] / [IsUse]: self-graded relevance, support, and utility</li>
+          <li>Critic-distilled training: GPT-4-labeled reflection data teaches the generator</li>
+          <li>Results: outperforms ChatGPT and Llama2-chat on open-domain QA, factuality, and citation generation</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Analogy — The Researcher with <em>Judgment</em></div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Naive RAG is an intern who <strong>Googles everything</strong> — including their own name — and pastes whatever loads first. Self-RAG is a researcher who knows the difference between trivia they own and questions needing the library, pulls sources when warranted, checks quotes before using them, and asks 'did I actually answer the question?' before hitting send.</p>
+
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The <em>Token</em> Grammar</h2>
+  <p class="section-desc">The reflection vocabulary interleaved with generation — the whole control system in one card.</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">🔍 [Retrieve?]</div><div class="notice-text">Per generation segment: does this next claim need evidence, or does parametric knowledge suffice? Adaptive branching.</div></div>
+    <div class="notice-card"><div class="notice-title">🧲 [IsRel]</div><div class="notice-text">Is the retrieved passage relevant to the prompt at hand? Filters context pollution before it enters generation.</div></div>
+    <div class="notice-card"><div class="notice-title">✅ [IsSup]</div><div class="notice-text">Is the generated segment supported by the retrieved passage? — the grounding grade, per claim.</div></div>
+    <div class="notice-card"><div class="notice-title">⭐ [IsUse]</div><div class="notice-text">Is the response useful as an answer to the question? — the quality grade, beyond mere support.</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Training: critic distillation</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>A strong critic (GPT-4) labels reflection tokens on sampled outputs and retrieved passages</li>
+        <li>The generator is finetuned on the combined (text + reflection) sequences</li>
+        <li>At inference the generator emits its own reflection tokens — no critic in the loop</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Inference: branching by token</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>[Retrieve?] = no → pure parametric continuation</li>
+        <li>[Retrieve?] = yes → fetch passages, then [IsRel] filters, [IsSup] grades each continuation</li>
+        <li>Best continuation picked by weighted reflection scores (support/utility)</li>
+        <li>Citations fall out naturally: supported segments carry their passages</li>
+      </ul>
+    </div>
+  </div>
+
+    <div id="selfragd0Tabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Same Query, Two Policies</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Tab through query types under always-on RAG vs Self-RAG — watch the retrieval decision adapt.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+
+    </div>
+    <div id="selfragd0Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="method">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The <em>Evidence</em></h2>
+  <p class="section-desc">Where Self-RAG lands: the 2023 leaderboard beats that made it famous.</p>
+
+  <div class="card">
+    <div class="card-label">Reported Results</div>
+    <ul class="problem-list" style="margin-top:8px;">
+        <li>Outperforms <strong>ChatGPT and Llama2-chat</strong> on open-domain QA benchmarks (PopQA etc.)</li>
+        <li>Improves <strong>factuality and citation</strong> metrics versus its own non-reflective base — short-form and long-form generation</li>
+        <li>Adaptivity is real, not cosmetic: reflection firing varies with query type (factual queries retrieve; open-ended ones lean parametric)</li>
+        <li>Ablations: removing [IsSup] degrades grounding; removing [Retrieve?] degrades versatility — every token earns its place</li>
+      </ul>
+    <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-top:10px;">Self-RAG reframed the RAG stack from a fixed pipeline into a <em>policy</em> — and reflection tokens became a reusable pattern (process supervision, verifier heads, self-consistency critics).</p>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — One Answer, Fully Reflected</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Trace a generation with every reflection token firing — the full self-policing loop in five steps.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="selfragd1Next" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="selfragd1Reset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="selfragd1Box" style="background:#0f172a;padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:#e2e8f0;line-height:1.8;min-height:220px;"></div>
+    <div id="selfragd1Note" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">Grounded <em>and</em> Versatile</h2>
+  <p class="section-desc">The dual win the always-retrieve camp said was impossible.</p>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">OPEN-DOMAIN QA</div><div class="result-score" style="color:var(--green);">beats ChatGPT</div><div class="result-label">and Llama2-chat with the same task framing</div></div>
+    <div class="result-card"><div class="result-model">FACTUALITY</div><div class="result-score" style="color:var(--teal);">improves</div><div class="result-label">short-form and long-form grounding metrics</div></div>
+    <div class="result-card"><div class="result-model">CITATIONS</div><div class="result-score" style="color:var(--amber);">emerge free</div><div class="result-label">supported segments carry their evidence</div></div>
+    <div class="result-card"><div class="result-model">ADAPTIVITY</div><div class="result-score" style="color:var(--blue);">learned</div><div class="result-label">retrieval fired only when reflection says so</div></div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Remove One Token, Watch It Break</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Each reflection token guards one failure mode. Press reveal to see the ablation pattern.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="selfragd2Go" type="button" style="font-size:13px;padding:8px 18px;">Reveal</button>
+    </div>
+    <div id="selfragd2Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Legacy — The <em>Learned</em> RAG Policy</h2>
+  <p class="section-desc">Reflection tokens became a reusable pattern far beyond retrieval.</p>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title"> 🎛 Adaptive retrieval standard</div><div class="notice-text">Production RAG stacks now route by query type — the decision Self-RAG moved from hand-coded heuristics into the model itself.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🪞 Self-critique as infrastructure</div><div class="notice-text">The critic-distillation recipe (strong model labels judgment, generator internalizes it) reappears in verifiers, process reward models (entry #45), and self-correction loops.</div></div>
+    <div class="notice-card"><div class="notice-title"> 📎 Attribution for free</div><div class="notice-text">Per-claim support grades make citations an output of the generation process itself — ALCE's (entry #32) agenda, implemented inside the decoder.</div></div>
+    <div class="notice-card"><div class="notice-title">⚖️ The versatility-accuracy framing</div><div class="notice-text">Self-RAG made explicit that RAG systems have TWO jobs (be right AND stay usable) — the trade-off later benchmarks evaluate directly.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">Reflection quality inherits the critic's biases (GPT-4-labeled); token overhead complicates serving; and reflection can be confidently wrong — self-grading is a signal, not a guarantee.</div></div>
+    <div class="notice-card"><div class="notice-title">🛤 Read next</div><div class="notice-text">The family: <a href='./RAG_Retrieval_Augmented_Generation.html' style='color:var(--amber-text);'>RAG</a> · <a href='./RAFT_Adapting_Language_Model_to_Domain_Specific_RAG.html' style='color:var(--amber-text);'>RAFT</a> · <a href='./RAGTruth_A_Hallucination_Corpus_for_Trustworthy_Retrieval_Augmented_Language_Models.html' style='color:var(--amber-text);'>RAGTruth</a></div></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from Self-RAG.</p>
+
+  <div id="quizContainer"></div>
+</section>
+<div class="divider"></div>
+
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ Self-RAG = reflection tokens: [Retrieve?] [IsRel] [IsSup] [IsUse] — a learned RAG policy.</div>
+    <div class="card-sm">✅ Critic distillation teaches the generator to self-reflect; inference runs without the critic.</div>
+    <div class="card-sm">✅ Outperforms ChatGPT and Llama2-chat on open-domain QA, factuality, and citations.</div>
+    <div class="card-sm">✅ Retrieval becomes per-segment and adaptive — no more context pollution on easy queries.</div>
+    <div class="card-sm">✅ Per-claim support grades make grounding inspectable and citations intrinsic.</div>
+    <div class="card-sm">✅ Read it as the bridge from RAG pipelines to self-policing generation.</div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2310.11511" target="_blank" rel="noopener noreferrer">"Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection"</a> (Asai et al., 2023)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2310.11511" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./RAG_Retrieval_Augmented_Generation.html">RAG Guide</a>
+    <a class="footer-link" href="./RAFT_Adapting_Language_Model_to_Domain_Specific_RAG.html">RAFT Guide</a>
+    <a class="footer-link" href="./Lets_Verify_Step_by_Step.html">Let's Verify Step by Step Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "method", "results", "impact", "quiz", "takeaways"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === TABS DEMO ===
+(function(){
+const wrap=document.getElementById('selfragd0Tabs');
+const box=document.getElementById('selfragd0Box');
+if(!wrap||!box)return;
+const T=[{"n": "factual query", "cells": [["Always-RAG", "retrieves"], ["Self-RAG", "retrieves"], ["Outcome", "tie→win"]], "d": "'What is the elevation of Mount Kilimanjaro?' — both retrieve; Self-RAG additionally grades support, so the answer carries verified grounding and a citation."}, {"n": "chatty query", "cells": [["Always-RAG", "retrieves junk"], ["Self-RAG", "skips"], ["Outcome", "Self-RAG"]], "d": "'Write a friendly hello to my team' — always-on RAG pollutes context with irrelevant pages; Self-RAG's [Retrieve?]=No keeps the parametric voice intact."}, {"n": "ambiguous query", "cells": [["Always-RAG", "1 guess"], ["Self-RAG", "branch"], ["Outcome", "Self-RAG"]], "d": "'Tell me about Java' — Self-RAG can branch: retrieve (islands? coffee? programming?) while [IsRel] filters which fetched passages actually match the user's intent."}, {"n": "false-premise query", "cells": [["Always-RAG", "grounds nonsense"], ["Self-RAG", "critiques"], ["Outcome", "Self-RAG"]], "d": "'When did Napoleon invade Japan?' — retrieved history pages 'support' fragments while the premise rots; [IsUse] catches that the response fails the actual question."}];
+let cur=0;
+function render(){
+wrap.innerHTML=T.map(function(t,k){return '<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid '+(k===cur?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(k===cur?'var(--amber-dim)':'var(--bg3)')+';color:'+(k===cur?'var(--amber-text)':'var(--text2)')+';cursor:pointer;">'+t.n+'</button>';}).join('');
+box.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">'+T[cur].cells.map(function(c){return '<div style="flex:1;min-width:120px;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);">'+c[0]+'</div><div style="font-family:var(--mono);font-size:17px;color:var(--amber-text);font-weight:600;">'+c[1]+'</div></div>';}).join('')+'</div>'+
+'<div style="font-size:12px;color:var(--text2);line-height:1.7;">'+T[cur].d+'</div>';
+}
+wrap.addEventListener('click',function(e){const b=e.target.closest('button');if(!b)return;cur=Array.from(wrap.children).indexOf(b);render();});
+render();
+})();
+
+// === STEPS DEMO ===
+(function(){
+const box=document.getElementById('selfragd1Box');
+const note=document.getElementById('selfragd1Note');
+const btn=document.getElementById('selfragd1Next');
+const rst=document.getElementById('selfragd1Reset');
+if(!box||!note||!btn||!rst)return;
+const ST=[{"label": "the question", "html": "Q: &quot;Who won the 2023 Nobel Prize in Physics?&quot;<br><br><span style='color:#94a3b8;'>time-sensitive, factual → likely a retrieval case</span>", "note": "The model's first judgment is about its OWN knowledge, not the question."}, {"label": "the retrieval decision", "html": "output: <span style='color:#f59e0b;'>[Retrieve? = Yes]</span><br><br>passages fetched (top-K from corpus)<br><br><span style='color:#94a3b8;'>a pop-culture question here would emit [No] and continue parametrically</span>", "note": "Per-segment adaptivity — the difference from pipeline RAG."}, {"label": "filter the evidence", "html": "for each passage: <span style='color:#f59e0b;'>[IsRel]</span><br>&nbsp;&nbsp;p1 &quot;2023 Nobel Physics: attosecond experiments…&quot; → relevant ✓<br>&nbsp;&nbsp;p2 &quot;Nobel banquet menu…&quot; → not relevant ✗ (discarded)<br><br><span style='color:#94a3b8;'>context pollution never reaches generation</span>", "note": "Relevance grading happens BEFORE the evidence is used."}, {"label": "generate + self-support-grade", "html": "segment: &quot;The 2023 prize went to Agostini, Krausz, and L&apos;Huillier…&quot;<br><span style='color:#f59e0b;'>[IsSup = Fully supported]</span> ← vs p1<br><br><span style='color:#94a3b8;'>each claim gets its own support grade as it is produced</span>", "note": "Grounding becomes a per-claim property, inspectable at decode time."}, {"label": "the utility verdict", "html": "<span style='color:#f59e0b;'>[IsUse = 5/5]</span> — answers the question, appropriately concise<br><br><span style='color:#22c55e;'>final answer + citations + verified support flags</span><br><span style='color:#94a3b8;'>branch selection used these scores to pick the best continuation</span>", "note": "The full output: not just an answer, but an answer that graded itself."}];
+let i=0;
+function render(){box.innerHTML='<div style="color:#f59e0b;font-size:11px;margin-bottom:6px;">'+ST[i].label.toUpperCase()+'</div>'+ST[i].html;note.textContent=ST[i].note;btn.textContent=i<ST.length-1?'Next step →':'Restart';}
+btn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+rst.addEventListener('click',()=>{i=0;render();});
+render();
+})();
+
+// === REVEAL DEMO ===
+(function(){
+const box=document.getElementById('selfragd2Box');
+const btn=document.getElementById('selfragd2Go');
+if(!box||!btn)return;
+const D={"before": "<div style='font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);'>full Self-RAG: grounded, cited, versatile<br><br>ablation time — remove tokens one at a time<br><span style='color:var(--text3);'>press reveal</span></div>", "after": "<div style='font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);'>no [Retrieve?]: every query polluted with retrieval — chat quality collapses<br>no [IsRel]: junk passages reach generation — context poisoning returns<br>no [IsSup]: fluent claims with no grounding — hallucination returns<br>no [IsUse]: supported but useless answers — pedantry wins<br><br><span style='color:var(--green-text);'>four tokens, four failure modes, each one closed</span></div>"};
+box.innerHTML=D.before;
+btn.addEventListener('click',function(){box.innerHTML=D.after;});
+})();
+
+
+const QUIZ_DATA=[{"q": "What are the four reflection token types in Self-RAG?", "opts": ["[Start] [Stop] [Retry] [Fail]", "[Retrieve?] [IsRel] [IsSup] [IsUse]", "[Query] [Doc] [Answer] [Cite]", "[Yes] [No] [Maybe] [Always]"], "correct": 1, "explain": "Whether to retrieve, whether the passage is relevant, whether the generation is supported, and whether the response is useful — four judgments, four tokens."}, {"q": "How does the generator learn to emit reflection tokens?", "opts": ["Reinforcement learning from scratch", "Distillation from a strong critic model's labels on sampled outputs, then finetuning the generator", "Hand-written rules", "Unsupervised clustering"], "correct": 1, "explain": "A critic (built on GPT-4-annotated data) labels reflection tokens; the generator is finetuned on text interleaved with those labels — at inference it reflects alone."}, {"q": "Which systems does the paper report outperforming?", "opts": ["GPT-4 and Claude-2 on all tasks", "ChatGPT and Llama2-chat on open-domain QA, factuality, and citation generation", "BM25 only", "No comparison was made"], "correct": 1, "explain": "Self-RAG's headline: beating ChatGPT and Llama2-chat on open-domain QA while improving factuality and citation quality."}, {"q": "What problem does on-demand retrieval solve that always-on RAG has?", "opts": ["Slow embedding models", "Indiscriminate retrieval pollutes context and hurts versatility on queries that don't need evidence", "Too many GPUs", "Retrieval precision on trivia"], "correct": 1, "explain": "Forcing passages into every prompt degrades un-grounded queries — Self-RAG keeps parametric fluency where evidence isn't needed."}, {"q": "What do citations look like in Self-RAG?", "opts": ["They are added by a post-processor", "Segments graded as supported carry the retrieved passages that supported them — attribution emerges from generation", "The model never cites", "Citations only appear for chatty queries"], "correct": 1, "explain": "Because [IsSup] links each segment to its supporting passage during decoding, attribution is intrinsic to the output, not bolted on after."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
