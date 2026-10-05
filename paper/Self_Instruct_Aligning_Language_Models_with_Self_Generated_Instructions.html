@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Self-Instruct — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of Self-Instruct, with playable demos for the bootstrap pipeline, diversity filters, and the 52K-instruction dataset build.">
+<meta name="keywords" content="Self-Instruct, instruction tuning, bootstrapping, synthetic data, Super-NaturalInstructions, InstructGPT, Alpaca, data generation">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Self_Instruct_Aligning_Language_Models_with_Self_Generated_Instructions.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Self-Instruct — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of Self-Instruct — the model bootstraps 52K instructions from 175 seed tasks, gaining a 33% absolute improvement on Super-NaturalInstructions, on par with InstructGPT-001.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Self_Instruct_Aligning_Language_Models_with_Self_Generated_Instructions.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="Self-Instruct — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of Self-Instruct — the model bootstraps 52K instructions from 175 seed tasks, gaining a 33% absolute improvement on Super-NaturalInstructions, on par with InstructGPT-001.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#method">Legacy</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+    <a class="nav-link" href="#takeaways">Takeaways</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2022</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#method">Legacy</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#takeaways">Takeaways</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    The Model Teaches <em>Itself</em><br>Self-Instruct
+  </h1>
+  <p class="hero-subtitle">
+    Start with 175 human-written seed tasks. Let the model generate new instructions, inputs, and outputs — filter the weak and the near-duplicate — fine-tune on the survivors. Vanilla GPT-3 gains 33% absolutely, matching InstructGPT-001 without its private data.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2212.10560" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">175</div>
+      <div class="stat-label">Human seed tasks</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">52K</div>
+      <div class="stat-label">Bootstrapped instructions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">+33%</div>
+      <div class="stat-label">vs vanilla GPT-3</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2022</div>
+      <div class="stat-label">Wang et al.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">The <em>Instruction</em> Data Bottleneck</h2>
+  <p class="section-desc">Instruction tuning worked — and the data to do it belonged to whoever could collect humans at scale.</p>
+
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2019-21</div><div class="tl-title">Instruction tuning arrives</div><div class="tl-desc">T5/FLAN-style tuning shows task-format training transfers zero-shot — but datasets are human-annotated and expensive (entries #5, #10).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2022 · Jan</div><div class="tl-title">FLAN goes big</div><div class="tl-desc">The Flan Collection (1300+ tasks) — months of annotation pipelines and private infrastructure.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2022 · Mar</div><div class="tl-title">InstructGPT's data moat</div><div class="tl-desc">The RLHF input begins as human-written demonstrations and comparisons — private user data, paid labelers (entry #40).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">2022 · Dec</div><div class="tl-title">🚀 Self-Instruct</div><div class="tl-desc">Wang et al.: GPT-3 bootstraps its own instruction dataset from 175 seeds — generation, filtering, finetuning, repeat. +33% absolute on Super-NaturalInstructions; on par with InstructGPT-001.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2023 · Mar</div><div class="tl-title">Alpaca detonation</div><div class="tl-desc">Stanford applies Self-Instruct to LLaMA with GPT-3.5 ($600 of API calls) → a usable assistant in a week (entry #12's story) — synthetic data goes mainstream forever.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Bootstrapping <em>Is</em> the Dataset</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The pipeline is a four-step loop the model runs on itself: <strong>(1) generate</strong> new instruction ideas seeded by existing ones (few-shot prompted), <strong>(2) expand</strong> each into (instruction, input, output), <strong>(3) filter</strong> — language check, dedup by embedding similarity against existing instructions, drop identical or degenerate outputs, <strong>(4) fine-tune</strong> the base model on the survivors. The model&apos;s own distribution generates the curriculum; cheap heuristics enforce quality and diversity; the fine-tuned model becomes a better generator for the next round.</p>
+    </div>
+
+  </div>
+</section>
+<div class="divider"></div>
+
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Instruction Data, <em>Priced</em> in Humans</h2>
+  <p class="section-desc">The 2022 economics that Self-Instruct attacked.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon"> 🏷</div>
+      <div class="problem-title">The Annotation Economy</div>
+      <ul class="problem-list">
+          <li>Instruction-tuned capability depends on instruction data — human-written, limited in quantity and diversity</li>
+          <li>The best sets (FLAN collection, InstructGPT prompts) are expensive pipelines or private user logs</li>
+          <li>Creativity is the bottleneck: annotators generate similar tasks, long before coverage saturates</li>
+          <li>Every new domain (new language, new tool) restarts the annotation budget from zero</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon"> 🔄</div>
+      <div class="problem-title">The Self-Instruct Answer</div>
+      <ul class="problem-list">
+          <li>175 seed tasks only — the model invents the rest of the curriculum</li>
+          <li>Generation + expansion + filtering: a self-supervised instruction dataset of 52K examples</li>
+          <li>Rouge-L/embedding-based dedup + language filtering keep quality without humans in the loop</li>
+          <li>+33% absolute on Super-NaturalInstructions for vanilla GPT-3 — on par with InstructGPT-001</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Analogy — The Chef Who Writes Their <em>Own</em> Cookbook</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Instruction tuning was a chef cooking from <strong>recipes commissioned from specialists</strong> — expensive, slow, coverage-limited. Self-Instruct hands the chef <strong>175 sample dishes</strong> and says: invent new recipes inspired by these, throw out the flops and the repeats, and practice on the keepers. The cookbook grows by the thousands — and the practice itself makes the invention better.</p>
+
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The <em>Pipeline</em> in Four Stations</h2>
+  <p class="section-desc">Generate → expand → filter → finetune — the loop that became the synthetic-data canon.</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">1️⃣ Instruction generation</div><div class="notice-text">Few-shot prompt with 175 seed tasks (classification, QA, generation, rewrite…): the model proposes NEW instructions — breadth via random seed sampling, not human imagination.</div></div>
+    <div class="notice-card"><div class="notice-title">2️⃣ Input/output expansion</div><div class="notice-text">Each instruction gets a classified type (yes/no, class, generation…) and a matching input + output generated in separate steps — output optionally conditioned on the instruction with input fields marked.</div></div>
+    <div class="notice-card"><div class="notice-title">3️⃣ Filtering</div><div class="notice-text">Language checks (is it English? is the output identical to the input?), plus embedding-similarity dedup against all existing instructions — near-copies die, diversity lives.</div></div>
+    <div class="notice-card"><div class="notice-title">4️⃣ Fine-tuning</div><div class="notice-text">The base model is tuned on the 52K survivors — and could then re-seed the loop: the improved model is a better instruction generator than the one that built its data.</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">The measured result</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Vanilla GPT-3 → +33% absolute on Super-NaturalInstructions</li>
+        <li>On par with <strong>InstructGPT-001</strong> — trained with private user data and human annotations</li>
+        <li>Human eval on expert-written novel tasks: Self-Instruct GPT-3 outputs preferred over vanilla GPT-3 outputs</li>
+        <li>The 52K dataset released — the community&apos;s first open instruction corpus of real size</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">The honest limits</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Data inherits the generator&apos;s distribution — biases replicate quietly</li>
+        <li>Dedup heuristics imperfect: diversity in instruction space, not necessarily in difficulty</li>
+        <li>Long-tail tasks and adversarial phrasing underrepresented vs human curation</li>
+        <li>Evaluation was pre-2023 rigor — but the pattern it validated was real</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Bootstrap Loop, Live</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Watch one iteration of generate → expand → filter → finetune — the entire Self-Instruct mechanism in five steps.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="selfinstd0Next" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="selfinstd0Reset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="selfinstd0Box" style="background:#0f172a;padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:#e2e8f0;line-height:1.8;min-height:220px;"></div>
+    <div id="selfinstd0Note" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="method">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">The <em>Alpaca</em> Descendant</h2>
+  <p class="section-desc">Where the idea went next — the $600 assistant.</p>
+
+  <div class="card">
+    <div class="card-label">From 52K to 52K</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Stanford&apos;s Alpaca (March 2023) re-ran the pattern with a stronger generator: GPT-3.5 (text-davinci-003) produced 52K instruction-following demonstrations from the Self-Instruct seed set for about <strong>$600 of API calls</strong>, then LLaMA-7B was fine-tuned on them — producing a single-GPU assistant that famously closed most of the gap to text-davinci-003 in blind evaluations. The loop&apos;s economics: synthetic data + a capable generator + a cheap open student = the open-weights ecosystem&apos;s assembly line. Every later recipe — Evol-Instruct (deepen complexity iteratively), UltraFeedback, distillation cascades — is a Self-Instruct variant with different plumbing.</p>
+  </div>
+
+    <div id="selfinstd1Tabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Diversity: The Filter Is the Product</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Tab through filter layers — what dies, what survives, and why dedup is the load-bearing heuristic.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+
+    </div>
+    <div id="selfinstd1Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">33 Points, <em>Zero</em> Annotators</h2>
+  <p class="section-desc">The result that made synthetic instruction data the default ingredient.</p>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">SUPER-NATURALINSTRUCTIONS</div><div class="result-score" style="color:var(--green);">+33%</div><div class="result-label">absolute improvement over vanilla GPT-3</div></div>
+    <div class="result-card"><div class="result-model">vs INSTRUCTGPT-001</div><div class="result-score" style="color:var(--amber);">on par</div><div class="result-label">which used private data + human annotation</div></div>
+    <div class="result-card"><div class="result-model">DATASET</div><div class="result-score" style="color:var(--teal);">52K</div><div class="result-label">instructions from 175 seeds, released publicly</div></div>
+    <div class="result-card"><div class="result-model">COST</div><div class="result-score" style="color:var(--blue);">~$0 human</div><div class="result-label">annotation budget beyond the seeds</div></div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Alpaca Re-Run</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Same pipeline, stronger generator, $600 of API calls. Press reveal for the 2023 sequel that opened the floodgates.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="selfinstd2Go" type="button" style="font-size:13px;padding:8px 18px;">Reveal</button>
+    </div>
+    <div id="selfinstd2Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Legacy — Synthetic Data <em>Wins</em></h2>
+  <p class="section-desc">Self-Instruct legitimized the loop that now trains half the field.</p>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title"> 🐑 Alpaca and the open herd</div><div class="notice-text">The LLaMA + Self-Instruct combination produced the first broadly usable open assistant — the recipe thousands of fine-tunes still descend from.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🔁 Synthetic-data genre</div><div class="notice-text">Evol-Instruct (iterative complexity growth), UltraFeedback (model-graded preferences), self-rewarding loops — all Self-Instruct's descendants with upgraded filters.</div></div>
+    <div class="notice-card"><div class="notice-title"> 💸 The cost collapse</div><div class="notice-text">'Instruction data = annotation budget' stopped being true overnight; $600 replaced months of labeling — the economic event that re-priced the assistant layer.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🎓 Curriculum self-generation</div><div class="notice-text">The idea that a model can write its own training distribution became standard practice for domain adaptation, multilingual coverage, and tool-use training.</div></div>
+    <div class="notice-card"><div class="notice-title"> ⚠️ What it did NOT solve</div><div class="notice-text">Distribution collapse (generator bias, quietly replicated); the limits of heuristic quality control; and evaluation rigor that predated 2023 norms — later work showed synthetic sets need real curation too.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🛤 Read next</div><div class="notice-text">The data lineage: <a href='./LLaMA_Open_and_Efficient_Foundation_Language_Models.html' style='color:var(--amber-text);'>LLaMA</a> · <a href='./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html' style='color:var(--amber-text);'>InstructGPT</a> · <a href='./FLAN_Finetuned_Language_Models_Are_Zero_Shot_Learners.html' style='color:var(--amber-text);'>FLAN</a></div></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from Self-Instruct.</p>
+
+  <div id="quizContainer"></div>
+</section>
+<div class="divider"></div>
+
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ 175 seeds → 52K instructions via generate / expand / filter / finetune — zero annotators beyond the seeds.</div>
+    <div class="card-sm">✅ Embedding-similarity dedup is the load-bearing diversity heuristic.</div>
+    <div class="card-sm">✅ Vanilla GPT-3 gains +33% absolute on Super-NaturalInstructions — on par with InstructGPT-001.</div>
+    <div class="card-sm">✅ The 52K set was released — the community's first large open instruction corpus.</div>
+    <div class="card-sm">✅ Alpaca re-ran the loop with GPT-3.5 + LLaMA-7B for ~$600 — the open ecosystem's big bang.</div>
+    <div class="card-sm">✅ Read it as the paper that turned instruction data from a budget into a function call.</div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2212.10560" target="_blank" rel="noopener noreferrer">"Self-Instruct: Aligning Language Models with Self-Generated Instructions"</a> (Wang et al., 2022)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2212.10560" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Training_Language_Models_to_Follow_Instructions_with_Human_Feedback.html">InstructGPT Guide</a>
+    <a class="footer-link" href="./LLaMA_Open_and_Efficient_Foundation_Language_Models.html">LLaMA Guide</a>
+    <a class="footer-link" href="./FLAN_Finetuned_Language_Models_Are_Zero_Shot_Learners.html">FLAN Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "method", "results", "impact", "quiz", "takeaways"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === STEPS DEMO ===
+(function(){
+const box=document.getElementById('selfinstd0Box');
+const note=document.getElementById('selfinstd0Note');
+const btn=document.getElementById('selfinstd0Next');
+const rst=document.getElementById('selfinstd0Reset');
+if(!box||!note||!btn||!rst)return;
+const ST=[{"label": "the 175 seeds", "html": "seed tasks (human-written, one line each):<br>&nbsp;&nbsp;· &quot;Classify whether the sentence is grammatical…&quot;<br>&nbsp;&nbsp;· &quot;Rewrite the paragraph in passive voice…&quot;<br>&nbsp;&nbsp;· &quot;Answer the trivia question…&quot;<br><br><span style='color:#94a3b8;'>+175 more — the ONLY human data in the loop</span>", "note": "Coverage across broad task families is the seeds' one job."}, {"label": "instruction generation", "html": "prompt: &quot;here are 3 existing tasks… write the task description for a new one&quot;<br><br>→ &quot;Convert the Roman numeral into an integer&quot;<br>→ &quot;Find the anagram of the word&quot;<br>→ &quot;Rate the movie review sentiment 1-10&quot;<br><br><span style='color:#94a3b8;'>random seed subsets per call → diversity pressure</span>", "note": "The model invents the curriculum — thousands of ideas per hour."}, {"label": "input + output expansion", "html": "classify the instruction (yes/no · class · generation · rewrite · …)<br>→ generate an INPUT for it<br>→ generate the OUTPUT (conditioned on both)<br><br><span style='color:#94a3b8;'>separate steps, because instruction ≠ instance</span>", "note": "Instruction generation and instance generation are different skills — splitting them was an engineering win."}, {"label": "the filters", "html": "✗ identical output to input → drop<br>✗ not-English / degenerate → drop<br>✗ embedding similarity > threshold vs existing → drop (near-dup)<br><br><span style='color:#22c55e;'>the survivors: 52K diverse, clean examples</span>", "note": "Cheap heuristics do the quality control humans would have done — imperfectly but infinitely."}, {"label": "finetune (and repeat?)", "html": "GPT-3 fine-tuned on the 52K set<br><br><span style='color:#f59e0b;'>+33% absolute on Super-NaturalInstructions</span><br><span style='color:#94a3b8;'>on par with InstructGPT-001 (private data era)</span><br><span style='color:#94a3b8;'>the tuned model can now re-seed the loop, better</span>", "note": "Bootstrapping: the output improves the generator that made the output."}];
+let i=0;
+function render(){box.innerHTML='<div style="color:#f59e0b;font-size:11px;margin-bottom:6px;">'+ST[i].label.toUpperCase()+'</div>'+ST[i].html;note.textContent=ST[i].note;btn.textContent=i<ST.length-1?'Next step →':'Restart';}
+btn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+rst.addEventListener('click',()=>{i=0;render();});
+render();
+})();
+
+// === TABS DEMO ===
+(function(){
+const wrap=document.getElementById('selfinstd1Tabs');
+const box=document.getElementById('selfinstd1Box');
+if(!wrap||!box)return;
+const T=[{"n": "before filtering", "cells": [["Raw ideas", "unbounded"], ["Diversity", "illusory"], ["Noise", "high"]], "d": "Model-sampled instructions cluster: 'write a poem about X' spawns fifty cousins; degenerate outputs (repeat the input, empty answers) ride along."}, {"n": "quality filters", "cells": [["Checks", "language + sanity"], ["Catches", "degenerate"], ["Cost", "~free"]], "d": "Is the output English? Is output ≠ input? Is the field structure valid? Rule-based screens kill the obvious waste before anything expensive runs."}, {"n": "similarity dedup", "cells": [["Metric", "embedding sim"], ["Victims", "near-copies"], ["Survivors", "genuinely new"]], "d": "Each candidate is embedded and compared against ALL existing instructions — above the similarity threshold, dropped. The set's diversity is enforced, not hoped for."}, {"n": "the released corpus", "cells": [["Size", "52K"], ["Seeds", "175"], ["License", "open"]], "d": "The survivors became the community's first large open instruction dataset — and the template every synthetic-data pipeline since has copied."}];
+let cur=0;
+function render(){
+wrap.innerHTML=T.map(function(t,k){return '<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid '+(k===cur?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(k===cur?'var(--amber-dim)':'var(--bg3)')+';color:'+(k===cur?'var(--amber-text)':'var(--text2)')+';cursor:pointer;">'+t.n+'</button>';}).join('');
+box.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">'+T[cur].cells.map(function(c){return '<div style="flex:1;min-width:120px;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);">'+c[0]+'</div><div style="font-family:var(--mono);font-size:17px;color:var(--amber-text);font-weight:600;">'+c[1]+'</div></div>';}).join('')+'</div>'+
+'<div style="font-size:12px;color:var(--text2);line-height:1.7;">'+T[cur].d+'</div>';
+}
+wrap.addEventListener('click',function(e){const b=e.target.closest('button');if(!b)return;cur=Array.from(wrap.children).indexOf(b);render();});
+render();
+})();
+
+// === REVEAL DEMO ===
+(function(){
+const box=document.getElementById('selfinstd2Box');
+const btn=document.getElementById('selfinstd2Go');
+if(!box||!btn)return;
+const D={"before": "<div style='font-family:var(--mono);font-size:12px;line-height:2.2;color:var(--text2);'>2022: GPT-3 generates → GPT-3 learns (+33%)<br><br>2023 question: what happens with a<br>STRONGER generator and a CHEAPER student?<br><br><span style='color:var(--text3);'>press reveal</span></div>", "after": "<div style='font-family:var(--mono);font-size:12px;line-height:2.2;color:var(--text2);'>Alpaca (Stanford, Mar 2023):<br>generator: GPT-3.5 text-davinci-003<br>student: LLaMA-7B (open weights)<br>data: 52K demonstrations ≈ <span style='color:var(--green-text);'>$600 of API calls</span><br>training: one GPU, an afternoon<br><br>→ a single-GPU assistant competitive with text-davinci-003 in blind evals<br><br><span style='color:var(--amber-text);'>entry #12's leaked-weights story + THIS paper's pipeline = the open ecosystem's big bang</span></div>"};
+box.innerHTML=D.before;
+btn.addEventListener('click',function(){box.innerHTML=D.after;});
+})();
+
+
+const QUIZ_DATA=[{"q": "How many human-written seed tasks does Self-Instruct start from?", "opts": ["175", "52,000", "1,300", "None — zero seeds"], "correct": 0, "explain": "175 seeds (with 1 instance each) are the only human-authored data; the model generates the rest of the instruction corpus."}, {"q": "What are the pipeline's main filtering mechanisms?", "opts": ["Human review boards", "Language/sanity checks plus embedding-similarity deduplication against existing instructions", "Grammar scoring only", "No filtering — all generations are kept"], "correct": 1, "explain": "Rule-based checks drop degenerate examples; near-duplicates are killed by embedding similarity — diversity is enforced cheaply, without annotators."}, {"q": "What improvement did Self-Instruct bring to vanilla GPT-3 on Super-NaturalInstructions?", "opts": ["3% relative", "A 33% absolute improvement — on par with InstructGPT-001", "No improvement", "It only improved code tasks"], "correct": 1, "explain": "The abstract's headline: +33% absolute over the original model, matching an InstructGPT variant trained on private user data and human annotations."}, {"q": "What famous 2023 system re-ran this pipeline with GPT-3.5 and LLaMA?", "opts": ["Vicuna-13B", "Stanford's Alpaca — 52K generations for ~$600, fine-tuned onto a 7B open model", "BERT-XXL", "GPT-4"], "correct": 1, "explain": "Alpaca applied the Self-Instruct pattern to generate data with text-davinci-003 and fine-tune LLaMA-7B — the open-assistant assembly line."}, {"q": "What is the core structural idea of Self-Instruct?", "opts": ["Reinforcement learning from model preferences", "Bootstrapping: a model generates its own instruction data, filters it, fine-tunes on it — and could regenerate with the improved model", "Retrieval-augmented instruction storage", "Quantizing instruction-following weights"], "correct": 1, "explain": "The self-improving data loop — model as dataset author — is the contribution; the specific filters are implementation details."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
