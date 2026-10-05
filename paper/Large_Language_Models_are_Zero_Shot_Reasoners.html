@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zero-Shot Reasoners — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of Zero-shot-CoT, with playable demos for the magic prompt, before/after single-shot reasoning, and the multi-task sweep.">
+<meta name="keywords" content="Zero-shot CoT, Kojima, prompting, step by step, reasoning, emergent abilities, arithmetic, symbolic reasoning">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/Large_Language_Models_are_Zero_Shot_Reasoners.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="Zero-Shot Reasoners — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of Zero-shot-CoT — adding the single sentence 'Let's think step by step' massively improves zero-shot reasoning across arithmetic, symbolic, and commonsense tasks.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/Large_Language_Models_are_Zero_Shot_Reasoners.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="Zero-Shot Reasoners — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of Zero-shot-CoT — adding the single sentence 'Let's think step by step' massively improves zero-shot reasoning across arithmetic, symbolic, and commonsense tasks.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#method">Afterlife</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+    <a class="nav-link" href="#takeaways">Takeaways</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2022</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#method">Afterlife</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#takeaways">Takeaways</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Two Words:<br>&quot;<em>Step by Step</em>&quot;<br>Zero-Shot Reasoners
+  </h1>
+  <p class="hero-subtitle">
+    No examples, no fine-tuning — one appended sentence. 'Let's think step by step' turns zero-shot answers into zero-shot reasoning, with large accuracy jumps on arithmetic, symbolic, and commonsense tasks.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2205.11916" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">1</div>
+      <div class="stat-label">Prompt sentence</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">10+</div>
+      <div class="stat-label">Tasks swept</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">Up to ~36pt</div>
+      <div class="stat-label">Single-task jump (paper figure)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2022</div>
+      <div class="stat-label">Kojima et al.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">Examples Were <em>Everything</em></h2>
+  <p class="section-desc">The 2022 assumption zero-shot prompting quietly broke.</p>
+
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2020-21</div><div class="tl-title">Few-shot is the GPT-3 story</div><div class="tl-desc">In-context exemplars define capability: 'few-shot learners' (entry #6). Zero-shot is the weak sibling.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">Jan 2022</div><div class="tl-title">CoT needs examples</div><div class="tl-desc">Chain-of-thought prompting (entry #48) elicits reasoning — but only with hand-written worked examples in the prompt.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">May 2022</div><div class="tl-title">🚀 Zero-shot-CoT</div><div class="tl-desc">Kojima et al.: the same model, no exemplars — append &quot;Let&apos;s think step by step&quot; and extract the answer afterward. MultiArith +36pp, GSM8K +17pp class gains (paper figures).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2022-23</div><div class="tl-title">The prompting wave</div><div class="tl-desc">Self-consistency (entry #49) stacks on it; the trick becomes folklore, then default practice, then built-in (chat models think before answering by training).</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2024-25</div><div class="tl-title">Reasoning as a product mode</div><div class="tl-desc">Think-before-answer graduates from a prompt suffix to a trained behavior — o1/R1-style models institutionalize what two words began.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">Reasoning Was <em>There</em> All Along</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The paper's quiet thesis: models had latent multi-step ability that few-shot exemplars were merely <strong>eliciting</strong>, not creating. If elicitation needed examples, it was a formatting problem — and formatting problems have cheap fixes. The fix here is almost embarrassing: a single imperative sentence triggers the step-by-step register; a second prompt (&quot;…so the answer is&quot;) then harvests it. The pattern generalizes: <em>zero-shot</em> capability is often a prompt-shape discovery away.</p>
+    </div>
+
+  </div>
+</section>
+<div class="divider"></div>
+
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Examples or <em>Nothing</em></h2>
+  <p class="section-desc">The 2022 constraint zero-shot CoT removed.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon"> 📚</div>
+      <div class="problem-title">The Exemplar Tax</div>
+      <ul class="problem-list">
+          <li>CoT prompting (entry #48) requires hand-crafted worked examples per task family</li>
+          <li>Example choice dominates results — a new hyperparameter surface, sensitive and manual</li>
+          <li>Zero-shot prompting collapses on multi-step tasks: models blurt answers before thinking</li>
+          <li>Nobody had isolated the question: do models reason zero-shot at ALL?</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon"> ✨</div>
+      <div class="problem-title">The Two-Word Answer</div>
+      <ul class="problem-list">
+          <li>Prompt: {question} + &quot;Let&apos;s think step by step&quot; — no exemplars, one template for all tasks</li>
+          <li>The model generates a rationale, then a second pass (&quot;Therefore, the answer is&quot;) extracts it</li>
+          <li>Large zero-shot gains: MultiArith +36pp, GSM8K +17pp-class (paper figures) — same weights</li>
+          <li>Result: CoT-style reasoning without example engineering — elicitation, not teaching</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Analogy — The <em>Counting</em> Question</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Ask a child &quot;17 minus 8?&quot; out of nowhere and they blurt a guess. Ask the same child &quot;17 minus 8 — <strong>take your time, work it out</strong>&quot; and they murmur &quot;8 plus what makes 17… 9.&quot; The ability was always there; the register you invite determines whether it shows up. The paper found the magic invitation for LLMs — and it was two words long.</p>
+
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The <em>Two-Step</em> Elicitation</h2>
+  <p class="section-desc">The full recipe — trigger, then harvest.</p>
+
+  <div class="notice-grid" style="margin-bottom:1.5rem;">
+    <div class="notice-card"><div class="notice-title">1️⃣ Trigger</div><div class="notice-text">&quot;Q: {question}\nA: Let&apos;s think step by step.&quot; — the model continues with a free-form rationale, working the problem aloud.</div></div>
+    <div class="notice-card"><div class="notice-title">2️⃣ Harvest</div><div class="notice-text">Append &quot;Therefore, the answer is&quot; (or A: …) — a second short completion that extracts the final answer from the rationale above.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Task sweep</div><div class="notice-text">Arithmetic (MultiArith, GSM8K, AQUA-RAT, SVAMP), symbolic (last-letter, coin flips), commonsense, and other benchmark suites — one template for everything.</div></div>
+    <div class="notice-card"><div class="notice-title">📊 Scale interplay</div><div class="notice-text">Largest models gain the most — consistent with reasoning as an emergent-ability phenomenon (weak models do not suddenly think because asked nicely).</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Reported effect sizes</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>MultiArith: <strong>~+36 percentage points</strong> over standard zero-shot (paper figure)</li>
+        <li>GSM8K: <strong>~+17pp</strong>-class jump (InstructGPT-class models)</li>
+        <li>Symbolic tasks (last letter, coin): large gains where the task is pure procedure</li>
+        <li>Consistent across model families — the sentence works broadly, not on one model</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">What the paper checked (and you should too)</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Control prompts tested: other imperative sentences (&quot;solve this&quot;) — weaker; the step-by-step register is special</li>
+        <li>Sensitivity: prompt phrasing matters at the margin — prompt engineering remains a real variable</li>
+        <li>Answer extraction is its own failure mode — the harvest step needs care on free-form outputs</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — The Two-Step Recipe, Live</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Watch one question go from blurting to reasoning — trigger, rationale, harvest.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="kotd0Next" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="kotd0Reset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="kotd0Box" style="background:#0f172a;padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:#e2e8f0;line-height:1.8;min-height:220px;"></div>
+    <div id="kotd0Note" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="method">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">From Suffix to <em>Training</em></h2>
+  <p class="section-desc">The trick's afterlife: folklore, default, then weight-level behavior.</p>
+
+  <div class="card">
+    <div class="card-label">The Institutionalization Path</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The sentence went through three careers: (1) <strong>folklore</strong> — every prompt-engineering guide taught it; (2) <strong>default</strong> — instruction-tuned models absorbed so much step-by-step training data that reasoning became their natural register (the suffix became redundant); (3) <strong>trained behavior</strong> — o1/R1-class models (entries #47, #58) generate long reasoning chains by construction, spending tokens on thinking as a policy. The conceptual arc the paper opened: capability and elicitation are different variables — and elicitation can be moved both by prompts (cheap, brittle) and by training (durable, expensive).</p>
+  </div>
+
+    <div id="kotd1Tabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — What the Prompt Actually Does</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Tab through hypotheses for why two words move performance — the paper's own analysis lens.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+
+    </div>
+    <div id="kotd1Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">One Sentence, <em>Ten</em> Benchmarks</h2>
+  <p class="section-desc">The sweep's pattern: big jumps on procedure-heavy tasks, model-scale dependent.</p>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">MULTIARITH</div><div class="result-score" style="color:var(--green);">+36pp</div><div class="result-label">zero-shot baseline → zero-shot CoT (paper figure)</div></div>
+    <div class="result-card"><div class="result-model">GSM8K</div><div class="result-score" style="color:var(--amber);">+17pp-class</div><div class="result-label">same weights, one template</div></div>
+    <div class="result-card"><div class="result-model">SYMBOLIC TASKS</div><div class="result-score" style="color:var(--teal);">large ↑</div><div class="result-label">last-letter concatenation, coin-flip tracking</div></div>
+    <div class="result-card"><div class="result-model">TEMPLATE</div><div class="result-score" style="color:var(--blue);">1</div><div class="result-label">single prompt for every task — no per-task examples</div></div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — From Suffix to Trained Behavior</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">The two-word trick's career arc. Press reveal to trace it from folklore to o1-style reasoning models.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="kotd2Go" type="button" style="font-size:13px;padding:8px 18px;">Reveal</button>
+    </div>
+    <div id="kotd2Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Legacy — The <em>Cheapest</em> Capability Unlock</h2>
+  <p class="section-desc">Zero-shot CoT is the highest ROI sentence in LLM history.</p>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title"> ✂️ The examples axe</div><div class="notice-text">It deleted CoT's example-engineering cost: reasoning on a new task with one shared template — the accessibility moment for chain-of-thought.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🧪 The elicitation frame</div><div class="notice-text">Capability vs. elicitation became a standard analysis lens — later applied to tool use, self-consistency (entry #49), and the 'emergent abilities' debate.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🏗 Prompting's professional era</div><div class="notice-text">Zero-shot CoT legitimized systematic prompt research (controls, phrasing sensitivity, answer extraction) — the paper's methodology, not just its sentence, was copied.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🚀 The reasoning-model prequel</div><div class="notice-text">The eventual product-mode answer (o1/R1-class models that think by construction) is this paper's question answered at the weight level — elicitation institutionalized.</div></div>
+    <div class="notice-card"><div class="notice-title"> ⚠️ What it did NOT solve</div><div class="notice-text">Small models gain little (emergence's double edge); phrasing sensitivity persists; answer extraction from free-form rationales is its own failure surface; and hallucinated steps look identical to valid ones.</div></div>
+    <div class="notice-card"><div class="notice-title"> 🛤 Read next</div><div class="notice-text">The prompting stack: <a href='./Chain_Of_Thought_Prompting.html' style='color:var(--amber-text);'>Chain-of-Thought</a> · <a href='./Self_Consistency.html' style='color:var(--amber-text);'>Self-Consistency</a> · <a href='./Scaling_LLM_Test_Time_Compute_Optimally.html' style='color:var(--amber-text);'>Test-Time Compute</a></div></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from Zero-Shot Reasoners.</p>
+
+  <div id="quizContainer"></div>
+</section>
+<div class="divider"></div>
+
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ &quot;Let&apos;s think step by step&quot; + answer-harvest prompt = zero-shot chain-of-thought, no exemplars.</div>
+    <div class="card-sm">✅ Reported jumps: ~+36pp MultiArith, ~+17pp-class GSM8K — one template, all tasks, unchanged weights.</div>
+    <div class="card-sm">✅ Effect concentrates in large models — reasoning as emergent, elicited ability.</div>
+    <div class="card-sm">✅ Control prompts show the register (not just any imperative) matters — elicitation is real but fragile.</div>
+    <div class="card-sm">✅ The suffix's career: folklore → default → built-in (chat models) → trained behavior (o1/R1).</div>
+    <div class="card-sm">✅ Read it as the proof that prompting was capability testing in disguise.</div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2205.11916" target="_blank" rel="noopener noreferrer">"Large Language Models are Zero-Shot Reasoners"</a> (Kojima et al., 2022)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2205.11916" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Chain_Of_Thought_Prompting.html">Chain-of-Thought Guide</a>
+    <a class="footer-link" href="./Self_Consistency.html">Self-Consistency Guide</a>
+    <a class="footer-link" href="./Scaling_LLM_Test_Time_Compute_Optimally.html">Test-Time Compute Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "method", "results", "impact", "quiz", "takeaways"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === STEPS DEMO ===
+(function(){
+const box=document.getElementById('kotd0Box');
+const note=document.getElementById('kotd0Note');
+const btn=document.getElementById('kotd0Next');
+const rst=document.getElementById('kotd0Reset');
+if(!box||!note||!btn||!rst)return;
+const ST=[{"label": "the question", "html": "Q: A store had 23 apples. They sold 7, then received 19 more. How many apples now?<br><br><span style='color:#94a3b8;'>zero-shot baseline prompt: Q: … A:</span>", "note": "The default register: answer immediately — confidence without computation."}, {"label": "the baseline answer", "html": "A: 35 &nbsp; <span style='color:#ef4444;'>✗ wrong</span><br><br><span style='color:#94a3b8;'>no reasoning tokens were spent — the model pattern-matched an answer shape</span><br><span style='color:#94a3b8;'>(23−7=16, 16+19=35 — luck, not math, sometimes lands right)</span>", "note": "Zero-shot failure mode: guessing in the answer's accent."}, {"label": "the trigger", "html": "A: <span style='color:#f59e0b;'>Let&apos;s think step by step.</span><br><br>model continues:<br>&quot;The store starts with 23 apples. Selling 7 leaves 23 − 7 = 16. Receiving 19 gives 16 + 19 = 35.&quot;", "note": "The register switch: imperative sentence → worked-aloud derivation. Same weights."}, {"label": "the harvest", "html": "&quot;Therefore, the answer is <span style='color:#22c55e;'>35</span>.&quot; ✓<br><br><span style='color:#94a3b8;'>a second short completion extracts the final answer from the rationale above</span><br><span style='color:#94a3b8;'>no examples were harmed in the making of this reasoning</span>", "note": "Trigger + harvest — the entire method. Two prompts, zero exemplars."}];
+let i=0;
+function render(){box.innerHTML='<div style="color:#f59e0b;font-size:11px;margin-bottom:6px;">'+ST[i].label.toUpperCase()+'</div>'+ST[i].html;note.textContent=ST[i].note;btn.textContent=i<ST.length-1?'Next step →':'Restart';}
+btn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+rst.addEventListener('click',()=>{i=0;render();});
+render();
+})();
+
+// === TABS DEMO ===
+(function(){
+const wrap=document.getElementById('kotd1Tabs');
+const box=document.getElementById('kotd1Box');
+if(!wrap||!box)return;
+const T=[{"n": "register switch", "cells": [["From", "answer register"], ["To", "derivation register"], ["Cost", "0 tokens"]], "d": "Trained on abundant worked math/steps in pre-training data, models have a 'showing work' style available; the sentence selects it — like telling a musician 'play it slow'."}, {"n": "compute before commit", "cells": [["Answer", "deferred"], ["Tokens", "spent on math"], ["Error", "localized"]], "d": "Blurted answers commit before computing; step-by-step output forces intermediate results to exist, where errors are caught and corrected mid-stream."}, {"n": "scale dependency", "cells": [["Small models", "no effect"], ["Large models", "large gains"], ["Implication", "emergence"]], "d": "The trick works where latent ability exists — consistent with reasoning as an emergent property that few-shot CoT was merely revealing (the paper's framing)."}, {"n": "prompt sensitivity", "cells": [["Phrasing", "matters"], ["Other cues", "weaker"], ["Lesson", "test variants"]], "d": "Not any imperative works equally — 'solve this' underperforms; the elicitation is real but fragile, which is exactly why it later moved into training."}];
+let cur=0;
+function render(){
+wrap.innerHTML=T.map(function(t,k){return '<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid '+(k===cur?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(k===cur?'var(--amber-dim)':'var(--bg3)')+';color:'+(k===cur?'var(--amber-text)':'var(--text2)')+';cursor:pointer;">'+t.n+'</button>';}).join('');
+box.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">'+T[cur].cells.map(function(c){return '<div style="flex:1;min-width:120px;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);">'+c[0]+'</div><div style="font-family:var(--mono);font-size:17px;color:var(--amber-text);font-weight:600;">'+c[1]+'</div></div>';}).join('')+'</div>'+
+'<div style="font-size:12px;color:var(--text2);line-height:1.7;">'+T[cur].d+'</div>';
+}
+wrap.addEventListener('click',function(e){const b=e.target.closest('button');if(!b)return;cur=Array.from(wrap.children).indexOf(b);render();});
+render();
+})();
+
+// === REVEAL DEMO ===
+(function(){
+const box=document.getElementById('kotd2Box');
+const btn=document.getElementById('kotd2Go');
+if(!box||!btn)return;
+const D={"before": "<div style='font-family:var(--mono);font-size:12px;line-height:2.2;color:var(--text2);'>2022: append &quot;Let&apos;s think step by step&quot;<br><br>the trick works, is fragile,<br>and everyone memorizes it<br><br><span style='color:var(--text3);'>press reveal for where it ended up</span></div>", "after": "<div style='font-family:var(--mono);font-size:12px;line-height:2.2;color:var(--text2);'>2023: instruction models absorb step-by-step style<br>— the suffix fades from necessity to habit<br><br>2024-25: o1 / DeepSeek-R1 (entry #47) TRAIN reasoning:<br>models emit long chains before answering —<br>thinking as a policy, not a prompt<br><br><span style='color:var(--green-text);'>elicitation moved from the prompt into the weights —<br>the two words were the proof of concept</span></div>"};
+box.innerHTML=D.before;
+btn.addEventListener('click',function(){box.innerHTML=D.after;});
+})();
+
+
+const QUIZ_DATA=[{"q": "What is the Zero-shot-CoT prompt?", "opts": ["A 40-example worked-problem prompt", "Appending the single sentence &quot;Let&apos;s think step by step&quot; — no exemplars", "Fine-tuning on math data", "A retrieval-augmented template"], "correct": 1, "explain": "One imperative sentence triggers a derivation register; a second short prompt then extracts the final answer."}, {"q": "How does the method extract the final answer after the rationale?", "opts": ["It doesn't — the rationale is the answer", "A follow-up completion like &quot;Therefore, the answer is&quot; harvests it from the generated reasoning", "A regex on the question", "A separate fine-tuned classifier"], "correct": 1, "explain": "The two-step recipe: trigger the step-by-step continuation, then prompt for the answer's extraction from it."}, {"q": "Roughly how big was the MultiArith gain reported in the paper?", "opts": ["~2 percentage points", "~36 percentage points over standard zero-shot prompting", "No gain", "~90 points"], "correct": 1, "explain": "The paper's headline jump on MultiArith — and ~17pp-class on GSM8K — from one unchanged template on unchanged weights."}, {"q": "Which model-scale pattern did the paper observe?", "opts": ["Small models gain the most", "Larger models show the larger gains — consistent with reasoning as an emergent ability", "All models gain equally", "Scale is irrelevant to the effect"], "correct": 1, "explain": "The elicitation works where latent ability exists: the effect concentrates in the largest models of each family tested."}, {"q": "What is the deeper conceptual contribution beyond the sentence itself?", "opts": ["A new architecture", "The capability-vs-elicitation distinction: prompting revealed that reasoning was latent, needing only the right register to appear", "A benchmark suite", "A quantization method"], "correct": 1, "explain": "Zero-shot CoT reframed few-shot examples as elicitation rather than teaching — the lens the reasoning-model era later used to move elicitation into training."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
