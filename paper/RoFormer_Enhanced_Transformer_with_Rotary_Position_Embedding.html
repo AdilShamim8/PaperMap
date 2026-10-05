@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoFormer (RoPE) — Interactive Guide</title>
+<meta name="description" content="A product-grade interactive explainer of Rotary Position Embedding (RoPE), with playable demos for the rotation mechanism, relative-distance decay, and positional-encoding families.">
+<meta name="keywords" content="RoPE, RoFormer, rotary position embedding, relative position, attention, positional encoding, LLaMA, GPT-NeoX">
+<meta name="author" content="PaperMap">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f59e0b">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="canonical" href="https://papermap.vercel.app/paper/RoFormer_Enhanced_Transformer_with_Rotary_Position_Embedding.html">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="shortcut icon" href="../assets/favicon.svg">
+<meta property="og:title" content="RoFormer (RoPE) — Interactive Guide">
+<meta property="og:description" content="Visual, interactive walkthrough of RoFormer/RoPE — the rotation-based position encoding that folds relative position into the attention score itself and became the default in modern LLMs.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://papermap.vercel.app/paper/RoFormer_Enhanced_Transformer_with_Rotary_Position_Embedding.html">
+<meta property="og:site_name" content="PaperMap">
+<meta property="og:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<meta name="twitter:card" content="summary_large_card">
+<meta name="twitter:title" content="RoFormer (RoPE) — Interactive Guide">
+<meta name="twitter:description" content="Visual, interactive walkthrough of RoFormer/RoPE — the rotation-based position encoding that folds relative position into the attention score itself and became the default in modern LLMs.">
+<meta name="twitter:image" content="https://papermap.vercel.app/assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --paper: #fffef8;
+  --ink-soft: #1e293b;
+  --border: rgba(15,23,42,0.10);
+  --border2: rgba(15,23,42,0.18);
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --amber: #f59e0b;
+  --amber-text: #92400e;
+  --blue-text: #1d4ed8;
+  --teal-text: #0f766e;
+  --green-text: #15803d;
+  --purple-text: #7e22ce;
+  --red-text: #b91c1c;
+  --amber-dim: rgba(245,158,11,0.12);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.12);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.12);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.12);
+  --mono: 'IBM Plex Mono', monospace;
+  --serif: 'Instrument Serif', serif;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(245,158,11,0.10), transparent 34%),
+    radial-gradient(circle at 93% 18%, rgba(20,184,166,0.08), transparent 36%),
+    linear-gradient(180deg, #fffefb 0%, #ffffff 42%, #fcfdff 100%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--amber); color: #000; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.skip-link { position:absolute;left:12px;top:-44px;background:#0f172a;color:#fff;font-family:var(--mono);font-size:12px;text-decoration:none;padding:8px 12px;border-radius:8px;z-index:300;transition:top .2s; }
+.skip-link:focus { top:10px; }
+nav { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,0.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);box-shadow:0 6px 28px rgba(15,23,42,0.06);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:54px; }
+.nav-logo { font-family:var(--mono);font-size:13px;color:var(--amber-text);letter-spacing:-0.02em;text-decoration:none;display:inline-flex;align-items:center; }
+.nav-links { display:flex;gap:4px; }
+.nav-actions { display:flex;gap:10px;align-items:center; }
+.nav-link { font-size:12px;color:var(--text2);padding:5px 10px;border-radius:6px;text-decoration:none;cursor:pointer;transition:all .2s;font-family:var(--mono); }
+.nav-link:hover { background:var(--bg3);color:var(--text); }
+.nav-link.active { background:var(--amber-dim);color:var(--amber-text); }
+.nav-badge { background:var(--amber-dim);color:var(--amber-text);font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid rgba(245,158,11,0.2); }
+.nav-toggle { display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:#fff;color:var(--text);font-family:var(--mono);font-size:14px;cursor:pointer; }
+.mobile-menu { position:fixed;top:54px;left:0;right:0;z-index:99;display:none;padding:10px;background:rgba(255,255,255,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(10px); }
+.mobile-menu.open { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.mobile-menu a { text-decoration:none;font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:8px;background:#fff;padding:8px 10px; }
+.mobile-menu a:hover { border-color:rgba(245,158,11,0.35);color:var(--amber-text); }
+.hero { min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 2rem 4rem;position:relative;overflow:hidden; }
+.hero > * { position:relative;z-index:1; }
+.hero-grid { position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);pointer-events:none;z-index:0; }
+.hero-glow { position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse, rgba(245,158,11,0.14) 0%, transparent 70%);pointer-events:none;z-index:0;animation:driftGlow 10s ease-in-out infinite; }
+.hero-eyebrow { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border:1px solid rgba(245,158,11,0.25);border-radius:20px;margin-bottom:2rem;background:var(--amber-dim); }
+.hero-title { font-family:var(--serif);font-size:clamp(2.4rem, 6vw, 4.5rem);line-height:1.1;letter-spacing:-0.02em;margin-bottom:1.5rem; }
+.hero-title em { color:var(--amber-text);font-style:italic; }
+.hero-subtitle { max-width:600px;color:var(--text2);font-size:16px;margin-bottom:2.5rem;line-height:1.8; }
+.hero-actions { display:flex;gap:12px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--amber);color:#000;font-weight:600;font-size:14px;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-block; }
+.btn-primary:hover { background:#fbbf24;transform:translateY(-1px); }
+.btn-outline { background:transparent;color:var(--text);font-size:14px;padding:10px 24px;border-radius:8px;border:1px solid var(--border2);cursor:pointer;text-decoration:none;display:inline-block;transition:all .2s; }
+.btn-outline:hover { background:#ffffff;border-color:rgba(245,158,11,0.35); }
+.hero-stats { display:flex;gap:3rem;margin-top:4rem;padding-top:3rem;border-top:1px solid var(--border); }
+.stat { text-align:center; }
+.stat-num { font-family:var(--mono);font-size:1.6rem;font-weight:600;color:var(--amber-text); }
+.stat-label { font-size:12px;color:var(--text3);margin-top:2px; }
+section { max-width:1100px;margin:0 auto;padding:5rem 2rem; }
+section:nth-of-type(odd) { background:linear-gradient(180deg, rgba(245,158,11,0.02), transparent 36%);border-radius:20px; }
+.section-tag { font-family:var(--mono);font-size:11px;color:var(--amber-text);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px; }
+.section-tag::before { content:'';display:block;width:20px;height:1px;background:var(--amber); }
+.section-title { font-family:var(--serif);font-size:clamp(1.8rem, 3vw, 2.4rem);line-height:1.2;margin-bottom:1rem; }
+.section-title em { color:var(--amber-text);font-style:italic; }
+.section-desc { color:var(--text2);max-width:580px;font-size:15px;margin-bottom:2.5rem; }
+.card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:0 10px 25px rgba(15,23,42,0.04);transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.card:hover { transform:translateY(-2px);box-shadow:0 16px 32px rgba(15,23,42,0.08);border-color:rgba(245,158,11,0.22); }
+.card-sm { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem; }
+.card-label { font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px; }
+.problem-grid { display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem; }
+.problem-card { border-radius:var(--radius-lg);padding:1.5rem;border:1px solid var(--border); }
+.problem-card.bad { background:rgba(239,68,68,0.04);border-color:rgba(239,68,68,0.15); }
+.problem-card.good { background:rgba(34,197,94,0.04);border-color:rgba(34,197,94,0.15); }
+.problem-icon { font-size:1.5rem;margin-bottom:10px; }
+.problem-title { font-weight:600;font-size:15px;margin-bottom:8px; }
+.problem-card.bad .problem-title { color:var(--red-text); }
+.problem-card.good .problem-title { color:var(--green-text); }
+.problem-list { list-style:none; }
+.problem-list li { font-size:13px;color:var(--text2);padding:3px 0;display:flex;gap:8px;align-items:flex-start; }
+.problem-list li::before { content:'';flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:7px; }
+.bad .problem-list li::before { background:var(--red);opacity:0.6; }
+.good .problem-list li::before { background:var(--green);opacity:0.6; }
+.formula-card { background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;text-align:center;margin:1.5rem 0; }
+.formula-main { font-family:var(--mono);font-size:clamp(14px,2.5vw,20px);color:var(--amber-text);letter-spacing:-0.01em;line-height:2; }
+.formula-breakdown { display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin-top:1.5rem;text-align:left; }
+.formula-piece { background:var(--bg4);border-radius:var(--radius);padding:0.8rem 1rem;border:1px solid var(--border); }
+.fp-sym { font-family:var(--mono);color:var(--amber-text);font-size:16px;font-weight:600;margin-bottom:4px; }
+.fp-name { font-size:12px;font-weight:600;margin-bottom:4px; }
+.fp-desc { font-size:12px;color:var(--text2);line-height:1.5; }
+.results-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-bottom:1.5rem; }
+.result-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem 1.4rem; }
+.result-model { font-size:12px;color:var(--text3);margin-bottom:6px;font-family:var(--mono); }
+.result-score { font-family:var(--mono);font-size:2rem;font-weight:600; }
+.result-label { font-size:11px;color:var(--text2);margin-top:2px; }
+.result-bar-wrap { margin-top:8px;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden; }
+.result-bar { height:100%;border-radius:2px; }
+.comp-table { width:100%;border-collapse:collapse; }
+.comp-table th { padding:10px 14px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text3);text-align:left;font-family:var(--mono);font-weight:500; }
+.comp-table td { padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2); }
+.comp-table tr:hover td { background:var(--bg3); }
+.comp-best { color:var(--green-text);font-weight:600; }
+.comp-worst { color:var(--red-text); }
+.quiz-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:12px; }
+.quiz-q { font-weight:500;font-size:15px;margin-bottom:1rem; }
+.quiz-opts { display:flex;flex-direction:column;gap:8px; }
+.quiz-opt { background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px; }
+.quiz-opt:hover { border-color:var(--border2);background:var(--bg4); }
+.quiz-opt.correct { background:var(--green-dim);border-color:rgba(34,197,94,0.3);color:var(--green-text); }
+.quiz-opt.wrong { background:var(--red-dim);border-color:rgba(239,68,68,0.3);color:var(--red-text); }
+.quiz-explain { font-size:12px;color:var(--text2);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:6px;display:none; }
+.quiz-explain.show { display:block; }
+.timeline { position:relative;padding-left:24px; }
+.timeline::before { content:'';position:absolute;left:7px;top:0;bottom:0;width:1px;background:var(--border2); }
+.tl-item { position:relative;margin-bottom:1.5rem; }
+.tl-dot { position:absolute;left:-21px;top:4px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg3); }
+.tl-year { font-family:var(--mono);font-size:11px;color:var(--amber-text);margin-bottom:3px; }
+.tl-title { font-weight:500;font-size:14px;margin-bottom:3px; }
+.tl-desc { font-size:13px;color:var(--text2); }
+.divider { height:1px;background:var(--border);max-width:1100px;margin:0 auto; }
+.highlight { color:var(--amber-text);font-weight:500; }
+.code-inline { font-family:var(--mono);background:var(--bg3);padding:1px 6px;border-radius:4px;font-size:0.92em;color:var(--text); }
+.pill { display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-family:var(--mono); }
+.pill-amber { background:var(--amber-dim);color:var(--amber-text);border:1px solid rgba(245,158,11,0.2); }
+.pill-blue { background:var(--blue-dim);color:var(--blue-text);border:1px solid rgba(59,130,246,0.2); }
+.pill-green { background:var(--green-dim);color:var(--green-text);border:1px solid rgba(34,197,94,0.2); }
+.pill-red { background:var(--red-dim);color:var(--red-text);border:1px solid rgba(239,68,68,0.2); }
+.pill-purple { background:var(--purple-dim);color:var(--purple-text);border:1px solid rgba(168,85,247,0.2); }
+.two-col { display:grid;grid-template-columns:1fr 1fr;gap:2rem; }
+.notice-grid { display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px; }
+.notice-card { background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem; }
+.notice-title { font-size:13px;font-weight:600;margin-bottom:6px; }
+.notice-text { font-size:12px;color:var(--text2);line-height:1.6; }
+.reading-progress { position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:transparent; }
+.reading-progress-bar { height:100%;background:var(--amber);width:0%;transition:width .1s; }
+footer { max-width:1100px;margin:0 auto;padding:3rem 2rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap; }
+.footer-left { font-size:13px;color:var(--text3); }
+.footer-left a { color:var(--amber-text);text-decoration:none; }
+.footer-links { display:flex;gap:16px; }
+.footer-link { font-size:12px;color:var(--text3);text-decoration:none;font-family:var(--mono);transition:color .2s; }
+.footer-link:hover { color:var(--text); }
+.footer-contact { width:100%;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:12px;color:var(--text2);line-height:1.8; }
+.footer-contact strong { color:var(--text);font-family:var(--mono);font-size:11px; }
+.footer-contact a { color:var(--amber-text);text-decoration:none;white-space:nowrap; }
+.social-strip { margin-top:8px;display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg, rgba(245,158,11,0.14), rgba(59,130,246,0.10));border:1px solid var(--border2);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.45); }
+.social-icon { width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;color:var(--text2);opacity:0.85;border-radius:7px;transition:transform .15s ease, opacity .15s ease, color .15s ease, background-color .15s ease; }
+.social-icon svg { width:16px;height:16px;fill:currentColor; }
+.social-icon.kg,.social-icon.md { border:1px solid var(--border2);border-radius:999px;font-family:var(--mono);font-size:10px;line-height:1;font-weight:600;background:rgba(255,255,255,0.5); }
+.social-icon:hover { opacity:1;transform:translateY(-1px);background:rgba(255,255,255,0.58);text-decoration:none; }
+.social-icon.gh:hover { color:var(--text); }
+.social-icon.li:hover { color:#0a66c2; }
+.social-icon.kg:hover { color:#0891b2;border-color:rgba(8,145,178,0.45); }
+.social-icon.x:hover { color:var(--text); }
+.social-icon.md:hover { color:var(--amber-text);border-color:rgba(245,158,11,0.45); }
+.reveal { opacity:0;transform:translateY(16px) scale(0.995);transition:opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity:1;transform:translateY(0) scale(1); }
+@keyframes fadeUp { from { opacity:0;transform:translateY(20px); } to { opacity:1;transform:translateY(0); } }
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+@keyframes scaleIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+@keyframes driftGlow { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-49%,-52%) scale(1.05); } }
+@keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-4px); } }
+.animate-in { animation:fadeUp .5s ease forwards; }
+@media (max-width: 768px) {
+  nav { height:50px;padding:0 12px; }
+  .mobile-menu { top:50px; }
+  .mobile-menu.open { grid-template-columns:1fr; }
+  section { padding:3rem 1rem; }
+  .hero { min-height:auto;padding:5rem 1rem 2rem; }
+  .hero-title { font-size:clamp(2rem, 10vw, 3rem);margin-bottom:1rem; }
+  .hero-subtitle { font-size:14px;line-height:1.7;margin-bottom:1.5rem; }
+  .hero-actions { width:100%; }
+  .btn-primary,.btn-outline { min-height:44px;width:100%;max-width:320px;justify-content:center; }
+  .hero-stats { width:100%;display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2rem;padding-top:1.5rem; }
+  .stat { text-align:left;border:1px solid var(--border);border-radius:10px;background:#fff;padding:8px 10px; }
+  .problem-grid { grid-template-columns:1fr; }
+  .two-col { grid-template-columns:1fr;gap:1rem; }
+  nav .nav-links { display:none; }
+  .nav-badge { display:none; }
+  .nav-toggle { display:inline-flex;align-items:center;justify-content:center; }
+  .footer-links { gap:10px;width:100%;flex-wrap:wrap; }
+}
+@media (max-width: 430px) {
+  body { font-size:14px; }
+  .hero-eyebrow { font-size:10px;padding:4px 10px; }
+  .hero-title { font-size:clamp(1.8rem, 10vw, 2.5rem); }
+  .section-title { font-size:clamp(1.5rem, 7.8vw, 2rem); }
+  .hero-stats { grid-template-columns:1fr; }
+  .social-strip { width:100%;justify-content:center; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#problem">Skip to content</a>
+<div class="reading-progress"><div class="reading-progress-bar" id="progressBar"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="../index.html" aria-label="Go to PaperMap home">papermap</a>
+  <div class="nav-links">
+    <a class="nav-link" href="#history">History</a>
+    <a class="nav-link" href="#problem">Problem</a>
+    <a class="nav-link" href="#core-idea">Core Idea</a>
+    <a class="nav-link" href="#method">Adoption</a>
+    <a class="nav-link" href="#results">Results</a>
+    <a class="nav-link" href="#impact">Impact</a>
+    <a class="nav-link" href="#quiz">Quiz</a>
+    <a class="nav-link" href="#takeaways">Takeaways</a>
+  </div>
+  <div class="nav-actions">
+    <div class="nav-badge">arXiv 2021</div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#history">History</a>
+  <a href="#problem">Problem</a>
+  <a href="#core-idea">Core Idea</a>
+  <a href="#method">Adoption</a>
+  <a href="#results">Results</a>
+  <a href="#impact">Impact</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#takeaways">Takeaways</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Interactive Paper Explainer</div>
+  <h1 class="hero-title">
+    Position as <em>Rotation</em><br>RoFormer / RoPE
+  </h1>
+  <p class="hero-subtitle">
+    Rotate the query and key by their absolute positions, and the dot product between them depends only on their relative distance — position information enters attention for free, with no added parameters.
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#problem">Start Learning</a>
+    <a class="btn-outline" href="https://arxiv.org/abs/2104.09864" target="_blank" rel="noopener noreferrer">Read the Paper ↗</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Added parameters</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2D</div>
+      <div class="stat-label">Rotation per pair</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100k+</div>
+      <div class="stat-label">Context in successors</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2021</div>
+      <div class="stat-label">Proposed</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<section id="history">
+  <div class="section-tag">History</div>
+  <h2 class="section-title">From <em>Lookup Tables</em> to Rotation</h2>
+  <p class="section-desc">Five years of positional-encoding experiments compressed into one clean mechanism.</p>
+
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--text3)"></div><div class="tl-year">2017</div><div class="tl-title">Sinusoidal (original)</div><div class="tl-desc">Attention Is All You Need adds deterministic sine/cosine position vectors to token embeddings — absolute, fixed, not learnable.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--blue)"></div><div class="tl-year">2018-19</div><div class="tl-title">Learned absolute</div><div class="tl-desc">BERT and GPT learn position embeddings as parameters — flexible, but absolute and fixed-length.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--teal)"></div><div class="tl-year">2018-20</div><div class="tl-title">Relative embeddings</div><div class="tl-desc">Shaw et al., Transformer-XL, and T5 bias attention scores with learned relative terms — expressive but computationally awkward.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--amber)"></div><div class="tl-year">Apr 2021</div><div class="tl-title">🚀 RoPE</div><div class="tl-desc">Su et al. rotate q and k by position-dependent angles: absolute information in, relative structure out — via the dot product.</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--purple)"></div><div class="tl-year">2022+</div><div class="tl-title">The default</div><div class="tl-desc">GPT-NeoX, LLaMA (1, 2, 3), Mistral, Qwen, DeepSeek and virtually every open LLM adopt RoPE; extensions stretch contexts to 100k+.</div></div>
+    </div>
+    <div class="card" style="padding:1.5rem;">
+      <div class="card-label">The One-Line Trick</div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">If a vector pair (x, y) is rotated by angles iθ and jθ, their dot product is a function of <strong>(i − j)θ</strong> alone. So rotate the query by its position, the key by its position, and the attention logit automatically becomes <strong>relative-position aware</strong> — the absolute positions never leak except through their difference.</p>
+    </div>
+
+  </div>
+</section>
+<div class="divider"></div>
+
+<section id="problem">
+  <div class="section-tag">Chapter 01</div>
+  <h2 class="section-title">Position Is <em>Leaking</em></h2>
+  <p class="section-desc">Attention is permutation-invariant; every positional scheme before RoPE paid for position with parameters, cost, or rigidity.</p>
+
+  <div class="problem-grid">
+    <div class="problem-card bad">
+      <div class="problem-icon">📦</div>
+      <div class="problem-title">The Position Problem</div>
+      <ul class="problem-list">
+          <li>Self-attention alone cannot tell 'dog bites man' from 'man bites dog' — it is order-blind</li>
+          <li>Learned absolute embeddings break beyond the trained length and waste capacity storing absolute order</li>
+          <li>Relative bias terms complicate the attention kernel and slow the exact/fast attention paths</li>
+          <li>Sinusoidal encodings inject absolute position, not the relative structure attention actually consumes</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-icon">🌀</div>
+      <div class="problem-title">The Rotation Answer</div>
+      <ul class="problem-list">
+          <li>Rotate each 2D coordinate pair of q and k by an angle proportional to its token position</li>
+          <li>The q·k logit then depends only on relative distance — no explicit bias terms, no lookup tables</li>
+          <li>Zero new parameters; fully compatible with standard attention kernels and linear attention</li>
+          <li>Longer contexts = larger rotation angles; sequence-length flexibility by construction</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Analogy — The Clock Hands</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">Two hands on the same clock: each has an <strong>absolute angle</strong>, but the angle <em>between</em> them is what you read. RoPE gives every token a clock-face; attention only ever measures hand separation, so absolute noon-time is irrelevant and the clock can be extended indefinitely.</p>
+
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="core-idea">
+  <div class="section-tag">Chapter 02</div>
+  <h2 class="section-title">The <em>Math</em> in One Card</h2>
+  <p class="section-desc">Absolute rotation in, relative structure out — the derivation every LLM engineer should own.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-label">Mechanism (per 2D pair)</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li>Split each head&apos;s q and k vectors into 2D coordinate pairs (x1,x2), (x3,x4), …</li>
+        <li>Rotate pair m by angle m·θ where m is the token position and θ a fixed frequency</li>
+        <li>Rotated q at position i · rotated k at position j depends on (i − j)·θ</li>
+        <li>Different pairs use different θ frequencies — coarse-to-fine position resolution</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-label">Why it sticks</div>
+      <ul class="problem-list" style="margin-top:8px;">
+        <li><strong>No parameters</strong> to learn and no memory beyond the rotation angles</li>
+        <li><strong>Decaying dependency</strong> — the paper proves inter-token interaction strength decays with relative distance, matching linguistic locality</li>
+        <li><strong>Kernel-friendly</strong> — plain dot products, so FlashAttention-class optimizations apply unchanged</li>
+        <li><strong>Linear-attention compatible</strong> — the paper shows RoPE can equip linear attention with relative encoding</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Watch Position Enter the Dot Product</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Step through the mechanism: rotate q, rotate k, take the dot product — and watch the absolute positions vanish.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <button class="btn-primary" id="roped0Next" type="button" style="font-size:13px;padding:8px 18px;">Next step →</button>
+      <button class="btn-outline" id="roped0Reset" type="button" style="font-size:13px;padding:8px 18px;">Reset</button>
+    </div>
+    <div id="roped0Box" style="background:#0f172a;padding:1rem;border-radius:var(--radius);font-family:var(--mono);font-size:12px;color:#e2e8f0;line-height:1.8;min-height:220px;"></div>
+    <div id="roped0Note" style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:10px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="method">
+  <div class="section-tag">Chapter 03</div>
+  <h2 class="section-title">From Paper to <em>Default</em></h2>
+  <p class="section-desc">RoFormer validated the idea on long-text classification; the ecosystem turned it into infrastructure.</p>
+
+  <div class="card">
+    <div class="card-label">Validation and Adoption</div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:1.8;">The paper evaluates RoFormer on long-text classification benchmarks (Chinese and English), where it consistently outperforms strong baselines — a modest proving ground for what followed. The mechanism&apos;s real career began when <strong>GPT-NeoX and LLaMA</strong> adopted it: because RoPE handles position inside the rotation, context windows can be stretched by rescaling frequencies (position interpolation and successors), which is exactly how open models reached 100k+ contexts. Today a &quot;standard Transformer head&quot; in an open LLM almost always means <em>causal attention + RoPE + (G)QA</em>.</p>
+  </div>
+
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Dependency Decays with Distance</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Slide the relative distance and watch the effective interaction strength fall off — the theoretical property RoPE inherits for free.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+      <input type="range" id="roped1Range" min="0" max="5" value="0" step="1" aria-label="Dependency Decays with Distance" style="width:100%;max-width:420px;accent-color:var(--amber);">
+    </div>
+    <div id="roped1Lab" style="font-family:var(--mono);font-size:12px;color:var(--amber-text);font-weight:600;margin-bottom:8px;"></div>    <div id="roped1Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+    <div id="roped1Cap" style="font-size:11.5px;color:var(--text3);margin-top:10px;">Illustrative decay profile — the paper proves this property analytically; bar blocks are qualitative, not measured values.</div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="results">
+  <div class="section-tag">Chapter 05</div>
+  <h2 class="section-title">A Quiet Paper with <em>Loud</em> Consequences</h2>
+  <p class="section-desc">The benchmark wins were real but secondary; the mechanism became universal infrastructure.</p>
+
+  <div class="formula-card">
+    <div class="formula-main">⟨R(iθ)·q , R(jθ)·k⟩ = f( (i − j)θ )</div>
+    <div class="formula-breakdown">
+      <div class="formula-piece"><div class="fp-sym">R(mθ)</div><div class="fp-name">The rotation</div><div class="fp-desc">Each 2D pair of q (or k) is rotated by m·θ — a plain rotation matrix, no learned parameters.</div></div>
+      <div class="formula-piece"><div class="fp-sym">i, j</div><div class="fp-name">Absolute positions</div><div class="fp-desc">Token indices enter only through their rotation angles; the embedding itself is untouched.</div></div>
+      <div class="formula-piece"><div class="fp-sym">i − j</div><div class="fp-name">Relative distance</div><div class="fp-desc">After the dot product, only the difference survives — the attention score becomes relative-position aware.</div></div>
+      <div class="formula-piece"><div class="fp-sym">θ</div><div class="fp-name">Frequency</div><div class="fp-desc">Each pair uses its own θ; small θ tracks long-range order, large θ resolves nearby order.</div></div>
+    </div>
+  </div>
+
+  <div class="results-grid">
+    <div class="result-card"><div class="result-model">NEW PARAMETERS</div><div class="result-score" style="color:var(--green);">0</div><div class="result-label">position information with zero learned embedding tables</div></div>
+    <div class="result-card"><div class="result-model">DECAY PROPERTY</div><div class="result-score" style="color:var(--teal);">distance ↓</div><div class="result-label">interaction strength decays with relative distance — matches linguistic locality</div></div>
+    <div class="result-card"><div class="result-model">KERNEL IMPACT</div><div class="result-score" style="color:var(--blue);">none</div><div class="result-label">pure dot-product attention — FlashAttention & friends work unchanged</div></div>
+    <div class="result-card"><div class="result-model">ADOPTION</div><div class="result-score" style="color:var(--amber);">LLM default</div><div class="result-label">GPT-NeoX, LLaMA 1/2/3, Mistral, Qwen, DeepSeek…</div></div>
+  </div>
+
+    <div id="roped2Tabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;"></div>
+
+  <div class="card" style="overflow:hidden;">
+    <div class="card-label">Interactive Demo — Positional Encoding Families</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;">Compare the four families on the properties that matter — parameters, relativity, length flexibility, kernel friendliness.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;align-items:center;">
+
+    </div>
+    <div id="roped2Box" style="background:var(--bg3);padding:1rem;border-radius:var(--radius);min-height:180px;"></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="impact">
+  <div class="section-tag">Legacy</div>
+  <h2 class="section-title">Legacy — The <em>Invisible</em> Standard</h2>
+  <p class="section-desc">RoPE rarely headlines model cards, yet it sits inside almost every open LLM shipped since 2022.</p>
+
+  <div class="notice-grid">
+    <div class="notice-card"><div class="notice-title">🦙 The LLaMA lineage</div><div class="notice-text">RoPE is part of the canonical open-LLM head (causal attention + RoPE + GQA in the larger models) — inherited by Mistral, Qwen, Gemma, DeepSeek, and hundreds of fine-tunes.</div></div>
+    <div class="notice-card"><div class="notice-title">📏 Long context via rescaling</div><div class="notice-text">Position interpolation and its successors stretch RoPE models to 100k+ contexts by rescaling rotation frequencies — a cottage industry built on RoPE's structure.</div></div>
+    <div class="notice-card"><div class="notice-title">⚡ Kernel compatibility</div><div class="notice-text">Because position lives in rotated vectors, FlashAttention-class kernels need no special casing — position, speed, and exactness compose.</div></div>
+    <div class="notice-card"><div class="notice-title">🧪 Theoretical hygiene</div><div class="notice-text">The decay-with-distance property gave the field a principled story for locality in attention — and a reference point for studying attention range.</div></div>
+    <div class="notice-card"><div class="notice-title">⚠️ What it did NOT solve</div><div class="notice-text">RoPE does not by itself confer long-context *ability* — models still under-use far tokens (see Lost in the Middle); length extrapolation needs frequency engineering; and rotation alone gives no notion of hierarchy (paragraphs, sections).</div></div>
+    <div class="notice-card"><div class="notice-title">🛤 Read next</div><div class="notice-text">The family it powers: <a href="./GQA_Training_Generalized_Multi_Query_Transformer_Models_from_Multi_Head_Checkpoints.html" style="color:var(--amber-text);">GQA</a> · <a href="./Attention_Is_All_You_Need.html" style="color:var(--amber-text);">Attention Is All You Need</a> · <a href="./Lost_in_the_Middle_How_Language_Models_Use_Long_Contexts.html" style="color:var(--amber-text);">Lost in the Middle</a></div></div>
+  </div>
+
+</section>
+<div class="divider"></div>
+
+<section id="quiz">
+  <div class="section-tag">Test Yourself</div>
+  <h2 class="section-title">Quick <em>Quiz</em></h2>
+  <p class="section-desc">Check your understanding of the key concepts from RoFormer (RoPE).</p>
+
+  <div id="quizContainer"></div>
+</section>
+<div class="divider"></div>
+
+<section id="takeaways">
+  <div class="section-tag">Reference</div>
+  <h2 class="section-title">Key <em>Takeaways</em></h2>
+  <p class="section-desc">Everything you need to remember about this paper.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
+    <div class="card-sm">✅ RoPE rotates q/k coordinate pairs by absolute-position angles; the attention logit becomes a function of relative distance.</div>
+    <div class="card-sm">✅ Zero learned parameters, standard dot-product kernels — speed and exactness are unaffected.</div>
+    <div class="card-sm">✅ Interaction strength decays with distance — locality for free, matching linguistic structure.</div>
+    <div class="card-sm">✅ Sequence-length flexibility: contexts stretch by rescaling rotation frequencies (position interpolation era).</div>
+    <div class="card-sm">✅ The modern open-LLM head is causal attention + RoPE (+ GQA) — this paper supplied the middle piece.</div>
+    <div class="card-sm">✅ Position, done right, is invisible: no tables, no biases, no special kernels.</div>
+  </div>
+
+</section>
+
+<div class="divider"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">Built with ❤️ to explain <a href="https://arxiv.org/abs/2104.09864" target="_blank" rel="noopener noreferrer">"RoFormer: Enhanced Transformer with Rotary Position Embedding"</a> (Su et al., 2021)</div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://arxiv.org/abs/2104.09864" target="_blank" rel="noopener noreferrer">Paper</a>
+    <a class="footer-link" href="https://github.com/AdilShamim8/PaperMap" target="_blank" rel="noopener noreferrer">PaperMap Repo</a>
+    <a class="footer-link" href="./Attention_Is_All_You_Need.html">Attention Is All You Need Guide</a>
+    <a class="footer-link" href="./GQA_Training_Generalized_Multi_Query_Transformer_Models_from_Multi_Head_Checkpoints.html">GQA Guide</a>
+    <a class="footer-link" href="./Lost_in_the_Middle_How_Language_Models_Use_Long_Contexts.html">Lost in the Middle Guide</a>
+  </div>
+  <div class="footer-contact">
+    <strong>Contact Adil Shamim:</strong><br>
+    <div class="social-strip" aria-label="Adil Shamim social links">
+      <a class="social-icon gh" href="https://github.com/AdilShamim8" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.5 7.5 0 0 1 8 4.73c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+      <a class="social-icon li" href="https://www.linkedin.com/in/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V23h-4V8zm7 0h3.8v2h.05c.53-1 1.82-2 3.75-2C19 8 20 10.4 20 14v9h-4v-8c0-1.9-.04-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.18V23h-4V8z"/></svg></a>
+      <a class="social-icon kg" href="https://www.kaggle.com/adilshamim8" target="_blank" rel="noopener noreferrer" aria-label="Kaggle" title="Kaggle">k</a>
+      <a class="social-icon x" href="https://x.com/adil_shamim8" target="_blank" rel="noopener noreferrer" aria-label="Twitter X" title="Twitter X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.24 2H21l-6.56 7.5L22.2 22h-6.1l-4.77-6.24L5.86 22H3.1l7.02-8.02L2 2h6.25l4.3 5.68L18.24 2zm-1.07 18h1.52L7.43 3.9H5.8L17.17 20z"/></svg></a>
+      <a class="social-icon md" href="https://adilshamim8.medium.com/" target="_blank" rel="noopener noreferrer" aria-label="Medium" title="Medium">m</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// === UTILS ===
+function scrollToSection(sel){const t=document.querySelector(sel);if(!t)return;window.scrollTo({top:t.getBoundingClientRect().top+window.scrollY-64,behavior:'smooth'});}
+document.addEventListener('click',e=>{const l=e.target.closest('a[href^="#"]');if(!l)return;const h=l.getAttribute('href');if(!h||h==='#')return;const t=document.querySelector(h);if(!t)return;e.preventDefault();scrollToSection(h);});
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progressBar').style.width=(window.scrollY/(h.scrollHeight-h.clientHeight))*100+'%';});
+
+// === MOBILE MENU ===
+(function(){const t=document.getElementById('navToggle'),m=document.getElementById('mobileMenu');if(!t||!m)return;t.addEventListener('click',()=>{const o=!m.classList.contains('open');m.classList.toggle('open',o);t.setAttribute('aria-expanded',o?'true':'false');});m.addEventListener('click',e=>{if(e.target.closest('a[href^="#"]')){m.classList.remove('open');t.setAttribute('aria-expanded','false');}});})();
+
+// === NAV ACTIVE ===
+(function(){const ids=["history", "problem", "core-idea", "method", "results", "impact", "quiz", "takeaways"];const links=Array.from(document.querySelectorAll('.nav-link'));window.addEventListener('scroll',()=>{let cur=ids[0];ids.forEach(id=>{const s=document.getElementById(id);if(s&&window.scrollY+90>=s.offsetTop)cur=id;});links.forEach(l=>l.classList.toggle('active',(l.getAttribute('href')||'')==='#'+cur));});})();
+// === SCROLL REVEAL ===
+(function(){const targets=document.querySelectorAll('section,.card,.card-sm,.problem-card,.result-card,.quiz-card,.notice-card');if(window.matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('visible'));return;}targets.forEach(t=>t.classList.add('reveal'));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -30px 0px'});targets.forEach(t=>obs.observe(t));})();
+
+// === STEPS DEMO ===
+(function(){
+const box=document.getElementById('roped0Box');
+const note=document.getElementById('roped0Note');
+const btn=document.getElementById('roped0Next');
+const rst=document.getElementById('roped0Reset');
+if(!box||!note||!btn||!rst)return;
+const ST=[{"label": "setup — two tokens, one 2D pair", "html": "q = (0.80, 0.60) &nbsp; <span style=\"color:#94a3b8;\">query vector, token i = 3</span><br>k = (0.28, 0.96) &nbsp; <span style=\"color:#94a3b8;\">key vector, token j = 7</span><br><br><span style=\"color:#94a3b8;\">plain attention:</span> ⟨q,k⟩ = 0.80·0.28 + 0.60·0.96 = <span style=\"color:#f59e0b;\">0.800</span><br><span style=\"color:#94a3b8;\">no position information anywhere</span>", "note": "Attention is permutation-invariant: swap token positions and this score is identical. Order is invisible."}, {"label": "rotate q by i·θ", "html": "θ = 0.5 rad &nbsp;→&nbsp; rotate by 3θ = 1.5 rad<br><br>q&apos; = R(1.5)·(0.80, 0.60) = (−0.902, 0.413)<br><br><span style=\"color:#94a3b8;\">the query now carries i&apos;s absolute position — as an angle</span>", "note": "Position is injected by rotation, not by adding an embedding vector."}, {"label": "rotate k by j·θ", "html": "rotate by 7θ = 3.5 rad<br><br>k&apos; = R(3.5)·(0.28, 0.96) = (−0.972, −0.157)<br><br><span style=\"color:#94a3b8;\">same for the key — every token&apos;s clock hand is set</span>", "note": "Two hands on one clock: absolute angles, relative reading."}, {"label": "the dot product — position appears", "html": "⟨q&apos;,k&apos;⟩ = (−0.902)(−0.972) + (0.413)(−0.157) = <span style=\"color:#22c55e;\">0.818</span><br><br>equivalently: ⟨R((i−j)θ)·q, k⟩ = ⟨R(−4·0.5)·q, k⟩<br><br><span style=\"color:#94a3b8;\">only (i − j) = 4 matters — i and j individually cancel</span>", "note": "This is the whole trick: absolute rotations in, relative distance out. No parameters, no bias terms, any length."}];
+let i=0;
+function render(){box.innerHTML='<div style="color:#f59e0b;font-size:11px;margin-bottom:6px;">'+ST[i].label.toUpperCase()+'</div>'+ST[i].html;note.textContent=ST[i].note;btn.textContent=i<ST.length-1?'Next step →':'Restart';}
+btn.addEventListener('click',()=>{i=(i+1)%ST.length;render();});
+rst.addEventListener('click',()=>{i=0;render();});
+render();
+})();
+
+// === SLIDER DEMO ===
+(function(){
+const range=document.getElementById('roped1Range');
+const lab=document.getElementById('roped1Lab');
+const box=document.getElementById('roped1Box');
+if(!range||!lab||!box)return;
+const D={"labels": ["Δ = 1 token", "Δ = 4 tokens", "Δ = 16 tokens", "Δ = 64 tokens", "Δ = 256 tokens", "Δ = 1024 tokens"], "frames": ["<div style=\"font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);\">interaction strength: <span style=\"color:var(--green-text);font-weight:600;\">██████████ near-maximal</span><br>typical role: adjacent syntax (subject-verb agreement)</div>", "<div style=\"font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);\">interaction strength: <span style=\"color:var(--green-text);font-weight:600;\">████████░░ strong</span><br>typical role: phrase-level dependency (modifier scope)</div>", "<div style=\"font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);\">interaction strength: <span style=\"color:var(--amber-text);font-weight:600;\">█████░░░░░ moderate</span><br>typical role: clause coreference (pronoun → antecedent)</div>", "<div style=\"font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);\">interaction strength: <span style=\"color:var(--amber-text);font-weight:600;\">███░░░░░░░ weak</span><br>typical role: paragraph topic carry-over</div>", "<div style=\"font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);\">interaction strength: <span style=\"color:var(--red-text);font-weight:600;\">█░░░░░░░░░ faint</span><br>typical role: document-level theme — where long-context models struggle</div>", "<div style=\"font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2);\">interaction strength: <span style=\"color:var(--red-text);font-weight:600;\">▌░░░░░░░░░ minimal</span><br>typical role: beyond-chapter recall — why context stretching (frequency rescaling) is needed at all</div>"]};
+function render(){const i=parseInt(range.value,10)||0;lab.textContent=D.labels[i];box.innerHTML=D.frames[i];}
+range.addEventListener('input',render);
+render();
+})();
+
+// === TABS DEMO ===
+(function(){
+const wrap=document.getElementById('roped2Tabs');
+const box=document.getElementById('roped2Box');
+if(!wrap||!box)return;
+const T=[{"n": "sinusoidal · 2017", "cells": [["Params", "0"], ["Relative", "no"], ["Flex length", "partial"]], "d": "Fixed sine/cosine vectors added to embeddings. Elegant and parameter-free, but injects absolute position; generalization to unseen lengths is unreliable."}, {"n": "learned absolute · 2018", "cells": [["Params", "L×d"], ["Relative", "no"], ["Flex length", "no"]], "d": "BERT/GPT-style position embedding tables: simple and effective, but strictly capped at the trained context length — and absolute."}, {"n": "relative bias · 2018-20", "cells": [["Params", "O(L)"], ["Relative", "yes"], ["Flex length", "yes"]], "d": "Shaw/Transformer-XL/T5 add learned relative terms into attention. Expressive, but they complicate kernels and slow attention variants."}, {"n": "RoPE · 2021", "cells": [["Params", "0"], ["Relative", "yes"], ["Flex length", "yes"]], "d": "Rotation-only: relative structure from absolute angles, zero parameters, standard dot-product kernels — and stretchable via frequency rescaling. The modern default."}];
+let cur=0;
+function render(){
+wrap.innerHTML=T.map(function(t,k){return '<button style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid '+(k===cur?'rgba(245,158,11,0.4)':'var(--border)')+';background:'+(k===cur?'var(--amber-dim)':'var(--bg3)')+';color:'+(k===cur?'var(--amber-text)':'var(--text2)')+';cursor:pointer;">'+t.n+'</button>';}).join('');
+box.innerHTML='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">'+T[cur].cells.map(function(c){return '<div style="flex:1;min-width:120px;padding:10px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);text-align:center;"><div style="font-family:var(--mono);font-size:11px;color:var(--text3);">'+c[0]+'</div><div style="font-family:var(--mono);font-size:17px;color:var(--amber-text);font-weight:600;">'+c[1]+'</div></div>';}).join('')+'</div>'+
+'<div style="font-size:12px;color:var(--text2);line-height:1.7;">'+T[cur].d+'</div>';
+}
+wrap.addEventListener('click',function(e){const b=e.target.closest('button');if(!b)return;cur=Array.from(wrap.children).indexOf(b);render();});
+render();
+})();
+
+
+const QUIZ_DATA=[{"q": "What is the core operation of RoPE?", "opts": ["Adding sinusoidal vectors to token embeddings", "Rotating 2D pairs of q and k by position-dependent angles", "Learning a bias term for each relative distance", "Concatenating position ids to the input layer"], "correct": 1, "explain": "Each 2D coordinate pair of the query and key is rotated by an angle proportional to the token's absolute position; the dot product then depends only on the relative offset."}, {"q": "After applying RoPE, what does the attention score between positions i and j depend on?", "opts": ["Both i and j individually", "Only i", "Only j", "Only the difference i − j"], "correct": 3, "explain": "The absolute rotation angles cancel in the dot product, leaving a function of (i − j)·θ — relative position, which is what attention actually consumes."}, {"q": "How many new learnable parameters does RoPE introduce?", "opts": ["One embedding table of size L×d", "Two per attention head", "Zero", "One frequency vector that is jointly trained"], "correct": 2, "explain": "Rotations use fixed frequency schedules — RoPE adds no learnable parameters to the model."}, {"q": "Which property did the paper prove about RoPE's inter-token dependency?", "opts": ["It grows with distance", "It is constant across all distances", "It decays with increasing relative distance", "It depends on absolute position only"], "correct": 2, "explain": "RoPE's interaction strength decays with relative distance, matching the local-first statistics of natural language."}, {"q": "Which systems made RoPE the de-facto default?", "opts": ["GPT-2 and T5", "BERT and RoBERTa", "GPT-NeoX and the LLaMA lineage (LLaMA 1/2/3, Mistral, DeepSeek)", "Original Transformer and Transformer-XL"], "correct": 2, "explain": "After GPT-NeoX and LLaMA adopted it, essentially every major open LLM family shipped with RoPE; long-context tricks then built on its frequency structure."}];
+(function(){const container=document.getElementById('quizContainer');if(!container)return;container.innerHTML=QUIZ_DATA.map((q,qi)=>`<div class="quiz-card" id="quiz-${qi}"><div class="quiz-q"><span style="color:var(--amber-text);font-family:var(--mono);font-size:13px;">Q${qi+1}.</span> ${q.q}</div><div class="quiz-opts">${q.opts.map((opt,oi)=>`<div class="quiz-opt" id="opt-${qi}-${oi}" onclick="answerQuiz(${qi},${oi})"><span style="font-family:var(--mono);color:var(--text3);font-size:12px;">${String.fromCharCode(65+oi)}.</span> ${opt}</div>`).join('')}</div><div class="quiz-explain" id="explain-${qi}">${q.explain}</div></div>`).join('');})();
+const answered={};
+function answerQuiz(qi,oi){if(answered[qi])return;answered[qi]=true;const q=QUIZ_DATA[qi];q.opts.forEach((_,i)=>{const el=document.getElementById(`opt-${qi}-${i}`);if(i===q.correct){el.classList.add('correct');el.innerHTML='✓ '+el.innerHTML;}else if(i===oi&&i!==q.correct){el.classList.add('wrong');el.innerHTML='✗ '+el.innerHTML;}el.style.pointerEvents='none';});document.getElementById(`explain-${qi}`).classList.add('show');}
+</script>
+
+</body>
+</html>
